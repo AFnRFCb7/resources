@@ -157,17 +157,11 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
 																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "$TEMP_FILE"
-echo IN LOG NN >> /tmp/DEBUG
 																	exec 203> ${ secret-directory }/log.lock
-echo IN LOG O >> /tmp/DEBUG
 																	flock -x 203
-echo IN LOG P >> /tmp/DEBUG
 																	cat "$TEMP_FILE" >> ${ secret-directory }/log.yaml
-echo IN LOG Q >> /tmp/DEBUG
 																	flock -u 203
-echo IN LOG R >> /tmp/DEBUG
 																	rm "$TEMP_FILE"
-echo IN LOG S >> /tmp/DEBUG
 																'' ;
 														} ;
 												null =
@@ -271,17 +265,11 @@ echo IN LOG S >> /tmp/DEBUG
 																	in
 																		if builtins.typeOf release-text == "null" then
 																			''
-echo IN TEARDOWN 1 >> /tmp/DEBUG
 																				HASH="$1"
-echo IN TEARDOWN 2 >> /tmp/DEBUG
 																				ORIGINATOR_PID="$2"
-echo "IN TEARDOWN 3" >> /tmp/DEBUG
 																				CREATION_TIME="$3"
-echo "IN TEARDOWN 33 EXPECTED=$CREATION_TIME" >> /tmp/DEBUG
-echo "IN TEARDOWN 33 OBSERVED=$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" >> /tmp/DEBUG
-																				if [[ ! -d "${ secret-directory }/$HASH" ]] || [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
+																				if [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
 																				then
-echo IN TEARDOWN 3.1 >> /tmp/DEBUG
 
 																					${ log }/bin/log \
 																						"teardown" \
@@ -291,31 +279,18 @@ echo IN TEARDOWN 3.1 >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"" \
-																						"" \
 																						"$CREATION_TIME" \
-																						${ builtins.toString lease }
-echo IN TEARDOWN 3.2 >> /tmp/DEBUG
-
+																						"" &
 																				else
-echo IN TEARDOWN 3.3 >> /tmp/DEBUG
 																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-echo IN TEARDOWN 3.4 >> /tmp/DEBUG
 																					flock -x 201
-echo IN TEARDOWN 3.5 >> /tmp/DEBUG
 																					exec 202> "${ secret-directory }/$HASH/shared-lock"
-echo IN TEARDOWN 3.6 >> /tmp/DEBUG
 																					flock -x 202																				
-echo IN TEARDOWN 3.7 >> /tmp/DEBUG
 																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-echo IN TEARDOWN 3.8 >> /tmp/DEBUG
 																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-echo IN TEARDOWN 3.9 >> /tmp/DEBUG
 																					rm --recursive --force "${ secret-directory }/$HASH"
-echo IN TEARDOWN 3.10 >> /tmp/DEBUG
 																					flock -u 202
-echo IN TEARDOWN 3.11 >> /tmp/DEBUG
 																					flock -u 201
-echo IN TEARDOWN 3.12 >> /tmp/DEBUG
 																					${ log }/bin/log \
 																						"teardown" \
 																						"active" \
@@ -324,18 +299,12 @@ echo IN TEARDOWN 3.12 >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"" \
-																						"$GARBAGE" \
 																						"$CREATION_TIME" \
-																						${ builtins.toString lease }
-echo IN TEARDOWN 3.13 >> /tmp/DEBUG
+																						"$GARBAGE" &
 																					exec 204> ${ secret-directory }/collect-garbage.lock
-echo IN TEARDOWN 3.14 >> /tmp/DEBUG
 																					flock -x 204
-echo IN TEARDOWN 3.15 >> /tmp/DEBUG
 																					nix-collect-garbage
-echo IN TEARDOWN 3.16 >> /tmp/DEBUG
 																					flock -u 204
-echo IN TEARDOWN 3.17 >> /tmp/DEBUG
 																				fi
 																			''
 																		else
@@ -343,7 +312,7 @@ echo IN TEARDOWN 3.17 >> /tmp/DEBUG
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
 																				CREATION_TIME="$3"
-																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
+																				if [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
 																				then
 																					${ log }/bin/log \
 																						"teardown" \
@@ -353,7 +322,7 @@ echo IN TEARDOWN 3.17 >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"$CREATION_TIME" \
-																						${ builtins.toString lease }
+																						""
 																				else
 																					export HASH
 																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
@@ -375,8 +344,8 @@ echo IN TEARDOWN 3.17 >> /tmp/DEBUG
 																						"" \
 																						"$( cat "${ secret-directory }/$HASH/release.standard-error )" \
 																						"$( cat "${ secret-directory }/$HASH/release.standard-output )" \
-																						"$GARBAGE" \
-																						${ builtins.toString lease }
+																						"$CREATION_TIME"
+																						"$GARBAGE" &
 																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
