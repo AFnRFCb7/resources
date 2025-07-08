@@ -249,7 +249,7 @@
 																					"" \
 																					"" \
 																					"" \
-																					"$GARBAGE"
+																					"$GARBAGE" \
 																					${ builtins.toString lease }
 																				exec 204> ${ secret-directory }/collect-garbage.lock
 																				flock -x 204
@@ -285,7 +285,7 @@
 																					"" \
 																					"" \
 																					"" \
-																					"$GARBAGE"
+																					"$GARBAGE" \
 																					${ builtins.toString lease }
 																				exec 204> ${ secret-directory }/collect-garbage.lock
 																				flock -x 204
