@@ -282,7 +282,7 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"" \
-																						"$CREATION_TIME"
+																						"$CREATION_TIME" \
 																						${ builtins.toString lease }
 																				else
 																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
@@ -303,7 +303,7 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"$GARBAGE" \
-																						"$CREATION_TIME"
+																						"$CREATION_TIME" \
 																						${ builtins.toString lease }
 																					exec 204> ${ secret-directory }/collect-garbage.lock
 																					flock -x 204
