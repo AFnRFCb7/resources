@@ -155,7 +155,7 @@ echo IN LOG J >> /tmp/DEBUG
 echo IN LOG K >> /tmp/DEBUG
 																	CURRENT_TIME=${ builtins.toString current-time }
 echo IN LOG L >> /tmp/DEBUG
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount )"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 echo IN LOG M >> /tmp/DEBUG
 																	TEMP_FILE="$( mktemp )"
 echo IN LOG N >> /tmp/DEBUG
