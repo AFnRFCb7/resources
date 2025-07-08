@@ -65,6 +65,7 @@
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
 																	rm "$FLAG"
+echo FOUND ME 2X HASH="$HASH" FLAG="$FLAG" ORIGINATOR_PID="$ORIGINATOR_PID" STATUS="$STATUS"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
 																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown"
@@ -314,15 +315,15 @@
 																else
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+																		${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+echo FOUND ME
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-																		echo FOUND ME
+																		${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
