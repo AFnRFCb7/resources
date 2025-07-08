@@ -23,7 +23,7 @@
 								pkgs.writeShellApplication
 									{
 										name = "application" ;
-										runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.flock pkgs.procps ] ;
+										runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.procps ] ;
 										text =
 											let
 												bad =
@@ -317,7 +317,7 @@ echo AA1
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
+																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 																		touch "${ secret-directory }/$HASH/flag"
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
@@ -325,7 +325,7 @@ echo AA1
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
