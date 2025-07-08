@@ -187,7 +187,7 @@
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
-																				exec 203> ${ secret-directory }/log.lock
+																				exec 203> "${ secret-directory }/log.lock"
 																				flock -x 203
 																				jq --null-input --arg HASH "$HASH" '{ "mode" : "teardown" , "hash" : $HASH }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
 																				tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$( mktemp --dry-run --suffix ".tar.zst" )"
