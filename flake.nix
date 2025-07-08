@@ -223,7 +223,6 @@
 												in
 													if builtins.typeOf init-text == "null" then
 														''
-echo BB1
 															PARENT_0_PID="$$"
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
@@ -256,53 +255,34 @@ echo BB1
 														''
 													else
 														''
-echo AA1
 															PARENT_0_PID="$$"
-echo AA1
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
-echo AA1
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-echo AA4
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-echo AA5
 															STANDARD_INPUT="$( mktemp )"
-echo AA6
 															if [[ -f /proc/self/fd/0 ]]
 															then
-echo AA61
 																HAS_STANDARD_INPUT=true
 																STANDARD_INPUT="$( cat )"
 																ORIGINATOR_PID="$PARENT_3_PID"
 															elif [[ -p /proc/self/fd/0 ]]
 															then
-echo AA62
 																HAS_STANDARD_INPUT=true
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_3_PID"
 															else
-echo AA63
 																HAS_STANDARD_INPUT=false
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
-echo AA7
 															ARGUMENTS=( "$@" )
-echo AA8
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
-echo AA9
 															export HASH
-echo AA1
 															mkdir --parents "${ secret-directory }/$HASH"
-echo AA1
 															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-echo AA1
 															flock -x 201
-echo AA1
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
-echo AA1
 															flock -s 202
-echo AA1
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-echo AAB
 															if [[ -f "${ secret-directory }/$HASH/flag" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
@@ -335,23 +315,16 @@ echo AAB
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-echo BB1
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
-echo BB2
 																		rm "$STANDARD_INPUT"
-echo BB3
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-echo CC1
 																		inotifywait --event delete "$FLAG" --quiet
-echo CC2
 																		flock -u 201
-echo CC3
 																		rm "$STANDARD_INPUT"
-echo CC4
 																		exit ${ builtins.toString error }
 																	fi
 																fi
