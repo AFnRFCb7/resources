@@ -189,8 +189,8 @@
 																				flock -x 202
 																				exec 203> ${ secret-directory }/log.lock
 																				flock -x 203
-																				jq --null-input --arg HASH "$HASH" '{ "mode" : "teardown" , "hash" : $HASH }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
-																				tar --create --file - ${ secret-directory }/$HASH | zstd -T1 --ultra -22 -o "$( mktemp --dry-run --suffix ".tar.zst" )"
+																				jq --null-input --arg HASH "$HASH" '{ "mode" : "teardown" , "hash" : $HASH }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																				tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$( mktemp --dry-run --suffix ".tar.zst" )"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 203
 																				flock -u 202
