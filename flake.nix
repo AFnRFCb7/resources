@@ -75,7 +75,7 @@
 																	flock -u 203
 																	flock -u 201
 																	flock -u 201
-																	echo ${ teardown }/bin/teardown "$HASH"							
+																	echo ${ teardown }/bin/teardown "$HASH" > "${ secret-directory }/$HASH/DEBUG"							
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
@@ -315,11 +315,15 @@
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-echo FOUND ME
+echo FOUND ME 1
 																		inotifywait --event delete "$FLAG" --quiet
+echo FOUND ME 2
 																		flock -u 201
+echo FOUND ME 3
 																		rm "$STANDARD_INPUT"
+echo FOUND ME 4
 																		echo "${ secret-directory }/$HASH/mount"
+echo FOUND ME 5
 																		exit 0
 																	else
 																		${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
