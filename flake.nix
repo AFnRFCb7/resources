@@ -10,11 +10,13 @@
 						init-text ? null ,
 						length ? 64 ,
 						lease ? 0 ,
+						nixpkgs ,
 						path ? null ,
 						release-input ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "$TMPDIR/secret" ,
-						seed ? null
+						seed ? null ,
+						system
 					} @primary :
 						let
 							application =
