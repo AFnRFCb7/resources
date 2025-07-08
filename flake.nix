@@ -255,11 +255,17 @@
 														''
 													else
 														''
+echo AA1
 															PARENT_0_PID="$$"
+echo AA1
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
+echo AA1
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
+echo AA1
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
+echo AA1
 															STANDARD_INPUT="$( mktemp )"
+echo AA1
 															if [[ -f /proc/self/fd/0 ]]
 															then
 																HAS_STANDARD_INPUT=true
@@ -275,15 +281,25 @@
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
+echo AA1
 															ARGUMENTS=( "$@" )
+echo AA1
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
+echo AA1
 															export HASH
+echo AA1
 															mkdir --parents "${ secret-directory }/$HASH"
+echo AA1
 															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+echo AA1
 															flock -x 201
+echo AA1
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
+echo AA1
 															flock -s 202
+echo AA1
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
+echo AA1
 															if [[ -f "${ secret-directory }/$HASH/flag" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
