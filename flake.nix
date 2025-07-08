@@ -76,9 +76,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-echo BEFORE CREATION >> /tmp/DEBUG
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" >> /tmp/DEBUG
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -87,17 +85,12 @@ echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" >> /tmp/DEBUG
 																		"$STATUS" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
-																		"" \
-																		"$CREATION_TIME" &
-echo "AFTER LOG COMMAND lease=${ builtins.toString lease }" >> /tmp/DEBUG
+																		"$CREATION_TIME" \
+																		"" &
 																	sleep ${ builtins.toString lease }
-echo "AFTER SLEEP" >> /tmp/DEBUG
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-echo "AFTER 201" >> /tmp/DEBUG
 																	flock -u 201
-echo "AFTER 201" >> /tmp/DEBUG
 																	flock -u 202
-echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
 														} ;
@@ -291,6 +284,7 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
 																					flock -u 201
+echo BEFORE LOGGING >> /tmp/DEBUG
 																					${ log }/bin/log \
 																						"teardown" \
 																						"active" \
@@ -300,7 +294,8 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																						"" \
 																						"" \
 																						"$CREATION_TIME" \
-																						"$GARBAGE" &
+																						"$GARBAGE"
+echo AFTER LOGGING >> /tmp/DEBUG
 																					exec 204> ${ secret-directory }/collect-garbage.lock
 																					flock -x 204
 																					nix-collect-garbage
