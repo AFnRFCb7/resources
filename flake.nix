@@ -77,8 +77,8 @@
 																		"$HASH" \
 																		"$ORIGINATOR_PID" \
 																		"$STATUS" \
-																		"$( cat "${ secret-directory }/$HASH/init.standard-error )" \
-																		"$( cat ${ secret-directory }/$HASH/init.standard-output )" \
+																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
+																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		${ builtins.toString lease } &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
