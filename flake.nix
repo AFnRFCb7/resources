@@ -14,7 +14,7 @@
 						path ? null ,
 						release-inputs ? [ ] ,
 						release-text ? null ,
-						secret-directory ? "$TMPDIR/secret" ,
+						secret-directory ? "/tmp" ,
 						seed ? null ,
 						system
 					} @primary :
@@ -79,6 +79,7 @@
 																	flock -u 203
 																	flock -u 201
 																	flock -u 201
+																	touch "${ secret-directory }/$HASH/TEARDOWN_FLAG"
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
 														} ;
@@ -103,6 +104,23 @@
 																				text = init-text ;
 																			} ;
 																	in "${ script }/bin/script" ;
+														} ;
+												log =
+													pkgs.writeShellApplication
+														{
+															name = "log" ;
+															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ]'
+															text =
+																''
+																	TIMESTAMP="$( date +%s )"
+																	exec 203> "${ secret-directory }/log.lock
+																	flock -x 203
+																	jq \
+																		--null-input \
+																		--arg TIMESTAMP="$TIMESTAMP \
+																		'{ "timestamp" : $TIMESTAMP }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																	flock -u 203
+																'' ;
 														} ;
 												null =
 													pkgs.writeShellApplication
@@ -308,7 +326,7 @@
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 																		touch "${ secret-directory }/$HASH/flag"
-																		inotifywait --event delete "$FLAG" --quiet
+																		inotifywait --event delete_self "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
@@ -331,7 +349,7 @@
 																		exit 0
 																	else
 																		${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-																		inotifywait --event delete "$FLAG" --quiet
+																		inotifywait --event delete_self "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		exit ${ builtins.toString error }
