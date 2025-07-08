@@ -262,31 +262,34 @@ echo AA1
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
 echo AA1
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-echo AA1
+echo AA4
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-echo AA1
+echo AA5
 															STANDARD_INPUT="$( mktemp )"
-echo AA1
+echo AA6
 															if [[ -f /proc/self/fd/0 ]]
 															then
+echo AA61
 																HAS_STANDARD_INPUT=true
 																STANDARD_INPUT="$( cat )"
 																ORIGINATOR_PID="$PARENT_3_PID"
 															elif [[ -p /proc/self/fd/0 ]]
 															then
+echo AA62
 																HAS_STANDARD_INPUT=true
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_3_PID"
 															else
+echo AA63
 																HAS_STANDARD_INPUT=false
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
-echo AA1
+echo AA7
 															ARGUMENTS=( "$@" )
-echo AA1
+echo AA8
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
-echo AA1
+echo AA9
 															export HASH
 echo AA1
 															mkdir --parents "${ secret-directory }/$HASH"
