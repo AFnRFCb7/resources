@@ -143,9 +143,9 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	exec 203> ${ secret-directory }/log.lock
+																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "ORIGINATOR_PID" '{ "mode" : "setup" , "type" : "stale" , "hash" : $HASH , "originator-pid" : $ORIGINATORY_PID  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
+																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" '{ "mode" : "setup" , "type" : "stale" , "hash" : $HASH , "originator-pid" : $ORIGINATORY_PID  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
