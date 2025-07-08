@@ -232,7 +232,7 @@
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
-																				tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 > "$GARBAGE"
+																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
@@ -258,7 +258,7 @@
 																				fi
 																				STANDARD_ERROR="$( cat "${ secret-directory }/$HASH/release.standard-error" )"
 																				STANDARD_OUTPUT="$( cat "${ secret-directory }/$HASH/release.standard-output" )"
-																				tar --create --file - ${ secret-directory }/$HASH | zstd -T1 --ultra -22 -o "$GARBAGE"
+																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
