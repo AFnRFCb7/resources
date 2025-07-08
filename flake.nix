@@ -321,9 +321,8 @@
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-echo FOUND ME
-																		echo nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+																		echo FOUND ME
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
