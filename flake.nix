@@ -86,7 +86,7 @@
 																	flock -u 201
 																	flock -u 202
 																	touch "${ secret-directory }/$HASH/TEARDOWN_FLAG"
-																	${ teardown }/bin/teardown "$HASH" "$ORIGNATOR_PID" "$STATUS"
+																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS"
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
