@@ -250,7 +250,7 @@
 																echo "${ secret-directory }/$HASH/mount"
 																exit 0
 															fi
-														'' ;
+														''
 													else
 														''
 															PARENT_0_PID="$$"
