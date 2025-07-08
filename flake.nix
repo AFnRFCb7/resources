@@ -6,12 +6,12 @@
 				lib.implementation =
 					{
 						error ? 64 ,
-						init-inputs ? [ pkgs.coreutils ] ,
+						init-inputs ? [ ] ,
 						init-text ? null ,
 						length ? 64 ,
 						lease ? 0 ,
 						path ? null ,
-						release-input ? [ pkgs.coreutils ] ,
+						release-input ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "$TMPDIR/secret" ,
 						seed ? null
