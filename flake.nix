@@ -125,7 +125,7 @@
 																	STANDARD_ERROR="$6"
 																	STANDARD_OUTPUT="$7"
 																	TIMESTAMP="$( date +%s )"
-																	exec 203> "${ secret-directory }/log.lock
+																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
 																	jq \
 																		--null-input \
