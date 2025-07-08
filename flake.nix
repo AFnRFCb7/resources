@@ -77,9 +77,9 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-echo BEFORE CREATION > /tmp/DEBUG
+echo BEFORE CREATION >> /tmp/DEBUG
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" > /tmp/DEBUG
+echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" >> /tmp/DEBUG
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -91,10 +91,15 @@ echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" > /tmp/DEBUG
 																		"" \
 																		"$CREATION_TIME"
 																		${ builtins.toString lease } &
+echo "AFTER LOG COMMAND lease=${ builtins.toString lease }" >> /tmp/DEBUG
 																	sleep ${ builtins.toString lease }
+echo "AFTER SLEEP" >> /tmp/DEBUG
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
+echo "AFTER 201" >> /tmp/DEBUG
 																	flock -u 201
+echo "AFTER 201" >> /tmp/DEBUG
 																	flock -u 202
+echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS" "$CREATION_TIME"
 																'' ;
 														} ;
