@@ -334,9 +334,7 @@ echo AA1
 																else
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-echo AAA1
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-echo AAA2
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
