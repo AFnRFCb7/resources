@@ -275,15 +275,15 @@
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
-															ARGUMENTS="$@"
-															HASH="$( echo "${ hash } $ARGUMENTS $( cat $STANDARD_INPUT ) $HAS_STANDARD_INPUT | sha512sum | cut --bytes -${ builtins.toString length } )"
-															export HASH
-															mkdir --parents "${ secret-directory }/$HASH"
-															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-															flock -x 201
-															exec 202> "${ secret-directory }/$HASH/shared-lock"
-															flock -s 202
-															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
+#															ARGUMENTS="$@"
+#															HASH="$( echo "${ hash } $ARGUMENTS $( cat $STANDARD_INPUT ) $HAS_STANDARD_INPUT | sha512sum | cut --bytes -${ builtins.toString length } )"
+#															export HASH
+#															mkdir --parents "${ secret-directory }/$HASH"
+#															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+#															flock -x 201
+#															exec 202> "${ secret-directory }/$HASH/shared-lock"
+#															flock -s 202
+#															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
 #															if [[ -f "${ secret-directory }/$HASH/flag" ]]
 #															then
 #																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
