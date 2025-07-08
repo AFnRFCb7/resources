@@ -67,7 +67,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown
+																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown"
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
 																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
