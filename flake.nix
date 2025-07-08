@@ -219,7 +219,7 @@
 																		"$ORIGINATOR_PID" \
 																		"" \
 																		"" \
-																		"" )" \
+																		"" \
 																		"" \
 																		"$CREATION_TIME"
 																		${ builtins.toString lease } &
