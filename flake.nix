@@ -223,6 +223,7 @@
 												in
 													if builtins.typeOf init-text == "null" then
 														''
+echo BB1
 															PARENT_0_PID="$$"
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
