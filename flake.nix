@@ -5,6 +5,7 @@
 			{
 				lib.implementation =
 					{
+						current-time ? 0 ,
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
@@ -15,7 +16,6 @@
 						release-inputs ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "/tmp" ,
-						seed ? null ,
 						system
 					} @primary :
 						let
@@ -131,10 +131,12 @@
 																	STANDARD_OUTPUT="$7"
 																	GARBAGE="$8"
 																	TIMESTAMP="$( date +%s )"
+																	CURRENT_TIME=${ builtins.toString current-time }
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
 																	jq \
 																		--null-input \
+																		--arg CURRENT_TIME "$CURRENT_TIME"
 																		--arg HASH "$HASH" \
 																		--arg GARBAGE "$GARBAGE" \
 																		--arg MODE "$MODE" \
@@ -144,8 +146,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
-#																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																		'{ "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
 																	flock -u 203
 																'' ;
 														} ;
