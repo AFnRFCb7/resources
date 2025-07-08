@@ -264,7 +264,7 @@
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
 																				CREATION_TIME="$3"
-																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f ${ secret-directory }/$HASH/flag ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/flag" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
 																				then
 																					${ log }/bin/log \
 																						"teardown" \
@@ -309,7 +309,7 @@
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
 																				CREATION_TIME="$3"
-																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f ${ secret-directory }/$HASH/flag ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/flag" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
 																				then
 																					${ log }/bin/log \
 																						"teardown" \
