@@ -71,7 +71,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	${ log }/log \
+																	${ log }/bin/log \
 																		"setup"
 																		"good"
 																		"$HASH" \
@@ -137,8 +137,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ }' | yq --yaml-output "." > ${ secret-directory }/log.txt
-#																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
 														} ;
@@ -362,7 +361,7 @@
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-																		inotifywait --event delete_self "$FLAG" --quiet
+																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
