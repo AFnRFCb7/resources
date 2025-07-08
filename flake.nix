@@ -70,7 +70,7 @@
 
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : $ORIGINATORY_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
@@ -119,7 +119,7 @@
 																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown
 																	exec 203> ${ secret-directory }/log.lock
 																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "ORIGINATOR_PID" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "null" , "hash" : $HASH , "originator-pid" : $ORIGINATORY_PID , "lease" : $LEASE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
+																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "ORIGINATOR_PID" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "null" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "lease" : $LEASE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
@@ -306,7 +306,7 @@
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS" &
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
@@ -322,7 +322,7 @@
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS" &
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
