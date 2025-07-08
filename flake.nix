@@ -140,7 +140,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID }' | yq --yaml-output "." >> ${ secret-directory }/log.yaml
+																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
 #																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
