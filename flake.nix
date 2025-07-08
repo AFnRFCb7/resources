@@ -313,7 +313,7 @@
 																		exit ${ builtins.toString error }
 																	fi
 																else
-																	if ${ init-application }/bin/init-application ${ builtins.conccatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] } > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+																	if ${ init-application }/bin/init-application ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] } > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
 																		inotifywait --event delete "$FLAG" --quiet
