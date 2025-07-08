@@ -92,7 +92,7 @@
 															runScript =
 																let
 																	script =
-																		pkgs.writeShellScriptApplication
+																		pkgs.writeShellApplication
 																			{
 																				name = "script" ;
 																				runtimeInputs = init-inputs ;
