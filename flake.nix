@@ -100,7 +100,7 @@ echo "AFTER 201" >> /tmp/DEBUG
 echo "AFTER 201" >> /tmp/DEBUG
 																	flock -u 202
 echo "AFTER TEARDOWN" >> /tmp/DEBUG
-																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS" "$CREATION_TIME"
+																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
@@ -293,9 +293,8 @@ echo IN TEARDOWN 1 >> /tmp/DEBUG
 																				HASH="$1"
 echo IN TEARDOWN 2 >> /tmp/DEBUG
 																				ORIGINATOR_PID="$2"
-																				STATUS="$3"
 echo "IN TEARDOWN 3" >> /tmp/DEBUG
-																				CREATION_TIME="$4"
+																				CREATION_TIME="$3"
 echo "IN TEARDOWN 33 EXPECTED=$CREATION_TIME" >> /tmp/DEBUG
 echo "IN TEARDOWN 33 OBSERVED=$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" >> /tmp/DEBUG
 																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
@@ -361,8 +360,7 @@ echo IN TEARDOWN 3.17 >> /tmp/DEBUG
 																			''
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
-																				STATUS="$3"
-																				CREATION_TIME="$4"
+																				CREATION_TIME="$3"
 																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
 																				then
 																					${ log }/bin/log \
