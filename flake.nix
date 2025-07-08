@@ -12,7 +12,7 @@
 						lease ? 0 ,
 						nixpkgs ,
 						path ? null ,
-						release-input ? [ ] ,
+						release-inputs ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "$TMPDIR/secret" ,
 						seed ? null ,
