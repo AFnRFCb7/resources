@@ -172,7 +172,7 @@ echo IN LOG N >> /tmp/DEBUG
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "TEMP_FILE"
+																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "$TEMP_FILE"
 echo IN LOG NN >> /tmp/DEBUG
 																	exec 203> ${ secret-directory }/log.lock
 echo IN LOG O >> /tmp/DEBUG
@@ -293,7 +293,7 @@ echo IN TEARDOWN 1 >> /tmp/DEBUG
 																				HASH="$1"
 echo IN TEARDOWN 2 >> /tmp/DEBUG
 																				ORIGINATOR_PID="$2"
-echo IN TEARDOWN 3 >> /tmp/DEBUG
+echo "IN TEARDOWN 3 EXPECTED=$CREATION_TIME OBSERVED=$( stat --format "%W" "${ secret-directory }/$HASH/mount" )">> /tmp/DEBUG
 																				CREATION_TIME="$3"
 																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
 																				then
