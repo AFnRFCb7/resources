@@ -75,6 +75,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
+																	echo BEFORE LOG >&2
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -85,6 +86,7 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"" \
 																		${ builtins.toString lease } &
+																	echo AFTER LOG >&2
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
@@ -136,7 +138,7 @@
 																	flock -x 203
 																	jq \
 																		--null-input \
-																		--arg CURRENT_TIME "$CURRENT_TIME"
+																		--arg CURRENT_TIME "$CURRENT_TIME" \
 																		--arg HASH "$HASH" \
 																		--arg GARBAGE "$GARBAGE" \
 																		--arg MODE "$MODE" \
