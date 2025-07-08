@@ -302,7 +302,7 @@ echo AA1
 															flock -s 202
 echo AA1
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-echo AA1
+echo AAB
 															if [[ -f "${ secret-directory }/$HASH/flag" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
@@ -335,16 +335,23 @@ echo AA1
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+echo BB1
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
+echo BB2
 																		rm "$STANDARD_INPUT"
+echo BB3
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+echo CC1
 																		inotifywait --event delete "$FLAG" --quiet
+echo CC2
 																		flock -u 201
+echo CC3
 																		rm "$STANDARD_INPUT"
+echo CC4
 																		exit ${ builtins.toString error }
 																	fi
 																fi
