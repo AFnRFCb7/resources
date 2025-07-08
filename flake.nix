@@ -72,8 +72,8 @@
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
 																	${ log }/bin/log \
-																		"setup"
-																		"good"
+																		"setup" \
+																		"good" \
 																		"$HASH" \
 																		"$ORIGINATOR_PID" \
 																		"$STATUS" \
