@@ -65,18 +65,17 @@
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
 																	rm "$FLAG"
-echo FOUND ME 2X HASH="$HASH" FLAG="$FLAG" ORIGINATOR_PID="$ORIGINATOR_PID" STATUS="$STATUS"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown"
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
 																	flock -u 201
+																	echo ${ teardown }/bin/teardown "$HASH"							
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
@@ -117,7 +116,6 @@ echo FOUND ME 2X HASH="$HASH" FLAG="$FLAG" ORIGINATOR_PID="$ORIGINATOR_PID" STAT
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	ln --symbolic ${ teardown }/bin/teardown "${ secret-directory }/$HASH/teardown
 																	exec 203> ${ secret-directory }/log.lock
 																	flock -x 203
 																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "ORIGINATOR_PID" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "null" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "lease" : $LEASE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
@@ -126,6 +124,7 @@ echo FOUND ME 2X HASH="$HASH" FLAG="$FLAG" ORIGINATOR_PID="$ORIGINATOR_PID" STAT
 																	flock -u 203
 																	flock -u 201
 																	flock -u 201
+																	echo ${ teardown }/bin/teardown "$HASH"
 																'' ;
 														} ;
 
