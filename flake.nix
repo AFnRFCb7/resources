@@ -53,8 +53,7 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"$GARBAGE" \
-																		"$CREATION_TIME" \
-																		${ builtins.toString lease } &
+																		"$CREATION_TIME" &
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
@@ -89,8 +88,7 @@ echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" >> /tmp/DEBUG
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"" \
-																		"$CREATION_TIME"
-																		${ builtins.toString lease } &
+																		"$CREATION_TIME" &
 echo "AFTER LOG COMMAND lease=${ builtins.toString lease }" >> /tmp/DEBUG
 																	sleep ${ builtins.toString lease }
 echo "AFTER SLEEP" >> /tmp/DEBUG
@@ -132,33 +130,19 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
-echo IN LOG A >> /tmp/DEBUG
 																	MODE="$1"
-echo IN LOG B >> /tmp/DEBUG
 																	TYPE="$2"
-echo IN LOG C >> /tmp/DEBUG
 																	HASH="$3"
-echo IN LOG D >> /tmp/DEBUG
 																	ORIGINATOR_PID="$4"
-echo IN LOG E >> /tmp/DEBUG
 																	STATUS="$5"
-echo IN LOG F >> /tmp/DEBUG
 																	STANDARD_ERROR="$6"
-echo IN LOG G >> /tmp/DEBUG
 																	STANDARD_OUTPUT="$7"
-echo IN LOG H >> /tmp/DEBUG
-																	# CREATION_TIME="$8"
-echo IN LOG I >> /tmp/DEBUG
+																	CREATION_TIME="$8"
 																	GARBAGE="$9"
-echo IN LOG J >> /tmp/DEBUG
 																	TIMESTAMP="$( date +%s )"
-echo IN LOG K >> /tmp/DEBUG
 																	CURRENT_TIME=${ builtins.toString current-time }
-echo IN LOG L >> /tmp/DEBUG
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-echo IN LOG M >> /tmp/DEBUG
 																	TEMP_FILE="$( mktemp )"
-echo IN LOG N >> /tmp/DEBUG
 																	jq \
 																		--null-input \
 																		--arg CREATION_TIME "$CREATION_TIME" \
@@ -212,8 +196,7 @@ echo IN LOG S >> /tmp/DEBUG
 																		"" \
 																		"" )" \
 																		"" \
-																		"$CREATION_TIME"
-																		${ builtins.toString lease } &
+																		"$CREATION_TIME" &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
@@ -249,8 +232,7 @@ echo IN LOG S >> /tmp/DEBUG
 																		"" \
 																		"" \
 																		"" \
-																		"$CREATION_TIME"
-																		${ builtins.toString lease } &
+																		"$CREATION_TIME" &
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
@@ -297,7 +279,7 @@ echo "IN TEARDOWN 3" >> /tmp/DEBUG
 																				CREATION_TIME="$3"
 echo "IN TEARDOWN 33 EXPECTED=$CREATION_TIME" >> /tmp/DEBUG
 echo "IN TEARDOWN 33 OBSERVED=$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" >> /tmp/DEBUG
-																				if [[ ! -d "${ secret-directory }/$HASH" ]] || [[ ! -f "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
+																				if [[ ! -d "${ secret-directory }/$HASH" ]] || [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
 																				then
 echo IN TEARDOWN 3.1 >> /tmp/DEBUG
 
