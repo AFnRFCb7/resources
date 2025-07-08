@@ -43,7 +43,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -x 201
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"bad" \
@@ -77,7 +77,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -174,7 +174,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"null" \
@@ -211,7 +211,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"stale" \
@@ -366,7 +366,7 @@
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-															if [[ -f "${ secret-directory }/$HASH/flag" ]]
+															if [[ -f "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
 																inotifywait --event delete "$FLAG" --quiet
@@ -415,7 +415,7 @@
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-															if [[ -f "${ secret-directory }/$HASH/flag" ]]
+															if [[ -f "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
 																inotifywait --event delete "$FLAG" --quiet
