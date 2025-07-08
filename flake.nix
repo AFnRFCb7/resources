@@ -282,7 +282,6 @@ echo AA62
 															else
 echo AA63
 																HAS_STANDARD_INPUT=false
-																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
 echo AA7
