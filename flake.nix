@@ -7,7 +7,7 @@
 					{
 						error ? 64 ,
 						init-inputs ? [ pkgs.coreutils ] ,
-						init-text ? null ;
+						init-text ? null ,
 						length ? 64 ,
 						lease ? 0 ,
 						path ? null ,
