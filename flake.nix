@@ -133,7 +133,7 @@
 																		--arg MODE "$MODE" \
 																		--arg ORIGINATOR_PID "$ORIGINATOR_PID" \
 																		--arg STANDARD_ERROR "$STANDARD_ERROR" \
-																		--arg STANDAR_OUTPUT "$STANDARD_OUTPUT" \
+																		--arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
@@ -226,7 +226,7 @@
 																			''
 																				HASH="$1"
 																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-																				exec 201> "$ secret-directory }/$HASH/exclusive-lock"
+																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
@@ -244,7 +244,7 @@
 																				HASH="$1"
 																				export HASH
 																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-																				exec 201> "$ secret-directory }/$HASH/exclusive-lock"
+																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
