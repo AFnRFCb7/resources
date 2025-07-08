@@ -91,7 +91,7 @@
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
 																	flock -u 202
-																	echo TEARDOWN >> "${ secret-directory }/DEBUG
+																	echo TEARDOWN >> "${ secret-directory }/DEBUG"
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS"
 																'' ;
 														} ;
