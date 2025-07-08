@@ -43,6 +43,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -x 201
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"bad" \
@@ -52,6 +53,7 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"$GARBAGE" \
+																		"$CREATION_TIME" \
 																		${ builtins.toString lease } &
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
@@ -75,7 +77,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	echo "BEFORE LOG ORIGINATOR_PID=$ORIGINATOR_PID" >> ${ secret-directory }/DEBUG
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -85,14 +87,13 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"" \
+																		"$CREATION_TIME"
 																		${ builtins.toString lease } &
-																	echo AFTER LOG >> ${ secret-directory }/DEBUG
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
 																	flock -u 202
-																	echo TEARDOWN >> "${ secret-directory }/DEBUG"
-																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS"
+																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS" "$CREATION_TIME"
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
@@ -131,13 +132,14 @@
 																	STATUS="$5"
 																	STANDARD_ERROR="$6"
 																	STANDARD_OUTPUT="$7"
-																	GARBAGE="$8"
+																	CREATION_TIME="$8"
+																	GARBAGE="$9"
 																	TIMESTAMP="$( date +%s )"
 																	CURRENT_TIME=${ builtins.toString current-time }
-																	exec 203> "${ secret-directory }/log.lock"
-																	flock -x 203
+																	TEMP_FILE="$( mktemp )"
 																	jq \
 																		--null-input \
+																		--arg CREATION_TIME "$CREATION_TIME" \
 																		--arg CURRENT_TIME "$CURRENT_TIME" \
 																		--arg HASH "$HASH" \
 																		--arg GARBAGE "$GARBAGE" \
@@ -148,7 +150,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
+																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
 																	flock -u 203
 																'' ;
 														} ;
@@ -168,15 +170,25 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	exec 203> ${ secret-directory }/log.lock
-																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "ORIGINATOR_PID" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "null" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "lease" : $LEASE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	${ log }/bin/log \
+																		"setup" \
+																		"null" \
+																		"$HASH" \
+																		"$ORIGINATOR_PID" \
+																		"" \
+																		"" \
+																		"" )" \
+																		"" \
+																		"$CREATION_TIME"
+																		${ builtins.toString lease } &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 203
 																	flock -u 201
 																	flock -u 201
-																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" ""
+																	exec 203> "${ secret-directory }/log.lock"
+																	flock -x 203
+																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "" "$CREATION_TIME"
 																'' ;
 														} ;
 
@@ -195,9 +207,18 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	exec 203> "${ secret-directory }/log.lock"
-																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" '{ "mode" : "setup" , "type" : "stale" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/flag" )"
+																	${ log }/bin/log \
+																		"setup" \
+																		"stale" \
+																		"$HASH" \
+																		"$ORIGINATOR_PID" \
+																		"" \
+																		"" \
+																		"" )" \
+																		"" \
+																		"$CREATION_TIME"
+																		${ builtins.toString lease } &
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
@@ -238,34 +259,63 @@
 																			''
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
-																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																				flock -x 201
-																				exec 202> "${ secret-directory }/$HASH/shared-lock"
-																				flock -x 202
-																				
-																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-																				rm --recursive --force "${ secret-directory }/$HASH"
-																				flock -u 202
-																				flock -u 201
-																				${ log }/bin/log \
-																					"teardown" \
-																					"null" \
-																					"$HASH" \
-																					"$ORIGINATOR_PID" \
-																					"" \
-																					"" \
-																					"" \
-																					"$GARBAGE" \
-																					${ builtins.toString lease }
-																				exec 204> ${ secret-directory }/collect-garbage.lock
-																				flock -x 204
-																				nix-collect-garbage
-																				flock -u 204
+																				CREATION_TIME="$3"
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f ${ secret-directory }/$HASH/flag ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				then
+																					${ log }/bin/log \
+																						"teardown" \
+																						"aborted" \
+																						"$HASH" \
+																						"$ORIGINATOR_PID" \
+																						"" \
+																						"" \
+																						"" \
+																						"" \
+																						"$CREATION_TIME"
+																						${ builtins.toString lease }
+																				else
+																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+																					flock -x 201
+																					exec 202> "${ secret-directory }/$HASH/shared-lock"
+																					flock -x 202																				
+																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
+																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
+																					rm --recursive --force "${ secret-directory }/$HASH"
+																					flock -u 202
+																					flock -u 201
+																					${ log }/bin/log \
+																						"teardown" \
+																						"active" \
+																						"$HASH" \
+																						"$ORIGINATOR_PID" \
+																						"" \
+																						"" \
+																						"" \
+																						"$GARBAGE" \
+																						"$CREATION_TIME"
+																						${ builtins.toString lease }
+																					exec 204> ${ secret-directory }/collect-garbage.lock
+																					flock -x 204
+																					nix-collect-garbage
+																					flock -u 204
+																				fi
 																			''
 																		else
 																			''
 																				HASH="$1"
+																				ORIGINATOR_PID="$2"
+																				CREATION_TIME="$3"
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f ${ secret-directory }/$HASH/flag ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				then
+																					${ log }/bin/log \
+																						"teardown" \
+																						"aborted" \
+																						"$HASH" \
+																						"$ORIGINATOR_PID" \
+																						"" \
+																						"" \
+																						"$CREATION_TIME"
+																						${ builtins.toString lease }
 																				export HASH
 																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
 																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
@@ -278,22 +328,20 @@
 																				else
 																					STATUS="$?"
 																				fi
-																				STANDARD_ERROR="$( cat "${ secret-directory }/$HASH/release.standard-error" )"
-																				STANDARD_OUTPUT="$( cat "${ secret-directory }/$HASH/release.standard-output" )"
-																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-																				rm --recursive --force "${ secret-directory }/$HASH"
-																				flock -u 202
-																				flock -u 201
 																				${ log }/bin/log \
 																					"teardown" \
 																					"null" \
 																					"$HASH" \
 																					"$ORIGINATOR_PID" \
 																					"" \
-																					"" \
-																					"" \
+																					"$( cat "${ secret-directory }/$HASH/release.standard-error )" \
+																					"$( cat "${ secret-directory }/$HASH/release.standard-output )" \
 																					"$GARBAGE" \
 																					${ builtins.toString lease }
+																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
+																				rm --recursive --force "${ secret-directory }/$HASH"
+																				flock -u 202
+																				flock -u 201
 																				exec 204> ${ secret-directory }/collect-garbage.lock
 																				flock -x 204
 																				nix-collect-garbage
