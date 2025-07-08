@@ -77,7 +77,9 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
+echo BEFORE CREATION > /tmp/DEBUG
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+echo "AFTER CREATION CREATION_TIME=$CREATION_TIME" > /tmp/DEBUG
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
