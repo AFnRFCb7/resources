@@ -275,9 +275,9 @@
 																cat > "$STANDARD_INPUT"
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
-#															ARGUMENTS="$@"
-#															HASH="$( echo "${ hash } $ARGUMENTS $( cat $STANDARD_INPUT ) $HAS_STANDARD_INPUT | sha512sum | cut --bytes -${ builtins.toString length } )"
-#															export HASH
+															ARGUMENTS="$@"
+															HASH="$( echo "${ hash } $ARGUMENTS $( cat $STANDARD_INPUT ) $HAS_STANDARD_INPUT | sha512sum | cut --bytes -${ builtins.toString length } )"
+															export HASH
 #															mkdir --parents "${ secret-directory }/$HASH"
 #															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 #															flock -x 201
