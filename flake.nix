@@ -284,52 +284,52 @@
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-															if [[ -f "${ secret-directory }/$HASH/flag" ]]
-															then
-																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
-																inotifywait --event delete "$FLAG" --quiet
-																flock -u 201
-																rm "$STANDARD_INPUT"
-																echo "${ secret-directory }/$HASH/mount"																
-																exit 0
-															else
-																mkdir "${ secret-directory }/$HASH/mount"
-																if "$HAS_STANDARD_INPUT"
-																then
-																	if ${ init-application }/bin/init-application "$ARGUMENTS" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
-																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS"
-																		touch "${ secret-directory }/$HASH/flag"
-																		inotifywait --event delete "$FLAG" --quiet
-																		flock -u 201
-																		rm "$STANDARD_INPUT"
-																		echo "${ secret-directory }/$HASH/mount"
-																		exit 0
-																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS"
-																		inotifywait --event delete "$FLAG" --quiet
-																		flock -u 201
-																		rm "$STANDARD_INPUT"
-																		exit ${ builtins.toString error }
-																	fi
-																else
-																	if ${ init-application }/bin/init-application "$ARGUMENTS" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
-																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS"
-																		inotifywait --event delete "$FLAG" --quiet
-																		flock -u 201
-																		rm "$STANDARD_INPUT"
-																		echo "${ secret-directory }/$HASH/mount"
-																		exit 0
-																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS"
-																		inotifywait --event delete "$FLAG" --quiet
-																		flock -u 201
-																		rm "$STANDARD_INPUT"
-																		exit ${ builtins.toString error }
-																	fi
-																fi
-															fi
+#															if [[ -f "${ secret-directory }/$HASH/flag" ]]
+#															then
+#																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
+#																inotifywait --event delete "$FLAG" --quiet
+#																flock -u 201
+#																rm "$STANDARD_INPUT"
+#																echo "${ secret-directory }/$HASH/mount"																
+#																exit 0
+#															else
+#																mkdir "${ secret-directory }/$HASH/mount"
+#																if "$HAS_STANDARD_INPUT"
+#																then
+#																	if ${ init-application }/bin/init-application "$ARGUMENTS" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+#																	then
+#																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
+#																		touch "${ secret-directory }/$HASH/flag"
+#																		inotifywait --event delete "$FLAG" --quiet
+#																		flock -u 201
+#																		rm "$STANDARD_INPUT"
+#																		echo "${ secret-directory }/$HASH/mount"
+#																		exit 0
+#																	else
+#																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS" &
+#																		inotifywait --event delete "$FLAG" --quiet
+#																		flock -u 201
+#																		rm "$STANDARD_INPUT"
+#																		exit ${ builtins.toString error }
+#																	fi
+#																else
+#																	if ${ init-application }/bin/init-application "$ARGUMENTS" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+#																	then
+#																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
+#																		inotifywait --event delete "$FLAG" --quiet
+#																		flock -u 201
+#																		rm "$STANDARD_INPUT"
+#																		echo "${ secret-directory }/$HASH/mount"
+#																		exit 0
+#																	else
+#																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATORY_PID" "$STATUS" &
+#																		inotifywait --event delete "$FLAG" --quiet
+#																		flock -u 201
+#																		rm "$STANDARD_INPUT"
+#																		exit ${ builtins.toString error }
+#																	fi
+#																fi
+#															fi
 														'' ;
 									} ;
 							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
