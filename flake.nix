@@ -43,16 +43,22 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -x 201
+																	${ log }/bin/log \
+																		"setup" \
+																		"bad" \
+																		"$HASH" \
+																		"$ORIGINATOR_PID" \
+																		"$STATUS" \
+																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
+																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
+																		"$GARBAGE" \
+																		${ builtins.toString lease } &
 																	STANDARD_ERROR="$( cat "${ secret-directory }/$HASH/init.standard-error" )"
 																	STANDARD_OUTPUT="$( cat "${ secret-directory }/$HASH/init.standard-output" )"
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
 																	flock -u 202
-																	exec 203> "${ secret-directory }/log.lock"
-																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$STANDARD_ERROR" --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" --arg GARBAGE "$GARBAGE" '{ "mode" : "init" , "type" : "good" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "garbage" : $GARBAGE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
-																	flock -u 203
 																'' ;
 														} ;
 												good =
@@ -140,7 +146,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
+																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" >> ${ secret-directory }/log.yaml
 #																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
