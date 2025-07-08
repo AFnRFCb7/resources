@@ -137,7 +137,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																		'{ "hash" : $HASH }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 #																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
@@ -199,6 +199,7 @@
 													pkgs.writeShellApplication
 														{
 															name = "teardown" ;
+															runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
 															text =
 																let
 																	release-application =
@@ -231,7 +232,7 @@
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
-																				tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$( mktemp --dry-run --suffix ".tar.zst" )"
+																				tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 > "$GARBAGE"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
@@ -257,7 +258,7 @@
 																				fi
 																				STANDARD_ERROR="$( cat "${ secret-directory }/$HASH/release.standard-error" )"
 																				STANDARD_OUTPUT="$( cat "${ secret-directory }/$HASH/release.standard-output" )"
-																				tar --create --file - ${ secret-directory }/$HASH | zstd -T1 --ultra -22 -o "$( mktemp --dry-run --suffix ".tar.zst" )"
+																				tar --create --file - ${ secret-directory }/$HASH | zstd -T1 --ultra -22 -o "$GARBAGE"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
@@ -265,6 +266,9 @@
 																				flock -x 203
 																				jq --null-input --arg HASH "$HASH" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$STANDARD_ERROR" --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" --arg GARBAGE "$GARBAGE" '{ "mode" : "teardown" , "hash" : $HASH , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "garbage" : $GARBAGE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
 																				flock -u 203
+																				exec 204> ${ secret-directory }/collect-garbage.lock
+																				flock -x ${ secret-directory }/collect-garbage.lock
+																				nix-collect-garbage
 																			'' ;
 														} ;
 												in
