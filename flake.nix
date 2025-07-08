@@ -53,8 +53,6 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"$GARBAGE" \
 																		${ builtins.toString lease } &
-																	STANDARD_ERROR="$( cat "${ secret-directory }/$HASH/init.standard-error" )"
-																	STANDARD_OUTPUT="$( cat "${ secret-directory }/$HASH/init.standard-output" )"
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
