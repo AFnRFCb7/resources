@@ -79,13 +79,14 @@
 																		"$STATUS" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
+																		"" \
 																		${ builtins.toString lease } &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
 																	flock -u 202
 																	touch "${ secret-directory }/$HASH/TEARDOWN_FLAG"
-																	${ teardown }/bin/teardown "$HASH"
+																	${ teardown }/bin/teardown "$HASH" "$ORIGNATOR_PID" "$STATUS"
 																'' ;
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
@@ -124,12 +125,14 @@
 																	STATUS="$5"
 																	STANDARD_ERROR="$6"
 																	STANDARD_OUTPUT="$7"
+																	GARBAGE="$8"
 																	TIMESTAMP="$( date +%s )"
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
 																	jq \
 																		--null-input \
 																		--arg HASH "$HASH" \
+																		--arg GARBAGE "$GARBAGE" \
 																		--arg MODE "$MODE" \
 																		--arg ORIGINATOR_PID "$ORIGINATOR_PID" \
 																		--arg STANDARD_ERROR "$STANDARD_ERROR" \
@@ -137,7 +140,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "hash" : $HASH , "mode" : $MODE }' | yq --yaml-output "." >> ${ secret-directory }/log.yaml
+																		'{ "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID }' | yq --yaml-output "." >> ${ secret-directory }/log.yaml
 #																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
@@ -166,7 +169,7 @@
 																	flock -u 203
 																	flock -u 201
 																	flock -u 201
-																	${ teardown }/bin/teardown "$HASH"
+																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" ""
 																'' ;
 														} ;
 
