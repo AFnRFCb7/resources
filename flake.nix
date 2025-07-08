@@ -157,7 +157,7 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "TEMP_FILE"
+																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "TEMP_FILE"
 																	exec 203> ${ secret-directory }/log.lock
 																	flock -x 203
 																	cat "$TEMP_FILE" >> ${ secret-directory }/log.yaml
@@ -268,10 +268,11 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																	in
 																		if builtins.typeOf release-text == "null" then
 																			''
+echo IN TEARDOWN >> /tmp/DEBUG
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
 																				CREATION_TIME="$3"
-																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/flag" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
 																				then
 																					${ log }/bin/log \
 																						"teardown" \
@@ -316,7 +317,7 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																				HASH="$1"
 																				ORIGINATOR_PID="$2"
 																				CREATION_TIME="$3"
-																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/flag" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/flag" )" != "$CREATION_TIME" ]
+																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
 																				then
 																					${ log }/bin/log \
 																						"teardown" \
@@ -325,38 +326,40 @@ echo "AFTER TEARDOWN" >> /tmp/DEBUG
 																						"$ORIGINATOR_PID" \
 																						"" \
 																						"" \
-																						"$CREATION_TIME"
+																						"$CREATION_TIME" \
 																						${ builtins.toString lease }
-																				export HASH
-																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																				flock -x 201
-																				exec 202> "${ secret-directory }/$HASH/shared-lock"
-																				flock -x 202
-																				if ${ release-application }/bin/release > "${ secret-directory }/$HASH/release.standard-output" 2> "${ secret-directory }/$HASH/release.standard-error"
-																				then
-																					STATUS="$?"
 																				else
-																					STATUS="$?"
+																					export HASH
+																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
+																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+																					flock -x 201
+																					exec 202> "${ secret-directory }/$HASH/shared-lock"
+																					flock -x 202
+																					if ${ release-application }/bin/release > "${ secret-directory }/$HASH/release.standard-output" 2> "${ secret-directory }/$HASH/release.standard-error"
+																					then
+																						STATUS="$?"
+																					else
+																						STATUS="$?"
+																					fi
+																					${ log }/bin/log \
+																						"teardown" \
+																						"null" \
+																						"$HASH" \
+																						"$ORIGINATOR_PID" \
+																						"" \
+																						"$( cat "${ secret-directory }/$HASH/release.standard-error )" \
+																						"$( cat "${ secret-directory }/$HASH/release.standard-output )" \
+																						"$GARBAGE" \
+																						${ builtins.toString lease }
+																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
+																					rm --recursive --force "${ secret-directory }/$HASH"
+																					flock -u 202
+																					flock -u 201
+																					exec 204> ${ secret-directory }/collect-garbage.lock
+																					flock -x 204
+																					nix-collect-garbage
+																					flock -u 204
 																				fi
-																				${ log }/bin/log \
-																					"teardown" \
-																					"null" \
-																					"$HASH" \
-																					"$ORIGINATOR_PID" \
-																					"" \
-																					"$( cat "${ secret-directory }/$HASH/release.standard-error )" \
-																					"$( cat "${ secret-directory }/$HASH/release.standard-output )" \
-																					"$GARBAGE" \
-																					${ builtins.toString lease }
-																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-																				rm --recursive --force "${ secret-directory }/$HASH"
-																				flock -u 202
-																				flock -u 201
-																				exec 204> ${ secret-directory }/collect-garbage.lock
-																				flock -x 204
-																				nix-collect-garbage
-																				flock -u 204
 																			'' ;
 														} ;
 												in
