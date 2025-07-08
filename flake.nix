@@ -82,7 +82,7 @@
 												init-application =
 													pkgs.buildFHSUserEnv
 														{
-															extraBwrapArgus =
+															extraBwrapArgs =
 																[
 																	"--bind ${ secret-directory }/$HASH/mount /mount"
 																	"--bind-ro ${ secret-directory } ${ secret-directory }"
