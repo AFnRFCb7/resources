@@ -180,7 +180,7 @@
 																						in "${ script }/bin/script" ;
 																			} ;
 																	in
-																		if builtins.typeOf teardown == "null" then
+																		if builtins.typeOf release-text == "null" then
 																			''
 																				HASH="$( basename "$( dirname "$0" )" )"
 																				exec 201> "$ secret-directory }/$HASH/exclusive-lock"
