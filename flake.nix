@@ -137,7 +137,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "hash" : $HASH }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																		'{ "hash" : $HASH , "mode" : $MODE }' | yq --yaml-output "." >> ${ secret-directory }/log.yaml
 #																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
@@ -227,19 +227,31 @@
 																		if builtins.typeOf release-text == "null" then
 																			''
 																				HASH="$1"
+																				ORIGINATOR_PID="$2"
 																				GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
 																				exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																				flock -x 201
 																				exec 202> "${ secret-directory }/$HASH/shared-lock"
 																				flock -x 202
+																				
 																				tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
-																				exec 203> "${ secret-directory }/log.lock"
-																				flock -x 203
-																				jq --null-input --arg HASH "$HASH" --arg GARBAGE "$GARBAGE" '{ "mode" : "teardown" , "hash" : $HASH , "garbage" : $GARBAGE }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
-																				flock -u 203
+																				${ log }/bin/log \
+																					"teardown" \
+																					"null" \
+																					"$HASH" \
+																					"$ORIGINATOR_PID" \
+																					"" \
+																					"" \
+																					"" \
+																					"$GARBAGE"
+																					${ builtins.toString lease }
+																				exec 204> ${ secret-directory }/collect-garbage.lock
+																				flock -x 204
+																				nix-collect-garbage
+																				flock -u 204
 																			''
 																		else
 																			''
@@ -262,13 +274,20 @@
 																				rm --recursive --force "${ secret-directory }/$HASH"
 																				flock -u 202
 																				flock -u 201
-																				exec 203> ${ secret-directory }/log.lock
-																				flock -x 203
-																				jq --null-input --arg HASH "$HASH" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$STANDARD_ERROR" --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" --arg GARBAGE "$GARBAGE" '{ "mode" : "teardown" , "hash" : $HASH , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "garbage" : $GARBAGE  }' | yq --yaml-output "." > ${ secret-directory }/log.yaml
-																				flock -u 203
+																				${ log }/bin/log \
+																					"teardown" \
+																					"null" \
+																					"$HASH" \
+																					"$ORIGINATOR_PID" \
+																					"" \
+																					"" \
+																					"" \
+																					"$GARBAGE"
+																					${ builtins.toString lease }
 																				exec 204> ${ secret-directory }/collect-garbage.lock
-																				flock -x ${ secret-directory }/collect-garbage.lock
+																				flock -x 204
 																				nix-collect-garbage
+																				flock -u 204
 																			'' ;
 														} ;
 												in
