@@ -316,7 +316,7 @@
 																	then
 																		${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
 echo FOUND ME 1
-																		inotifywait --event delete "$FLAG" --quiet
+																		inotifywait --event delete_self "$FLAG" --quiet
 echo FOUND ME 2
 																		flock -u 201
 echo FOUND ME 3
