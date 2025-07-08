@@ -75,7 +75,7 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	echo BEFORE LOG >&2
+																	echo "BEFORE LOG ORIGINATOR_PID=$ORIGINATOR_PID" >> ${ secret-directory }/DEBUG
 																	${ log }/bin/log \
 																		"setup" \
 																		"good" \
@@ -86,12 +86,12 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"" \
 																		${ builtins.toString lease } &
-																	echo AFTER LOG >&2
+																	echo AFTER LOG >> ${ secret-directory }/DEBUG
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
 																	flock -u 202
-																	touch "${ secret-directory }/$HASH/TEARDOWN_FLAG"
+																	echo TEARDOWN >> "${ secret-directory }/DEBUG
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$STATUS"
 																'' ;
 														} ;
