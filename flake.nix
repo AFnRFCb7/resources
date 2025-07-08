@@ -145,7 +145,7 @@
 																	flock -s 201
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" '{ "mode" : "setup" , "type" : "stale" , "hash" : $HASH , "originator-pid" : $ORIGINATORY_PID  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" '{ "mode" : "setup" , "type" : "stale" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
@@ -296,7 +296,7 @@
 																mkdir "${ secret-directory }/$HASH/mount"
 																if "$HAS_STANDARD_INPUT"
 																then
-																	if ${ init-application }/bin/init-application "$ARGUMENTS" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+																	if ${ init-application }/bin/init-application ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] } < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
 																		touch "${ secret-directory }/$HASH/flag"
@@ -313,7 +313,7 @@
 																		exit ${ builtins.toString error }
 																	fi
 																else
-																	if ${ init-application }/bin/init-application "$ARGUMENTS" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+																	if ${ init-application }/bin/init-application ${ builtins.conccatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] } > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$STATUS" &
 																		inotifywait --event delete "$FLAG" --quiet
