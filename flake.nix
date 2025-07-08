@@ -293,8 +293,9 @@ echo IN TEARDOWN 1 >> /tmp/DEBUG
 																				HASH="$1"
 echo IN TEARDOWN 2 >> /tmp/DEBUG
 																				ORIGINATOR_PID="$2"
-echo "IN TEARDOWN 3 EXPECTED=$CREATION_TIME" >> /tmp/DEBUG
+echo "IN TEARDOWN 3" >> /tmp/DEBUG
 																				CREATION_TIME="$3"
+echo "IN TEARDOWN 33 EXPECTED=$CREATION_TIME" >> /tmp/DEBUG
 																				if [ ! -d "${ secret-directory }/$HASH" ] || [ ! -f "${ secret-directory }/$HASH/mount" ] || [ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]
 																				then
 echo IN TEARDOWN 3.1 >> /tmp/DEBUG
