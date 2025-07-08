@@ -109,7 +109,7 @@
 													pkgs.writeShellApplication
 														{
 															name = "log" ;
-															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ]'
+															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
 																	TIMESTAMP="$( date +%s )"
