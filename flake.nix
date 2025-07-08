@@ -85,7 +85,7 @@
 															extraBwrapArgs =
 																[
 																	"--bind ${ secret-directory }/$HASH/mount /mount"
-																	"--bind-ro ${ secret-directory } ${ secret-directory }"
+																	"--ro-bind ${ secret-directory } ${ secret-directory }"
 																	"--tmpfs /work"
 																] ;
 															name = "init-application" ;
@@ -163,8 +163,8 @@
 																			{
 																				extraBwrapArgs =
 																					[
-																						"--bind-ro ${ secret-directory }/$HASH/mount /mount"
-																						"--bind-ro ${ secret-directory } ${ secret-directory }"
+																						"--ro-bind ${ secret-directory }/$HASH/mount /mount"
+																						"--ro-bind ${ secret-directory } ${ secret-directory }"
 																						"--tmpfs /work"
 																					] ;
 																				name = "release-application" ;
