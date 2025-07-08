@@ -71,14 +71,19 @@
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
-																	exec 203> "${ secret-directory }/log.lock"
-																	flock -x 203
-																	jq --null-input --arg HASH "$HASH" --arg ORIGINATOR_PID "$ORIGINATOR_PID" --arg STATUS "$STATUS" --arg STANDARD_ERROR "$( cat "${ secret-directory }/$HASH/init.standard-error" )" --arg STANDARD_OUTPUT "$( cat "${ secret-directory }/$HASH/init.standard-output" )" --arg LEASE ${ builtins.toString lease } '{ "mode" : "setup" , "type" : "good" , "hash" : $HASH , "originator-pid" : $ORIGINATOR_PID , "status" : $STATUS , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "lease" : $LEASE  }' | yq --yaml-output "." > "${ secret-directory }/log.yaml"
+																	${ log }/log \
+																		"setup"
+																		"good"
+																		"$HASH" \
+																		"$ORIGINATOR_PID" \
+																		"$STATUS" \
+																		"$( cat "${ secret-directory }/$HASH/init.standard-error )" \
+																		"$( cat ${ secret-directory }/$HASH/init.standard-output \
+																		${ builtins.toString lease } &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 203
 																	flock -u 201
-																	flock -u 201
+																	flock -u 202
 																	touch "${ secret-directory }/$HASH/TEARDOWN_FLAG"
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
@@ -112,13 +117,27 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+																	MODE="$1"
+																	TYPE="$2"
+																	HASH="$3"
+																	ORIGINATOR_PID="$4"
+																	STATUS="$5"
+																	STANDARD_ERROR="$6"
+																	STANDARD_OUTPUT="$7"
 																	TIMESTAMP="$( date +%s )"
 																	exec 203> "${ secret-directory }/log.lock
 																	flock -x 203
 																	jq \
 																		--null-input \
-																		--arg TIMESTAMP="$TIMESTAMP \
-																		'{ "timestamp" : $TIMESTAMP }' | yq --yaml-output "." > ${ secret-directory }/log.txt
+																		--arg HASH "$HASH" \
+																		--arg MODE "$MODE" \
+																		--arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+																		--arg STANDARD_ERROR "$STANDARD_ERROR" \
+																		--arg STANDAR_OUTPUT "$STANDARD_OUTPUT" \
+																		--arg STATUS "$STATUS" \
+																		--arg TIMESTAMP "$TIMESTAMP \
+																		--arg TYPE "$TYPE" \
+																		'{ "hash" : $HASH , "mode" $MODE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --yaml-output "." > ${ secret-directory }/log.txt
 																	flock -u 203
 																'' ;
 														} ;
