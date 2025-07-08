@@ -370,15 +370,15 @@
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		touch "${ secret-directory }/$HASH/flag"
-																		inotifywait --event delete_self "$FLAG" --quiet
+																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
@@ -387,15 +387,15 @@
 																else
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-																		${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
+																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" &
-																		inotifywait --event delete_self "$FLAG" --quiet
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
+																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
 																		exit ${ builtins.toString error }
