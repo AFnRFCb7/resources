@@ -123,6 +123,7 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+echo IN LOGGING 0 >> /tmp/DEBUG
 																	MODE="$1"
 																	TYPE="$2"
 																	HASH="$3"
