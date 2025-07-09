@@ -42,8 +42,6 @@
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
 																	rm "$FLAG"
-																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -x 201
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
@@ -172,6 +170,8 @@
 																	STATUS="$4"
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
+																	flock -u 201
+																	exec 201>&-
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
@@ -213,8 +213,6 @@
 																	flock -u 201
 																	exec 201>&-
 																	rm "$FLAG"
-																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -s 201
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
@@ -453,11 +451,11 @@ echo TA >> /tmp/DEBUG
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 echo TB >> /tmp/DEBUG
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
-echo TC >> /tmp/DEBUG
+echo TC PARENT ABOUT TO RELEASE THE EXCLUSIVE LOCK >> /tmp/DEBUG
 																flock -u 201
 																exec 201>&-
 
-echo TD >> /tmp/DEBUG
+echo TD PARENT JUST RELEASED THE EXCLUSIVE LOCK >> /tmp/DEBUG
 																rm "$STANDARD_INPUT"
 echo TE >> /tmp/DEBUG
 																echo "${ secret-directory }/$HASH/mount"																
