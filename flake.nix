@@ -58,6 +58,7 @@
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
+																	exec 201>&-
 																	flock -u 202
 																'' ;
 														} ;
@@ -91,6 +92,7 @@
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
+																	exec 201>&-
 																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
@@ -189,7 +191,9 @@
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 201
+																	exec 201>&-
 																	flock -u 201
+																	exec 201>&-
 																	exec 203> "${ secret-directory }/log.lock"
 																	flock -x 203
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "" "$CREATION_TIME"
@@ -225,7 +229,7 @@
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
 																	flock -u 203
 																	flock -u 201
-																	flock -u 201
+																	exec 201>&-
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
 														} ;
@@ -286,6 +290,7 @@
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
 																					flock -u 201
+																					exec 201>&-
 																					${ log }/bin/log \
 																						"teardown" \
 																						"active" \
@@ -345,6 +350,7 @@
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
 																					flock -u 201
+																					exec 201>&-
 																					exec 204> ${ secret-directory }/collect-garbage.lock
 																					flock -x 204
 																					nix-collect-garbage
@@ -371,6 +377,7 @@
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																flock -u 201
+																exec 201>&-
 																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"																
 																exit 0
@@ -380,6 +387,7 @@
 																nohup ${ null }/bin/null "$HASH" "$FLAG" "$ORIGINATOR_PID"
 																inotifywati --event delete "$FLAG" --quiet
 																flock -u 201
+																exec 201>&-
 																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"
 																exit 0
@@ -449,6 +457,8 @@ echo TB >> /tmp/DEBUG
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 echo TC >> /tmp/DEBUG
 																flock -u 201
+																exec 201>&-
+
 echo TD >> /tmp/DEBUG
 																rm "$STANDARD_INPUT"
 echo TE >> /tmp/DEBUG
@@ -466,6 +476,7 @@ echo SB >> /tmp/DEBUG
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
+																		exec 201>&-
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
@@ -473,6 +484,7 @@ echo SB >> /tmp/DEBUG
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		inotifywait --event delete "$FLAG" --quiet
 																		flock -u 201
+																		exec 201>&-
 																		rm "$STANDARD_INPUT"
 																		exit ${ builtins.toString error }
 																	fi
@@ -486,6 +498,8 @@ echo SE >> /tmp/DEBUG
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 echo SF >> /tmp/DEBUG
 																		flock -u 201
+																		exec 201>&-
+
 echo SG >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
 echo SH >> /tmp/DEBUG
@@ -496,6 +510,7 @@ echo SI >> /tmp/DEBUG
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
+																		exec 201>&-
 																		rm "$STANDARD_INPUT"
 																		exit ${ builtins.toString error }
 																	fi
