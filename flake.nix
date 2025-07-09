@@ -125,33 +125,19 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
-echo IN LOGGING A >> /tmp/DEBUG
 																	MODE="$1"
-echo IN LOGGING B >> /tmp/DEBUG
 																	TYPE="$2"
-echo IN LOGGING C >> /tmp/DEBUG
 																	HASH="$3"
-echo IN LOGGING D >> /tmp/DEBUG
 																	ORIGINATOR_PID="$4"
-echo IN LOGGING E >> /tmp/DEBUG
 																	STATUS="$5"
-echo IN LOGGING F >> /tmp/DEBUG
 																	STANDARD_ERROR="$6"
-echo IN LOGGING G >> /tmp/DEBUG
 																	STANDARD_OUTPUT="$7"
-echo IN LOGGING H >> /tmp/DEBUG
 																	CREATION_TIME="$8"
-echo IN LOGGING I >> /tmp/DEBUG
 																	GARBAGE="$9"
-echo IN LOGGING J >> /tmp/DEBUG
 																	TIMESTAMP="$( date +%s )"
-echo IN LOGGING K >> /tmp/DEBUG
 																	CURRENT_TIME=${ builtins.toString current-time }
-echo IN LOGGING L  >> /tmp/DEBUG
 #																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-echo IN LOGGING M >> /tmp/DEBUG
 																	TEMP_FILE="$( mktemp )"
-echo IN LOGGING N >> /tmp/DEBUG
 																	jq \
 																		--null-input \
 																		--arg CREATION_TIME "$CREATION_TIME" \
@@ -166,17 +152,11 @@ echo IN LOGGING N >> /tmp/DEBUG
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
 																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "$TEMP_FILE"
-echo IN LOGGING O >> /tmp/DEBUG
 																	exec 203> ${ secret-directory }/log.lock
-echo IN LOGGING P >> /tmp/DEBUG
 																	flock -x 203
-echo IN LOGGING Q >> /tmp/DEBUG
 																	cat "$TEMP_FILE" >> ${ secret-directory }/log.yaml
-echo IN LOGGING R >> /tmp/DEBUG
 																	flock -u 203
-echo IN LOGGING S >> /tmp/DEBUG
 																	rm "$TEMP_FILE"
-echo IN LOGGING T >> /tmp/DEBUG
 																'' ;
 														} ;
 												null =
@@ -306,7 +286,6 @@ echo IN LOGGING T >> /tmp/DEBUG
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
 																					flock -u 201
-echo BEFORE LOGGING >> /tmp/DEBUG
 																					${ log }/bin/log \
 																						"teardown" \
 																						"active" \
@@ -317,7 +296,6 @@ echo BEFORE LOGGING >> /tmp/DEBUG
 																						"" \
 																						"$CREATION_TIME" \
 																						"$GARBAGE"
-echo AFTER LOGGING >> /tmp/DEBUG
 																					exec 204> ${ secret-directory }/collect-garbage.lock
 																					flock -x 204
 																					nix-collect-garbage
@@ -388,7 +366,7 @@ echo AFTER LOGGING >> /tmp/DEBUG
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-															if [[ -f "${ secret-directory }/$HASH/mount" ]]
+															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
 																inotifywait --event delete "$FLAG" --quiet
@@ -437,7 +415,7 @@ echo AFTER LOGGING >> /tmp/DEBUG
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-															if [[ -f "${ secret-directory }/$HASH/mount" ]]
+															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
 																inotifywait --event delete "$FLAG" --quiet
