@@ -212,8 +212,7 @@
 																	flock -u 202
 																	exec 202>&-
 																	HASH="$1"
-																	FLAG="$2"
-																	ORIGINATOR_PID="$3"
+																	ORIGINATOR_PID="$2"
 																	${ log }/bin/log \
 																		"setup" \
 																		"stale" \
