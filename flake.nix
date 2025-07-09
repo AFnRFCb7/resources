@@ -446,7 +446,7 @@
 #																STANDARD_OUTPUT="$( mktemp )"
 															if "$HAS_STANDARD_INPUT"
 																then
-																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> $STANDARD_ERROR"
+																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> "$STANDARD_ERROR"
 																	then
 #																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 #																		flock -u 202
