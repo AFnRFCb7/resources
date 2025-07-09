@@ -408,20 +408,20 @@
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
 															STANDARD_INPUT="$( mktemp )"
-															if [[ -f /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																STANDARD_INPUT="$( cat )"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															elif [[ -p /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																cat > "$STANDARD_INPUT"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															else
-																HAS_STANDARD_INPUT=false
-																ORIGINATOR_PID="$PARENT_2_PID"
-															fi
+#															if [[ -f /proc/self/fd/0 ]]
+#															then
+#																HAS_STANDARD_INPUT=true
+#																STANDARD_INPUT="$( cat )"
+#																ORIGINATOR_PID="$PARENT_3_PID"
+#															elif [[ -p /proc/self/fd/0 ]]
+#															then
+#																HAS_STANDARD_INPUT=true
+#																cat > "$STANDARD_INPUT"
+#																ORIGINATOR_PID="$PARENT_3_PID"
+#															else
+#																HAS_STANDARD_INPUT=false
+#																ORIGINATOR_PID="$PARENT_2_PID"
+#															fi
 #															ARGUMENTS=( "$@" )
 #															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
 #															export HASH
