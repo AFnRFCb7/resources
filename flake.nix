@@ -433,8 +433,9 @@ echo RO >> /tmp/DEBUG
 cat >> /tmp/DEBUG <<EOF
 BEFORE
 
-"${ secret-directory }/$HASH/mount"
+DIRECTORY IS "${ secret-directory }/$HASH/mount"
 
+CONTENTS ARE
 $( ls -lah "${ secret-directory }/$HASH")
 EOF
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
