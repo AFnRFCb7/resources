@@ -403,33 +403,33 @@
 														''
 													else
 														''
-#															PARENT_0_PID="$$"
-#															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
-#															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-#															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-#															STANDARD_INPUT="$( mktemp )"
-#															if [[ -f /proc/self/fd/0 ]]
-#															then
-#																HAS_STANDARD_INPUT=true
-#																STANDARD_INPUT="$( cat )"
-#																ORIGINATOR_PID="$PARENT_3_PID"
-#															elif [[ -p /proc/self/fd/0 ]]
-#															then
-#																HAS_STANDARD_INPUT=true
-#																cat > "$STANDARD_INPUT"
-#																ORIGINATOR_PID="$PARENT_3_PID"
-#															else
-#																HAS_STANDARD_INPUT=false
-#																ORIGINATOR_PID="$PARENT_2_PID"
-#															fi
-#															ARGUMENTS=( "$@" )
-#															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
-#															export HASH
-#															mkdir --parents "${ secret-directory }/$HASH"
-#															exec 201> "${ secret-directory }/$HASH/teardown.lock"
-#															flock -s 201
-#															exec 202> "${ secret-directory }/$HASH/setup.lock"
-#															flock -x 202
+															PARENT_0_PID="$$"
+															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
+															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
+															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
+															STANDARD_INPUT="$( mktemp )"
+															if [[ -f /proc/self/fd/0 ]]
+															then
+																HAS_STANDARD_INPUT=true
+																STANDARD_INPUT="$( cat )"
+																ORIGINATOR_PID="$PARENT_3_PID"
+															elif [[ -p /proc/self/fd/0 ]]
+															then
+																HAS_STANDARD_INPUT=true
+																cat > "$STANDARD_INPUT"
+																ORIGINATOR_PID="$PARENT_3_PID"
+															else
+																HAS_STANDARD_INPUT=false
+																ORIGINATOR_PID="$PARENT_2_PID"
+															fi
+															ARGUMENTS=( "$@" )
+															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
+															export HASH
+															mkdir --parents "${ secret-directory }/$HASH"
+															exec 201> "${ secret-directory }/$HASH/teardown.lock"
+															flock -s 201
+															exec 202> "${ secret-directory }/$HASH/setup.lock"
+															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 #																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
