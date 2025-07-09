@@ -432,18 +432,18 @@
 															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
-#																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
-#																flock -u 202
-#																exec 202>&-
-#																flock -u 201
-#																exec 201>&-
-#																rm "$STANDARD_INPUT"
-#																echo "${ secret-directory }/$HASH/mount"																
+																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																flock -u 202
+																exec 202>&-
+																flock -u 201
+																exec 201>&-
+																rm "$STANDARD_INPUT"
+																echo "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
-#																mkdir "${ secret-directory }/$HASH/mount"
-#																STANDARD_ERROR="$( mktemp )"
-#																STANDARD_OUTPUT="$( mktemp )"
+																mkdir "${ secret-directory }/$HASH/mount"
+																STANDARD_ERROR="$( mktemp )"
+																STANDARD_OUTPUT="$( mktemp )"
 															if "$HAS_STANDARD_INPUT"
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
