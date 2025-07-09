@@ -75,9 +75,11 @@
 																	STATUS="$4"
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
+																	flock -u 201
+																	exec 201>&-
 																	rm "$FLAG"
-																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -s 201
+																	exec 205> "${ secret-directory }/$HASH/exclusive-lock"
+																	flock -s 205
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
@@ -91,8 +93,8 @@
 																		"" &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 201
-																	exec 201>&-
+																	flock -u 205
+																	exec 205>&-
 																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
@@ -500,7 +502,7 @@ echo SF >> /tmp/DEBUG
 																		flock -u 201
 echo SG ABOUT TO RELEASE LOCK >> /tmp/DEBUG
 																		exec 201>&-
-echo SH >> /tmp/DEBUG
+# echo SH >> /tmp/DEBUG
 																		rm "${ secret-directory }/$HASH/exclusive-lock"
 echo SI JUST RELEASED LOCK  >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
