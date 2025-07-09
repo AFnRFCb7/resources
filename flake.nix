@@ -369,7 +369,7 @@
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
-																inotifywait --event delete "$FLAG" --quiet
+																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																flock -u 201
 																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"																
@@ -418,7 +418,7 @@
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
-																inotifywait --event delete "$FLAG" --quiet
+																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																flock -u 201
 																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"																
@@ -430,7 +430,6 @@
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-																		touch "${ secret-directory }/$HASH/flag"
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 																		flock -u 201
 																		rm "$STANDARD_INPUT"
