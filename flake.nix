@@ -391,17 +391,11 @@
 														''
 													else
 														''
-echo RA >> /tmp/DEBUG
 															PARENT_0_PID="$$"
-echo RB >> /tmp/DEBUG
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
-echo RC >> /tmp/DEBUG
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-echo RD >> /tmp/DEBUG
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-echo RE >> /tmp/DEBUG
 															STANDARD_INPUT="$( mktemp )"
-echo RF >> /tmp/DEBUG
 															if [[ -f /proc/self/fd/0 ]]
 															then
 																HAS_STANDARD_INPUT=true
@@ -416,55 +410,27 @@ echo RF >> /tmp/DEBUG
 																HAS_STANDARD_INPUT=false
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
-echo RG >> /tmp/DEBUG
 															ARGUMENTS=( "$@" )
-echo RH >> /tmp/DEBUG
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
-echo RI >> /tmp/DEBUG
 															export HASH
-echo RJ >> /tmp/DEBUG
 															mkdir --parents "${ secret-directory }/$HASH"
-echo RK >> /tmp/DEBUG
 															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-echo RL >> /tmp/DEBUG
 															flock -x 201
-echo RM >> /tmp/DEBUG
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
-echo RN >> /tmp/DEBUG
 															flock -s 202
-echo RO >> /tmp/DEBUG
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-cat >> /tmp/DEBUG <<EOF
-BEFORE
-
-DIRECTORY IS "${ secret-directory }/$HASH/mount"
-
-TEMP DIRECTORY CONTENTARE 
-$( ls -lah "${ secret-directory }" )
-
-CONTENTS ARE
-$( ls -lah "${ secret-directory }/$HASH")
-EOF
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
-echo TA >> /tmp/DEBUG
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
-echo TB >> /tmp/DEBUG
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
-echo TC PARENT ABOUT TO RELEASE THE EXCLUSIVE LOCK >> /tmp/DEBUG
 																flock -u 201
 																exec 201>&-
 
-echo TD PARENT JUST RELEASED THE EXCLUSIVE LOCK >> /tmp/DEBUG
 																rm "$STANDARD_INPUT"
-echo TE >> /tmp/DEBUG
 																echo "${ secret-directory }/$HASH/mount"																
-echo TF >> /tmp/DEBUG
 																exit 0
 															else
-echo SA >> /tmp/DEBUG
 																mkdir "${ secret-directory }/$HASH/mount"
-echo SB >> /tmp/DEBUG
 																if "$HAS_STANDARD_INPUT"
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
@@ -485,24 +451,15 @@ echo SB >> /tmp/DEBUG
 																		exit ${ builtins.toString error }
 																	fi
 																else
-echo SC >> /tmp/DEBUG
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
-# echo SD >> /tmp/DEBUG
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-echo SE >> /tmp/DEBUG
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
-echo SF >> /tmp/DEBUG
 																		flock -u 201
-echo SG ABOUT TO RELEASE LOCK >> /tmp/DEBUG
 																		exec 201>&-
-# echo SH >> /tmp/DEBUG
 																		rm "${ secret-directory }/$HASH/exclusive-lock"
-echo SI JUST RELEASED LOCK  >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
-echo SJ >> /tmp/DEBUG
 																		echo "${ secret-directory }/$HASH/mount"
-echo SK >> /tmp/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
