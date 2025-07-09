@@ -497,14 +497,16 @@ echo SC >> /tmp/DEBUG
 echo SE >> /tmp/DEBUG
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 echo SF >> /tmp/DEBUG
-#																		flock -u 201
-# echo SG ABOUT TO RELEASE LOCK >> /tmp/DEBUG
-#																		exec 201>&-
-# echo SH JUST RELEASED LOCK  >> /tmp/DEBUG
+																		flock -u 201
+echo SG ABOUT TO RELEASE LOCK >> /tmp/DEBUG
+																		exec 201>&-
+echo SH >> /tmp/DEBUG
+																		rm "${ secret-directory }/$HASH/exclusive-lock
+echo SI JUST RELEASED LOCK  >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
-echo SI >> /tmp/DEBUG
-																		echo "${ secret-directory }/$HASH/mount"
 echo SJ >> /tmp/DEBUG
+																		echo "${ secret-directory }/$HASH/mount"
+echo SK >> /tmp/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
