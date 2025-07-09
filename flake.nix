@@ -415,6 +415,7 @@
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
+echo BEFORE >> /tmp/DEBUG
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
@@ -460,6 +461,7 @@
 																	fi
 																fi
 															fi
+echo AFTER >> /tmp/DEBUG
 														'' ;
 									} ;
 							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
