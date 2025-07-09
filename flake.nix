@@ -418,11 +418,17 @@
 echo BEFORE >> /tmp/DEBUG
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
+echo TA >> /tmp/DEBUG
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
+echo TB >> /tmp/DEBUG
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+echo TC >> /tmp/DEBUG
 																flock -u 201
+echo TD >> /tmp/DEBUG
 																rm "$STANDARD_INPUT"
+echo TE >> /tmp/DEBUG
 																echo "${ secret-directory }/$HASH/mount"																
+echo TF >> /tmp/DEBUG
 																exit 0
 															else
 																mkdir "${ secret-directory }/$HASH/mount"
@@ -461,7 +467,6 @@ echo BEFORE >> /tmp/DEBUG
 																	fi
 																fi
 															fi
-echo AFTER >> /tmp/DEBUG
 														'' ;
 									} ;
 							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
