@@ -403,11 +403,11 @@
 														''
 													else
 														''
-															PARENT_0_PID="$$"
-															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
-															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-															STANDARD_INPUT="$( mktemp )"
+#															PARENT_0_PID="$$"
+#															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
+#															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
+#															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
+#															STANDARD_INPUT="$( mktemp )"
 #															if [[ -f /proc/self/fd/0 ]]
 #															then
 #																HAS_STANDARD_INPUT=true
