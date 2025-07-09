@@ -45,7 +45,7 @@ echo BAD D >> /tmp/DEBUG
 echo BAD E >> /tmp/DEBUG
 																	STANDARD_ERROR="$5"
 echo BAD F >> /tmp/DEBUG
-																	GARBAGE="$( mktemp --dry-run suffix ".tar.zst" )"
+																	GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
 echo BAD G >> /tmp/DEBUG
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 echo BAD H >> /tmp/DEBUG
