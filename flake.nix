@@ -55,7 +55,7 @@
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
 																		"$GARBAGE" \
 																		"$CREATION_TIME" &
-																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 --ultra -22 -o "$GARBAGE"
+																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
 																	exec 201>&-
@@ -210,6 +210,8 @@
 																	ORIGINATOR_PID="$3"
 																	exec 202> "${ secret-directory }/$HASH/shared-lock"
 																	flock -s 202
+																	flock -u 201
+																	exec 201>&-
 																	rm "$FLAG"
 																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
 																	flock -s 201
@@ -225,9 +227,7 @@
 																		"" \
 																		"$CREATION_TIME" &
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 203
-																	flock -u 201
-																	exec 201>&-
+																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
 														} ;
