@@ -416,6 +416,7 @@
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
 echo BEFORE >> /tmp/DEBUG
+ls -lah "${ secret-directory }/$HASH" >> /tmp/DEBUG
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 echo TA >> /tmp/DEBUG
@@ -431,6 +432,7 @@ echo TE >> /tmp/DEBUG
 echo TF >> /tmp/DEBUG
 																exit 0
 															else
+echo SA >> /tmp/DEBUG
 																mkdir "${ secret-directory }/$HASH/mount"
 																if "$HAS_STANDARD_INPUT"
 																then
