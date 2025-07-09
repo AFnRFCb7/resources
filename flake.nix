@@ -441,10 +441,10 @@
 #																echo "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
-																mkdir "${ secret-directory }/$HASH/mount"
-																STANDARD_ERROR="$( mktemp )"
-																STANDARD_OUTPUT="$( mktemp )"
-																if "$HAS_STANDARD_INPUT"
+#																mkdir "${ secret-directory }/$HASH/mount"
+#																STANDARD_ERROR="$( mktemp )"
+#																STANDARD_OUTPUT="$( mktemp )"
+															if "$HAS_STANDARD_INPUT"
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> $STANDARD_ERROR"
 																	then
