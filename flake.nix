@@ -473,7 +473,7 @@ echo SB >> /tmp/DEBUG
 																		exit ${ builtins.toString error }
 																	fi
 																else
-echo SC >> /tmp/DEBUG
+# echo SC >> /tmp/DEBUG
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
 echo SD >> /tmp/DEBUG
