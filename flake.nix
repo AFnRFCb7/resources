@@ -436,7 +436,7 @@ BEFORE
 DIRECTORY IS "${ secret-directory }/$HASH/mount"
 
 TEMP DIRECTORY CONTENTARE 
-$( ls -lah "${ secret-directory } )
+$( ls -lah "${ secret-directory }" )
 
 CONTENTS ARE
 $( ls -lah "${ secret-directory }/$HASH")
