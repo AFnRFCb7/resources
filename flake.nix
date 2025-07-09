@@ -454,6 +454,7 @@ echo TF >> /tmp/DEBUG
 															else
 echo SA >> /tmp/DEBUG
 																mkdir "${ secret-directory }/$HASH/mount"
+echo SB >> /tmp/DEBUG
 																if "$HAS_STANDARD_INPUT"
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
@@ -472,13 +473,20 @@ echo SA >> /tmp/DEBUG
 																		exit ${ builtins.toString error }
 																	fi
 																else
+echo SC >> /tmp/DEBUG
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
 																	then
+echo SD >> /tmp/DEBUG
 																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
+echo SE >> /tmp/DEBUG
 																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+echo SF >> /tmp/DEBUG
 																		flock -u 201
+echo SG >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
+echo SH >> /tmp/DEBUG
 																		echo "${ secret-directory }/$HASH/mount"
+echo SI >> /tmp/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
