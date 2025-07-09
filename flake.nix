@@ -35,11 +35,10 @@
 															text =
 																''
 																	HASH="$1"
-																	FLAG="$2"
-																	ORIGINATOR_PID="$3"
-																	STATUS="$4"
-																	STANDARD_OUTPUT="$5"
-																	STANDARD_ERROR="$6"
+																	ORIGINATOR_PID="$2"
+																	STATUS="$3"
+																	STANDARD_OUTPUT="$4"
+																	STANDARD_ERROR="$5"
 																	GARBAGE="$( mktemp --dry-run suffix ".tar.zst" )"
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
@@ -69,11 +68,10 @@
 																	flock -u 202
 																	exec 202>&-
 																	HASH="$1"
-																	FLAG="$2"
-																	ORIGINATOR_PID="$3"
-																	STATUS="$4"
-																	STANDARD_OUTPUT="$5"
-																	STANDARD_ERROR="$6"
+																	ORIGINATOR_PID="$2"
+																	STATUS="$3"
+																	STANDARD_OUTPUT="$4"
+																	STANDARD_ERROR="$5"
 																	nohup \
 																		${ log }/bin/log \
 																		"setup" \
@@ -182,9 +180,8 @@
 																	flock -u 202
 																	exec 202>&-
 																	HASH="$1"
-																	FLAG="$2"
-																	ORIGINATOR_PID="$3"
-																	STATUS="$4"
+																	ORIGINATOR_PID="$2"
+																	STATUS="$3"
 																	nohup \
 																		${ log }/bin/log \
 																		"setup" \
@@ -387,7 +384,7 @@
 															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
-																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 																flock -u 202
 																exec 202>&-
 																flock -u 201
@@ -396,7 +393,7 @@
 																exit 0
 															else
 																mkdir "${ secret-directory }/$HASH/mount
-																nohup ${ null }/bin/null "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																nohup ${ null }/bin/null "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 																flock -u 202
 																exec 202>&-
 																flock -u 201
@@ -436,7 +433,7 @@
 															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
-																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 																flock -u 202
 																exec 202>&-
 																flock -u 201
@@ -452,7 +449,7 @@
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> $STANDARD_ERROR"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
@@ -461,7 +458,7 @@
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
@@ -472,7 +469,7 @@
 																else
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
@@ -481,7 +478,7 @@
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
