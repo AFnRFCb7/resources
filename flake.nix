@@ -387,11 +387,17 @@
 														''
 													else
 														''
+echo RA >> /tmp/DEBUG
 															PARENT_0_PID="$$"
+echo RB >> /tmp/DEBUG
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
+echo RC >> /tmp/DEBUG
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
+echo RD >> /tmp/DEBUG
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
+echo RE >> /tmp/DEBUG
 															STANDARD_INPUT="$( mktemp )"
+echo RF >> /tmp/DEBUG
 															if [[ -f /proc/self/fd/0 ]]
 															then
 																HAS_STANDARD_INPUT=true
@@ -406,14 +412,23 @@
 																HAS_STANDARD_INPUT=false
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
+echo RG >> /tmp/DEBUG
 															ARGUMENTS=( "$@" )
+echo RH >> /tmp/DEBUG
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
+echo RI >> /tmp/DEBUG
 															export HASH
+echo RJ >> /tmp/DEBUG
 															mkdir --parents "${ secret-directory }/$HASH"
+echo RK >> /tmp/DEBUG
 															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+echo RL >> /tmp/DEBUG
 															flock -x 201
+echo RM >> /tmp/DEBUG
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
+echo RN >> /tmp/DEBUG
 															flock -s 202
+echo RO >> /tmp/DEBUG
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
 cat >> /tmp/DEBUG <<EOF
 BEFORE
