@@ -34,13 +34,21 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+echo BAD A >> /tmp/DEBUG &&
 																	HASH="$1"
+echo BAD B >> /tmp/DEBUG &&
 																	ORIGINATOR_PID="$2"
+echo BAD C >> /tmp/DEBUG &&
 																	STATUS="$3"
+echo BAD D >> /tmp/DEBUG &&
 																	STANDARD_OUTPUT="$4"
+echo BAD E >> /tmp/DEBUG &&
 																	STANDARD_ERROR="$5"
+echo BAD F >> /tmp/DEBUG &&
 																	GARBAGE="$( mktemp --dry-run suffix ".tar.zst" )"
+echo BAD G >> /tmp/DEBUG &&
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+echo BAD H >> /tmp/DEBUG &&
 																	${ log }/bin/log \
 																		"setup" \
 																		"bad" \
@@ -51,8 +59,11 @@
 																		"$STANDARD_ERROR" \
 																		"$CREATION_TIME" \
 																		"$GARBAGE"
+echo BAD I >> /tmp/DEBUG &&
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
+echo BAD J >> /tmp/DEBUG &&
 																	rm --recursive --force "${ secret-directory }/$HASH"
+echo BAD K >> /tmp/DEBUG &&
 																'' ;
 														} ;
 												good =
@@ -478,6 +489,7 @@
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+echo SETUP BAD 1 >> /tmp/DEBUG &&
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
