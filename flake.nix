@@ -16,6 +16,7 @@
 						release-inputs ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "/tmp" ,
+						self ? "SELF" ,
 						system
 					} @primary :
 						let
@@ -105,6 +106,7 @@
 																	"--tmpfs /work"
 																] ;
 															name = "init-application" ;
+															profile = "export ${ self }=${ secret-directory }/$HASH/mount" ;
 															runScript =
 																let
 																	script =
