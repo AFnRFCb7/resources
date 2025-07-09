@@ -501,7 +501,7 @@ echo SF >> /tmp/DEBUG
 echo SG ABOUT TO RELEASE LOCK >> /tmp/DEBUG
 																		exec 201>&-
 echo SH >> /tmp/DEBUG
-																		rm "${ secret-directory }/$HASH/exclusive-lock
+																		rm "${ secret-directory }/$HASH/exclusive-lock"
 echo SI JUST RELEASED LOCK  >> /tmp/DEBUG
 																		rm "$STANDARD_INPUT"
 echo SJ >> /tmp/DEBUG
