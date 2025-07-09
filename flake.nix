@@ -448,13 +448,13 @@
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> $STANDARD_ERROR"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
-																		flock -u 202
-																		exec 202>&-
-																		flock -u 201
-																		exec 201>&-
-																		rm "$STANDARD_INPUT"
-																		echo "${ secret-directory }/$HASH/mount"
+#																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+#																		flock -u 202
+#																		exec 202>&-
+#																		flock -u 201
+#																		exec 201>&-
+#																		rm "$STANDARD_INPUT"
+#																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
