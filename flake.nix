@@ -430,7 +430,7 @@
 #															flock -s 201
 #															exec 202> "${ secret-directory }/$HASH/setup.lock"
 #															flock -x 202
-#															if [[ -d "${ secret-directory }/$HASH/mount" ]]
+															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 #																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 #																flock -u 202
