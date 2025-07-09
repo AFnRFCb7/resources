@@ -417,10 +417,10 @@
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
 cat >> /tmp/DEBUG <<EOF
 BEFORE
-echo
-echo "${ secret-directory }/$HASH/mount"
-echo
-ls -lah "${ secret-directory }/$HASH"
+
+"${ secret-directory }/$HASH/mount"
+
+$( ls -lah "${ secret-directory }/$HASH")
 EOF
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
