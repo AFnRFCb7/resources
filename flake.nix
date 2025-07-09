@@ -415,11 +415,13 @@
 															exec 202> "${ secret-directory }/$HASH/shared-lock"
 															flock -s 202
 															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
-echo BEFORE >> /tmp/DEBUG
-echo >> /tmp/DEBUG
-echo "${ secret-directory }/$HASH/mount" >> /tmp/DEBUG
-echo >> /tmp/DEBUG
-ls -lah "${ secret-directory }/$HASH" >> /tmp/DEBUG
+cat >> /tmp/DEBUG <<EOF
+BEFORE
+echo
+echo "${ secret-directory }/$HASH/mount"
+echo
+ls -lah "${ secret-directory }/$HASH"
+EOF
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 echo TA >> /tmp/DEBUG
