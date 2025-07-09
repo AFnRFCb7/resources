@@ -51,8 +51,8 @@
 																		"$STATUS" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
 																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
-																		"$GARBAGE" \
-																		"$CREATION_TIME" &
+																		"$CREATION_TIME" \
+																		"$GARBAGE" &
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
 																	rm --recursive --force "${ secret-directory }/$HASH"																
 																	flock -u 201
@@ -212,6 +212,8 @@
 																	flock -s 202
 																	flock -u 201
 																	exec 201>&-
+																	exec 205> "${ secret-directory }/$HASH/exclusive-lock"
+																	flock -s 205
 																	rm "$FLAG"
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
@@ -222,9 +224,11 @@
 																		"" \
 																		"" \
 																		"" \
-																		"" \
-																		"$CREATION_TIME" &
+																		"$CREATION_TIME" \
+																		"" &
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
+																	flock -s 205
+																	exec 205>&-
 																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
