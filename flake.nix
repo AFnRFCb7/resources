@@ -78,8 +78,6 @@
 																	flock -u 201
 																	exec 201>&-
 																	rm "$FLAG"
-																	exec 205> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -s 205
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
@@ -93,8 +91,6 @@
 																		"" &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 205
-																	exec 205>&-
 																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
@@ -454,7 +450,7 @@ EOF
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 echo TA >> /tmp/DEBUG
-																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" &
+																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 echo TB >> /tmp/DEBUG
 																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
 echo TC >> /tmp/DEBUG
