@@ -38,10 +38,9 @@
 																	FLAG="$2"
 																	ORIGINATOR_PID="$3"
 																	STATUS="$4"
+																	STANDARD_OUTPUT="$5"
+																	STANDARD_ERROR="$6"
 																	GARBAGE="$( mktemp --dry-run suffix ".tar.zst" )"
-																	exec 202> "${ secret-directory }/$HASH/shared-lock"
-																	flock -s 202
-																	rm "$FLAG"
 																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
@@ -49,15 +48,12 @@
 																		"$HASH" \
 																		"$ORIGINATOR_PID" \
 																		"$STATUS" \
-																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
-																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
+																		"$STANDARD_OUTPUT" \
+																		"$STANDARD_ERROR" \
 																		"$CREATION_TIME" \
-																		"$GARBAGE" &
+																		"$GARBAGE"
 																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
-																	rm --recursive --force "${ secret-directory }/$HASH"																
-																	flock -u 201
-																	exec 201>&-
-																	flock -u 202
+																	rm --recursive --force "${ secret-directory }/$HASH"
 																'' ;
 														} ;
 												good =
@@ -67,29 +63,30 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+																	flock -u 202
+																	exec 201>&-
+																	flock -u 202
+																	exec 202>&-
 																	HASH="$1"
 																	FLAG="$2"
 																	ORIGINATOR_PID="$3"
 																	STATUS="$4"
-																	exec 202> "${ secret-directory }/$HASH/shared-lock"
-																	flock -s 202
-																	flock -u 201
-																	exec 201>&-
-																	rm "$FLAG"
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-																	${ log }/bin/log \
+																	STANDARD_OUTPUT="$5"
+																	STANDARD_ERROR="$6"
+																	nohup \
+																		${ log }/bin/log \
 																		"setup" \
 																		"good" \
 																		"$HASH" \
 																		"$ORIGINATOR_PID" \
 																		"$STATUS" \
-																		"$( cat "${ secret-directory }/$HASH/init.standard-error" )" \
-																		"$( cat "${ secret-directory }/$HASH/init.standard-output" )" \
+																		"$STANDARD_OUTPUT" \
+																		"$STANDARD_ERROR" \
 																		"$CREATION_TIME" \
 																		"" &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
 																'' ;
 														} ;
@@ -128,11 +125,25 @@
 																	HASH="$3"
 																	ORIGINATOR_PID="$4"
 																	STATUS="$5"
-																	STANDARD_ERROR="$6"
-																	STANDARD_OUTPUT="$7"
+																	STANDARD_OUTPUT_FILE="$6"
+																	STANDARD_ERROR_FILE="$7"
 																	CREATION_TIME="$8"
 																	GARBAGE="$9"
 																	TIMESTAMP="$( date +%s )"
+																	if [ -z "$STANDARD_OUTPUT_FILE" }
+																	then
+																		STANDARD_OUTPUT=""
+																	else
+																		STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )
+																		rm "$STANDARD_OUTPUT_FILE"
+																	fi
+																	if [ -z "$STANDARD_ERROR_FILE" }
+																	then
+																		STANDARD_ERROR=""
+																	else
+																		STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )
+																		rm "$STANDARD_ERROR_FILE"
+																	fi
 																	CURRENT_TIME=${ builtins.toString current-time }
 #																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	TEMP_FILE="$( mktemp )"
@@ -154,6 +165,7 @@
 																	flock -x 203
 																	cat "$TEMP_FILE" >> ${ secret-directory }/log.yaml
 																	flock -u 203
+																	exec 203>&-
 																	rm "$TEMP_FILE"
 																'' ;
 														} ;
@@ -164,19 +176,17 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+																	flock -u 202
+																	exec 201>&-
+																	flock -u 202
+																	exec 202>&-
 																	HASH="$1"
 																	FLAG="$2"
 																	ORIGINATOR_PID="$3"
 																	STATUS="$4"
-																	exec 202> "${ secret-directory }/$HASH/shared-lock"
-																	flock -s 202
-																	flock -u 201
-																	exec 201>&-
-																	rm "$FLAG"
-																	exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -s 201
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
-																	${ log }/bin/log \
+																	nohup \
+																		${ log }/bin/log \
 																		"setup" \
 																		"null" \
 																		"$HASH" \
@@ -188,12 +198,6 @@
 																		"$CREATION_TIME" &
 																	sleep ${ builtins.toString lease }
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -u 201
-																	exec 201>&-
-																	flock -u 201
-																	exec 201>&-
-																	exec 203> "${ secret-directory }/log.lock"
-																	flock -x 203
 																	${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "" "$CREATION_TIME"
 																'' ;
 														} ;
@@ -205,17 +209,14 @@
 															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
 															text =
 																''
+																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+																	flock -u 202
+																	exec 201>&-
+																	flock -u 202
+																	exec 202>&-
 																	HASH="$1"
 																	FLAG="$2"
 																	ORIGINATOR_PID="$3"
-																	exec 202> "${ secret-directory }/$HASH/shared-lock"
-																	flock -s 202
-																	flock -u 201
-																	exec 201>&-
-																	exec 205> "${ secret-directory }/$HASH/exclusive-lock"
-																	flock -s 205
-																	rm "$FLAG"
-																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
 																	${ log }/bin/log \
 																		"setup" \
 																		"stale" \
@@ -227,9 +228,6 @@
 																		"$CREATION_TIME" \
 																		"" &
 																	tail --follow /dev/null --pid "$ORIGINATOR_PID"
-																	flock -s 205
-																	exec 205>&-
-																	flock -u 202
 																	${ teardown }/bin/teardown "$HASH"
 																'' ;
 														} ;
@@ -281,14 +279,15 @@
 																						"$CREATION_TIME" \
 																						"" &
 																				else
-																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
+																					exec 201> "${ secret-directory }/$HASH/teardown.lock"
 																					flock -x 201
-																					exec 202> "${ secret-directory }/$HASH/shared-lock"
+																					exec 202> "${ secret-directory }/$HASH/setup.lock"
 																					flock -x 202																				
 																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
 																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
+																					exec 202>&-
 																					flock -u 201
 																					exec 201>&-
 																					${ log }/bin/log \
@@ -305,6 +304,7 @@
 																					flock -x 204
 																					nix-collect-garbage
 																					flock -u 204
+																					exec 204>&-
 																				fi
 																			''
 																		else
@@ -324,37 +324,42 @@
 																						"$CREATION_TIME" \
 																						""
 																				else
+																					exec 201> "${ secret-directory }/$HASH/teardown.lock"
+																					flock -x 201
+																					exec 202> "${ secret-directory }/$HASH/setup.lock"
+																					flock -x 202
 																					export HASH
 																					GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-																					exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-																					flock -x 201
-																					exec 202> "${ secret-directory }/$HASH/shared-lock"
-																					flock -x 202
-																					if ${ release-application }/bin/release > "${ secret-directory }/$HASH/release.standard-output" 2> "${ secret-directory }/$HASH/release.standard-error"
+																					STANDARD_INPUT="$( mktemp )"
+																					STANDARD_ERROR="$( mktemp )"
+																					if ${ release-application }/bin/release > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																					then
 																						STATUS="$?"
 																					else
 																						STATUS="$?"
 																					fi
-																					${ log }/bin/log \
+																					nohup \
+																						${ log }/bin/log \
 																						"teardown" \
 																						"null" \
 																						"$HASH" \
 																						"$ORIGINATOR_PID" \
 																						"" \
-																						"$( cat "${ secret-directory }/$HASH/release.standard-error )" \
-																						"$( cat "${ secret-directory }/$HASH/release.standard-output )" \
+																						"$STANDARD_OUTPUT" \
+																						"$STANDARD_ERROR" \
 																						"$CREATION_TIME"
 																						"$GARBAGE" &
 																					tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
 																					rm --recursive --force "${ secret-directory }/$HASH"
 																					flock -u 202
+																					exec 202>&-
 																					flock -u 201
 																					exec 201>&-
 																					exec 204> ${ secret-directory }/collect-garbage.lock
 																					flock -x 204
 																					nix-collect-garbage
 																					flock -u 204
+																					exec 204>&-
 																				fi
 																			'' ;
 														} ;
@@ -365,30 +370,37 @@
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
+															if [[ -f /proc/self/fd/0 ]]
+															then
+																ORIGINATOR_PID="$PARENT_3_PID"
+															elif [[ -p /proc/self/fd/0 ]]
+															then
+																ORIGINATOR_PID="$PARENT_3_PID"
+															else
+																ORIGINATOR_PID="$PARENT_2_PID"
+															fi
 															HASH="$( echo "${ hash } | sha512sum | cut --bytes -${ builtins.toString length } )"
 															mkdir --parents "${ secret-directory }/$HASH"
-															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-															flock -x 201
-															exec 202> "${ secret-directory }/$HASH/shared-lock"
-															flock -s 202
-															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
+															exec 201> "${ secret-directory }/$HASH/teardown.lock"
+															flock -s 201
+															exec 202> "${ secret-directory }/$HASH/setup.lock"
+															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
-																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID"
-																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																flock -u 202
+																exec 202>&-
 																flock -u 201
 																exec 201>&-
-																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
-																mkdir "${ secret-directory }/$HASH/mount"
-																touch "${ secret-directory }/$HASH/flag"
-																nohup ${ null }/bin/null "$HASH" "$FLAG" "$ORIGINATOR_PID"
-																inotifywati --event delete "$FLAG" --quiet
+																mkdir "${ secret-directory }/$HASH/mount
+																nohup ${ null }/bin/null "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
+																flock -u 202
+																exec 202>&-
 																flock -u 201
 																exec 201>&-
-																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"
 																exit 0
 															fi
@@ -418,56 +430,60 @@
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
 															export HASH
 															mkdir --parents "${ secret-directory }/$HASH"
-															exec 201> "${ secret-directory }/$HASH/exclusive-lock"
-															flock -x 201
-															exec 202> "${ secret-directory }/$HASH/shared-lock"
-															flock -s 202
-															FLAG="$( mktemp "${ secret-directory }/$HASH/XXXXXXXX" )"
+															exec 201> "${ secret-directory }/$HASH/teardown.lock"
+															flock -s 201
+															exec 202> "${ secret-directory }/$HASH/setup.lock"
+															flock -x 202
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$FLAG" "$ORIGINATOR_PID" > /dev/null 2>&1 &
-																inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+																flock -u 202
+																exec 202>&-
 																flock -u 201
 																exec 201>&-
-
 																rm "$STANDARD_INPUT"
 																echo "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
 																mkdir "${ secret-directory }/$HASH/mount"
+																STANDARD_ERROR="$( mktemp )"
+																STANDARD_OUTPUT="$( mktemp )"
 																if "$HAS_STANDARD_INPUT"
 																then
-																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_INPUT" 2> $STANDARD_ERROR"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		flock -u 202
+																		exec 202>&-
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-																		inotifywait --event delete "$FLAG" --quiet
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		flock -u 202
+																		exec 202>&-
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
 																		exit ${ builtins.toString error }
 																	fi
 																else
-																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "${ secret-directory }/$HASH/init.standard-output" 2> "${ secret-directory }/$HASH/init.standard-error"
+																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																	then
-																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+																		nohup ${ good }/bin/good "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		flock -u 202
+																		exec 202>&-
 																		flock -u 201
 																		exec 201>&-
-																		rm "${ secret-directory }/$HASH/exclusive-lock"
 																		rm "$STANDARD_INPUT"
 																		echo "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
-																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" > /dev/null 2>&1 &
-																		inotifywait --event delete_self "$FLAG" --quiet > /dev/null 2>&1
+																		nohup ${ bad }/bin/bad "$HASH" "$FLAG" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+																		flock -u 202
+																		exec 202>&-
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
