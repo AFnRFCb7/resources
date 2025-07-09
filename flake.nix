@@ -130,14 +130,14 @@
 																	CREATION_TIME="$8"
 																	GARBAGE="$9"
 																	TIMESTAMP="$( date +%s )"
-																	if [ -z "$STANDARD_OUTPUT_FILE" }
+																	if [[ -z "$STANDARD_OUTPUT_FILE" ]]
 																	then
 																		STANDARD_OUTPUT=""
 																	else
 																		STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )
 																		rm "$STANDARD_OUTPUT_FILE"
 																	fi
-																	if [ -z "$STANDARD_ERROR_FILE" }
+																	if [[ -z "$STANDARD_ERROR_FILE" ]]
 																	then
 																		STANDARD_ERROR=""
 																	else
