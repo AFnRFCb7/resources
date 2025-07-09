@@ -134,14 +134,14 @@
 																	then
 																		STANDARD_OUTPUT=""
 																	else
-																		STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )
+																		STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )"
 																		rm "$STANDARD_OUTPUT_FILE"
 																	fi
 																	if [[ -z "$STANDARD_ERROR_FILE" ]]
 																	then
 																		STANDARD_ERROR=""
 																	else
-																		STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )
+																		STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )"
 																		rm "$STANDARD_ERROR_FILE"
 																	fi
 																	CURRENT_TIME=${ builtins.toString current-time }
