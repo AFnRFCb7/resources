@@ -11,7 +11,7 @@
 						init-text ? null ,
 						length ? 64 ,
 						lease ? 0 ,
-						log-directory ? "/'tmp/log" ,
+						log-directory ? "/tmp/log" ,
 						nixpkgs ,
 						path ? null ,
 						release-inputs ? [ ] ,
@@ -164,10 +164,10 @@
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
 																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
-																	mkdir --parents ${ log-directory }
-																	exec 203> ${ log-directory }/log.lock
+																	mkdir --parents "${ log-directory }"
+																	exec 203> "${ log-directory }/log.lock"
 																	flock -x 203
-																	cat "$TEMP_FILE" >> ${ log-directory }/log.yaml
+																	cat "$TEMP_FILE" >> "${ log-directory }/log.yaml"
 																	flock -u 203
 																	exec 203>&-
 																	rm "$TEMP_FILE"
