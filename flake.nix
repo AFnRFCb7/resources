@@ -498,7 +498,7 @@ echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
 echo 1 >> ${ log-directory }/DEBUG
-echo >> ${ log-direcotry }/DEBUG
+echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_OUTPUT" >> ${ log-directory }/DEBUG
 echo >> ${ log-direcotry }/DEBUG
 cat "$STANDARD_ERROR" >> ${ log-directory }/DEBUG																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
