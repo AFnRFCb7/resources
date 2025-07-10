@@ -53,7 +53,7 @@
 																		"$GARBAGE"
 																	# tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
 																	# rm --recursive --force "${ secret-directory }/$HASH"
-																	mv "${ secret-directory }/$HASH" "$( mktemp --directory }"
+																	mv "${ secret-directory }/$HASH" "$( mktemp --directory )"
 																'' ;
 														} ;
 												good =
