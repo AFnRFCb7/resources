@@ -491,8 +491,9 @@
 																	fi
 																fi
 															fi
-														'' ;
-											) ;
+														''
+#														'' ;
+										) ;
 #									} ;
 							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 							in "${ application }/bin/application" ;
