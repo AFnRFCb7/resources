@@ -428,7 +428,7 @@ echo H >> ${ log-directory }/DEBUG
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
 echo I >> ${ log-directory }/DEBUG
 															export HASH
-															${ self }="${ secret-directory/$HASH/mount"
+															${ self }="${ secret-directory }/$HASH/mount"
 															export ${ self }
 echo J >> ${ log-directory }/DEBUG
 															mkdir --parents "${ secret-directory }/$HASH"
