@@ -126,7 +126,7 @@ echo BAD K >> /tmp/DEBUG
 													pkgs.writeShellApplication
 														{
 															name = "log" ;
-															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+															runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
 															text =
 																''
 																	MODE="$1"
@@ -170,7 +170,7 @@ echo BAD K >> /tmp/DEBUG
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --yaml-output "[.]" > "$TEMP_FILE"
+																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
 																	exec 203> ${ secret-directory }/log.lock
 																	flock -x 203
 																	cat "$TEMP_FILE" >> ${ secret-directory }/log.yaml
