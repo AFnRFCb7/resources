@@ -21,11 +21,13 @@
 					} @primary :
 						let
 							application =
-								pkgs.writeShellApplication
-									{
-										name = "application" ;
-										runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.procps ] ;
-										text =
+								pkgs.writeShellScriptBin "application"
+#								pkgs.writeShellApplication
+#									{
+#										name = "application" ;
+#										runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.procps ] ;
+										(
+#										text =
 											let
 												bad =
 													pkgs.writeShellApplication
@@ -490,7 +492,8 @@
 																fi
 															fi
 														'' ;
-									} ;
+											) ;
+#									} ;
 							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 							in "${ application }/bin/application" ;
 			} ;
