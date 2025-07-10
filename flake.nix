@@ -94,27 +94,11 @@
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
 												init-application =
-													pkgs.buildFHSUserEnv
+													pkgs.writeShellScriptApplication
 														{
-															extraBwrapArgs =
-																[
-																	"--bind ${ secret-directory }/$HASH/mount /mount"
-																	"--bind ${ log-directory } ${ log-directory }"
-																	"--ro-bind ${ secret-directory } ${ secret-directory }"
-																	"--tmpfs /work"
-																] ;
 															name = "init-application" ;
-															profile = "export ${ self }=${ secret-directory }/$HASH/mount" ;
-															runScript =
-																let
-																	script =
-																		pkgs.writeShellApplication
-																			{
-																				name = "script" ;
-																				runtimeInputs = init-inputs ;
-																				text = init-text ;
-																			} ;
-																	in "${ script }/bin/script" ;
+															runtimeInputs = init-inputs ;
+															text = init-text ;
 														} ;
 												log =
 													pkgs.writeShellApplication
