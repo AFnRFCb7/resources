@@ -497,6 +497,7 @@ echo Y >> ${ log-directory }/DEBUG
 echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
+echo 1 >> ${ log-directory }/DEBUG
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
