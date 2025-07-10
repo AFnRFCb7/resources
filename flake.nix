@@ -250,8 +250,8 @@ echo BAD K >> /tmp/DEBUG
 																			{
 																				extraBwrapArgs =
 																					[
-																						"--ro-bind ${ secret-directory }/$HASH/mount /mount"
-																						"--ro-bind ${ secret-directory } ${ secret-directory }"
+																						"--bind ${ secret-directory }/$HASH/mount /mount"
+																						"--bind ${ secret-directory } ${ secret-directory }"
 																						"--tmpfs /work"
 																					] ;
 																				name = "release-application" ;
