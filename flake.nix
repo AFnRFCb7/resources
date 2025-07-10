@@ -428,6 +428,8 @@ echo H >> ${ log-directory }/DEBUG
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
 echo I >> ${ log-directory }/DEBUG
 															export HASH
+															${ self }="${ secret-directory/$HASH/mount"
+															export ${ self }
 echo J >> ${ log-directory }/DEBUG
 															mkdir --parents "${ secret-directory }/$HASH"
 echo K >> ${ log-directory }/DEBUG
@@ -439,7 +441,7 @@ echo M >> ${ log-directory }/DEBUG
 echo N >> ${ log-directory }/DEBUG
 															flock -x 202
 echo O >> ${ log-directory }/DEBUG
-															if [[ -d "${ secret-directory }/$HASH/mount" ]]
+															if [[ -d "$${ self }" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 																flock -u 202
@@ -447,7 +449,7 @@ echo O >> ${ log-directory }/DEBUG
 																flock -u 201
 																exec 201>&-
 																rm "$STANDARD_INPUT"
-																echo -n "${ secret-directory }/$HASH/mount"																
+																echo -n "$${ self }"																
 																exit 0
 															else
 echo P >> ${ log-directory }/DEBUG
@@ -467,7 +469,7 @@ echo S >> ${ log-directory }/DEBUG
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
-																		echo -n "${ secret-directory }/$HASH/mount"
+																		echo -n "$${ self }"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
@@ -493,7 +495,7 @@ echo W >> ${ log-directory }/DEBUG
 echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
 echo Y >> ${ log-directory }/DEBUG
-																		echo -n "${ secret-directory }/$HASH/mount"
+																		echo -n "$${ self }"
 echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
@@ -502,6 +504,8 @@ echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_OUTPUT" >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_ERROR" >> ${ log-directory }/DEBUG																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+echo >> ${ log-directory }/DEBUG
+echo "$${ self }" >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
 echo ${ init-application }/bin/init-application >> ${ log-directory }/DEBUG
 ${ pkgs.findutils }/bin/find ${ secret-directory } >> ${ log-directory }/DEBUG
