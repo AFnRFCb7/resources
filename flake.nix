@@ -389,7 +389,7 @@
 																exec 202>&-
 																flock -u 201
 																exec 201>&-
-																echo "${ secret-directory }/$HASH/mount"																
+																printf "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
 																mkdir "${ secret-directory }/$HASH/mount
@@ -398,7 +398,7 @@
 																exec 202>&-
 																flock -u 201
 																exec 201>&-
-																echo "${ secret-directory }/$HASH/mount"
+																printf "${ secret-directory }/$HASH/mount"
 																exit 0
 															fi
 														''
@@ -439,7 +439,7 @@
 																flock -u 201
 																exec 201>&-
 																rm "$STANDARD_INPUT"
-																echo "${ secret-directory }/$HASH/mount"																
+																printf "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
 																mkdir "${ secret-directory }/$HASH/mount"
@@ -455,7 +455,7 @@
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
-																		echo "${ secret-directory }/$HASH/mount"
+																		printf "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
@@ -475,7 +475,7 @@
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
-																		echo "${ secret-directory }/$HASH/mount"
+																		printf "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
