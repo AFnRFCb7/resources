@@ -500,7 +500,7 @@ echo Z >> ${ log-directory }/DEBUG
 echo 1 >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_OUTPUT" >> ${ log-directory }/DEBUG
-echo >> ${ log-direcotry }/DEBUG
+echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_ERROR" >> ${ log-directory }/DEBUG																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 echo >> ${ log-directory }/DEBUG
 echo ${ init-application }/bin/init-application >> ${ log-directory }/DEBUG
