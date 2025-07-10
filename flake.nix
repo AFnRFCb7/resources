@@ -412,17 +412,17 @@
 													else
 														''
 mkdir --parents ${ log-directory }
-echo A > ${ log-directory }/DEBUG
+echo A >> ${ log-directory }/DEBUG
 															PARENT_0_PID="$$"
-echo B > ${ log-directory }/DEBUG
+echo B >> ${ log-directory }/DEBUG
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
-echo C > ${ log-directory }/DEBUG
+echo C >> ${ log-directory }/DEBUG
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
-echo D > ${ log-directory }/DEBUG
+echo D >> ${ log-directory }/DEBUG
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-echo E > ${ log-directory }/DEBUG
+echo E >> ${ log-directory }/DEBUG
 															STANDARD_INPUT="$( mktemp )"
-echo F > ${ log-directory }/DEBUG
+echo F >> ${ log-directory }/DEBUG
 															if [[ -f /proc/self/fd/0 ]]
 															then
 																HAS_STANDARD_INPUT=true
