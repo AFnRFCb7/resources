@@ -51,8 +51,9 @@
 																		"$STANDARD_ERROR" \
 																		"$CREATION_TIME" \
 																		"$GARBAGE"
-																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
-																	rm --recursive --force "${ secret-directory }/$HASH"
+																	# tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
+																	# rm --recursive --force "${ secret-directory }/$HASH"
+																	mv "${ secret-directory }/$HASH" "$( mktemp --directory }"
 																'' ;
 														} ;
 												good =
