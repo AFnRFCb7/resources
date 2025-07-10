@@ -412,7 +412,7 @@
 													else
 														''
 mkdir --parents ${ log-directory }
-echo ${ builtins.toJSON path }
+echo ${ builtins.toJSON path } >> ${ log-directory }/DEBUG
 echo A >> ${ log-directory }/DEBUG
 															PARENT_0_PID="$$"
 echo B >> ${ log-directory }/DEBUG
