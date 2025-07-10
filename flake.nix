@@ -412,6 +412,7 @@
 													else
 														''
 mkdir --parents ${ log-directory }
+echo ${ builtins.toJSON path }
 echo A >> ${ log-directory }/DEBUG
 															PARENT_0_PID="$$"
 echo B >> ${ log-directory }/DEBUG
@@ -437,14 +438,23 @@ echo F >> ${ log-directory }/DEBUG
 																HAS_STANDARD_INPUT=false
 																ORIGINATOR_PID="$PARENT_2_PID"
 															fi
+echo G >> ${ log-directory }/DEBUG
 															ARGUMENTS=( "$@" )
+echo H >> ${ log-directory }/DEBUG
 															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
+echo I >> ${ log-directory }/DEBUG
 															export HASH
+echo J >> ${ log-directory }/DEBUG
 															mkdir --parents "${ secret-directory }/$HASH"
+echo K >> ${ log-directory }/DEBUG
 															exec 201> "${ secret-directory }/$HASH/teardown.lock"
+echo L >> ${ log-directory }/DEBUG
 															flock -s 201
+echo M >> ${ log-directory }/DEBUG
 															exec 202> "${ secret-directory }/$HASH/setup.lock"
+echo N >> ${ log-directory }/DEBUG
 															flock -x 202
+echo O >> ${ log-directory }/DEBUG
 															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
@@ -456,20 +466,31 @@ echo F >> ${ log-directory }/DEBUG
 																echo -n "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
+echo P >> ${ log-directory }/DEBUG
 																mkdir "${ secret-directory }/$HASH/mount"
+echo Q >> ${ log-directory }/DEBUG
 																STANDARD_ERROR="$( mktemp )"
+echo R >> ${ log-directory }/DEBUG
 																STANDARD_OUTPUT="$( mktemp )"
+echo S >> ${ log-directory }/DEBUG
 															if "$HAS_STANDARD_INPUT"
 																then
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+echo T >> ${ log-directory }/DEBUG
 																		flock -u 202
+echo U >> ${ log-directory }/DEBUG
 																		exec 202>&-
+echo V >> ${ log-directory }/DEBUG
 																		flock -u 201
+echo W >> ${ log-directory }/DEBUG
 																		exec 201>&-
+echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
+echo Y >> ${ log-directory }/DEBUG
 																		echo -n "${ secret-directory }/$HASH/mount"
+echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
