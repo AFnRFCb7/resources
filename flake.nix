@@ -478,19 +478,12 @@ echo S >> ${ log-directory }/DEBUG
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
-echo T >> ${ log-directory }/DEBUG
 																		flock -u 202
-echo U >> ${ log-directory }/DEBUG
 																		exec 202>&-
-echo V >> ${ log-directory }/DEBUG
 																		flock -u 201
-echo W >> ${ log-directory }/DEBUG
 																		exec 201>&-
-echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
-echo Y >> ${ log-directory }/DEBUG
 																		echo -n "${ secret-directory }/$HASH/mount"
-echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
@@ -505,12 +498,19 @@ echo Z >> ${ log-directory }/DEBUG
 																	if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
 																	then
 																		nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+echo T >> ${ log-directory }/DEBUG
 																		flock -u 202
+echo U >> ${ log-directory }/DEBUG
 																		exec 202>&-
+echo V >> ${ log-directory }/DEBUG
 																		flock -u 201
+echo W >> ${ log-directory }/DEBUG
 																		exec 201>&-
+echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
+echo Y >> ${ log-directory }/DEBUG
 																		echo -n "${ secret-directory }/$HASH/mount"
+echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
