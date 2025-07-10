@@ -106,7 +106,7 @@ echo BAD K >> /tmp/DEBUG
 															extraBwrapArgs =
 																[
 																	"--bind ${ secret-directory }/$HASH/mount /mount"
-																	"--ro-bind ${ secret-directory } ${ secret-directory }"
+																	"--bind ${ secret-directory } ${ secret-directory }"
 																	"--tmpfs /work"
 																] ;
 															name = "init-application" ;
