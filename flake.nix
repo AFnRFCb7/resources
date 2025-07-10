@@ -94,7 +94,7 @@
 														} ;
 												hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
 												init-application =
-													pkgs.writeShellScriptApplication
+													pkgs.writeShellApplication
 														{
 															name = "init-application" ;
 															runtimeInputs = init-inputs ;
