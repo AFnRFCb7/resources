@@ -449,7 +449,7 @@ echo O >> ${ log-directory }/DEBUG
 																flock -u 201
 																exec 201>&-
 																rm "$STANDARD_INPUT"
-																echo -n "$${ self }"																
+																echo -n "${ secret-directory }/$HASH/mount"																
 																exit 0
 															else
 echo P >> ${ log-directory }/DEBUG
