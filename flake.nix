@@ -495,7 +495,7 @@ echo W >> ${ log-directory }/DEBUG
 echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
 echo Y >> ${ log-directory }/DEBUG
-																		echo -n "$${ self }"
+																		echo -n "${ self }"
 echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
