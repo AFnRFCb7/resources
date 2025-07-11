@@ -441,7 +441,7 @@ echo M >> ${ log-directory }/DEBUG
 echo N >> ${ log-directory }/DEBUG
 															flock -x 202
 echo O >> ${ log-directory }/DEBUG
-															if [[ -d "$${ self }" ]]
+															if [[ -d "${ secret-directory }/$HASH/mount" ]]
 															then
 																nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
 																flock -u 202
@@ -469,7 +469,7 @@ echo S >> ${ log-directory }/DEBUG
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
-																		echo -n "$${ self }"
+																		echo -n "${ secret-directory }/$HASH/mount"
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
@@ -495,7 +495,7 @@ echo W >> ${ log-directory }/DEBUG
 echo X >> ${ log-directory }/DEBUG
 																		rm "$STANDARD_INPUT"
 echo Y >> ${ log-directory }/DEBUG
-																		echo -n "${ self }"
+																		echo -n "${ secret-directory }/$HASH/mount"
 echo Z >> ${ log-directory }/DEBUG
 																		exit 0
 																	else
@@ -503,9 +503,10 @@ echo 1 >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
 cat "$STANDARD_OUTPUT" >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
-cat "$STANDARD_ERROR" >> ${ log-directory }/DEBUG																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
+cat "$STANDARD_ERROR" >> ${ log-directory }/DEBUG
+																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 echo >> ${ log-directory }/DEBUG
-echo "${ self }" >> ${ log-directory }/DEBUG
+echo "${ secret-directory }/$HASH/mount" >> ${ log-directory }/DEBUG
 echo >> ${ log-directory }/DEBUG
 echo ${ init-application }/bin/init-application >> ${ log-directory }/DEBUG
 ${ pkgs.findutils }/bin/find ${ secret-directory } >> ${ log-directory }/DEBUG
