@@ -408,20 +408,16 @@ echo D >> ${ log-directory }/DEBUG
 echo E >> ${ log-directory }/DEBUG
 															STANDARD_INPUT="$( mktemp )"
 echo F >> ${ log-directory }/DEBUG
-															if [[ -f /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																STANDARD_INPUT="$( cat )"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															elif [[ -p /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																cat > "$STANDARD_INPUT"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															else
-																HAS_STANDARD_INPUT=false
-																ORIGINATOR_PID="$PARENT_2_PID"
-															fi
+                                                            if read -t 0
+                                                            then
+                                                                HAS_STANDARD_INPUT=true
+                                                                STANDARD_INPUT="$( timeout 1m cat )"
+                                                                ORIGINATOR_PID="$PARENT_3_PID"
+                                                            else
+                                                                HAS_STANDARD_INPUT=false
+                                                                STANDARD_INPUT=
+                                                                ORIGINATOR_PID="$PARENT_2_PID"
+                                                            fi
 echo G >> ${ log-directory }/DEBUG
 															ARGUMENTS=( "$@" )
 echo H >> ${ log-directory }/DEBUG
