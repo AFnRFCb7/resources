@@ -358,16 +358,18 @@
 															PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
 															PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
 															PARENT_3_PID=$( ps -p "$PARENT_2_PID" -o ppid= | xargs )
-															if [[ -f /proc/self/fd/0 ]]
-															then
-																ORIGINATOR_PID="$PARENT_3_PID"
-															elif [[ -p /proc/self/fd/0 ]]
-															then
-																ORIGINATOR_PID="$PARENT_3_PID"
-															else
-																ORIGINATOR_PID="$PARENT_2_PID"
-															fi
-															HASH="$( echo "${ hash } | sha512sum | cut --bytes -${ builtins.toString length } )"
+															STANDARD_INPUT="$( mktemp )"
+                                                            if read -t 0
+                                                            then
+                                                                HAS_STANDARD_INPUT=true
+                                                                timeout 1m cat > "$STANDARD_INPUT"
+                                                                ORIGINATOR_PID="$PARENT_3_PID"
+                                                            else
+                                                                HAS_STANDARD_INPUT=false
+                                                                ORIGINATOR_PID="$PARENT_2_PID"
+                                                            fi
+															HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
+															rm "$STANDARD_INPUT"
 															mkdir --parents "${ secret-directory }/$HASH"
 															exec 201> "${ secret-directory }/$HASH/teardown.lock"
 															flock -s 201
@@ -408,20 +410,15 @@ echo D >> ${ log-directory }/DEBUG
 echo E >> ${ log-directory }/DEBUG
 															STANDARD_INPUT="$( mktemp )"
 echo F >> ${ log-directory }/DEBUG
-															if [[ -f /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																STANDARD_INPUT="$( cat )"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															elif [[ -p /proc/self/fd/0 ]]
-															then
-																HAS_STANDARD_INPUT=true
-																cat > "$STANDARD_INPUT"
-																ORIGINATOR_PID="$PARENT_3_PID"
-															else
-																HAS_STANDARD_INPUT=false
-																ORIGINATOR_PID="$PARENT_2_PID"
-															fi
+                                                            if read -t 0
+                                                            then
+                                                                HAS_STANDARD_INPUT=true
+                                                                timeout 1m cat > "$STANDARD_INPUT"
+                                                                ORIGINATOR_PID="$PARENT_3_PID"
+                                                            else
+                                                                HAS_STANDARD_INPUT=false
+                                                                ORIGINATOR_PID="$PARENT_2_PID"
+                                                            fi
 echo G >> ${ log-directory }/DEBUG
 															ARGUMENTS=( "$@" )
 echo H >> ${ log-directory }/DEBUG
