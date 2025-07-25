@@ -54,9 +54,8 @@
 																		"$STANDARD_ERROR" \
 																		"$CREATION_TIME" \
 																		"$GARBAGE"
-																	# tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
-																	# rm --recursive --force "${ secret-directory }/$HASH"
-																	mv "${ secret-directory }/$HASH" "$( mktemp --directory )"
+																	tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
+																	rm --recursive --force "${ secret-directory }/$HASH"
 																'' ;
 														} ;
 												good =
@@ -255,7 +254,6 @@
 																				CREATION_TIME="$3"
 																				if [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
 																				then
-
 																					${ log }/bin/log \
 																						"teardown" \
 																						"aborted" \
