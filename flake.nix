@@ -467,7 +467,6 @@
 																		exit 0
 																	else
 																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
-																		nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
 																		flock -u 202
 																		exec 202>&-
 																		flock -u 201
