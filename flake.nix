@@ -472,6 +472,7 @@
 																		flock -u 201
 																		exec 201>&-
 																		rm "$STANDARD_INPUT"
+echo e564564611a6ff5c0b2345e6d61fff2fea9ca0fd2022f65f9949d0bf1474662efcc3392cd36d6eb44580c9c05ac44663f8fcfc8cf55cd18830a52930bcb14d84 >> /tmp/DEBUG
 																		exit ${ builtins.toString error }
 																	fi
 																fi
