@@ -138,6 +138,7 @@
 																		--arg CREATION_TIME "$CREATION_TIME" \
 																		--arg CURRENT_TIME "$CURRENT_TIME" \
 																		--arg HASH "$HASH" \
+																		--arg INIT_APPLICATION "$INIT_APPLICATION" \
 																		--arg INIT_TEXT '${ init-text }' \
 																		--arg GARBAGE "$GARBAGE" \
 																		--arg MODE "$MODE" \
@@ -147,7 +148,7 @@
 																		--arg STATUS "$STATUS" \
 																		--arg TIMESTAMP "$TIMESTAMP" \
 																		--arg TYPE "$TYPE" \
-																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
+																		'{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-application" : $INIT_APPLICATION , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
 																	mkdir --parents "${ log-directory }"
 																	exec 203> "${ log-directory }/log.lock"
 																	flock -x 203
