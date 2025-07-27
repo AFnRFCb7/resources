@@ -17,6 +17,7 @@
 						release-inputs ? [ ] ,
 						release-text ? null ,
 						secret-directory ? "/tmp/secrets" ,
+						seed ? null ,
 						self ? "SELF" ,
 						system
 					} @primary :
