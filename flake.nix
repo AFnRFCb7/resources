@@ -84,6 +84,23 @@
                                                                 "" &
                                                             sleep ${ builtins.toString lease }
                                                             tail --follow /dev/null --pid "$ORIGINATOR_PID"
+                                                            SYMLINK=-1
+                                                            while [[ -n "$SYMLINK" ]]
+                                                            do
+                                                                SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
+                                                                do
+                                                                    RESOLVED="$( readlink --canonical "$CANDIDATE" 2>/dev/null )"
+                                                                    if [[ "$RESOLVED" == "${ secret-directory }/$HASH/mount" ]]
+                                                                    then
+                                                                        echo "$CANDIDATE"
+                                                                        break
+                                                                    fi
+                                                                done )"
+                                                                if [[ -n "$SYMLINK" ]]
+                                                                then
+                                                                    inotifywait --event delete_self "$SYMLINK" --quiet || true
+                                                                fi
+                                                            done
                                                             ${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
                                                         '' ;
                                                 } ;
