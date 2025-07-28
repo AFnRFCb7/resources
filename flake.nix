@@ -92,7 +92,9 @@
                                                                 while IFS= read -r CANDIDATE
                                                                 do
                                                                     RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
-                                                                    if [[ "$RESOLVED" == "${secret-directory}/$HASH/mount" ]]
+                                                                    TARGET="$( readlink --canonicalize "${secret-directory}/$HASH/mount" )"
+                                                                    echo "RESOLVED=$RESOLVED TARGET=$TARGET" >> /tmp/DEBUG
+                                                                    if [[ "$RESOLVED" == "$TARGET" ]]
                                                                     then
                                                                         SYMLINK="$CANDIDATE"
                                                                         break
