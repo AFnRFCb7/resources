@@ -101,6 +101,7 @@
                                                                 echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                                 if [[ -n "$SYMLINK" ]]
                                                                 then
+                                                                    echo "WAITING FOR $SYMLINK TO BE DELETED" >> /tmp/DEBUG
                                                                     inotifywait --event delete_self "$SYMLINK" --quiet || true
                                                                 fi
                                                             done
