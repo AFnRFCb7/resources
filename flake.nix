@@ -85,7 +85,6 @@
                                                             sleep ${ builtins.toString lease }
                                                             tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                             SYMLINK=-1
-                                                            echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                             while [[ -n "$SYMLINK" ]]
                                                             do
                                                                 SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
