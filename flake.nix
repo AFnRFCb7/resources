@@ -88,25 +88,18 @@
                                                             echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                             while [[ -n "$SYMLINK" ]]
                                                             do
-                                                                SYMLINK=""
-                                                                for CANDIDATE in $( find "${secret-directory}" -type l 2>/dev/null )
-                                                                do
-                                                                    RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
-                                                                    TARGET="$( readlink --canonicalize "${secret-directory}/$HASH/mount" )"
-                                                                    echo "RESOLVED=$RESOLVED TARGET=$TARGET" >> /tmp/DEBUG
-                                                                    if [[ "$RESOLVED" == "$TARGET" ]]
-                                                                    then
-                                                                        SYMLINK="$CANDIDATE"
-                                                                        break
-                                                                    fi
-                                                                done
-                                                                echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
+                                                                SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
+                                                                    do
+                                                                        RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
+                                                                        TARGET="$( readlink --canonicalize "${secret-directory}/$HASH/mount" )"
+                                                                        if [[ "$RESOLVED" == "$TARGET" ]]
+                                                                        then
+                                                                            echo "$CANDIDATE"
+                                                                        fi
+                                                                    done | head --lines 1 )"
                                                                 if [[ -n "$SYMLINK" ]]
                                                                 then
-                                                                    echo "WAITING FOR $SYMLINK TO BE DELETED" >> /tmp/DEBUG
                                                                     inotifywait --event delete_self "$SYMLINK" --quiet || true
-                                                                else
-                                                                    echo "NOT WAITING BECAUSE $SYMLINK IS EMPTY" >> /tmp/DEBUG
                                                                 fi
                                                             done
                                                             ${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
@@ -479,7 +472,6 @@
                                                         else
                                                             if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
                                                             then
-                                                                echo "HASH=$HASH" >> /tmp/DEBUG
                                                                 nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
                                                                 flock -u 202
                                                                 exec 202>&-
