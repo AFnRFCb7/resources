@@ -105,6 +105,8 @@
                                                                 then
                                                                     echo "WAITING FOR $SYMLINK TO BE DELETED" >> /tmp/DEBUG
                                                                     inotifywait --event delete_self "$SYMLINK" --quiet || true
+                                                                else
+                                                                    echo "NOT WAITING BECAUSE $SYMLINK IS EMPTY" >> /tmp/DEBUG
                                                                 fi
                                                             done
                                                             ${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
