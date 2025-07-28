@@ -88,16 +88,16 @@
                                                             echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                             while [[ -n "$SYMLINK" ]]
                                                             do
-                                                                SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
+                                                                SYMLINK=""
+                                                                while IFS= read -r CANDIDATE
                                                                 do
                                                                     RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
-                                                                    echo "SYMLINK=$SYMLINK HASH=$HASH CANDIDATE=$CANDIDATE RESOLVED=$RESOLVED" >> /tmp/DEBUG
-                                                                    if [[ "$RESOLVED" == "${ secret-directory }/$HASH/mount" ]]
+                                                                    if [[ "$RESOLVED" == "${secret-directory}/$HASH/mount" ]]
                                                                     then
-                                                                        echo "$CANDIDATE"
+                                                                        SYMLINK="$CANDIDATE"
                                                                         break
                                                                     fi
-                                                                done )"
+                                                                done < <( find "${secret-directory}" -type l 2>/dev/null )
                                                                 echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                                 if [[ -n "$SYMLINK" ]]
                                                                 then
