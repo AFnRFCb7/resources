@@ -89,7 +89,7 @@
                                                             while [[ -n "$SYMLINK" ]]
                                                             do
                                                                 SYMLINK=""
-                                                                while IFS= read -r CANDIDATE
+                                                                for CANDIDATE in $( find "${secret-directory}" -type l 2>/dev/null )
                                                                 do
                                                                     RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
                                                                     TARGET="$( readlink --canonicalize "${secret-directory}/$HASH/mount" )"
@@ -99,7 +99,7 @@
                                                                         SYMLINK="$CANDIDATE"
                                                                         break
                                                                     fi
-                                                                done < <( find "${secret-directory}" -type l 2>/dev/null )
+                                                                done
                                                                 echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                                 if [[ -n "$SYMLINK" ]]
                                                                 then
