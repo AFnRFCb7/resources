@@ -91,7 +91,7 @@
                                                                 SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
                                                                 do
                                                                     RESOLVED="$( readlink --canonical "$CANDIDATE" 2>/dev/null )"
-                                                                    if [[ "$RESOLVED" == "${ secret-directory }/$HASH/mount" ]]
+                                                                    if [[ "$RESOLVED" == "${ secret-directory }/$HASH/mount" ]] || true
                                                                     then
                                                                         echo "$CANDIDATE"
                                                                         break
