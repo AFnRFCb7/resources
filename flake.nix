@@ -85,7 +85,7 @@
                                                             sleep ${ builtins.toString lease }
                                                             tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                             SYMLINK=-1
-                                                            echo "SYMLINK=$SYMLINK HASH=$HASH" > /tmp/DEBUG
+                                                            echo "SYMLINK=$SYMLINK HASH=$HASH" >> /tmp/DEBUG
                                                             while [[ -n "$SYMLINK" ]]
                                                             do
                                                                 SYMLINK="$( find ${ secret-directory } -mindepth 4 -maxdepth 4 -type l 2>/dev/null | while read -r CANDIDATE
@@ -474,6 +474,7 @@
                                                         else
                                                             if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
                                                             then
+                                                                echo "HASH=$HASH" >> /tmp/DEBUG
                                                                 nohup ${ good }/bin/good "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
                                                                 flock -u 202
                                                                 exec 202>&-
