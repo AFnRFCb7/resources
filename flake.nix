@@ -11,7 +11,6 @@
 						length ? 64 ,
 						log-directory ? "/tmp/log" ,
 						nixpkgs ,
-						path ? null ,
 						release-inputs ? [ ] ,
 						release-text ? null ,
 						resources-directory ? "/tmp/resources" ,
@@ -158,7 +157,7 @@
                                                                 --arg STATUS "$STATUS" \
                                                                 --arg TIMESTAMP "$TIMESTAMP" \
                                                                 --arg TYPE "$TYPE" \
-                                                                '{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-application" : $INIT_APPLICATION , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , path : ${ builtins.toJSON path } , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
+                                                                '{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-application" : $INIT_APPLICATION , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
                                                             mkdir --parents "${ log-directory }"
                                                             exec 203> "${ log-directory }/log.lock"
                                                             flock -x 203
