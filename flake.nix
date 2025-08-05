@@ -171,7 +171,7 @@
                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
                                                     text =
                                                         ''
-                                                            CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+                                                            CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
                                                             flock -u 202
                                                             exec 201>&-
                                                             flock -u 202
