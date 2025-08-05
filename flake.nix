@@ -10,7 +10,6 @@
 						init-inputs ? [ ] ,
 						init-text ? null ,
 						length ? 64 ,
-						lease ? 0 ,
 						log-directory ? "/tmp/log" ,
 						nixpkgs ,
 						path ? null ,
@@ -82,7 +81,6 @@
                                                                 "$STANDARD_ERROR" \
                                                                 "$CREATION_TIME" \
                                                                 "" &
-                                                            sleep ${ builtins.toString lease }
                                                             tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                             SYMLINK=-1
                                                             while [[ -n "$SYMLINK" ]]
@@ -197,7 +195,6 @@
                                                                 "" )" \
                                                                 "" \
                                                                 "$CREATION_TIME" &
-                                                            sleep ${ builtins.toString lease }
                                                             tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                             ${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "" "$CREATION_TIME"
                                                         '' ;
