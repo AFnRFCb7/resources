@@ -14,7 +14,7 @@
 						path ? null ,
 						release-inputs ? [ ] ,
 						release-text ? null ,
-						secret-directory ? "/tmp/secrets" ,
+						resources-directory ? "/tmp/resources" ,
 						seed ? null ,
 						self ? "SELF" ,
 						system
