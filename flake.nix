@@ -139,13 +139,10 @@
                                                                 STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )"
                                                                 rm "$STANDARD_ERROR_FILE"
                                                             fi
-                                                            CURRENT_TIME=${ builtins.toString current-time }
-#																	CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
                                                             TEMP_FILE="$( mktemp )"
                                                             jq \
                                                                 --null-input \
                                                                 --arg CREATION_TIME "$CREATION_TIME" \
-                                                                --arg CURRENT_TIME "$CURRENT_TIME" \
                                                                 --arg HASH "$HASH" \
                                                                 --arg INIT_APPLICATION "$INIT_APPLICATION" \
                                                                 --arg INIT_TEXT '${ init-text }' \
@@ -157,7 +154,7 @@
                                                                 --arg STATUS "$STATUS" \
                                                                 --arg TIMESTAMP "$TIMESTAMP" \
                                                                 --arg TYPE "$TYPE" \
-                                                                '{ "creation-time" : $CREATION_TIME , "current-time" : $CURRENT_TIME , "hash" : $HASH , "init-application" : $INIT_APPLICATION , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
+                                                                '{ "creation-time" : $CREATION_TIME , "hash" : $HASH , "init-application" : $INIT_APPLICATION , "init-text" : $INIT_TEXT , "mode" : $MODE , "garbage": $GARBAGE , "originator-pid" : $ORIGINATOR_PID , "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "timestamp" : $TIMESTAMP , "type" : $TYPE  }' | yq --prettyPrint "[.]" > "$TEMP_FILE"
                                                             mkdir --parents "${ log-directory }"
                                                             exec 203> "${ log-directory }/log.lock"
                                                             flock -x 203
