@@ -244,7 +244,7 @@
                                                                                     [
                                                                                         "--bind ${ resources-directory }/$HASH/mount /mount"
                                                                                         "--bind ${ log-directory } ${ log-directory }"
-                                                                                        "--bind ${ secret-directory } ${ secret-directory }"
+                                                                                        "--bind ${ resources-directory } ${ resources-directory }"
                                                                                         "--tmpfs /work"
                                                                                     ] ;
                                                                                 name = "release-application" ;
