@@ -16,7 +16,8 @@
 						resources-directory ? "/tmp/resources" ,
 						seed ? null ,
 						self ? "SELF" ,
-						system
+						system ,
+						writeShellApplication
 					} @primary :
 						let
 							application =
