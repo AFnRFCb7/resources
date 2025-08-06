@@ -23,7 +23,8 @@
 						self ? "SELF" ,
 						system ,
 						writeShellApplication ,
-						yq-go
+						yq-go ,
+						zstd
 					} @primary :
 						let
 							application =
@@ -236,7 +237,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "teardown" ;
-                                                            runtimeInputs = [ coreutils flock gnutar nix pkgs.zstd ] ;
+                                                            runtimeInputs = [ coreutils flock gnutar nix zstd ] ;
                                                             text =
                                                                 let
                                                                     release-application =
