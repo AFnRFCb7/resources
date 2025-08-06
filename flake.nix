@@ -43,7 +43,7 @@
                                                                     STANDARD_OUTPUT="$4"
                                                                     STANDARD_ERROR="$5"
                                                                     GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-                                                                    CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+                                                                    CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
                                                                     ${ log }/bin/log \
                                                                         "setup" \
                                                                         "bad" \
@@ -54,8 +54,8 @@
                                                                         "$STANDARD_ERROR" \
                                                                         "$CREATION_TIME" \
                                                                         "$GARBAGE"
-                                                                    tar --create --file - "${ secret-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
-                                                                    rm --recursive --force "${ secret-directory }/$HASH"
+                                                                    tar --create --file - "${ resources-directory }/$HASH" | zstd -T1 -19 > "$GARBAGE"
+                                                                    rm --recursive --force "${ resources-directory }/$HASH"
                                                                 '' ;
                                                         } ;
                                                 good =
@@ -65,7 +65,7 @@
                                                             runtimeInputs = [ coreutils ] ;
                                                             text =
                                                                 ''
-                                                                    CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+                                                                    CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
                                                                     flock -u 202
                                                                     exec 201>&-
                                                                     flock -u 202
@@ -90,10 +90,10 @@
                                                                     SYMLINK=-1
                                                                     while [[ -n "$SYMLINK" ]]
                                                                     do
-                                                                        SYMLINK="$( find ${ secret-directory } -type l 2>/dev/null | while read -r CANDIDATE
+                                                                        SYMLINK="$( find ${ resources-directory } -type l 2>/dev/null | while read -r CANDIDATE
                                                                             do
                                                                                 RESOLVED="$( readlink --canonicalize "$CANDIDATE" 2>/dev/null )"
-                                                                                TARGET="$( readlink --canonicalize "${secret-directory}/$HASH/mount" )"
+                                                                                TARGET="$( readlink --canonicalize "${resources-directory}/$HASH/mount" )"
                                                                                 if [[ "$RESOLVED" == "$TARGET" ]]
                                                                                 then
                                                                                     echo "$CANDIDATE"
@@ -209,7 +209,7 @@
                                                             runtimeInputs = [ coreutils ] ;
                                                             text =
                                                                 ''
-                                                                    CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
+                                                                    CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
                                                                     flock -u 202
                                                                     exec 201>&-
                                                                     flock -u 202
@@ -265,7 +265,7 @@
                                                                                 HASH="$1"
                                                                                 ORIGINATOR_PID="$2"
                                                                                 CREATION_TIME="$3"
-                                                                                if [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
+                                                                                if [[ ! -d "${ resources-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ resources-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
                                                                                 then
                                                                                     ${ log }/bin/log \
                                                                                         "teardown" \
@@ -278,13 +278,13 @@
                                                                                         "$CREATION_TIME" \
                                                                                         "" &
                                                                                 else
-                                                                                    exec 201> "${ secret-directory }/$HASH/teardown.lock"
+                                                                                    exec 201> "${ resources-directory }/$HASH/teardown.lock"
                                                                                     flock -x 201
-                                                                                    exec 202> "${ secret-directory }/$HASH/setup.lock"
+                                                                                    exec 202> "${ resources-directory }/$HASH/setup.lock"
                                                                                     flock -x 202
                                                                                     GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
-                                                                                    tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-                                                                                    rm --recursive --force "${ secret-directory }/$HASH"
+                                                                                    tar --create --file - -C "${ resources-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
+                                                                                    rm --recursive --force "${ resources-directory }/$HASH"
                                                                                     flock -u 202
                                                                                     exec 202>&-
                                                                                     flock -u 201
@@ -299,7 +299,7 @@
                                                                                         "" \
                                                                                         "$CREATION_TIME" \
                                                                                         "$GARBAGE"
-                                                                                    exec 204> ${ secret-directory }/collect-garbage.lock
+                                                                                    exec 204> ${ resources-directory }/collect-garbage.lock
                                                                                     flock -x 204
                                                                                     nix-collect-garbage
                                                                                     flock -u 204
@@ -311,7 +311,7 @@
                                                                                 HASH="$1"
                                                                                 ORIGINATOR_PID="$2"
                                                                                 CREATION_TIME="$3"
-                                                                                if [[ ! -d "${ secret-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ secret-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
+                                                                                if [[ ! -d "${ resources-directory }/$HASH/mount" ]] || [[ "$( stat --format "%W" "${ resources-directory }/$HASH/mount" )" != "$CREATION_TIME" ]]
                                                                                 then
                                                                                     ${ log }/bin/log \
                                                                                         "teardown" \
@@ -323,9 +323,9 @@
                                                                                         "$CREATION_TIME" \
                                                                                         ""
                                                                                 else
-                                                                                    exec 201> "${ secret-directory }/$HASH/teardown.lock"
+                                                                                    exec 201> "${ resources-directory }/$HASH/teardown.lock"
                                                                                     flock -x 201
-                                                                                    exec 202> "${ secret-directory }/$HASH/setup.lock"
+                                                                                    exec 202> "${ resources-directory }/$HASH/setup.lock"
                                                                                     flock -x 202
                                                                                     export HASH
                                                                                     GARBAGE="$( mktemp --dry-run --suffix ".tar.zst" )"
@@ -348,13 +348,13 @@
                                                                                         "$STANDARD_ERROR" \
                                                                                         "$CREATION_TIME"
                                                                                         "$GARBAGE" &
-                                                                                    tar --create --file - -C "${ secret-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
-                                                                                    rm --recursive --force "${ secret-directory }/$HASH"
+                                                                                    tar --create --file - -C "${ resources-directory }" "$HASH" | zstd -T1 -19 > "$GARBAGE"
+                                                                                    rm --recursive --force "${ resources-directory }/$HASH"
                                                                                     flock -u 202
                                                                                     exec 202>&-
                                                                                     flock -u 201
                                                                                     exec 201>&-
-                                                                                    exec 204> ${ secret-directory }/collect-garbage.lock
+                                                                                    exec 204> ${ resources-directory }/collect-garbage.lock
                                                                                     flock -x 204
                                                                                     nix-collect-garbage
                                                                                     flock -u 204
@@ -381,28 +381,28 @@
                                                             fi
                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
                                                             rm "$STANDARD_INPUT"
-                                                            mkdir --parents "${ secret-directory }/$HASH"
-                                                            exec 201> "${ secret-directory }/$HASH/teardown.lock"
+                                                            mkdir --parents "${ resources-directory }/$HASH"
+                                                            exec 201> "${ resources-directory }/$HASH/teardown.lock"
                                                             flock -s 201
-                                                            exec 202> "${ secret-directory }/$HASH/setup.lock"
+                                                            exec 202> "${ resources-directory }/$HASH/setup.lock"
                                                             flock -x 202
-                                                            if [[ -d "${ secret-directory }/$HASH/mount" ]]
+                                                            if [[ -d "${ resources-directory }/$HASH/mount" ]]
                                                             then
                                                                 nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
                                                                 flock -u 202
                                                                 exec 202>&-
                                                                 flock -u 201
                                                                 exec 201>&-
-                                                                echo -n "${ secret-directory }/$HASH/mount"
+                                                                echo -n "${ resources-directory }/$HASH/mount"
                                                                 exit 0
                                                             else
-                                                                mkdir "${ secret-directory }/$HASH/mount
+                                                                mkdir "${ resources-directory }/$HASH/mount
                                                                 nohup ${ null }/bin/null "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
                                                                 flock -u 202
                                                                 exec 202>&-
                                                                 flock -u 201
                                                                 exec 201>&-
-                                                                echo -n "${ secret-directory }/$HASH/mount"
+                                                                echo -n "${ resources-directory }/$HASH/mount"
                                                                 exit 0
                                                             fi
                                                         ''
@@ -425,14 +425,14 @@
                                                             ARGUMENTS=( "$@" )
                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[*]" "}" ] } $( cat "$STANDARD_INPUT" ) $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )"
                                                             export HASH
-                                                            ${ self }="${ secret-directory }/$HASH/mount"
+                                                            ${ self }="${ resources-directory }/$HASH/mount"
                                                             export ${ self }
-                                                            mkdir --parents "${ secret-directory }/$HASH"
-                                                            exec 201> "${ secret-directory }/$HASH/teardown.lock"
+                                                            mkdir --parents "${ resources-directory }/$HASH"
+                                                            exec 201> "${ resources-directory }/$HASH/teardown.lock"
                                                             flock -s 201
-                                                            exec 202> "${ secret-directory }/$HASH/setup.lock"
+                                                            exec 202> "${ resources-directory }/$HASH/setup.lock"
                                                             flock -x 202
-                                                            if [[ -d "${ secret-directory }/$HASH/mount" ]]
+                                                            if [[ -d "${ resources-directory }/$HASH/mount" ]]
                                                             then
                                                                 nohup ${ stale }/bin/stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
                                                                 flock -u 202
@@ -440,10 +440,10 @@
                                                                 flock -u 201
                                                                 exec 201>&-
                                                                 rm "$STANDARD_INPUT"
-                                                                echo -n "${ secret-directory }/$HASH/mount"
+                                                                echo -n "${ resources-directory }/$HASH/mount"
                                                                 exit 0
                                                             else
-                                                                mkdir "${ secret-directory }/$HASH/mount"
+                                                                mkdir "${ resources-directory }/$HASH/mount"
                                                                 STANDARD_ERROR="$( mktemp )"
                                                                 STANDARD_OUTPUT="$( mktemp )"
                                                             if "$HAS_STANDARD_INPUT"
@@ -456,7 +456,7 @@
                                                                         flock -u 201
                                                                         exec 201>&-
                                                                         rm "$STANDARD_INPUT"
-                                                                        echo -n "${ secret-directory }/$HASH/mount"
+                                                                        echo -n "${ resources-directory }/$HASH/mount"
                                                                         exit 0
                                                                     else
                                                                         nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
@@ -476,7 +476,7 @@
                                                                         flock -u 201
                                                                         exec 201>&-
                                                                         rm "$STANDARD_INPUT"
-                                                                        echo -n "${ secret-directory }/$HASH/mount"
+                                                                        echo -n "${ resources-directory }/$HASH/mount"
                                                                         exit 0
                                                                     else
                                                                         nohup ${ bad }/bin/bad "$HASH" "$ORIGINATOR_PID" "$?" "$STANDARD_OUTPUT" "$STANDARD_ERROR" > /dev/null 2>&1 &
