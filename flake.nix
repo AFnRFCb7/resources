@@ -240,7 +240,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
-                                                                                        "--bind ${ secret-directory }/$HASH/mount /mount"
+                                                                                        "--bind ${ resources-directory }/$HASH/mount /mount"
                                                                                         "--bind ${ log-directory } ${ log-directory }"
                                                                                         "--bind ${ secret-directory } ${ secret-directory }"
                                                                                         "--tmpfs /work"
