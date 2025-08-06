@@ -19,7 +19,8 @@
 						seed ? null ,
 						self ? "SELF" ,
 						system ,
-						writeShellApplication
+						writeShellApplication ,
+						yq-go
 					} @primary :
 						let
 							application =
@@ -117,7 +118,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "log" ;
-                                                            runtimeInputs = [ coreutils jq pkgs.yq-go ] ;
+                                                            runtimeInputs = [ coreutils jq yq-go ] ;
                                                             text =
                                                                 ''
                                                                     MODE="$1"
