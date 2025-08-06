@@ -5,6 +5,7 @@
 			{
 				lib.implementation =
 					{
+					    buildFHSUserEnv ,
 					    coreutils ,
 						error ? 64 ,
 						init-inputs ? [ ] ,
@@ -241,7 +242,7 @@
                                                             text =
                                                                 let
                                                                     release-application =
-                                                                        pkgs.buildFHSUserEnv
+                                                                        buildFHSUserEnv
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
