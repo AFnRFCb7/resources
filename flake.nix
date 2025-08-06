@@ -16,13 +16,11 @@
 						length ? 64 ,
 						log-directory ? "/tmp/log" ,
 						nix ,
-						nixpkgs ,
 						release-inputs ? [ ] ,
 						release-text ? null ,
 						resources-directory ? "/tmp/resources" ,
 						seed ? null ,
 						self ? "SELF" ,
-						system ,
 						writeShellApplication ,
 						yq-go ,
 						zstd
@@ -495,7 +493,6 @@
                                                             fi
                                                         '' ;
                                     } ;
-							pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 							in "${ application }/bin/application" ;
 			} ;
 }
