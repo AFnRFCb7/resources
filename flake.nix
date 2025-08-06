@@ -25,7 +25,7 @@
                                 (
                                     let
                                         bad =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "bad" ;
                                                     runtimeInputs = [ pkgs.coreutils ] ;
@@ -53,7 +53,7 @@
                                                         '' ;
                                                 } ;
                                         good =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "good" ;
                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
@@ -103,14 +103,14 @@
                                                 } ;
                                         hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
                                         init-application =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "init-application" ;
                                                     runtimeInputs = init-inputs ;
                                                     text = init-text ;
                                                 } ;
                                         log =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "log" ;
                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
@@ -166,7 +166,7 @@
                                                         '' ;
                                                 } ;
                                         null =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "null" ;
                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
@@ -197,7 +197,7 @@
                                                 } ;
 
                                         stale =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "stale" ;
                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
@@ -225,7 +225,7 @@
                                                         '' ;
                                                 } ;
                                         teardown =
-                                            pkgs.writeShellApplication
+                                            writeShellApplication
                                                 {
                                                     name = "teardown" ;
                                                     runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
@@ -245,7 +245,7 @@
                                                                         runScript =
                                                                             let
                                                                                 script =
-                                                                                    pkgs.writeShellApplication
+                                                                                    writeShellApplication
                                                                                         {
                                                                                             name = "script" ;
                                                                                             runtimeInputs = release-inputs ;
