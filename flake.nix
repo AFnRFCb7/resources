@@ -110,7 +110,7 @@
                                                                     ${ teardown }/bin/teardown "$HASH" "$ORIGINATOR_PID" "$CREATION_TIME"
                                                                 '' ;
                                                         } ;
-                                                hash = builtins.hashString "sha512" ( builtins.toJSON primary ) ;
+                                                hash = builtins.hashString "sha512" ( builtins.toJSON ( builtins.filter ( value : builtins.typeOf value != "lambda" ) builtins.attrValues primary ) ) ;
                                                 init-application =
                                                     writeShellApplication
                                                         {
