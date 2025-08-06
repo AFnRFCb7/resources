@@ -9,6 +9,7 @@
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
+						flock ,
 						jq ,
 						length ? 64 ,
 						log-directory ? "/tmp/log" ,
@@ -233,7 +234,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "teardown" ;
-                                                            runtimeInputs = [ coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
+                                                            runtimeInputs = [ coreutils flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
                                                             text =
                                                                 let
                                                                     release-application =
