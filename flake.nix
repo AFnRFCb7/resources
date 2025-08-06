@@ -9,6 +9,7 @@
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
+						jq ,
 						length ? 64 ,
 						log-directory ? "/tmp/log" ,
 						nixpkgs ,
@@ -116,7 +117,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "log" ;
-                                                            runtimeInputs = [ coreutils pkgs.jq ] ;
+                                                            runtimeInputs = [ coreutils jq pkgs.yq-go ] ;
                                                             text =
                                                                 ''
                                                                     MODE="$1"
@@ -172,7 +173,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "null" ;
-                                                            runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
+                                                            runtimeInputs = [ coreutils ] ;
                                                             text =
                                                                 ''
                                                                     CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
@@ -203,7 +204,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "stale" ;
-                                                            runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
+                                                            runtimeInputs = [ coreutils jq pkgs.yq ] ;
                                                             text =
                                                                 ''
                                                                     CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
