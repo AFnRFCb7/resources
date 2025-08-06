@@ -59,7 +59,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "good" ;
-                                                            runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
+                                                            runtimeInputs = [ coreutils ] ;
                                                             text =
                                                                 ''
                                                                     CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
