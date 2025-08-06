@@ -5,6 +5,7 @@
 			{
 				lib.implementation =
 					{
+					    coreutils ,
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
@@ -30,7 +31,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "bad" ;
-                                                        runtimeInputs = [ pkgs.coreutils ] ;
+                                                        runtimeInputs = [ coreutils ] ;
                                                         text =
                                                             ''
                                                                 HASH="$1"
@@ -58,7 +59,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "good" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                        runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                         text =
                                                             ''
                                                                 CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -115,7 +116,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "log" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
+                                                        runtimeInputs = [ coreutils pkgs.jq pkgs.yq-go ] ;
                                                         text =
                                                             ''
                                                                 MODE="$1"
@@ -171,7 +172,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "null" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                        runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                         text =
                                                             ''
                                                                 CREATION_TIME="$( stat --format "%W" "${ resources-directory }/$HASH/mount" )"
@@ -202,7 +203,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "stale" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                        runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                         text =
                                                             ''
                                                                 CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -230,7 +231,7 @@
                                                 writeShellApplication
                                                     {
                                                         name = "teardown" ;
-                                                        runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
+                                                        runtimeInputs = [ coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
                                                         text =
                                                             let
                                                                 release-application =
