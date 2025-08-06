@@ -14,6 +14,7 @@
 						jq ,
 						length ? 64 ,
 						log-directory ? "/tmp/log" ,
+						nix ,
 						nixpkgs ,
 						release-inputs ? [ ] ,
 						release-text ? null ,
@@ -235,7 +236,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "teardown" ;
-                                                            runtimeInputs = [ coreutils flock gnutar pkgs.nix pkgs.zstd ] ;
+                                                            runtimeInputs = [ coreutils flock gnutar nix pkgs.zstd ] ;
                                                             text =
                                                                 let
                                                                     release-application =
