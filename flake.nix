@@ -23,7 +23,7 @@
 							application =
 								pkgs.writeShellApplication
 								{
-								    name = "application"
+								    name = "application" ;
 								    text =
                                         let
                                             bad =
