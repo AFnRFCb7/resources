@@ -116,7 +116,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "log" ;
-                                                            runtimeInputs = [ coreutils pkgs.jq pkgs.yq-go ] ;
+                                                            runtimeInputs = [ coreutils pkgs.jq ] ;
                                                             text =
                                                                 ''
                                                                     MODE="$1"
