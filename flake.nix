@@ -29,7 +29,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "bad" ;
-                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                    runtimeInputs = [ coreutils ] ;
                                                     text =
                                                         ''
                                                             HASH="$1"
