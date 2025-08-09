@@ -19,7 +19,8 @@
 						secret-directory ? "/tmp/secrets" ,
 						seed ? null ,
 						self ? "SELF" ,
-						system
+						system ,
+						yq-go
 					} @primary :
 						let
 							application =
@@ -115,7 +116,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "log" ;
-                                                    runtimeInputs = [ coreutils jq pkgs.yq-go ] ;
+                                                    runtimeInputs = [ coreutils jq yq-go ] ;
                                                     text =
                                                         ''
                                                             MODE="$1"
