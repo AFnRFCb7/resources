@@ -5,7 +5,6 @@
 			{
 				lib.implementation =
 					{
-						current-time ? 0 ,
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
