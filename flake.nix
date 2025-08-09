@@ -7,6 +7,7 @@
 					{
 					    coreutils ,
 						error ? 64 ,
+						jq ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
 						length ? 64 ,
@@ -114,7 +115,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "log" ;
-                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq-go ] ;
+                                                    runtimeInputs = [ coreutils jq pkgs.yq-go ] ;
                                                     text =
                                                         ''
                                                             MODE="$1"
@@ -173,7 +174,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "null" ;
-                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
+                                                    runtimeInputs = [ coreutils ] ;
                                                     text =
                                                         ''
                                                             CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -204,7 +205,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "stale" ;
-                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
+                                                    runtimeInputs = [ coreutils ] ;
                                                     text =
                                                         ''
                                                             CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
