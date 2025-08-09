@@ -5,7 +5,7 @@
 			{
 				lib.implementation =
 					{
-						current-time ? 0 ,
+					    coreutils ,
 						error ? 64 ,
 						init-inputs ? [ ] ,
 						init-text ? null ,
@@ -57,7 +57,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "good" ;
-                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                     text =
                                                         ''
                                                             CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -114,7 +114,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "log" ;
-                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
+                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq-go ] ;
                                                     text =
                                                         ''
                                                             MODE="$1"
@@ -173,7 +173,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "null" ;
-                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                     text =
                                                         ''
                                                             CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -204,7 +204,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "stale" ;
-                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq ] ;
+                                                    runtimeInputs = [ coreutils pkgs.jq pkgs.yq ] ;
                                                     text =
                                                         ''
                                                             CREATION_TIME="$( stat --format "%W" "${ secret-directory }/$HASH/mount" )"
@@ -232,7 +232,7 @@
                                             pkgs.writeShellApplication
                                                 {
                                                     name = "teardown" ;
-                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
+                                                    runtimeInputs = [ coreutils pkgs.flock pkgs.gnutar pkgs.nix pkgs.zstd ] ;
                                                     text =
                                                         let
                                                             release-application =
