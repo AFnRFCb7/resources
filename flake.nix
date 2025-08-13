@@ -166,7 +166,23 @@
                                                             --argjson TARGETS "$TARGETS" \
                                                             --arg TIMESTAMP "$TIMESTAMP" \
                                                             --arg TYPE "$TYPE" \
-                                                            '{ "arguments" : $ARGUMENTS , "bad" : $BAD , "creation-time" : $CREATION_TIME  , "hash" : $HASH , "has-standard-input" : $HAS_STANDARD_INPUT , "init-application" : $INIT_APPLICATION , "links" : $LINKS , "release-application" : $RELEASE_APPLICATION , "standard-error" : $STANDARD_ERROR , "standard-input" : $STANDARD_INPUT , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS , "targets" : $TARGETS , "timestamp" : $TIMESTAMP , "type" : $TYPE }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
+                                                            '{
+                                                                "arguments" : $ARGUMENTS ,
+                                                                "bad" : $BAD ,
+                                                                "creation-time" : $CREATION_TIME ,
+                                                                "hash" : $HASH ,
+                                                                "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                "init-application" : $INIT_APPLICATION ,
+                                                                "links" : $LINKS ,
+                                                                "release-application" : $RELEASE_APPLICATION ,
+                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                "standard-input" : $STANDARD_INPUT ,
+                                                                "standard-output" : $STANDARD_OUTPUT ,
+                                                                "status" : $STATUS ,
+                                                                "targets" : $TARGETS ,
+                                                                "timestamp" : $TIMESTAMP ,
+                                                                "type" : $TYPE
+                                                            }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
                                                         NOHUP="$( temporary )" || exit ${ builtins.toString hidden-error }
                                                         nohup log "$TEMPORARY_LOG" > "$NOHUP" 2>&1 &
                                                     '' ;
