@@ -659,36 +659,13 @@
                                 writeShellApplication
                                     {
                                         name = "teardown-completed" ;
-                                        runtimeInputs = [ ] ;
+                                        runtimeInputs = [ teardown-final ] ;
                                         text =
                                             if builtins.typeOf release == "null" then
                                                 ''
                                                     HASH="$1"
                                                     CREATION_TIME="$2"
-                                                    TIMESTAMP="$( date +%s )" || exit ${ builtins.toString hidden-error }
-                                                    TYPE="$( basename "$0" )" || exit ${ builtins.toString hidden-error }
-                                                    TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                    GOOD="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                    mkdir --parents "$GOOD"
-                                                    ${ if builtins.typeOf init == "null" then "#" else ''mv "${ resources-directory }/links/$HASH" "$GOOD/links"'' }
-                                                    mv "${ resources-directory }/mounts/$HASH" "$GOOD/mounts"
-                                                    rm --recursive "${ resources-directory }/locks/$HASH"
-                                                    TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                    jq \
-                                                        --null-input \
-                                                        --arg CREATION_TIME "$CREATION_TIME" \
-                                                        --arg GOOD "$GOOD" \
-                                                        --arg HASH "$HASH" \
-                                                        --arg TIMESTAMP "$TIMESTAMP" \
-                                                        --arg TYPE "$TYPE" \
-                                                        '{
-                                                            "creation-time" : $CREATION_TIME ,
-                                                            "good" : $GOOD ,
-                                                            "hash" : $HASH ,
-                                                            "timestamp" : $TIMESTAMP ,
-                                                            "type" : $TYPE
-                                                        }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
-                                                    log "$TEMPORARY_LOG"
+                                                    teardown-final "$HASH" "$CREATION_TIME"
                                                 ''
                                             else
                                                 ''
@@ -698,35 +675,50 @@
                                                     TYPE="$( basename "$0" )" || exit ${ builtins.toString hidden-error }
                                                     TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
                                                     GOOD="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                    mkdir --parents "$GOOD"
-                                                    ${ if builtins.typeOf init == "null" then "#" else ''mv "${ resources-directory }/links/$HASH" "$GOOD/links"'' }
-                                                    mv "${ resources-directory }/mounts/$HASH" "$GOOD/mounts"
-                                                    rm --recursive "${ resources-directory }/locks/$HASH"
-                                                    TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                    jq \
-                                                        --null-input \
-                                                        --arg CREATION_TIME "$CREATION_TIME" \
-                                                        --arg GOOD "$GOOD" \
-                                                        --arg HASH "$HASH" \
-                                                        --arg TIMESTAMP "$TIMESTAMP" \
-                                                        --arg TYPE "$TYPE" \
-                                                        '{
-                                                            "creation-time" : $CREATION_TIME ,
-                                                            "good" : $GOOD ,
-                                                            "hash" : $HASH ,
-                                                            "timestamp" : $TIMESTAMP ,
-                                                            "type" : $TYPE
-                                                        }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
-                                                    log "$TEMPORARY_LOG"
-                                                        STANDARD_INPUT="$( temporary )" || exit ${ builtins.hidden-error }
-                                                        STANDARD_ERROR="$( temporary )" || exit ${ builtins.hidden-error }
-                                                        if ${ release-application }/bin/release > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR" && STATUS="$?" && [[ ! -s "$STANDARD_ERROR" ]]
-                                                        then
-                                                            teardown-completed "$HASH" "$CREATION_TIME"
-                                                        else
-                                                            nohup bad "$HASH" "$STATUS" "$STANDARD_OUTPUT" "$STANDARD_ERROR" false "" > /dev/null 2>&1 &
-                                                        fi
+                                                    STANDARD_INPUT="$( temporary )" || exit ${ builtins.hidden-error }
+                                                    STANDARD_ERROR="$( temporary )" || exit ${ builtins.hidden-error }
+                                                    if ${ release-application }/bin/release > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR" && STATUS="$?" && [[ ! -s "$STANDARD_ERROR" ]]
+                                                    then
+                                                        teardown-final "$HASH" "$CREATION_TIME"
+                                                    else
+                                                        nohup bad "$HASH" "$STATUS" "$STANDARD_OUTPUT" "$STANDARD_ERROR" false "" > /dev/null 2>&1 &
+                                                    fi
                                                 '' ;
+                                    } ;
+                            teardown-final =
+                                writeShellApplication
+                                    {
+                                        name = "teardown-final" ;
+                                        runtimeInputs = [ ] ;
+                                        text =
+                                            ''
+                                                HASH="$1"
+                                                CREATION_TIME="$2"
+                                                TIMESTAMP="$( date +%s )" || exit ${ builtins.toString hidden-error }
+                                                TYPE="$( basename "$0" )" || exit ${ builtins.toString hidden-error }
+                                                TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
+                                                GOOD="$( temporary )" || exit ${ builtins.toString hidden-error }
+                                                mkdir --parents "$GOOD"
+                                                ${ if builtins.typeOf init == "null" then "#" else ''mv "${ resources-directory }/links/$HASH" "$GOOD/links"'' }
+                                                mv "${ resources-directory }/mounts/$HASH" "$GOOD/mounts"
+                                                rm --recursive "${ resources-directory }/locks/$HASH"
+                                                TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
+                                                jq \
+                                                    --null-input \
+                                                    --arg CREATION_TIME "$CREATION_TIME" \
+                                                    --arg GOOD "$GOOD" \
+                                                    --arg HASH "$HASH" \
+                                                    --arg TIMESTAMP "$TIMESTAMP" \
+                                                    --arg TYPE "$TYPE" \
+                                                    '{
+                                                        "creation-time" : $CREATION_TIME ,
+                                                        "good" : $GOOD ,
+                                                        "hash" : $HASH ,
+                                                        "timestamp" : $TIMESTAMP ,
+                                                        "type" : $TYPE
+                                                    }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
+                                                log "$TEMPORARY_LOG"
+                                            '' ;
                                     } ;
                             teardown-processed =
                                 writeShellApplication
