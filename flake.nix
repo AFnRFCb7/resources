@@ -109,7 +109,6 @@
                                                     {
                                                         bad =
                                                             ''
-                                                                echo "f283c432-25be-495b-a497-9f462d1b2e05" >> /tmp/DEBUG
                                                                 HASH="$1"
                                                                 STATUS="$2"
                                                                 STANDARD_OUTPUT_FILE="$3"
@@ -118,7 +117,6 @@
                                                                 STANDARD_INPUT="$6"
                                                                 shift 6
                                                                 ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || exit ${ builtins.toString hidden-error }
-                                                                echo "bfb9a6a8-886e-4024-9ad3-1a631afcbaf1" >> /tmp/DEBUG
                                                                 CREATION_TIME="$( stat --format "%W" "${ resources-directory }/mounts/$HASH" )" || exit ${ builtins.toString hidden-error }
                                                                 LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$HASH" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || exit ${ builtins.toString hidden-error }'' }
                                                                 TARGETS="$( find "${ resources-directory }/mounts/$HASH" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || exit ${ builtins.toString hidden-error }
@@ -128,25 +126,13 @@
                                                                 ${ if builtins.typeOf init == "null" then "#" else ''cp --recursive "${ resources-directory }/links/$HASH" "$BAD/links"'' }
                                                                 rm --recursive --force "${ resources-directory }/locks/$HASH"
                                                                 mv "${ resources-directory }/mounts/$HASH" "$BAD/mounts"
-                                                                echo "b01fb612-087e-4881-8738-5e832d1fd729" >> /tmp/DEBUG
                                                                 flock -u 201
-                                                                echo "f5c4fddf-a955-4a36-b77b-fb8170dda17f" >> /tmp/DEBUG
                                                                 exec 201>&-
-                                                                echo "6ed065f7-1b7a-4ace-bc84-a943198973cf" >> /tmp/DEBUG
                                                                 echo "$CREATION_TIME" > "$BAD/creation-time.asc"
                                                                 echo "$HASH" > "$BAD/hash.asc"
                                                                 RESOLVE="$( which resolve )" || exit ${ builtins.toString hidden-error }
                                                                 ln --symbolic "$RESOLVE" "$BAD/resolve.sh"
                                                                 ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "${ resources-directory }/links/$HASH"'' }
-                                                                # echo "4f0fc092-5794-40b0-9dfb-0d226fd2ff4e" >> /tmp/DEBUG
-                                                                # flock -u 202
-                                                                # echo "dcff554e-62b6-442a-8656-84d41e0c3209" >> /tmp/DEBUG
-                                                                # exec 202>&-
-                                                                # echo "f6be374d-7472-4e9f-802f-0cfd4bf56e5e" >> /tmp/DEBUG
-                                                                # flock -u 201
-                                                                # echo "13d083e0-dd7d-4898-b604-21d13ff368f5" >> /tmp/DEBUG
-                                                                # exec 201>&-
-                                                                echo "d1f547f2-cd3e-423b-9b7a-18a19ab522a9" >> /tmp/DEBUG
                                                                 STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || exit ${ builtins.toString hidden-error }
                                                                 STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || exit ${ builtins.toString hidden-error }
                                                                 rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
@@ -577,22 +563,15 @@
                                                                 flock -u 201
                                                                 exec 201>&-
                                                                 exec 201> ${ resources-directory }/locks/teardown.lock
-                                                                echo "9058f107-e00f-4ef2-9342-40a213f43f26" >> /tmp/DEBUG
                                                                 flock -x 201
-                                                                echo "b6c84f97-6b5a-4318-b42e-1cec229c6a99" >> /tmp/DEBUG
                                                                 exec 202> ${ resources-directory }/locks/setup.lock
-                                                                echo "f61dcf3c-38e7-4331-a9b6-8653fda02c89" >> /tmp/DEBUG
                                                                 flock -x 202
-                                                                echo "2c28511c-af4f-4e7c-9a98-01db7f750950" >> /tmp/DEBUG
                                                                 if [[ ! -d "${ resources-directory }/mounts/$HASH" ]] || [[ "$( stat --format "%W" "${ resources-directory }/mounts/$HASH" )" != "$CREATION_TIME" ]]
                                                                 then
-                                                                    echo "4489ba95-211f-4963-be37-5bd2bfa0955b" >> /tmp/DEBUG
                                                                     teardown-aborted "$HASH" "$CREATION_TIME"
                                                                 else
-                                                                    echo "51c2a72f-2f49-4224-83a1-335c351b1972" >> /tmp/DEBUG
                                                                     teardown-completed "$HASH" "$CREATION_TIME"
                                                                 fi
-                                                                echo "2823f6b5-b006-405f-a684-b814870f7b2c" >> /tmp/DEBUG
                                                             '' ;
                                                         teardown-aborted =
                                                             ''
@@ -624,15 +603,10 @@
                                                                     ''
                                                                 else
                                                                     ''
-                                                                        echo "ebe4993e-3414-4671-ae78-506369fca9d6" >> /tmp/DEBUG
                                                                         HASH="$1"
-                                                                        echo "2d8b1aa4-72c1-49e4-a2d2-a7bf3f681ae8" >> /tmp/DEBUG
                                                                         CREATION_TIME="$2"
-                                                                        echo "59af58c0-aef8-4938-939b-70abd13e5157" >> /tmp/DEBUG
                                                                         STANDARD_OUTPUT="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                                        echo "519d2bb0-6341-40ee-9a34-ebf616d72a4d" >> /tmp/DEBUG
                                                                         STANDARD_ERROR="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                                        echo "24946981-8fd8-4bc6-be46-d74461d2c613" >> /tmp/DEBUG
                                                                         if ${ release-application }/bin/release-application > "$STANDARD_OUTPUT" 2> "$STANDARD_ERROR"
                                                                         then
                                                                             STATUS="$?"
@@ -641,17 +615,12 @@
                                                                         fi
                                                                         flock -u 202
                                                                         exec 202>&-
-                                                                        echo "dc95cee1-f935-450d-94a1-4989bfe31893 STATUS=$STATUS STANDARD_ERROR=$STANDARD_ERROR" >> /tmp/DEBUG
                                                                         if [[ "$STATUS" == "0" ]] && [[ ! -s "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            echo "5ef8aeaf-5977-4439-86c3-bfb83f6b0c49" >> /tmp/DEBUG
                                                                             teardown-final "$HASH" "$CREATION_TIME"
                                                                         else
-                                                                            echo "805ffcbf-1b7a-4ed3-9277-be18925462ef" >> /tmp/DEBUG
                                                                             bad "$HASH" "$STATUS" "$STANDARD_OUTPUT" "$STANDARD_ERROR" false ""
-                                                                            echo "13ada047-be29-497f-8d02-ef1abdcfc80d" >> /tmp/DEBUG
                                                                         fi
-                                                                        echo "5dff7637-081d-4335-8748-871fccfab11d" >> /tmp/DEBUG
                                                                     '' ;
                                                         teardown-final =
                                                             ''
