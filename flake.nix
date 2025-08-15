@@ -128,9 +128,11 @@
                                                                 mv "${ resources-directory }/mounts/$HASH" "$BAD/mounts"
                                                                 flock -u 201
                                                                 exec 201>&-
-                                                                echo "$CREATION_TIME" > "$BAD/creation-time.asc"
-                                                                echo "$HASH" > "$BAD/hash.asc"
                                                                 RESOLVE="$( which resolve )" || exit ${ builtins.toString hidden-error }
+                                                                # shellcheck source=/dev/null
+                                                                source "$MAKE_WRAPPER/nix-support/setup-hook"
+                                                                makeWrapper "$RESOLVE" "$BAD/settle" --set BAD "$BAD" --set CREATION_TIME "$CREATION_TIME" --set HASH "$HASH" --set ACTION settle
+                                                                makeWrapper "$RESOLVE" "$BAD/repair" --set BAD "$BAD" --set CREATION_TIME "$CREATION_TIME" --set HASH "$HASH" --set ACTION repair
                                                                 ln --symbolic "$RESOLVE" "$BAD/resolve.sh"
                                                                 ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "${ resources-directory }/links/$HASH"'' }
                                                                 STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || exit ${ builtins.toString hidden-error }
@@ -285,9 +287,6 @@
                                                             '' ;
                                                         resolve =
                                                             ''
-                                                                BAD="$( dirname "$0" )" || exit ${ builtins.toString remediation-bad-error }
-                                                                CREATION_TIME="$( < "$BAD/creation-time.asc" )" || exit ${ builtins.toString remediation-create-time-error }
-                                                                HASH="$( < "$BAD/hash.asc" )" || exit ${ builtins.toString remediation-hash-error }
                                                                 GOOD="$( temporary )" || exit ${ builtins.toString remediation-good-error }
                                                                 mv "$BAD" "$GOOD"
                                                                 if read -t 0
@@ -301,6 +300,7 @@
                                                                 TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString remediation-temporary-error }
                                                                 jq \
                                                                     --null-input \
+                                                                    --arg ACTION "$ACTION" \
                                                                     --arg BAD "$BAD" \
                                                                     --arg CREATION_TIME "$CREATION_TIME" \
                                                                     --arg GOOD "$GOOD" \
@@ -309,6 +309,7 @@
                                                                     --arg TIMESTAMP "$TIMESTAMP" \
                                                                     --arg TYPE "$TYPE" \
                                                                     '{
+                                                                        "action" : $ACTION ,
                                                                         "bad" : $BAD ,
                                                                         "creation-time" : $CREATION_TIME ,
                                                                         "good" : $GOOD ,
@@ -660,7 +661,7 @@
 						                        in
 						                            ''
 						                                mkdir --parents $out/scripts
-                                                        ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock jq ps which yq-go ] }" ) scripts ) ) }
+                                                        ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock jq ps which yq-go ] } --set MAKE_WRAPPER ${ makeWrapper }" ) scripts ) ) }
 						                            '' ;
 						                name = "derivation" ;
 						                nativeBuildInputs = [ coreutils makeWrapper ] ;
