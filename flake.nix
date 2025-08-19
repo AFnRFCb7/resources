@@ -95,13 +95,11 @@
                                                                                 echo "${ label } command succeeded but it generated standard-error" >&2
                                                                                 exit 133
                                                                             fi
-                                                                            ${ if status != 0 then ''cat /build/DEBUG && echo "${ label } ${ implementation } command succeeded but we expected the status to be ${ builtins.toString status } and we observed 0" >&2'' else "# " }
                                                                             ${ if status != 0 then ''exit 148'' else "# " }
                                                                         else
                                                                             STATUS="$?"
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
-                                                                                cat /build/DEBUG
                                                                                 echo "${ label } ${ implementation } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
                                                                                 exit 249
                                                                             fi
@@ -196,40 +194,20 @@
                                                                                             runtimeInputs = [ coreutils ] ;
                                                                                             text =
                                                                                                 ''
-                                                                                                    echo "10036972-cfcd-4770-a8bd-134f82c264c0 HAS_STANDARD_INPUT=$HAS_STANDARD_INPUT" >> /build/DEBUG
                                                                                                     if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                                     then
-                                                                                                        echo "c0fdd649-636c-44f1-ad3a-a9180ed56d05 ABOUT TO INVOKE STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE ... ${ init "${ resources-directory }/mounts/$HASH" } " >> /build/DEBUG
                                                                                                         if ${ init "${ resources-directory }/mounts/$HASH" } < "$STANDARD_INPUT_FILE" "${ builtins.concatStringsSep "" [ "$" "{" "@" "}" ] }" > "/standard-input" 2> "/standard-error"
                                                                                                         then
                                                                                                             STATUS="$?"
-                                                                                                            echo "7f1873cc-2443-4e44-8bf9-45c9b0c3a9a5 YES ${ init "${ resources-directory }/mounts/$HASH" }" >> /build/DEBUG
-                                                                                                            if [[ -e "$STANDARD_ERROR_FILE" ]]
-                                                                                                            then
-                                                                                                                echo "55c36ea1-68ef-42c3-a6cf-292ec8e9aa77 STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" >> /build/DEBUG
-                                                                                                                cat "$STANDARD_ERROR_FILE" >> /build/DEBUG
-                                                                                                            else
-                                                                                                                echo "e9e9cea2-0b4e-4467-bac3-323a3bf208ce" >> /build/DEBUG
-                                                                                                            fi
-                                                                                                            cat ${ init "${ resources-directory }/mounts/$HASH" } >> /build/DEBUG
                                                                                                         else
                                                                                                             STATUS="$?"
-                                                                                                            echo "cf3c56a2-8d4f-4e86-ad4d-d27c627bb5b0 NO" >> /build/DEBUG
-                                                                                                            if [[ -e "$STANDARD_ERROR_FILE" ]]
-                                                                                                            then
-                                                                                                                echo "60ac6e95-5f34-49c6-bcbf-6229a945b772" >> /build/DEBUG
-                                                                                                            else
-                                                                                                                echo "e06e5f79-a43a-45da-b6e6-e1bc19967f1b" >> /build/DEBUG
-                                                                                                            fi
                                                                                                         fi
                                                                                                     else
                                                                                                         if ${ init "${ resources-directory }/mounts/$HASH" } "${ builtins.concatStringsSep "" [ "$" "{" "@" "}" ] }" > "/standard-input" 2> "/standard-error"
                                                                                                         then
                                                                                                             STATUS="$?"
-                                                                                                            echo "5ba8b238-ccb1-4f4a-aae9-3e9b2b336d32 NO" >> /build/DEBUG
                                                                                                         else
                                                                                                             STATUS="$?"
-                                                                                                            echo "c06b8b93-4dc2-4dd0-8c15-ffc160c7a311 YES" >> /build/DEBUG
                                                                                                         fi
                                                                                                     fi
                                                                                                     echo "$STATUS" > "$STATUS_FILE"
@@ -534,7 +512,6 @@
                                                                         ''
                                                                     else
                                                                         ''
-                                                                            echo "ceedc5b6-3396-46ea-9a8c-8f1597da6b72" >> /build/DEBUG
                                                                             PARENT_0_PID="$$"
                                                                             PARENT_1_PID=$( ps -p "$PARENT_0_PID" -o ppid= | xargs )
                                                                             PARENT_2_PID=$( ps -p "$PARENT_1_PID" -o ppid= | xargs )
@@ -554,16 +531,13 @@
                                                                             fi
                                                                             ARGUMENTS=( "$@" )
                                                                             TRANSIENT=${ transient_ }
-                                                                            echo "d60d2523-6e02-428e-9bb1-869f0741597f" >> /build/DEBUG
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
-                                                                            echo "51169838-cddc-4b30-9b64-7a97a6f9368c" >> /build/DEBUG
                                                                             exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 201
                                                                             exec 202> "${ resources-directory }/locks/$HASH/setup.lock"
                                                                             flock -x 202
-                                                                            echo "c95a5ae2-b4b3-4ba6-a0c1-657ab2226f80" >> /build/DEBUG
                                                                             if [[ -d "${ resources-directory }/mounts/$HASH" ]]
                                                                             then
                                                                                 flock -u 202
@@ -571,15 +545,8 @@
                                                                                 nohup stale "$HASH" "$ORIGINATOR_PID" > /dev/null 2>&1 &
                                                                                 echo -n "${ resources-directory }/mounts/$HASH"
                                                                             else
-                                                                                echo "1e79594f-0db0-418f-b9bc-14e099fbca2b" >> /build/DEBUG
                                                                                 mkdir --parents "${ resources-directory }/mounts/$HASH"
                                                                                 mkdir --parents "${ resources-directory }/links/$HASH"
-                                                                                WASTE=$( temporary )
-                                                                                WASTE=$( temporary )
-                                                                                WASTE=$( temporary )
-                                                                                WASTE=$( temporary )
-                                                                                WASTE=$( temporary )
-                                                                                export WASTE
                                                                                 STANDARD_ERROR_FILE="$( temporary )" || exit ${ builtins.toString standard-error-error }
                                                                                 touch "$STANDARD_ERROR_FILE"
                                                                                 export STANDARD_ERROR_FILE
@@ -589,49 +556,23 @@
                                                                                 STATUS_FILE="$( temporary )" || exit ${ builtins.toString standard-status-error }
                                                                                 export STATUS_FILE
                                                                                 export HAS_STANDARD_INPUT
-                                                                                echo "703c3475-9d55-4d5a-9c6a-44c8dccdfa61" >> /build/DEBUG
                                                                                 ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }"
-                                                                                if [[ -e "$STANDARD_ERROR_FILE" ]]
-                                                                                then
-                                                                                    echo "36e0ec57-2ddc-4306-ace2-deef9817d026 STANDARD_ERROR_FILE YES" >> /build/DEBUG
-                                                                                    echo "$STANDARD_ERROR_FILE" >> /build/DEBUG
-                                                                                    # cat "$STANDARD_ERROR_FILE" >> /build/DEBUG
-                                                                                else
-                                                                                    echo "f606c822-5951-4aa0-9fe1-681e6f38f25b STANDARD_ERROR_FILE NO" >> /build/DEBUG
-                                                                                fi
-                                                                                echo "51e8f2ae-a5b5-4351-88f2-17acf96035cb" >> /build/DEBUG
                                                                                 STATUS="$( < "$STATUS_FILE" )" || exit ${ builtins.toString standard-status-error }
-                                                                                echo "6f3fdd73-bf7e-45cf-a57e-1f490c57a090 STATUS=$STATUS" >> /build/DEBUG
                                                                                 flock -u 202
                                                                                 exec 202>&-
-                                                                                echo "01335b9c-b7d4-4655-b6e3-2027c145b719 HAS_STANDARD_INPUT=$HAS_STANDARD_INPUT" >> /build/DEBUG
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
-                                                                                    echo "cae8c12e-c5c1-4bdf-a221-0fe0fae26a98" >> /build/DEBUG
                                                                                     rm "$STANDARD_INPUT_FILE"
                                                                                 fi
-                                                                                echo "6a8fe0c3-9cc4-478a-9b14-ffaa18c0cfff FIND ME STATUS=$STATUS" >> /build/DEBUG
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "${ resources-directory }/mounts/$HASH" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
-                                                                                    echo "3db34526-2049-45e8-afae-e363bc31f141" >> /build/DEBUG
-                                                                                    if [[ -e "$STANDARD_ERROR_FILE" ]]
-                                                                                    then
-                                                                                        echo "592c4203-7ff1-4be5-a60f-1ffeca9f28d7" >> /build/DEBUG
-                                                                                    else
-                                                                                        echo "8a1848e4-ff98-4c4d-ae1e-900c86eff251" >> /build/DEBUG
-                                                                                    fi
                                                                                     nohup good "$HASH" "$ORIGINATOR_PID" "$TRANSIENT" "$STATUS" "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE" "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /dev/null 2>&1 &
-                                                                                    echo "caf41f71-8927-41d2-8317-c5fcb90e7ab1" >> /build/DEBUG
                                                                                     echo -n "${ resources-directory }/mounts/$HASH"
-                                                                                    echo "009986a3-a9d1-4a3b-8dc8-6b4a986e644e" >> /build/DEBUG
                                                                                 else
-                                                                                    echo "e242e944-0274-45ab-b311-211373c30d81" >> /build/DEBUG
                                                                                     nohup bad "$HASH" "$TRANSIENT" "$STATUS" "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE" "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /dev/null 2>&1 &
                                                                                     exit ${ builtins.toString initialization-error }
                                                                                 fi
-                                                                                echo "e7a11009-180e-46b8-bd2c-91933e5837a2" >> /build/DEBUG
                                                                             fi
-                                                                            echo "dcfb8219-2a2e-41a3-aeb0-832c79e3873b" >> /build/DEBUG
                                                                         '' ;
                                                                 stale =
                                                                     ''
