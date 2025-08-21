@@ -77,6 +77,7 @@
                                                                 runtimeInputs = [ coreutils ] ;
                                                                 text =
                                                                     ''
+                                                                        echo "5718cb62-8b4e-4cb4-b35b-0349ac8be86b INVOKE_RESOURCE PID=$$ ... ${ implementation }" >> /build/DEBUG
                                                                         mkdir --parents ${ test-directory }
                                                                         if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
                                                                         then
@@ -100,18 +101,18 @@
                                                                             STATUS="$?"
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
-                                                                                echo "${ label } ${ implementation } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
+                                                                                echo "${ label } command failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
                                                                                 exit 249
                                                                             fi
                                                                             if [[ -s ${ test-directory }/standard-output ]]
                                                                             then
-                                                                                cat ${ test-directory }/standard-output
                                                                                 echo "${ label } command failed but it generated standard-output"
                                                                                 exit 113
                                                                             fi
                                                                             if [[ -s ${ test-directory }/standard-error ]]
                                                                             then
-                                                                                echo "${ label }:  Command failed but it generated standard-error"
+                                                                                cat ${ test-directory }/standard-error
+                                                                                echo "${ label } command failed but it generated standard-error"
                                                                                 exit 163
                                                                             fi
                                                                         fi
@@ -122,22 +123,37 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ coreutils invoke-resource ] ;
+                                                                runtimeInputs = [ coreutils invoke-resource findutils ] ;
                                                                 text =
                                                                     ''
+                                                                        echo "d2240b23-7626-4be1-ae2a-a94542e945f6 ROOT PID=$$" > /build/DEBUG
                                                                         OUT="$1"
                                                                         touch "$OUT"
                                                                         if [[ -e ${ resources-directory } ]]
                                                                         then
-                                                                            echo ${ label }:  We expected the resources directory to not initially exist >&2
+                                                                            echo ${ label } We expected the resources directory to not initially exist >&2
                                                                             exit 179
                                                                         fi
                                                                         if [[ -e ${ test-directory } ]]
                                                                         then
-                                                                            echo ${ label }:  We expected the test directory to not initially exit >&2
+                                                                            echo ${ label } We expected the test directory to not initially exit >&2
                                                                             exit 135
                                                                         fi
                                                                         invoke-resource
+                                                                        sleep 10s
+                                                                        find ${ resources-directory } >&2
+                                                                        if [[ ! -d ${ resources-directory }/bad ]]
+                                                                        then
+                                                                            cat ${ resources-directory }/logs/log.yaml
+                                                                            cat /build/DEBUG
+                                                                            echo ${ label } We expected ${ resources-directory }/bad to be an existing directory >&2
+                                                                            exit 226
+                                                                        fi
+                                                                        # if [[ -n "$( find ${ resources-directory }/bad -mindepth 1 -maxdepth 1 )" ]]
+                                                                        # then
+                                                                        #     echo ${ label } We expected the ${ resources-directory }/bad to be an empty directory >&2
+                                                                        #     exit 192
+                                                                        # fi
                                                                     '' ;
                                                             } ;
                                                     in
@@ -180,40 +196,10 @@
                                                                             [
                                                                                 "--bind ${ resources-directory }/mounts/$HASH /mount"
                                                                                 "--bind ${ resources-directory }/links/$HASH /links"
-                                                                                "--bind $STANDARD_INPUT_FILE /standard-input"
-                                                                                "--bind $STANDARD_ERROR_FILE /standard-error"
                                                                                 "--tmpfs /scratch"
                                                                             ] ;
                                                                         name = "init-application" ;
-                                                                        runScript =
-                                                                            let
-                                                                                application =
-                                                                                    writeShellApplication
-                                                                                        {
-                                                                                            name = "script" ;
-                                                                                            runtimeInputs = [ coreutils ] ;
-                                                                                            text =
-                                                                                                ''
-                                                                                                    if [[ "$HAS_STANDARD_INPUT" == "true" ]]
-                                                                                                    then
-                                                                                                        if ${ init "${ resources-directory }/mounts/$HASH" } < "$STANDARD_INPUT_FILE" "${ builtins.concatStringsSep "" [ "$" "{" "@" "}" ] }" > "/standard-input" 2> "/standard-error"
-                                                                                                        then
-                                                                                                            STATUS="$?"
-                                                                                                        else
-                                                                                                            STATUS="$?"
-                                                                                                        fi
-                                                                                                    else
-                                                                                                        if ${ init "${ resources-directory }/mounts/$HASH" } "${ builtins.concatStringsSep "" [ "$" "{" "@" "}" ] }" > "/standard-input" 2> "/standard-error"
-                                                                                                        then
-                                                                                                            STATUS="$?"
-                                                                                                        else
-                                                                                                            STATUS="$?"
-                                                                                                        fi
-                                                                                                    fi
-                                                                                                    echo "$STATUS" > "$STATUS_FILE"
-                                                                                                '' ;
-                                                                                        } ;
-                                                                                in "${ application }/bin/script ${ builtins.concatStringsSep "" [ "$" "{" "@" "}" ] }" ;
+                                                                        runScript = init "${ resources-directory }/mounts/$HASH" ;
                                                                     } ;
                                                         release-application =
                                                             if builtins.typeOf release == "null" then null
@@ -318,6 +304,7 @@
                                                                         STANDARD_INPUT="$8"
                                                                         shift 8
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || exit ${ builtins.toString hidden-error }
+                                                                        echo "60d3d468-ce49-4f79-9db5-f9580f254880 GOOD ORIGINATOR_PID=$ORIGINATOR_PID" >> /build/DEBUG
                                                                         CREATION_TIME="$( stat --format "%W" "${ resources-directory }/mounts/$HASH" )" || exit ${ builtins.toString hidden-error }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$HASH" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || exit ${ builtins.toString hidden-error }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || exit ${ builtins.toString hidden-error }
@@ -483,11 +470,11 @@
                                                                                 timeout 1m cat > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || exit ${ builtins.toString standard-input-cat-error }
                                                                                 rm "$STANDARD_INPUT_FILE"
-                                                                                ORIGINATOR_PID="$PARENT_3_PID"
+                                                                                ORIGINATOR_PID="$PARENT_1_PID"
                                                                             else
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
-                                                                                ORIGINATOR_PID="$PARENT_2_PID"
+                                                                                ORIGINATOR_PID="$PARENT_1_PID"
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
@@ -523,14 +510,15 @@
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 timeout 1m cat > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || exit ${ builtins.toString standard-input-cat-error }
-                                                                                ORIGINATOR_PID="$PARENT_3_PID"
+                                                                                ORIGINATOR_PID="$PARENT_1_PID"
                                                                             else
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
-                                                                                ORIGINATOR_PID="$PARENT_2_PID"
+                                                                                ORIGINATOR_PID="$PARENT_1_PID"
                                                                             fi
                                                                             ARGUMENTS=( "$@" )
                                                                             TRANSIENT=${ transient_ }
+                                                                            echo "878573b2-e85d-4dad-9161-3d9f96a476b7 SETUP PARENT_0_PID=$PARENT_0_PID PARENT_1_PID=$PARENT_1_PID PARENT_2_PID=$PARENT_2_PID PARENT_3_PID=$PARENT_3_PID ORIGINATOR_PID=$ORIGINATOR_PID" >> /build/DEBUG
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
@@ -548,22 +536,28 @@
                                                                                 mkdir --parents "${ resources-directory }/mounts/$HASH"
                                                                                 mkdir --parents "${ resources-directory }/links/$HASH"
                                                                                 STANDARD_ERROR_FILE="$( temporary )" || exit ${ builtins.toString standard-error-error }
-                                                                                touch "$STANDARD_ERROR_FILE"
-                                                                                export STANDARD_ERROR_FILE
                                                                                 STANDARD_OUTPUT_FILE="$( temporary )" || exit ${ builtins.toString standard-output-error }
-                                                                                touch "$STANDARD_OUTPUT_FILE"
-                                                                                export STANDARD_OUTPUT_FILE
-                                                                                STATUS_FILE="$( temporary )" || exit ${ builtins.toString standard-status-error }
-                                                                                export STATUS_FILE
-                                                                                export HAS_STANDARD_INPUT
-                                                                                ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }"
-                                                                                STATUS="$( < "$STATUS_FILE" )" || exit ${ builtins.toString standard-status-error }
-                                                                                flock -u 202
-                                                                                exec 202>&-
+                                                                                echo "581576ab-9d2f-41f7-b5ba-bfb1a42a0c6e PID=$$" >> /build/DEBUG
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
+                                                                                    if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                    then
+                                                                                        STATUS="$?"
+                                                                                    else
+                                                                                        STATUS="$?"
+                                                                                    fi
                                                                                     rm "$STANDARD_INPUT_FILE"
+                                                                                else
+                                                                                    if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                    then
+                                                                                        STATUS="$?"
+                                                                                    else
+                                                                                        STATUS="$?"
+                                                                                    fi
                                                                                 fi
+                                                                                echo "fae1341d-953c-46ef-8524-e89c94e2ae1b" >> /build/DEBUG
+                                                                                flock -u 202
+                                                                                exec 202>&-
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "${ resources-directory }/mounts/$HASH" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
                                                                                     nohup good "$HASH" "$ORIGINATOR_PID" "$TRANSIENT" "$STATUS" "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE" "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /dev/null 2>&1 &
@@ -649,11 +643,17 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
+                                                                        echo "856f0129-6445-40ec-a7b4-9debaef0e413" >> /build/DEBUG
                                                                         ORIGINATOR_PID="$1"
+                                                                        echo "2c5452d7-0b34-4ed3-99ef-fa1b2166cb78" >> /build/DEBUG
                                                                         HASH="$2"
+                                                                        echo "0c774c9b-1792-418b-825c-a52f4752e910" >> /build/DEBUG
                                                                         CREATION_TIME="$3"
+                                                                        echo "72db9e4f-08f2-409e-b894-eec3b2f34aea" >> /build/DEBUG
                                                                         TIMESTAMP="$( date +%s )" || exit ${ builtins.toString hidden-error }
+                                                                        echo "d0507451-7cdb-4f26-bfeb-ad2443e493cf" >> /build/DEBUG
                                                                         TYPE="$( basename "$0" )" || exit ${ builtins.toString hidden-error }
+                                                                        echo "86c9e947-12a9-4e5d-bb48-492a464fb3a6" >> /build/DEBUG
                                                                         TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
                                                                         jq \
                                                                             --null-input \
@@ -669,10 +669,15 @@
                                                                                     "timestamp" : $TIMESTAMP ,
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
+                                                                        echo "8a2e5531-47a8-4b05-99d0-d798f8a1dbec" >> /build/DEBUG
                                                                         NOHUP="$( temporary )" || exit ${ builtins.toString hidden-error }
+                                                                        echo "a12ff2d1-806d-4b36-9038-e6a92254fe8c" >> /build/DEBUG
                                                                         nohup log "$TEMPORARY_LOG" > "$NOHUP" 2>&1 &
+                                                                        echo "5fcc2e14-761b-42b4-ad3b-cc8df257210c ORIGINATOR_PID=$ORIGINATOR_PID" >> /build/DEBUG
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
+                                                                        echo "187927c0-0b08-408f-be6e-bb7d586e2a1c" >> /build/DEBUG
                                                                         stall-for-cleanup "$HASH" "$CREATION_TIME"
+                                                                        echo "badb0f54-04ee-4e7e-ae97-f531f8f4d9f7" >> /build/DEBUG
                                                                     '' ;
                                                                 stall-for-symlink =
                                                                     ''
@@ -696,6 +701,7 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
+                                                                        echo "24f59f7b-eaae-4baa-8add-ea3ced923ffb" >> /build/DEBUG
                                                                         HASH="$1"
                                                                         CREATION_TIME="$2"
                                                                         flock -u 201
@@ -704,6 +710,7 @@
                                                                         flock -x 201
                                                                         exec 202> ${ resources-directory }/locks/setup.lock
                                                                         flock -x 202
+                                                                        echo "706452dd-728f-4109-8a75-4d0e32873903" >> /build/DEBUG
                                                                         if [[ ! -d "${ resources-directory }/mounts/$HASH" ]] || [[ "$( stat --format "%W" "${ resources-directory }/mounts/$HASH" )" != "$CREATION_TIME" ]]
                                                                         then
                                                                             teardown-aborted "$HASH" "$CREATION_TIME"
