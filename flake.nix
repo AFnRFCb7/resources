@@ -68,9 +68,7 @@
                                 } :
                                     mkDerivation
                                         {
-                                            installPhase = "root $out" ;
-                                            name = "test-expected" ;
-                                            nativeBuildInputs =
+                                            installPhase =
                                                 let
                                                     command =
                                                         index :
@@ -89,11 +87,11 @@
                                                                                             echo ${ command.command } > "$OUT/${ builtins.toString index }/command"
                                                                                             ${ command.command }
                                                                                             cp --recursive ${ resources-directory } "$OUT/${ builtins.toString index }/checkpoint"
-                                                                                            touch "$OUT/${ builtins.toString index }/${ builtins.toString index }/checkpoint/.gitkeep"
-                                                                                            if ! diff --recursive ${ command.checkpoint } ${ resources-directory }
+                                                                                            find "$OUT/${ builtins.toString index }/checkpoint -type d -exec touch {}/.gitkeep \;
+                                                                                            if ! diff --recursive ${ command.checkpoint } "$OUT/${ builtins.toString index }/checkpoint"
                                                                                             then
-                                                                                                echo We expected the result of the ${ builtins.toString index }th command ${ command.command } to be ${ command.checkpoint } but it was ${ resources-directory } >&2
-                                                                                                exit 148
+                                                                                                echo We expected the result of the ${ builtins.toString index }th command ${ command.command } to be $OUT/${ builtins.toString index }/checkpoint but it was ${ resources-directory } >&2
+                                                                                                ${ errors_.df837f22 }
                                                                                             fi
                                                                                         '' ;
                                                                         } ;
@@ -102,86 +100,85 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "invoke-resource" ;
-                                                                runtimeInputs = [ coreutils ] ;
+                                                                runtimeInputs = [ coreutils flock ] ;
                                                                 text =
                                                                     ''
-                                                                        OUT="$1"
                                                                         mkdir --parents "$OUT/0"
                                                                         mkdir --parents ${ test-directory }
                                                                         echo "${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error" > "$OUT/0/command.sh"
                                                                         if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
                                                                         then
-                                                                            MOUNT="$( < ${ test-directory }/standard-output )" || exit ${ builtins.toString hidden-error }
+                                                                            MOUNT="$( < ${ test-directory }/standard-output )" || ${ errors_.b982047f }
                                                                             if [[ ! -d "$MOUNT" ]]
                                                                             then
-                                                                                echo "${ label } command succeeded but mount $MOUNT is not a directory" >&2
-                                                                                exit 216
+                                                                                echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not a directory" >&2
+                                                                                ${ errors_.e551352c }
                                                                             elif [[ "$MOUNT" != "${ mount }" ]]
                                                                             then
-                                                                                echo "${ label } command succeeded but mount $MOUNT is not the expected directory ${ mount }" >&2
-                                                                                exit 102
+                                                                                echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not the expected directory ${ mount }" >&2
+                                                                                ${ errors_.e484b646 }
                                                                             fi
                                                                             if [[ -s ${ test-directory }/standard-error ]]
                                                                             then
-                                                                                echo "${ label } command succeeded but it generated standard-error" >&2
-                                                                                exit 133
+                                                                                echo "${ label } command ${ implementation } succeeded but it generated standard-error" >&2
+                                                                                ${ errors_.eede733e }
                                                                             fi
                                                                             ${ if status != 0 then ''exit 148'' else "# " }
                                                                         else
                                                                             STATUS="$?"
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
-                                                                                echo "${ label } command failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
-                                                                                exit 249
+                                                                                echo "${ label } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
+                                                                                ${ errors_.e3be9f66 }
                                                                             fi
                                                                             if [[ -s ${ test-directory }/standard-output ]]
                                                                             then
-                                                                                echo "${ label } command failed but it generated standard-output"
-                                                                                exit 113
+                                                                                echo "${ label } command failed but it generated standard-output" >&2
+                                                                                ${ errors_.c4cb3838 }
                                                                             fi
                                                                             if [[ -s ${ test-directory }/standard-error ]]
                                                                             then
-                                                                                cat ${ test-directory }/standard-error
-                                                                                echo "${ label } command failed but it generated standard-error"
-                                                                                exit 163
+                                                                                echo "${ label } command ${ implementation } failed but it generated standard-error"
+                                                                                ${ errors_.dde5524a }
                                                                             fi
                                                                         fi
-                                                                        find ${ resources-directory }/links ${ resources-directory }/locks ${ resources-directory }/mounts -maxdepth 2 -type d -exec touch {}/.gitkeep \;
+                                                                        exec 200> ${ resources-directory }/test.lock
+                                                                        flock -x 200
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
+                                                                        find "$OUT/0/checkpoint-pre" -type d -exec touch {}/.gitkeep \;
                                                                         if ! diff --recursive ${ checkpoint-pre } "$OUT/0/checkpoint-pre"
                                                                         then
-                                                                            echo ${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } >&2
-                                                                            exit 144
+                                                                            echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
+                                                                            ${ errors_.a6f0de4f }
                                                                         fi
-                                                                        # exit 185
                                                                     '' ;
                                                             } ;
                                                     root =
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ coreutils diffutils findutils invoke-resource stall ] ;
+                                                                runtimeInputs = [ coreutils diffutils findutils flock invoke-resource ] ;
                                                                 text =
                                                                     ''
-                                                                        OUT="$1"
                                                                         if [[ -e ${ resources-directory } ]]
                                                                         then
                                                                             echo ${ label } We expected the resources directory to not initially exist >&2
-                                                                            exit 179
+                                                                            ${ errors_.a6e628b6 }
                                                                         fi
                                                                         if [[ -e ${ test-directory } ]]
                                                                         then
                                                                             echo ${ label } We expected the test directory to not initially exit >&2
                                                                             exit 135
                                                                         fi
-                                                                        invoke-resource "$OUT"
-                                                                        stall
-                                                                        find ${ resources-directory }/links ${ resources-directory }/bad ${ resources-directory }/locks ${ resources-directory }/mounts -maxdepth 1 -type d -exec touch {}/.gitkeep \;
+                                                                        invoke-resource
+                                                                        exec 200> ${ resources-directory }/test.lock
+                                                                        flock -x 200
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
+                                                                        find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
                                                                         if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
                                                                         then
-                                                                            echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } >&2
-                                                                            exit 184
+                                                                            echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
+                                                                            ${ errors_.b42acd0d }
                                                                         fi
                                                                         # ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
                                                                         # if [[ -n "$( find ${ resources-directory }/bad -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
@@ -195,42 +192,26 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "stall" ;
-                                                                runtimeInputs = [ inotify-tools ] ;
+                                                                runtimeInputs = [ flock ] ;
                                                                 text =
-                                                                    if status == 0 then
-                                                                        ''
-                                                                            inotifywait --quiet --timeout 60 --event create ${ resources-directory }
-                                                                            if [[ ! -d ${ resources-directory }/logs ]]
-                                                                            then
-                                                                                echo ${ label } We expected ${ resources-directory }/logs to be created >&2
-                                                                                exit 246
-                                                                            fi
-                                                                            inotifywait --quiet --timeout 60 --event create ${ resources-directory }
-                                                                            if [[ ! -d ${ resources-directory }/bad ]]
-                                                                            then
-                                                                                echo ${ label } We expected ${ resources-directory }/bad to be created >&2
-                                                                                exit 226
-                                                                            fi
-                                                                        ''
-                                                                    else
-                                                                        ''
-                                                                            inotifywait --quiet --timeout 60 --event create ${ resources-directory }
-                                                                            if [[ ! -d ${ resources-directory }/bad ]]
-                                                                            then
-                                                                                echo ${ label } We expected ${ resources-directory }/bad to be created >&2
-                                                                                exit 226
-                                                                            fi
-                                                                            inotifywait --quiet --timeout 60 --event create ${ resources-directory }
-                                                                            if [[ ! -d ${ resources-directory }/logs ]]
-                                                                            then
-                                                                                echo ${ label } We expected ${ resources-directory }/logs to be created >&2
-                                                                                exit 246
-                                                                            fi
-                                                                            sleep 10s
-                                                                        '' ;
+                                                                    ''
+                                                                        find ${ resources-directory }/locks -type f | while read -r LOCK
+                                                                        do
+                                                                            exec 201> "$LOCK"
+                                                                            flock -x 201
+                                                                        done
+                                                                    '' ;
                                                             } ;
                                                     in
-                                                        [ root ] ;
+                                                        ''
+                                                            mkdir --parents $out/bin
+                                                            makeWrapper ${ invoke-resource }/bin/invoke-resource $out/bin/invoke-resource --set OUT $out
+                                                            makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out
+                                                            makeWrapper ${ stall }/bin/stall $out/bin/stall
+                                                            $out/bin/root
+                                                        '' ;
+                                            name = "test-expected" ;
+                                            nativeBuildInputs = [ makeWrapper ] ;
                                             src = ./. ;
                                         } ;
                             errors_ =
@@ -241,14 +222,18 @@
                                                 [
                                                     "a0721efc"
                                                     "a69f5bc2"
+                                                    "a6f0de4f"
                                                     "a7486bbb"
+                                                    "a6e628b6"
                                                     "ae2d1658"
                                                     "aee914c6"
                                                     "a1b19aa5"
                                                     "a32a15dc"
                                                     "a3bc4273"
                                                     "a3c6c75b"
+                                                    "b42acd0d"
                                                     "b63481a0"
+                                                    "b982047f"
                                                     "bf282501"
                                                     "b07f7374"
                                                     "b385d889"
@@ -258,23 +243,33 @@
                                                     "cd255035"
                                                     "c141fe3b"
                                                     "cfb26c78"
+                                                    "c4cb3838"
                                                     "d162db9f"
                                                     "d2cc81ec"
+                                                    "d565ecbe"
                                                     "dc662c73"
+                                                    "dde5524a"
                                                     "df0ddf7b"
+                                                    "df837f22"
                                                     "d6df365c"
                                                     "d8a96cd7"
                                                     "e1892647"
+                                                    "e3be9f66"
                                                     "e4782f79"
                                                     "e139686a"
+                                                    "e484b646"
+                                                    "e551352c"
                                                     "e5fa2135"
                                                     "e9c39c16"
                                                     "ea11161a"
+                                                    "eede733e"
+                                                    "faa95dc4"
                                                     "f2f6f4e4"
                                                     "fb67f7f4"
                                                     "f3ead1ff"
                                                     "f66f966d"
                                                     "f696cd77"
+                                                    "f75c4adf"
                                                     "ffff1b30"
                                                     "f13f84ae"
                                                     "f2409776"
@@ -284,8 +279,9 @@
                                                     "faa95dc4"
                                                     "f9b0e418"
                                                 ] ;
-                                            in builtins.genList ( index : { name = builtins.elemAt list index ; value = index + 100 ; } ) ( builtins.length list ) ;
+                                            in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.elemAt list index ; value = ( mod index 235 ) + 10 ; } ) ( builtins.length list ) ) ;
                                     integers = defaults // errors ;
+                                    mod = a : b : a - ( b * ( a / b ) ) ;
                                     in builtins.mapAttrs ( name : value : "exit ${ builtins.toString value }" ) integers ;
                             implementation =
                                 let
@@ -335,8 +331,8 @@
                                                                     {
                                                                         extraBwrapArgs =
                                                                             [
-                                                                                "--ro-bind ${ resources-directory }/mounts/$HASH /mount"
-                                                                                "--ro-bind ${ resources-directory }/mounts ${ resources-directory }/mounts"
+                                                                                "--ro-bind $MOUNT /mount"
+                                                                                "--ro-bind ${ resources-directory } ${ resources-directory }"
                                                                                 "--tmpfs /scratch"
                                                                             ] ;
                                                                         name = "release-application" ;
@@ -346,6 +342,7 @@
                                                             {
                                                                 bad =
                                                                     ''
+                                                                        LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ errors_.a1b19aa5 }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.bf995f33 }'' }
                                                                         TARGETS="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.f3ead1ff }
@@ -357,8 +354,8 @@
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
                                                                         # shellcheck source=/dev/null
                                                                         source "$MAKE_WRAPPER/nix-support/setup-hook"
+                                                                        makeWrapper "$RECOVERY_BIN" "$RECOVERY/repair" --set ACTION repair --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
                                                                         makeWrapper "$RECOVERY_BIN" "$RECOVERY/settle" --set ACTION settle --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
-                                                                        makeWrapper "$RECOVERY_BIN" "$RECOVERY/repair" --set ACTION settle --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
                                                                         STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ errors_.c141fe3b }
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ errors_.f13f84ae }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
@@ -386,7 +383,7 @@
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
                                                                                 "links" : $LINKS ,
-                                                                                "mount-indexs" : $MOUNT_INDEX
+                                                                                "mount-index" : $MOUNT_INDEX ,
                                                                                 "release-application" : $RELEASE_APPLICATION ,
                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
@@ -395,12 +392,12 @@
                                                                                 "targets" : $TARGETS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log-bad $HASH" > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | nohup log-bad > "$NOHUP" 2>&1 &
                                                                     '' ;
                                                                 good =
                                                                     ''
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ errors_.ea11161a }
-                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resource-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.a7486bbb }
+                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.a7486bbb }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ errors_.a69f5bc2 }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ errors_.dc662c73 }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
@@ -409,11 +406,11 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg INIT_APPLICATION ${ if builtins.typeOf init-application == "null" then "null" else "${ init-application }/bin/init-application" } \
                                                                             --argjson LINKS "$LINKS" \
+                                                                            --arg MOUNT "$MOUNT" \
                                                                             --arg RELEASE_APPLICATION ${ if builtins.typeOf release-application == "null" then "null" else "${ release-application }/bin/release-application" } \
                                                                             --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
@@ -422,11 +419,11 @@
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
-                                                                                "creation-time" : $CREATION_TIME  ,
                                                                                 "hash" : $HASH ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
                                                                                 "links" : $LINKS ,
+                                                                                "mount" : $MOUNT ,
                                                                                 "release-application" : $RELEASE_APPLICATION ,
                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
@@ -434,7 +431,7 @@
                                                                                 "status" : $STATUS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log "$TEMPORARY_LOG" > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
                                                                         stall-for-process
                                                                     '' ;
                                                                 log =
@@ -465,14 +462,12 @@
                                                                         TYPE="$( basename "$0" )" || ${ errors_.a32a15dc }
                                                                         NOHUP="$( temporary )" || ${ errors_.e139686a }
                                                                         jq \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             --null-input \
                                                                             '{
-                                                                                "creation-time" : $CREATION_TIME ,
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "type" : $TYPE
@@ -517,7 +512,7 @@
                                                                         flock -x 205
                                                                         if [[ -s ${ resources-directory }/counter.increment ]]
                                                                         then
-                                                                            OLD="$( < ${ resources-directory }/counter.increment )" || exit ${ builtins.toString hidden-error }
+                                                                            OLD="$( < ${ resources-directory }/counter.increment )" || ${ errors_.d565ecbe }
                                                                         else
                                                                             OLD="0"
                                                                         fi
@@ -545,6 +540,8 @@
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
+                                                                            exec 200> "${ resources-directory }/test.lock"
+                                                                            flock -s 200
                                                                             exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 201
                                                                             exec 202> "${ resources-directory }/locks/$HASH/setup.lock"
@@ -560,6 +557,7 @@
                                                                                 echo -n "$MOUNT"
                                                                             else
                                                                                 MOUNT_INDEX="$( sequential )" || ${ errors_.d162db9f }
+                                                                                export MOUNT_INDEX
                                                                                 MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
                                                                                 mkdir --parents "$MOUNT"
                                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
@@ -588,17 +586,19 @@
                                                                             ARGUMENTS=( "$@" )
                                                                             TRANSIENT=${ transient_ }
                                                                             export TRANSIENT
-                                                                            ORIGINATOR_PID=$PPID
+                                                                            export ORIGINATOR_PID=$PPID
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
+                                                                            exec 200> "${ resources-directory }/test.lock"
+                                                                            flock -s 200
                                                                             exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 201
                                                                             exec 202> "${ resources-directory }/locks/$HASH/setup.lock"
                                                                             flock -x 202
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
-                                                                                MOUNT="$( readlink ${ resources-directory }/canonical/$HASH }" || ${ errors_.ae2d1658 }
+                                                                                MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ errors_.ae2d1658 }
                                                                                 export MOUNT
                                                                                 flock -u 202
                                                                                 exec 202>&-
@@ -607,6 +607,7 @@
                                                                                 echo -n "$MOUNT"
                                                                             else
                                                                                 MOUNT_INDEX="$( sequential )" || ${ errors_.cab66847 }
+                                                                                export MOUNT_INDEX
                                                                                 LINK="${ resources-directory }/links/$MOUNT_INDEX"
                                                                                 export LINK
                                                                                 mkdir --parents "$LINK"
@@ -635,15 +636,15 @@
                                                                                     fi
                                                                                 fi
                                                                                 export STATUS
-                                                                                flock -u 202
-                                                                                exec 202>&-
-                                                                                if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "${ resources-directory }/mounts/$HASH" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
+                                                                                # flock -u 202
+                                                                                # exec 202>&-
+                                                                                if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
-                                                                                    NOHUP="$( temporary )" || ${ errors.faa95dc4 }
+                                                                                    NOHUP="$( temporary )" || ${ errors_.faa95dc4 }
                                                                                     nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
                                                                                     echo -n "$MOUNT"
                                                                                 else
-                                                                                    NOHUP="$( temporary )" || ${ errors.aee914c6 }
+                                                                                    NOHUP="$( temporary )" || ${ errors_.aee914c6 }
                                                                                     nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
                                                                                     ${ errors_.b385d889 }
                                                                                 fi
@@ -657,7 +658,7 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX"
+                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -674,7 +675,6 @@
                                                                         NOHUP="$( temporary )" || ${ errors_.df0ddf7b }
                                                                         jq \
                                                                             --null-input \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HEAD "$HEAD" \
                                                                             --arg TYPE "$TYPE" \
@@ -697,7 +697,7 @@
                                                                         mkdir --parents ${ resources-directory }/links
                                                                         find ${ resources-directory }/links -mindepth 2 -maxdepth 2 -type l | while read -r CANDIDATE
                                                                         do
-                                                                            RESOLVED="$( readlink --canonicalize "$CANDIDATE" )" || ${ errors_1.e9c39c16 }
+                                                                            RESOLVED="$( readlink --canonicalize "$CANDIDATE" )" || ${ errors_.e9c39c16 }
                                                                             if [[ "$RESOLVED" == "$MOUNT" ]]
                                                                             then
                                                                                 echo "$CANDIDATE"
@@ -711,7 +711,6 @@
                                                                         NOHUP="$( temporary )" || ${ errors_.e1892647 }
                                                                         jq \
                                                                             --null-input \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                             --arg TYPE "$TYPE" \
@@ -720,6 +719,8 @@
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
+                                                                        flock -u 200
+                                                                        exec 200>&-
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                                         stall-for-cleanup
                                                                     '' ;
@@ -756,6 +757,7 @@
                                                                                 teardown-completed
                                                                             else
                                                                                 teardown-aborted
+                                                                            fi
                                                                         else
                                                                             teardown-aborted
                                                                         fi
@@ -766,11 +768,9 @@
                                                                         TYPE="$( basename "$0" )" || ${ errors_.f75c4adf }
                                                                         jq \
                                                                             --null-input \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
-                                                                                "creation-time" : $CREATION_TIME ,
                                                                                 "hash" : $HASH ,
                                                                                 "type" : $TYPE
                                                                             }' | yq --prettyPrint "[.]" | log
@@ -811,12 +811,10 @@
                                                                         mv "$MOUNT" "$GOOD"
                                                                         jq \
                                                                             --null-input \
-                                                                            --arg CREATION_TIME "$CREATION_TIME" \
                                                                             --arg GOOD "$GOOD" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
-                                                                                "creation-time" : $CREATION_TIME ,
                                                                                 "good" : $GOOD ,
                                                                                 "hash" : $HASH ,
                                                                                 "type" : $TYPE
@@ -832,7 +830,7 @@
                                                         in
                                                             ''
                                                                 mkdir --parents $out/scripts
-                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock jq ps uuidlib yq-go ] }" ) scripts ) ) }
+                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock jq ps uuidlib yq-go ] }" ) scripts ) ) }
                                                             '' ;
                                                 name = "derivation" ;
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
