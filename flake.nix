@@ -85,10 +85,8 @@
                                                                         mkdir --parents "$OUT/0"
                                                                         mkdir --parents ${ test-directory }
                                                                         echo "${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error" > "$OUT/0/command.sh"
-                                                                        # sleep 1s #KLUDGE
                                                                         if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
                                                                         then
-                                                                            # sleep 1s #KLUDGE
                                                                             MOUNT="$( < ${ test-directory }/standard-output )" || ${ failures_ "b982047f" }
                                                                             if [[ ! -d "$MOUNT" ]]
                                                                             then
@@ -161,12 +159,12 @@
                                                                             echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
-                                                                        # ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        # if [[ -n "$( find ${ resources-directory }/bad -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
-                                                                        # then
-                                                                        #     echo ${ label } We expected ${ resources-directory }/bad to be an empty directory >&2
-                                                                        #     exit 192
-                                                                        # fi
+                                                                        ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
+                                                                        if [[ -n "$( find ${ resources-directory }/bad -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
+                                                                        then
+                                                                            echo ${ label } We expected ${ resources-directory }/bad to be an empty directory >&2
+                                                                            exit 192
+                                                                        fi
                                                                     '' ;
                                                             } ;
                                                     stall =
