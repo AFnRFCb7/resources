@@ -6,19 +6,12 @@
 		        lib =
                     {
                         buildFHSUserEnv ,
-                        creation-time-error ? 153 ,
-                        description ? null ,
                         coreutils ,
-                        echo-error ? 102 ,
-                        errors ? { } ,
-                        exit-error ? 121 ,
+                        description ? null ,
                         failures ? { } ,
                         findutils ,
                         flock ,
-                        hash-error ? 172 ,
-                        hidden-error ? 249 ,
                         init ? null ,
-                        initialization-error ? 175 ,
                         jq ,
                         inotify-tools ,
                         length ? 64 ,
@@ -27,24 +20,9 @@
                         mkDerivation ,
                         ps ,
                         release ? null ,
-                        remediation-bad-error ? 194 ,
-                        remediation-create-time-error ? 254 ,
-                        remediation-good-error ? 101 ,
-                        remediation-hash-error ? 112 ,
-                        remediation-resolution-error ? 242 ,
-                        remediation-type-error ? 253 ,
-                        remediation-temporary-error ? 166 ,
                         resources-directory ,
-                        resource-error ? 251 ,
                         seed ? null ,
                         self ? "SELF" ,
-                        standard-error-error ? 253 ,
-                        standard-error-not-empty-error ? 132 ,
-                        standard-input-cat-error ? 115 ,
-                        standard-input-temporary-error ? 123 ,
-                        standard-output-error ? 197 ,
-                        standard-status-error ? 108 ,
-                        target-error ? 106 ,
                         targets ? [ ] ,
                         transient ? false ,
                         uuidlib ,
@@ -426,6 +404,7 @@
                                                                               "observed" : load(strenv(TEMPORARY_LOG))
                                                                             }' | yq eval '.expected.targets |= to_entries | .expected.targets[] |= .value' > "$BAD/log.yaml"
                                                                         log < "$TEMPORARY_LOG"
+                                                                        rm "$TEMPORARY_LOG"
                                                                     '' ;
                                                                 no-init =
                                                                     ''
@@ -442,7 +421,7 @@
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log "$TEMPORARY_LOG" > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
                                                                         stall-for-process
                                                                     '' ;
                                                                 recovery =
@@ -460,8 +439,7 @@
                                                                         else
                                                                             RESOLUTION="${ builtins.concatStringsSep "" [ "$" "{" "*" "}" ] }"
                                                                         fi
-                                                                        TYPE="$( basename "$0" )" || exit ${ builtins.toString remediation-type-error }
-                                                                        TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString remediation-temporary-error }
+                                                                        TYPE="$( basename "$0" )" || ${ failures_ "26030b9e" }
                                                                         jq \
                                                                             --null-input \
                                                                             --arg ACTION "$ACTION" \
@@ -475,7 +453,7 @@
                                                                                 "mount-index" : $MOUNT_INDEX ,
                                                                                 "resolution" : $RESOLUTION ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
+                                                                            }' | yq --prettyPrint "[.]" > log
                                                                         log
                                                                     '' ;
                                                                 sequential =
@@ -501,16 +479,16 @@
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
-                                                                                STANDARD_INPUT_FILE="$( temporary )" || exit ${ builtins.toString standard-input-temporary-error }
+                                                                                STANDARD_INPUT_FILE="$( temporary )" || ${ failures_ "7f77cdad" }
                                                                             else
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 timeout 1m cat > "$STANDARD_INPUT_FILE"
-                                                                                STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || exit ${ builtins.toString standard-input-cat-error }
+                                                                                STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "fbb0e2f8" }
                                                                                 rm "$STANDARD_INPUT_FILE"
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
                                                                             export ORIGINATOR_PID="$PPID"
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
+                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || ${ failures_ "bc3e1b88" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
                                                                             exec 200> "${ resources-directory }/test.lock"
@@ -560,7 +538,7 @@
                                                                             TRANSIENT=${ transient_ }
                                                                             export TRANSIENT
                                                                             export ORIGINATOR_PID=$PPID
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || exit ${ builtins.toString hash-error }
+                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || ${ failures_ "7849a979" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
                                                                             exec 200> "${ resources-directory }/test.lock"
@@ -589,7 +567,7 @@
                                                                                 mkdir --parents "$MOUNT"
                                                                                 STANDARD_ERROR_FILE="$( temporary )" || ${ failures_ "b07f7374" }
                                                                                 export STANDARD_ERROR_FILE
-                                                                                STANDARD_OUTPUT_FILE="$( temporary )" || exit ${ builtins.toString standard-output-error }
+                                                                                STANDARD_OUTPUT_FILE="$( temporary )" || g${ failures_ "29c19af1" }
                                                                                 export STANDARD_OUTPUT_FILE
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
@@ -702,8 +680,7 @@
                                                                 stall-for-symlink =
                                                                     ''
                                                                         SYMLINK="$1"
-                                                                        TYPE="$( basename "$0" )" || exit ${ builtins.toString hidden-error }
-                                                                        TEMPORARY_LOG="$( temporary )" || exit ${ builtins.toString hidden-error }
+                                                                        TYPE="$( basename "$0" )" || ${ failures_ "99ddfc39" }
                                                                         jq \
                                                                             --null-input \
                                                                             --arg SYMLINK "$SYMLINK" \
@@ -711,9 +688,7 @@
                                                                             '{
                                                                                 "symlink" : $SYMLINK ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
-                                                                        NOHUP="$( temporary )" || exit ${ builtins.toString hidden-error }
-                                                                        nohup log "$TEMPORARY_LOG" > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | log
                                                                         inotifywait --event move_self "$SYMLINK" --quiet
                                                                     '' ;
                                                                 teardown =
@@ -798,7 +773,7 @@
                                                                 temporary =
                                                                     ''
                                                                         mkdir --parents ${ resources-directory }/temporary
-                                                                        SEQUENCE="$( sequential )" || exit ${ builtins.toString hidden-error }
+                                                                        SEQUENCE="$( sequential )" || ${ failures_ "09d1282d" }
                                                                         echo "${ resources-directory }/temporary/$SEQUENCE"
                                                                     '' ;
                                                             } ;
