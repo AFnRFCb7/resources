@@ -106,8 +106,10 @@
                                                                         mkdir --parents "$OUT/0"
                                                                         mkdir --parents ${ test-directory }
                                                                         echo "${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error" > "$OUT/0/command.sh"
+                                                                        # sleep 1s #KLUDGE
                                                                         if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
                                                                         then
+                                                                            # sleep 1s #KLUDGE
                                                                             MOUNT="$( < ${ test-directory }/standard-output )" || ${ errors_.b982047f }
                                                                             if [[ ! -d "$MOUNT" ]]
                                                                             then
@@ -241,6 +243,7 @@
                                                     "bf995f33"
                                                     "cab66847"
                                                     "cd255035"
+                                                    "cebabd7e"
                                                     "c141fe3b"
                                                     "cfb26c78"
                                                     "c4cb3838"
@@ -342,6 +345,7 @@
                                                             {
                                                                 bad =
                                                                     ''
+                                                                        flock -s 200
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ errors_.a1b19aa5 }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.bf995f33 }'' }
@@ -360,7 +364,6 @@
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ errors_.f13f84ae }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                         TYPE="$( basename "$0" )" || ${ errors_.e5fa2135 }
-                                                                        NOHUP="$( temporary )" || ${ errors_.fb67f7f4 }
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
@@ -392,17 +395,17 @@
                                                                                 "targets" : $TARGETS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log-bad > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | log-bad
                                                                     '' ;
                                                                 good =
                                                                     ''
+                                                                        flock -s 200
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ errors_.ea11161a }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ errors_.a7486bbb }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ errors_.a69f5bc2 }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ errors_.dc662c73 }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                         TYPE="$( basename "$0" )" || ${ errors_.cd255035 }
-                                                                        NOHUP="$( temporary )" || ${ errors_.f86a3eb9 }
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
@@ -431,7 +434,7 @@
                                                                                 "status" : $STATUS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
+                                                                            }' | yq --prettyPrint "[.]" | log
                                                                         stall-for-process
                                                                     '' ;
                                                                 log =
@@ -443,8 +446,8 @@
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
-                                                                        export HASH="$1"
-                                                                        export TEMPORARY_LOG="$2"
+                                                                        TEMPORARY_LOG="$( temporary )" || ${ errors_.cebabd7e }
+                                                                        cat > "$TEMPORARY_LOG"
                                                                         yq --null-input eval '
                                                                             {
                                                                                 "expected" :
@@ -455,10 +458,11 @@
                                                                                     } ,
                                                                               "observed" : load(strenv(TEMPORARY_LOG))
                                                                             }' | yq eval '.expected.targets |= to_entries | .expected.targets[] |= .value' > "$BAD/log.yaml"
-                                                                        log "$TEMPORARY_LOG"
+                                                                        log < "$TEMPORARY_LOG"
                                                                     '' ;
                                                                 no-init =
                                                                     ''
+                                                                        flock -s 200
                                                                         TYPE="$( basename "$0" )" || ${ errors_.a32a15dc }
                                                                         NOHUP="$( temporary )" || ${ errors_.e139686a }
                                                                         jq \
@@ -476,6 +480,8 @@
                                                                     '' ;
                                                                 recovery =
                                                                     ''
+                                                                        exec 200> ${ resources-directory }/test.log
+                                                                        flock -s 200
                                                                         GOOD="$( sequential )" || ${ errors_.f696cd77 }
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         rm --recursive --force "$LINK"
@@ -503,7 +509,7 @@
                                                                                 "resolution" : $RESOLUTION ,
                                                                                 "type" : $TYPE
                                                                             }' | yq --prettyPrint "[.]" > "$TEMPORARY_LOG"
-                                                                        log "$TEMPORARY_LOG"
+                                                                        log
                                                                     '' ;
                                                                 sequential =
                                                                     ''
@@ -652,6 +658,7 @@
                                                                         '' ;
                                                                 stale =
                                                                     ''
+                                                                        flock -s 200
                                                                         MOUNT_INDEX="$( basename "$MOUNT" )" || ${ errors_.d6df365c }
                                                                         TYPE="$( basename "$0" )" || ${ errors_.d2cc81ec }
                                                                         NOHUP="$( temporary )" || ${ errors_.a3c6c75b }
@@ -670,6 +677,8 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
+                                                                        exec 200> ${ resources-directory }/test.lock
+                                                                        flock -s 200
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ errors_.f9b0e418 }
                                                                         TYPE="$( basename "$0" )" || ${ errors_.e4782f79 }
                                                                         NOHUP="$( temporary )" || ${ errors_.df0ddf7b }
@@ -708,7 +717,6 @@
                                                                 stall-for-process =
                                                                     ''
                                                                         TYPE="$( basename "$0" )" || ${ errors_.a3bc4273 }
-                                                                        NOHUP="$( temporary )" || ${ errors_.e1892647 }
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
@@ -718,7 +726,7 @@
                                                                                     "hash" : $HASH ,
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "type" : $TYPE
-                                                                                }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
+                                                                                }' | yq --prettyPrint "[.]" | log
                                                                         flock -u 200
                                                                         exec 200>&-
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
@@ -743,6 +751,7 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
+                                                                        flock -s 200
                                                                         flock -u 201
                                                                         exec 201>&-
                                                                         exec 201> ${ resources-directory }/locks/teardown.lock
@@ -764,7 +773,6 @@
                                                                     '' ;
                                                                 teardown-aborted =
                                                                     ''
-                                                                        HASH="$1"
                                                                         TYPE="$( basename "$0" )" || ${ errors_.f75c4adf }
                                                                         jq \
                                                                             --null-input \
