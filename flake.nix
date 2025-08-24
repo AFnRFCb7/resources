@@ -294,8 +294,6 @@
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
                                                                         TARGETS="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "f3ead1ff" }
                                                                         rm "${ resources-directory }/canonical/$HASH"
-                                                                        flock -u 201
-                                                                        exec 201>&-
                                                                         RECOVERY="${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         mkdir --parents "$RECOVERY"
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
@@ -343,6 +341,7 @@
                                                                 good =
                                                                     ''
                                                                         flock -s 200
+                                                                        flock -s 201
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
@@ -407,6 +406,7 @@
                                                                 no-init =
                                                                     ''
                                                                         flock -s 200
+                                                                        flock -s 201
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
                                                                         NOHUP="$( temporary )" || ${ failures_ "e139686a" }
                                                                         jq \
@@ -602,6 +602,7 @@
                                                                 stale =
                                                                     ''
                                                                         flock -s 200
+                                                                        flock -s 201
                                                                         MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "d6df365c" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "d2cc81ec" }
                                                                         NOHUP="$( temporary )" || ${ failures_ "a3c6c75b" }
