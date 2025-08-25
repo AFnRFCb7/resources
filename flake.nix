@@ -160,9 +160,9 @@
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        if [[ -n "$( find ${ resources-directory }/bad -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
+                                                                        if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
                                                                         then
-                                                                            echo ${ label } We expected ${ resources-directory }/bad to be an empty directory >&2
+                                                                            echo ${ label } We expected ${ resources-directory }/mounts to be an empty directory >&2
                                                                             exit 192
                                                                         fi
                                                                     '' ;
@@ -176,8 +176,8 @@
                                                                     ''
                                                                         find ${ resources-directory }/locks -type f | while read -r LOCK
                                                                         do
-                                                                            exec 201> "$LOCK"
-                                                                            flock -x 201
+                                                                            exec 210> "$LOCK"
+                                                                            flock -x 210
                                                                         done
                                                                     '' ;
                                                             } ;
@@ -341,7 +341,7 @@
                                                                 good =
                                                                     ''
                                                                         flock -s 200
-                                                                        flock -s 201
+                                                                        flock -s 210
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
@@ -406,7 +406,7 @@
                                                                 no-init =
                                                                     ''
                                                                         flock -s 200
-                                                                        flock -s 201
+                                                                        flock -s 210
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
                                                                         NOHUP="$( temporary )" || ${ failures_ "e139686a" }
                                                                         jq \
@@ -491,8 +491,8 @@
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
                                                                             exec 200> "${ resources-directory }/test.lock"
                                                                             flock -s 200
-                                                                            exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
-                                                                            flock -s 201
+                                                                            exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                            flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "bf282501" }
@@ -535,8 +535,8 @@
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
                                                                             exec 200> "${ resources-directory }/test.lock"
                                                                             flock -s 200
-                                                                            exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
-                                                                            flock -s 201
+                                                                            exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                            flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
@@ -590,7 +590,7 @@
                                                                 stale =
                                                                     ''
                                                                         flock -s 200
-                                                                        flock -s 201
+                                                                        flock -s 210
                                                                         MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "d6df365c" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "d2cc81ec" }
                                                                         NOHUP="$( temporary )" || ${ failures_ "a3c6c75b" }
@@ -681,8 +681,8 @@
                                                                 teardown =
                                                                     ''
                                                                         flock -s 200
-                                                                        exec 201> ${ resources-directory }/locks/teardown.lock
-                                                                        flock -x 201
+                                                                        exec 210> ${ resources-directory }/locks/teardown.lock
+                                                                        flock -x 210
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
