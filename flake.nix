@@ -493,12 +493,8 @@
                                                                             flock -s 200
                                                                             exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 201
-                                                                            exec 202> "${ resources-directory }/locks/$HASH/setup.lock"
-                                                                            flock -x 202
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
-                                                                                flock -u 202
-                                                                                exec 202>&-
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "bf282501" }
                                                                                 export MOUNT
                                                                                 NOHUP="$( temporary )" || ${ failures_ "b63481a0" }
@@ -510,8 +506,6 @@
                                                                                 MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
                                                                                 mkdir --parents "$MOUNT"
                                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
-                                                                                flock -u 202
-                                                                                exec 202>&-
                                                                                 NOHUP="$( temporary )" || ${ failures_ "f91c57c2" }
                                                                                 nohup no-init > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
@@ -543,14 +537,10 @@
                                                                             flock -s 200
                                                                             exec 201> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 201
-                                                                            exec 202> "${ resources-directory }/locks/$HASH/setup.lock"
-                                                                            flock -x 202
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
                                                                                 export MOUNT
-                                                                                flock -u 202
-                                                                                exec 202>&-
                                                                                 NOHUP="$( temporary )" || ${ failures_ "f2f6f4e4" }
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
@@ -585,8 +575,6 @@
                                                                                     fi
                                                                                 fi
                                                                                 export STATUS
-                                                                                # flock -u 202
-                                                                                # exec 202>&-
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
                                                                                     NOHUP="$( temporary )" || ${ failures_ "faa95dc4" }
@@ -693,12 +681,8 @@
                                                                 teardown =
                                                                     ''
                                                                         flock -s 200
-                                                                        flock -u 201
-                                                                        exec 201>&-
                                                                         exec 201> ${ resources-directory }/locks/teardown.lock
                                                                         flock -x 201
-                                                                        exec 202> ${ resources-directory }/locks/setup.lock
-                                                                        flock -x 202
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
@@ -741,8 +725,6 @@
                                                                             else
                                                                                 STATUS="$?"
                                                                             fi
-                                                                            flock -u 202
-                                                                            exec 202>&-
                                                                             export STATUS
                                                                             if [[ "$STATUS" == "0" ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                             then
