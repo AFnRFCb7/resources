@@ -42,8 +42,7 @@
                                     label ,
                                     mount ,
                                     standard-input  ,
-                                    status ,
-                                    test-directory
+                                    status
                                 } :
                                     mkDerivation
                                         {
@@ -83,13 +82,13 @@
                                                                 text =
                                                                     ''
                                                                         mkdir --parents "$OUT/0"
-                                                                        echo "The test directory is $OUT"
-                                                                        echo "$$" > "$OUT/0/invoke-resource.pid"
-                                                                        mkdir --parents ${ test-directory }
-                                                                        echo "${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error" > "$OUT/0/command.sh"
-                                                                        if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
+                                                                        if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > "$OUT/test/standard-output" 2> "$OUT/test/standard-error"
                                                                         then
-                                                                            MOUNT="$( < ${ test-directory }/standard-output )" || ${ failures_ "b982047f" }
+                                                                            if [[ ! -f "$OUT/test/standard-output" ]]
+                                                                            then
+                                                                                ${ failures_ "be0cdb02" }
+                                                                            fi
+                                                                            MOUNT="$( < "$OUT/test/standard-output" )"
                                                                             if [[ ! -d "$MOUNT" ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not a directory" >&2
@@ -99,7 +98,7 @@
                                                                                 echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not the expected directory ${ mount }" >&2
                                                                                 ${ failures_ "e484b646" }
                                                                             fi
-                                                                            if [[ -s ${ test-directory }/standard-error ]]
+                                                                            if [[ -s ${ resources-directory }/test/standard-error ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } succeeded but it generated standard-error" >&2
                                                                                 ${ failures_ "eede733e" }
@@ -109,15 +108,16 @@
                                                                             STATUS="$?"
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
+                                                                                cat ${ resources-directory }/DEBUG
                                                                                 echo "${ label } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
                                                                                 ${ failures_ "e3be9f66" }
                                                                             fi
-                                                                            if [[ -s ${ test-directory }/standard-output ]]
+                                                                            if [[ -s ${ resources-directory }/test/standard-output ]]
                                                                             then
                                                                                 echo "${ label } command failed but it generated standard-output" >&2
                                                                                 ${ failures_ "c4cb3838" }
                                                                             fi
-                                                                            if [[ -s ${ test-directory }/standard-error ]]
+                                                                            if [[ -s ${ resources-directory }/test/standard-error ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } failed but it generated standard-error"
                                                                                 ${ failures_ "dde5524a" }
@@ -132,8 +132,6 @@
                                                                             echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
                                                                             ${ failures_ "a6f0de4f" }
                                                                         fi
-                                                                        flock -u 200
-                                                                        exec 200>&-
                                                                     '' ;
                                                             } ;
                                                     root =
@@ -148,13 +146,8 @@
                                                                             echo ${ label } We expected the resources directory to not initially exist >&2
                                                                             ${ failures_ "a6e628b6" }
                                                                         fi
-                                                                        if [[ -e ${ test-directory } ]]
-                                                                        then
-                                                                            echo ${ label } We expected the test directory to not initially exit >&2
-                                                                            exit 135
-                                                                        fi
+                                                                        mkdir "$OUT/test"
                                                                         invoke-resource
-                                                                        echo "root $$" >> "$OUT/0/invoke-resource.pid"
                                                                         exec 200> ${ resources-directory }/test.setup.lock
                                                                         flock -x 200
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
@@ -506,18 +499,19 @@
                                                                         NEW=$(( OLD + 1 ))
                                                                         echo "$NEW" > ${ resources-directory }/counter.increment
                                                                         chmod 0644 ${ resources-directory }/counter.increment
-                                                                        printf "%08d\n" "$NEW"
+                                                                        printf "%016d\n" "$NEW"
                                                                     '' ;
                                                                 setup =
                                                                     if builtins.typeOf init == "null" then
                                                                         ''
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                            mkdir --parents "${ resources-directory }/locks"
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.stall-for-process.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.stall-for-cleanup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.teardown.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
@@ -565,24 +559,31 @@
                                                                         ''
                                                                     else
                                                                         ''
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                            mkdir --parents ${ resources-directory }
+                                                                            echo "effe6b3e-de50-4be0-874e-4ea83d3a4b16" >> ${ resources-directory }/DEBUG
+                                                                            mkdir --parents "${ resources-directory }/locks"
+                                                                            echo "52375c8d-efe6-4f84-a4ca-7e2709d93cad" >> ${ resources-directory }/DEBUG
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.stall-for-process.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.stall-for-cleanup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.teardown.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                            echo "21fc3cf2-8899-4b11-b8f5-e3ea19986b2d" >> ${ resources-directory }/DEBUG
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
                                                                             else
+                                                                                echo "738f02f9-3f5e-43fd-b881-8ef2f92ee386" >> ${ resources-directory }/DEBUG
                                                                                 STANDARD_INPUT_FILE="$( temporary )" || ${ failures_ "f66f966d" }
                                                                                 export STANDARD_INPUT_FILE
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 cat > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
+                                                                                echo "9cb3d3a2-4ac7-4020-803f-d1b3eef7b38d" >> ${ resources-directory }/DEBUG
                                                                             fi
                                                                             export HAS_STANDARD_INPUT
                                                                             export STANDARD_INPUT
@@ -592,13 +593,9 @@
                                                                             export ORIGINATOR_PID=$PPID
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
-                                                                            mkdir --parents "${ resources-directory }/locks/$HASH"
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.teardown.lock" else "#" }
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                            exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                            exec 210> "${ resources-directory }/locks/$HASH"
                                                                             flock -s 210
+                                                                            echo "6e695639-8165-4cc5-8130-40a204c5d50e" >> ${ resources-directory }/DEBUG
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
@@ -612,6 +609,7 @@
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
                                                                             else
+                                                                                echo "65777e3f-eb61-400a-a144-5a625c3a3719" >> ${ resources-directory }/DEBUG
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                                 export MOUNT_INDEX
                                                                                 mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
@@ -621,14 +619,17 @@
                                                                                 export LINK
                                                                                 mkdir --parents "$LINK"
                                                                                 MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
+                                                                                mkdir --parents "$MOUNT"
                                                                                 export MOUNT
                                                                                 mkdir --parents "$MOUNT"
                                                                                 STANDARD_ERROR_FILE="$( temporary )" || ${ failures_ "b07f7374" }
                                                                                 export STANDARD_ERROR_FILE
-                                                                                STANDARD_OUTPUT_FILE="$( temporary )" || g${ failures_ "29c19af1" }
+                                                                                STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "29c19af1" }
                                                                                 export STANDARD_OUTPUT_FILE
+                                                                                echo "0c53bb94-d7e3-4395-a9dd-e83c5de6e4a9" >> ${ resources-directory }/DEBUG
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
+                                                                                    echo "0b9e0437-7ed7-410f-823f-4e4d49bd15a3 LINK=$LINK MOUNT=$MOUNT" >> ${ resources-directory }/DEBUG
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
                                                                                         STATUS="$?"
@@ -644,13 +645,16 @@
                                                                                         STATUS="$?"
                                                                                     fi
                                                                                 fi
+                                                                                echo "3460e109-7ea4-41ea-8adf-f071000c4e9c STATUS=$STATUS ${ init-application }/bin/init-application" >> ${ resources-directory }/DEBUG
                                                                                 export STATUS
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
+                                                                                    echo "d1c2dc39-1fa8-4dda-bff9-6e0bead9151d" >> ${ resources-directory }/DEBUG
                                                                                     NOHUP="$( temporary )" || ${ failures_ "faa95dc4" }
                                                                                     nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
                                                                                     echo -n "$MOUNT"
                                                                                 else
+                                                                                    echo "e4946e3c-7717-4fd3-8b67-d7f04b446340" >> ${ resources-directory }/DEBUG
                                                                                     NOHUP="$( temporary )" || ${ failures_ "aee914c6" }
                                                                                     nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
                                                                                     ${ failures_ "b385d889" }
@@ -776,7 +780,7 @@
                                                                 teardown =
                                                                     ''
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
-                                                                        exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                        exec 210> "${ resources-directory }/locks/$HASH"
                                                                         echo "4c6a4df6-c320-40b0-816b-5eac11d7fab3" >> /build/DEBUG
                                                                         flock -x 210
                                                                         flock -s 211
