@@ -14,7 +14,6 @@
                         init ? null ,
                         jq ,
                         inotify-tools ,
-                        length ? 64 ,
                         makeBinPath ,
                         makeWrapper ,
                         mkDerivation ,
@@ -23,6 +22,7 @@
                         resources-directory ,
                         seed ? null ,
                         self ? "SELF" ,
+                        testing-locks ? false ,
                         targets ? [ ] ,
                         transient ? false ,
                         uuidlib ,
@@ -83,6 +83,8 @@
                                                                 text =
                                                                     ''
                                                                         mkdir --parents "$OUT/0"
+                                                                        echo "The test directory is $OUT"
+                                                                        echo "$$" > "$OUT/0/invoke-resource.pid"
                                                                         mkdir --parents ${ test-directory }
                                                                         echo "${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error" > "$OUT/0/command.sh"
                                                                         if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > ${ test-directory }/standard-output 2> ${ test-directory }/standard-error
@@ -121,8 +123,8 @@
                                                                                 ${ failures_ "dde5524a" }
                                                                             fi
                                                                         fi
-                                                                        exec 200> ${ resources-directory }/test.lock
-                                                                        flock -x 200
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -x 200" else "#" }
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
                                                                         find "$OUT/0/checkpoint-pre" -type d -exec touch {}/.gitkeep \;
                                                                         if ! diff --recursive ${ checkpoint-pre } "$OUT/0/checkpoint-pre"
@@ -130,6 +132,8 @@
                                                                             echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
                                                                             ${ failures_ "a6f0de4f" }
                                                                         fi
+                                                                        flock -u 200
+                                                                        exec 200>&-
                                                                     '' ;
                                                             } ;
                                                     root =
@@ -150,7 +154,8 @@
                                                                             exit 135
                                                                         fi
                                                                         invoke-resource
-                                                                        exec 200> ${ resources-directory }/test.lock
+                                                                        echo "root $$" >> "$OUT/0/invoke-resource.pid"
+                                                                        exec 200> ${ resources-directory }/test.setup.lock
                                                                         flock -x 200
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
                                                                         find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
@@ -159,11 +164,23 @@
                                                                             echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
+                                                                        echo "da4b3b6c-fe76-4be1-a335-0e3b84a5b8fc" >> /build/DEBUG
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 ! -name .gitkeep )" ]]
+                                                                        echo "801e761b-27de-47d3-b9ec-2482f5548fb6 BEFORE SLEEP" >> /build/DEBUG
+                                                                        sleep 10s # KLUDGE
+                                                                        echo "21293d5e-1de7-4c08-8f8f-5a244ce0cfa5 AFTER SLEEP" >> /build/DEBUG
+                                                                        if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" ]]
                                                                         then
+                                                                            cat /build/DEBUG
                                                                             echo ${ label } We expected ${ resources-directory }/mounts to be an empty directory >&2
-                                                                            exit 192
+                                                                            find ${ resources-directory }/mounts #KLUDGE
+                                                                            ${ failures_ "65eb34ce" }
+                                                                        fi
+                                                                        if [[ -n "$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" ]]
+                                                                        then
+                                                                            cat /build/DEBUG
+                                                                            echo ${ label } We expected the canonical directory ${ resources-directory }/canonical to be empty >&2
+                                                                            ${ failures_ "4705e39e" }
                                                                         fi
                                                                     '' ;
                                                             } ;
@@ -288,7 +305,7 @@
                                                             {
                                                                 bad =
                                                                     ''
-                                                                        flock -s 200
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "a1b19aa5" }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
@@ -340,8 +357,11 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
-                                                                        flock -s 200
-                                                                        flock -s 210
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
@@ -377,14 +397,20 @@
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
                                                                             }' | yq --prettyPrint "[.]" | log
-                                                                        stall-for-process
+                                                                        NOHUP="$( temporary )" || ${ failures_ "8d2d5a45" }
+                                                                        nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
                                                                 log =
                                                                     ''
+                                                                        echo "61cc998a-7373-4141-ba51-5d50476c43ee IN LOG" >> /build/DEBUG
                                                                         mkdir --parents ${ resources-directory }/logs
+                                                                        echo "b0a08351-7feb-4f4f-b635-dee834083b1d" >> /build/DEBUG
                                                                         exec 203> ${ resources-directory }/logs/lock
+                                                                        echo "45dad86f-097f-44d4-b6fd-0b6093ed1254" >> /build/DEBUG
                                                                         flock -x 203
+                                                                        echo "7d990221-085a-4446-95f2-89f505964d13" >> /build/DEBUG
                                                                         cat >> ${ resources-directory }/logs/log.yaml
+                                                                        echo "334419e9-5b60-4bc6-a48f-6537ba39ccbc FINISHED LOG" >> /build/DEBUG
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
@@ -405,10 +431,12 @@
                                                                     '' ;
                                                                 no-init =
                                                                     ''
-                                                                        flock -s 200
-                                                                        flock -s 210
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 204" else "#" }
+                                                                        flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
-                                                                        NOHUP="$( temporary )" || ${ failures_ "e139686a" }
                                                                         jq \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -419,13 +447,23 @@
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
-                                                                        stall-for-process
+                                                                            }' | yq --prettyPrint "[.]"
+                                                                        NOHUP="$( temporary )" || ${ failures_ "8192be99" }
+                                                                        nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
                                                                 recovery =
                                                                     ''
-                                                                        exec 200> ${ resources-directory }/test.log
-                                                                        flock -s 200
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
+                                                                        exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                        flock -x 211
                                                                         GOOD="$( sequential )" || ${ failures_ "f696cd77" }
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         rm --recursive --force "$LINK"
@@ -473,6 +511,14 @@
                                                                 setup =
                                                                     if builtins.typeOf init == "null" then
                                                                         ''
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.stall-for-process.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.stall-for-cleanup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.teardown.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
@@ -486,23 +532,29 @@
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
                                                                             export ORIGINATOR_PID="$PPID"
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || ${ failures_ "bc3e1b88" }
+                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
-                                                                            exec 200> "${ resources-directory }/test.lock"
-                                                                            flock -s 200
                                                                             exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "bf282501" }
                                                                                 export MOUNT
+                                                                                MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "26213048" }
+                                                                                export MOUNT_INDEX
+                                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
+                                                                                exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                                flock -s 211
                                                                                 NOHUP="$( temporary )" || ${ failures_ "b63481a0" }
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
                                                                             else
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "d162db9f" }
                                                                                 export MOUNT_INDEX
+                                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
+                                                                                exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                                flock -s 211
                                                                                 MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
                                                                                 mkdir --parents "$MOUNT"
                                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
@@ -513,6 +565,14 @@
                                                                         ''
                                                                     else
                                                                         ''
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.stall-for-process.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.stall-for-cleanup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.teardown.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
@@ -530,23 +590,33 @@
                                                                             TRANSIENT=${ transient_ }
                                                                             export TRANSIENT
                                                                             export ORIGINATOR_PID=$PPID
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --bytes -${ builtins.toString length } )" || ${ failures_ "7849a979" }
+                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
-                                                                            exec 200> "${ resources-directory }/test.lock"
-                                                                            flock -s 200
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.teardown.lock" else "#" }
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
                                                                             exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
                                                                                 export MOUNT
+                                                                                MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "277afc07" }
+                                                                                export MOUNT_INDEX
+                                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
+                                                                                exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                                flock -s 211
                                                                                 NOHUP="$( temporary )" || ${ failures_ "f2f6f4e4" }
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
                                                                             else
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                                 export MOUNT_INDEX
+                                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
+                                                                                exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                                flock -s 211
                                                                                 LINK="${ resources-directory }/links/$MOUNT_INDEX"
                                                                                 export LINK
                                                                                 mkdir --parents "$LINK"
@@ -589,11 +659,13 @@
                                                                         '' ;
                                                                 stale =
                                                                     ''
-                                                                        flock -s 200
-                                                                        flock -s 210
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 204" else "#" }
+                                                                        flock -s 211
                                                                         MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "d6df365c" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "d2cc81ec" }
-                                                                        NOHUP="$( temporary )" || ${ failures_ "a3c6c75b" }
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
@@ -604,34 +676,50 @@
                                                                                 "hash" : $HASH ,
                                                                                 "mount-index" : $MOUNT_INDEX ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
-                                                                        stall-for-process
+                                                                            }' | yq --prettyPrint "[.]" | nohup log
+                                                                        NOHUP="$( temporary )" || ${ failures_ "290a9299" }
+                                                                        nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
-                                                                        exec 200> ${ resources-directory }/test.lock
-                                                                        flock -s 200
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        flock -s 211
+                                                                        echo "b39d663d-7d4e-4e75-bd7e-51cbcd5fc9d1" >> /build/DEBUG
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        echo "b43685d4-2c8a-4f53-8b89-46b22faa8fea" >> /build/DEBUG
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                        echo "f44227f5-c7bd-4083-bd57-6a4fcd9a4744" >> /build/DEBUG
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
+                                                                        HEAD2="HEAD=$HEAD"
+                                                                        echo "5e87057c-d3f0-4529-b6cc-b183a7d6db60" >> /build/DEBUG
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
-                                                                        NOHUP="$( temporary )" || ${ failures_ "df0ddf7b" }
+                                                                        echo "5fa7d290-52cb-46cc-9565-c235daed0e08 BEGIN LOG stall-for-cleanup" >> /build/DEBUG
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg HEAD "$HEAD" \
+                                                                            --arg HEAD "$HEAD2" \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
-                                                                                    "head" : $HEAD ,
+                                                                                    "head" : "$HEAD" ,
                                                                                     "type" : $TYPE
-                                                                                }' | yq --prettyPrint "[.]" | nohup log > "$NOHUP" 2>&1 &
-                                                                        mkdir --parents ${ resources-directory }/links ${ resources-directory }/bad
+                                                                                }' | yq --prettyPrint "[.]" | log
+                                                                        echo "a22285b2-0ebf-4ff8-8198-17fc45968fc3 END LOG stall-for-cleanup" >> /build/DEBUG
+                                                                        NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
                                                                         if [[ -n "$HEAD" ]]
                                                                         then
+                                                                            echo "cd0df0d8-f830-4351-aaab-03520a291120" >> /build/DEBUG
                                                                             inotifywait --event move_self "$HEAD" --quiet
-                                                                            stall-for-cleanup
+                                                                            echo "5ccbe110-6c5b-4878-b6df-fe7e1925c482" >> /build/DEBUG
+                                                                            nohup stall-for-cleanup > "$NOHUP" 2>&1 &
+                                                                            echo "266b98de-52e9-41a5-a0db-78bd61de6e42" >> /build/DEBUG
                                                                         else
-                                                                            teardown
+                                                                            echo "ca583298-d738-40e9-afc8-751acd16f46f" >> /build/DEBUG
+                                                                            nohup teardown > "$NOHUP" 2>&1 &
+                                                                            echo "183ddaba-d4f0-4d74-8fcb-5a900e27e53c" >> /build/DEBUG
                                                                         fi
+                                                                        echo "e0296274-2e60-4ad3-a407-555b021e9792" >> /build/DEBUG
                                                                     '' ;
                                                                 stall-for-cleanup-head =
                                                                     ''
@@ -648,6 +736,10 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a3bc4273" }
                                                                         jq \
                                                                             --null-input \
@@ -659,10 +751,13 @@
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" | log
-                                                                        flock -u 200
-                                                                        exec 200>&-
+                                                                        echo "31e4c966-638d-42f0-9690-e9ba3a02ac77" > /build/DEBUG
+                                                                        echo "f2692e9b-7652-4e83-a6f7-834412775b9d" >> /build/DEBUG
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
-                                                                        stall-for-cleanup
+                                                                        echo "de16c36b-a60b-4f0f-afdf-c9b8da36d523" >> /build/DEBUG
+                                                                        NOHUP="$( temporary )" || ${ failures_ "ee645658" }
+                                                                        nohup stall-for-cleanup > "$NOHUP" 2>&1 &
+                                                                        echo "099dcc85-e24b-47d4-b59d-b1ad72339e9c" >> /build/DEBUG
                                                                     '' ;
                                                                 stall-for-symlink =
                                                                     ''
@@ -680,24 +775,38 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
-                                                                        flock -s 200
-                                                                        exec 210> ${ resources-directory }/locks/teardown.lock
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                        echo "4c6a4df6-c320-40b0-816b-5eac11d7fab3" >> /build/DEBUG
                                                                         flock -x 210
+                                                                        flock -s 211
+                                                                        echo "a7c7b814-96a3-42ee-b875-b3df59aea073" >> /build/DEBUG
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
+                                                                            echo "3f1c7fad-53e4-4344-95cc-5dfa983e22ba" >> /build/DEBUG
+                                                                            NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
-                                                                                teardown-completed
+                                                                                echo "70d5fd35-a89d-48be-a31d-d6f04553a1ec" >> /build/DEBUG
+                                                                                rm "${ resources-directory }/canonical/$HASH"
+                                                                                nohup teardown-completed > "$NOHUP" 2>&1 &
+                                                                                echo "3177bf16-a2e1-43e2-9c36-4d7bbd644b9b" >> /build/DEBUG
                                                                             else
-                                                                                teardown-aborted
+                                                                                echo "e7372c5b-f5f7-4ace-800f-ddfc030a085e" >> /build/DEBUG
+                                                                                nohup teardown-aborted > "$NOHUP" 2>&1 &
+                                                                                echo "d2e9addc-5e48-4682-a438-8af8767a7959" >> /build/DEBUG
                                                                             fi
                                                                         else
+                                                                            echo "54051e3c-ddce-4bd2-be8d-0ee15d0870b7" >> /build/DEBUG
                                                                             teardown-aborted
+                                                                            echo "f7519e3c-bf3d-41cd-82b2-df3a83d3b240" >> /build/DEBUG
                                                                         fi
                                                                     '' ;
                                                                 teardown-aborted =
                                                                     ''
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "f75c4adf" }
                                                                         jq \
                                                                             --null-input \
@@ -711,10 +820,14 @@
                                                                 teardown-completed =
                                                                     if builtins.typeOf release == "null" then
                                                                         ''
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                            flock -s 211
                                                                             teardown-final
                                                                         ''
                                                                     else
                                                                         ''
+                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                            flock -s 211
                                                                             STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "a0721efc" }
                                                                             export STANDARD_OUTPUT_FILE
                                                                             STANDARD_ERROR_FILE="$( temporary )" || ${ failures_ "f78116ae" }
