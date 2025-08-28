@@ -108,7 +108,6 @@
                                                                             STATUS="$?"
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
-                                                                                cat ${ resources-directory }/DEBUG
                                                                                 echo "${ label } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
                                                                                 ${ failures_ "e3be9f66" }
                                                                             fi
@@ -148,8 +147,20 @@
                                                                         fi
                                                                         mkdir "$OUT/test"
                                                                         invoke-resource
+                                                                        sleep 10s
+                                                                        echo "c8af576f-d3d2-4034-90f5-e87a6c4b941d" >> ${ resources-directory }/debug
                                                                         exec 200> ${ resources-directory }/test.setup.lock
                                                                         flock -x 200
+                                                                        echo "60820cb4-3103-49f5-9491-8bf67b95bce9" >> ${ resources-directory }/debug
+                                                                        exec 201> ${ resources-directory }/test.stall-for-process.lock
+                                                                        flock -x 201
+                                                                        echo "78eb1b64-5913-469d-a396-e3c6592ffeba" >> ${ resources-directory }/debug
+                                                                        exec 202> ${ resources-directory }/test.stall-for-cleanup.lock
+                                                                        flock -x 202
+                                                                        echo "5f93b22c-6f47-49f7-82e7-a68ccaf7ba47" >> ${ resources-directory }/debug
+                                                                        exec 203> ${ resources-directory }/test.teardown.lock
+                                                                        flock -x 203
+                                                                        echo "2fa94211-47aa-4c7e-a91d-e0a571abf3bf" >> ${ resources-directory }/debug
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
                                                                         find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
                                                                         if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
@@ -157,21 +168,22 @@
                                                                             echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
-                                                                        echo "da4b3b6c-fe76-4be1-a335-0e3b84a5b8fc" >> /build/DEBUG
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        echo "801e761b-27de-47d3-b9ec-2482f5548fb6 BEFORE SLEEP" >> /build/DEBUG
                                                                         sleep 10s # KLUDGE
-                                                                        echo "21293d5e-1de7-4c08-8f8f-5a244ce0cfa5 AFTER SLEEP" >> /build/DEBUG
+                                                                        if [[ -e ${ resources-directory }/debug ]]
+                                                                        then
+                                                                            echo ${ label } We expected the debug to be non-existant >&2
+                                                                            cat ${ resources-directory }/debug
+                                                                            ${ failures_ "bf77ed8c" }
+                                                                        fi
                                                                         if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" ]]
                                                                         then
-                                                                            cat /build/DEBUG
                                                                             echo ${ label } We expected ${ resources-directory }/mounts to be an empty directory >&2
                                                                             find ${ resources-directory }/mounts #KLUDGE
                                                                             ${ failures_ "65eb34ce" }
                                                                         fi
                                                                         if [[ -n "$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" ]]
                                                                         then
-                                                                            cat /build/DEBUG
                                                                             echo ${ label } We expected the canonical directory ${ resources-directory }/canonical to be empty >&2
                                                                             ${ failures_ "4705e39e" }
                                                                         fi
@@ -395,15 +407,10 @@
                                                                     '' ;
                                                                 log =
                                                                     ''
-                                                                        echo "61cc998a-7373-4141-ba51-5d50476c43ee IN LOG" >> /build/DEBUG
                                                                         mkdir --parents ${ resources-directory }/logs
-                                                                        echo "b0a08351-7feb-4f4f-b635-dee834083b1d" >> /build/DEBUG
                                                                         exec 203> ${ resources-directory }/logs/lock
-                                                                        echo "45dad86f-097f-44d4-b6fd-0b6093ed1254" >> /build/DEBUG
                                                                         flock -x 203
-                                                                        echo "7d990221-085a-4446-95f2-89f505964d13" >> /build/DEBUG
                                                                         cat >> ${ resources-directory }/logs/log.yaml
-                                                                        echo "334419e9-5b60-4bc6-a48f-6537ba39ccbc FINISHED LOG" >> /build/DEBUG
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
@@ -542,6 +549,7 @@
                                                                                 flock -s 211
                                                                                 NOHUP="$( temporary )" || ${ failures_ "b63481a0" }
                                                                                 nohup stale > "$NOHUP" 2>&1 &
+                                                                                ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                                 echo -n "$MOUNT"
                                                                             else
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "d162db9f" }
@@ -551,6 +559,7 @@
                                                                                 flock -s 211
                                                                                 MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
                                                                                 mkdir --parents "$MOUNT"
+                                                                                mkdir --parents ${ resources-directory }/canonical
                                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                                 NOHUP="$( temporary )" || ${ failures_ "f91c57c2" }
                                                                                 nohup no-init > "$NOHUP" 2>&1 &
@@ -560,9 +569,7 @@
                                                                     else
                                                                         ''
                                                                             mkdir --parents ${ resources-directory }
-                                                                            echo "effe6b3e-de50-4be0-874e-4ea83d3a4b16" >> ${ resources-directory }/DEBUG
                                                                             mkdir --parents "${ resources-directory }/locks"
-                                                                            echo "52375c8d-efe6-4f84-a4ca-7e2709d93cad" >> ${ resources-directory }/DEBUG
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
@@ -571,19 +578,16 @@
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
-                                                                            echo "21fc3cf2-8899-4b11-b8f5-e3ea19986b2d" >> ${ resources-directory }/DEBUG
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
                                                                             else
-                                                                                echo "738f02f9-3f5e-43fd-b881-8ef2f92ee386" >> ${ resources-directory }/DEBUG
                                                                                 STANDARD_INPUT_FILE="$( temporary )" || ${ failures_ "f66f966d" }
                                                                                 export STANDARD_INPUT_FILE
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 cat > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
-                                                                                echo "9cb3d3a2-4ac7-4020-803f-d1b3eef7b38d" >> ${ resources-directory }/DEBUG
                                                                             fi
                                                                             export HAS_STANDARD_INPUT
                                                                             export STANDARD_INPUT
@@ -595,7 +599,6 @@
                                                                             export HASH
                                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                                             flock -s 210
-                                                                            echo "6e695639-8165-4cc5-8130-40a204c5d50e" >> ${ resources-directory }/DEBUG
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
@@ -609,7 +612,6 @@
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
                                                                             else
-                                                                                echo "65777e3f-eb61-400a-a144-5a625c3a3719" >> ${ resources-directory }/DEBUG
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                                 export MOUNT_INDEX
                                                                                 mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
@@ -626,10 +628,8 @@
                                                                                 export STANDARD_ERROR_FILE
                                                                                 STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "29c19af1" }
                                                                                 export STANDARD_OUTPUT_FILE
-                                                                                echo "0c53bb94-d7e3-4395-a9dd-e83c5de6e4a9" >> ${ resources-directory }/DEBUG
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
-                                                                                    echo "0b9e0437-7ed7-410f-823f-4e4d49bd15a3 LINK=$LINK MOUNT=$MOUNT" >> ${ resources-directory }/DEBUG
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
                                                                                         STATUS="$?"
@@ -645,18 +645,17 @@
                                                                                         STATUS="$?"
                                                                                     fi
                                                                                 fi
-                                                                                echo "3460e109-7ea4-41ea-8adf-f071000c4e9c STATUS=$STATUS ${ init-application }/bin/init-application" >> ${ resources-directory }/DEBUG
                                                                                 export STATUS
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
                                                                                 then
-                                                                                    echo "d1c2dc39-1fa8-4dda-bff9-6e0bead9151d" >> ${ resources-directory }/DEBUG
-                                                                                    NOHUP="$( temporary )" || ${ failures_ "faa95dc4" }
-                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
+                                                                                    NOHUP="$( temporary )" || ${ failures_ "605463b2" }
+                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1
+                                                                                    mkdir --parents ${ resources-directory }/canonical
+                                                                                    ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                                     echo -n "$MOUNT"
                                                                                 else
-                                                                                    echo "e4946e3c-7717-4fd3-8b67-d7f04b446340" >> ${ resources-directory }/DEBUG
-                                                                                    NOHUP="$( temporary )" || ${ failures_ "aee914c6" }
-                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1 &
+                                                                                    NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
+                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1
                                                                                     ${ failures_ "b385d889" }
                                                                                 fi
                                                                             fi
@@ -686,44 +685,38 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
+                                                                        echo "8f573e1f-9483-45a3-852d-67d619a12f01 CLEANUP" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
+                                                                        echo "f867c075-a994-4eb7-b9d3-a657e6a92f08" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        echo "fefdb14d-0182-4073-bc47-9b9d2944257c" >> ${ resources-directory }/debug
                                                                         flock -s 211
-                                                                        echo "b39d663d-7d4e-4e75-bd7e-51cbcd5fc9d1" >> /build/DEBUG
+                                                                        echo "55a68e1f-b6f4-4786-b223-0d0407122e0d" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
-                                                                        echo "b43685d4-2c8a-4f53-8b89-46b22faa8fea" >> /build/DEBUG
+                                                                        echo "57feaa46-4996-47a6-8b38-64f4edee2fb1" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        echo "f44227f5-c7bd-4083-bd57-6a4fcd9a4744" >> /build/DEBUG
+                                                                        echo "06ee1361-1fd5-437e-b962-65382ae8d607" >> ${ resources-directory }/debug
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
-                                                                        HEAD2="HEAD=$HEAD"
-                                                                        echo "5e87057c-d3f0-4529-b6cc-b183a7d6db60" >> /build/DEBUG
+                                                                        echo "59c453bd-cf96-4a1c-a59d-cdc7f47bf66b" >> ${ resources-directory }/debug
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
-                                                                        echo "5fa7d290-52cb-46cc-9565-c235daed0e08 BEGIN LOG stall-for-cleanup" >> /build/DEBUG
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg HEAD "$HEAD2" \
+                                                                            --arg HEAD "<$HEAD>" \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
-                                                                                    "head" : "$HEAD" ,
+                                                                                    "head" : $HEAD ,
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" | log
-                                                                        echo "a22285b2-0ebf-4ff8-8198-17fc45968fc3 END LOG stall-for-cleanup" >> /build/DEBUG
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
                                                                         if [[ -n "$HEAD" ]]
                                                                         then
-                                                                            echo "cd0df0d8-f830-4351-aaab-03520a291120" >> /build/DEBUG
                                                                             inotifywait --event move_self "$HEAD" --quiet
-                                                                            echo "5ccbe110-6c5b-4878-b6df-fe7e1925c482" >> /build/DEBUG
                                                                             nohup stall-for-cleanup > "$NOHUP" 2>&1 &
-                                                                            echo "266b98de-52e9-41a5-a0db-78bd61de6e42" >> /build/DEBUG
                                                                         else
-                                                                            echo "ca583298-d738-40e9-afc8-751acd16f46f" >> /build/DEBUG
                                                                             nohup teardown > "$NOHUP" 2>&1 &
-                                                                            echo "183ddaba-d4f0-4d74-8fcb-5a900e27e53c" >> /build/DEBUG
                                                                         fi
-                                                                        echo "e0296274-2e60-4ad3-a407-555b021e9792" >> /build/DEBUG
                                                                     '' ;
                                                                 stall-for-cleanup-head =
                                                                     ''
@@ -755,13 +748,10 @@
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" | log
-                                                                        echo "31e4c966-638d-42f0-9690-e9ba3a02ac77" > /build/DEBUG
-                                                                        echo "f2692e9b-7652-4e83-a6f7-834412775b9d" >> /build/DEBUG
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
-                                                                        echo "de16c36b-a60b-4f0f-afdf-c9b8da36d523" >> /build/DEBUG
                                                                         NOHUP="$( temporary )" || ${ failures_ "ee645658" }
                                                                         nohup stall-for-cleanup > "$NOHUP" 2>&1 &
-                                                                        echo "099dcc85-e24b-47d4-b59d-b1ad72339e9c" >> /build/DEBUG
+                                                                        echo "ae4d729b-cb5b-4876-8484-30dac25679f2 PROCESS" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 stall-for-symlink =
                                                                     ''
@@ -781,30 +771,26 @@
                                                                     ''
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
-                                                                        echo "4c6a4df6-c320-40b0-816b-5eac11d7fab3" >> /build/DEBUG
                                                                         flock -x 210
                                                                         flock -s 211
-                                                                        echo "a7c7b814-96a3-42ee-b875-b3df59aea073" >> /build/DEBUG
+                                                                        echo "b92842b3-aada-4091-8af4-068260a7aded ${ resources-directory }/canonical/$HASH" >> ${ resources-directory }/debug
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
+                                                                            echo "38e833c8-fed6-4458-b219-538aa2eeb61c" >> ${ resources-directory }/debug
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
-                                                                            echo "3f1c7fad-53e4-4344-95cc-5dfa983e22ba" >> /build/DEBUG
                                                                             NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
-                                                                                echo "70d5fd35-a89d-48be-a31d-d6f04553a1ec" >> /build/DEBUG
+                                                                                echo "e3a229a5-b563-46ae-a15c-e88e409094e7" >> ${ resources-directory }/debug
                                                                                 rm "${ resources-directory }/canonical/$HASH"
                                                                                 nohup teardown-completed > "$NOHUP" 2>&1 &
-                                                                                echo "3177bf16-a2e1-43e2-9c36-4d7bbd644b9b" >> /build/DEBUG
                                                                             else
-                                                                                echo "e7372c5b-f5f7-4ace-800f-ddfc030a085e" >> /build/DEBUG
+                                                                                echo "d5551abe-1794-4e25-b8f0-e889abcd182d" >> ${ resources-directory }/debug
                                                                                 nohup teardown-aborted > "$NOHUP" 2>&1 &
-                                                                                echo "d2e9addc-5e48-4682-a438-8af8767a7959" >> /build/DEBUG
                                                                             fi
                                                                         else
-                                                                            echo "54051e3c-ddce-4bd2-be8d-0ee15d0870b7" >> /build/DEBUG
+                                                                            echo "c17785a0-9ece-4032-8d26-99ec2290ea37" >> ${ resources-directory }/debug
                                                                             teardown-aborted
-                                                                            echo "f7519e3c-bf3d-41cd-82b2-df3a83d3b240" >> /build/DEBUG
                                                                         fi
                                                                     '' ;
                                                                 teardown-aborted =
