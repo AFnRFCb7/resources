@@ -137,39 +137,11 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ coreutils diffutils findutils flock invoke-resource ] ;
+                                                                runtimeInputs = [ coreutils diffutils findutils flock invoke-resource setup ] ;
                                                                 text =
                                                                     ''
-                                                                        if [[ -e ${ resources-directory } ]]
-                                                                        then
-                                                                            echo ${ label } We expected the resources directory to not initially exist >&2
-                                                                            ${ failures_ "a6e628b6" }
-                                                                        fi
-                                                                        mkdir "$OUT/test"
-                                                                        invoke-resource
-                                                                        sleep 10s
-                                                                        echo "c8af576f-d3d2-4034-90f5-e87a6c4b941d" >> ${ resources-directory }/debug
-                                                                        exec 200> ${ resources-directory }/test.setup.lock
-                                                                        flock -x 200
-                                                                        echo "60820cb4-3103-49f5-9491-8bf67b95bce9" >> ${ resources-directory }/debug
-                                                                        exec 201> ${ resources-directory }/test.stall-for-process.lock
-                                                                        flock -x 201
-                                                                        echo "78eb1b64-5913-469d-a396-e3c6592ffeba" >> ${ resources-directory }/debug
-                                                                        exec 202> ${ resources-directory }/test.stall-for-cleanup.lock
-                                                                        flock -x 202
-                                                                        echo "5f93b22c-6f47-49f7-82e7-a68ccaf7ba47" >> ${ resources-directory }/debug
-                                                                        exec 203> ${ resources-directory }/test.teardown.lock
-                                                                        flock -x 203
-                                                                        echo "2fa94211-47aa-4c7e-a91d-e0a571abf3bf" >> ${ resources-directory }/debug
-                                                                        cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
-                                                                        find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
-                                                                        if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
-                                                                        then
-                                                                            echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
-                                                                            ${ failures_ "b42acd0d" }
-                                                                        fi
+                                                                        setup
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        sleep 10s # KLUDGE
                                                                         if [[ -e ${ resources-directory }/debug ]]
                                                                         then
                                                                             echo ${ label } We expected the debug to be non-existant >&2
@@ -179,7 +151,6 @@
                                                                         if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" ]]
                                                                         then
                                                                             echo ${ label } We expected ${ resources-directory }/mounts to be an empty directory >&2
-                                                                            find ${ resources-directory }/mounts #KLUDGE
                                                                             ${ failures_ "65eb34ce" }
                                                                         fi
                                                                         if [[ -n "$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" ]]
@@ -203,11 +174,44 @@
                                                                         done
                                                                     '' ;
                                                             } ;
+                                                    setup =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "setup" ;
+                                                                runtimeInputs = [ coreutils diffutils flock invoke-resource ] ;
+                                                                text =
+                                                                    ''
+                                                                        if [[ -e ${ resources-directory } ]]
+                                                                        then
+                                                                            echo ${ label } We expected the resources directory to not initially exist >&2
+                                                                            ${ failures_ "a6e628b6" }
+                                                                        fi
+                                                                        mkdir "$OUT/test"
+                                                                        invoke-resource
+                                                                        sleep 10s #KLUDGE
+                                                                        exec 200> ${ resources-directory }/test.setup.lock
+                                                                        flock -x 200
+                                                                        exec 201> ${ resources-directory }/test.stall-for-process.lock
+                                                                        flock -x 201
+                                                                        exec 202> ${ resources-directory }/test.stall-for-cleanup.lock
+                                                                        flock -x 202
+                                                                        exec 203> ${ resources-directory }/test.teardown.lock
+                                                                        flock -x 203
+                                                                        cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
+                                                                        find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
+                                                                        if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
+                                                                        then
+                                                                            echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
+                                                                            ${ failures_ "b42acd0d" }
+                                                                        fi
+                                                                    '' ;
+                                                            } ;
                                                     in
                                                         ''
                                                             mkdir --parents $out/bin
                                                             makeWrapper ${ invoke-resource }/bin/invoke-resource $out/bin/invoke-resource --set OUT $out
                                                             makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out
+                                                            makeWrapper ${ setup }/bin/setup $out/bin/setup
                                                             makeWrapper ${ stall }/bin/stall $out/bin/stall
                                                             $out/bin/root
                                                         '' ;
@@ -685,19 +689,12 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
-                                                                        echo "8f573e1f-9483-45a3-852d-67d619a12f01 CLEANUP" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        echo "f867c075-a994-4eb7-b9d3-a657e6a92f08" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
-                                                                        echo "fefdb14d-0182-4073-bc47-9b9d2944257c" >> ${ resources-directory }/debug
                                                                         flock -s 211
-                                                                        echo "55a68e1f-b6f4-4786-b223-0d0407122e0d" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
-                                                                        echo "57feaa46-4996-47a6-8b38-64f4edee2fb1" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        echo "06ee1361-1fd5-437e-b962-65382ae8d607" >> ${ resources-directory }/debug
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
-                                                                        echo "59c453bd-cf96-4a1c-a59d-cdc7f47bf66b" >> ${ resources-directory }/debug
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
                                                                         jq \
                                                                             --null-input \
@@ -751,7 +748,6 @@
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                                         NOHUP="$( temporary )" || ${ failures_ "ee645658" }
                                                                         nohup stall-for-cleanup > "$NOHUP" 2>&1 &
-                                                                        echo "ae4d729b-cb5b-4876-8484-30dac25679f2 PROCESS" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 stall-for-symlink =
                                                                     ''
@@ -773,23 +769,18 @@
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
                                                                         flock -s 211
-                                                                        echo "b92842b3-aada-4091-8af4-068260a7aded ${ resources-directory }/canonical/$HASH" >> ${ resources-directory }/debug
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
-                                                                            echo "38e833c8-fed6-4458-b219-538aa2eeb61c" >> ${ resources-directory }/debug
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
                                                                             NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
-                                                                                echo "e3a229a5-b563-46ae-a15c-e88e409094e7" >> ${ resources-directory }/debug
                                                                                 rm "${ resources-directory }/canonical/$HASH"
                                                                                 nohup teardown-completed > "$NOHUP" 2>&1 &
                                                                             else
-                                                                                echo "d5551abe-1794-4e25-b8f0-e889abcd182d" >> ${ resources-directory }/debug
                                                                                 nohup teardown-aborted > "$NOHUP" 2>&1 &
                                                                             fi
                                                                         else
-                                                                            echo "c17785a0-9ece-4032-8d26-99ec2290ea37" >> ${ resources-directory }/debug
                                                                             teardown-aborted
                                                                         fi
                                                                     '' ;
