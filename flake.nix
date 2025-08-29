@@ -122,7 +122,7 @@
                                                                                 ${ failures_ "dde5524a" }
                                                                             fi
                                                                         fi
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -x 200" else "#" }
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
                                                                         find "$OUT/0/checkpoint-pre" -type d -exec touch {}/.gitkeep \;
@@ -178,7 +178,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "setup" ;
-                                                                runtimeInputs = [ coreutils diffutils flock invoke-resource ] ;
+                                                                runtimeInputs = [ coreutils diffutils flock inotify-tools invoke-resource ] ;
                                                                 text =
                                                                     ''
                                                                         if [[ -e ${ resources-directory } ]]
@@ -186,17 +186,17 @@
                                                                             echo ${ label } We expected the resources directory to not initially exist >&2
                                                                             ${ failures_ "a6e628b6" }
                                                                         fi
+                                                                        ${ if testing-locks then "mkdir --parents ${ resources-directory }/test.ready" else "#" }
                                                                         mkdir "$OUT/test"
                                                                         invoke-resource
-                                                                        sleep 10s #KLUDGE
-                                                                        exec 200> ${ resources-directory }/test.setup.lock
-                                                                        flock -x 200
-                                                                        exec 201> ${ resources-directory }/test.stall-for-process.lock
-                                                                        flock -x 201
-                                                                        exec 202> ${ resources-directory }/test.stall-for-cleanup.lock
-                                                                        flock -x 202
-                                                                        exec 203> ${ resources-directory }/test.teardown.lock
-                                                                        flock -x 203
+                                                                        sleep 10s # KLUDGE
+                                                                        # inotifywait ${ resources-directory } --event create ${ resources-directory }/test.ready # KLUDGE
+                                                                        # exec 201> ${ resources-directory }/locks/test.stall-for-process.lock
+                                                                        # flock -x 201
+                                                                        # exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock
+                                                                        # flock -x 202
+                                                                        # exec 203> ${ resources-directory }/locks/test.teardown.lock
+                                                                        # flock -x 203
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
                                                                         find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
                                                                         if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
@@ -457,13 +457,13 @@
                                                                     '' ;
                                                                 recovery =
                                                                     ''
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/test.setup.lock" else "#" }
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
                                                                         exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
@@ -692,8 +692,6 @@
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         flock -s 211
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
                                                                         jq \
@@ -767,22 +765,22 @@
                                                                     ''
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
+                                                                        ${ if testing-locks_ then "touch ${ resources-directory }/test.ready/FLAG" else "#" }
                                                                         flock -x 210
                                                                         flock -s 211
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
-                                                                            NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
-                                                                                rm "${ resources-directory }/canonical/$HASH"
-                                                                                nohup teardown-completed > "$NOHUP" 2>&1 &
+                                                                                nohup teardown-completed
                                                                             else
-                                                                                nohup teardown-aborted > "$NOHUP" 2>&1 &
+                                                                                teardown-aborted
                                                                             fi
                                                                         else
                                                                             teardown-aborted
                                                                         fi
+                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "touch ${ resources-directory }/locks/test.ready/FLAG" else "#" }
                                                                     '' ;
                                                                 teardown-aborted =
                                                                     ''
@@ -831,6 +829,7 @@
                                                                     ''
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "f2409776" }
                                                                         GOOD="$( temporary )" || ${ failures_ "b82279bb" }
+                                                                        rm "${ resources-directory }/canonical/$HASH"
                                                                         mkdir --parents "$GOOD"
                                                                         ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "$LINK"'' }
                                                                         mv "$MOUNT" "$GOOD"
@@ -861,6 +860,12 @@
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
                                                 src = ./. ;
                                             } ;
+                                    testing-locks_ =
+                                        visitor.lib.implementation
+                                            {
+                                                bool = path : value : value ;
+                                            }
+                                            testing-locks ;
                                     transient_ =
                                         visitor.lib.implementation
                                             {
