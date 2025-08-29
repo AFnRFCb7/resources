@@ -67,7 +67,7 @@
                                                                                             echo ${ command.command } > "$OUT/${ builtins.toString index }/command"
                                                                                             ${ command.command }
                                                                                             cp --recursive ${ resources-directory } "$OUT/${ builtins.toString index }/checkpoint"
-                                                                                            find "$OUT/${ builtins.toString index }/checkpoint -type d -exec touch {}/.gitkeep \;
+                                                                                            find "$OUT/${ builtins.toString index }/checkpoint" -type d -exec touch {}/.gitkeep \;
                                                                                             if ! diff --recursive ${ command.checkpoint } "$OUT/${ builtins.toString index }/checkpoint"
                                                                                             then
                                                                                                 echo We expected the result of the ${ builtins.toString index }th command ${ command.command } to be $OUT/${ builtins.toString index }/checkpoint but it was ${ resources-directory } >&2
