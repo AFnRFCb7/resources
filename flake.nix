@@ -188,7 +188,7 @@
                                                                         fi
                                                                         mkdir "$OUT/test"
                                                                         bash invoke-resource
-                                                                        sleep 10s #KLUDGE
+                                                                        # sleep 10s #KLUDGE
                                                                         exec 200> ${ resources-directory }/locks/test.setup.lock
                                                                         flock -x 200
                                                                         exec 201> ${ resources-directory }/locks/test.stall-for-process.lock
