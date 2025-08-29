@@ -861,6 +861,12 @@
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
                                                 src = ./. ;
                                             } ;
+                                    testing-locks_ =
+                                        visitor.lib.implementation
+                                            {
+                                                bool = path : value : value ;
+                                            }
+                                            testing-locks ;
                                     transient_ =
                                         visitor.lib.implementation
                                             {
