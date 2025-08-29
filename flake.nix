@@ -189,13 +189,13 @@
                                                                         mkdir "$OUT/test"
                                                                         bash invoke-resource
                                                                         sleep 10s #KLUDGE
-                                                                        exec 200> ${ resources-directory }/test.setup.lock
+                                                                        exec 200> ${ resources-directory }/locks/test.setup.lock
                                                                         flock -x 200
-                                                                        exec 201> ${ resources-directory }/test.stall-for-process.lock
+                                                                        exec 201> ${ resources-directory }/locks/test.stall-for-process.lock
                                                                         flock -x 201
-                                                                        exec 202> ${ resources-directory }/test.stall-for-cleanup.lock
+                                                                        exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock
                                                                         flock -x 202
-                                                                        exec 203> ${ resources-directory }/test.teardown.lock
+                                                                        exec 203> ${ resources-directory }/locks/test.teardown.lock
                                                                         flock -x 203
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
                                                                         find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
@@ -694,8 +694,6 @@
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         flock -s 211
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/test.setup.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
                                                                         jq \
