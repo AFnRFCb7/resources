@@ -455,14 +455,14 @@
                                                                     '' ;
                                                                 recovery =
                                                                     ''
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
+                                                                        ${ if testing-locks_ then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
+                                                                        ${ if testing-locks_ then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
                                                                         exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
                                                                         flock -x 211
