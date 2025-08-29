@@ -11,6 +11,7 @@
                         failures ? { } ,
                         findutils ,
                         flock ,
+                        gawk ,
                         init ? null ,
                         jq ,
                         inotify-tools ,
@@ -35,6 +36,7 @@
                             check =
                                 {
                                     arguments ,
+                                    bash ,
                                     checkpoint-pre ,
                                     checkpoint-post ,
                                     commands ,
@@ -82,13 +84,12 @@
                                                                 text =
                                                                     ''
                                                                         mkdir --parents "$OUT/0"
-                                                                        if ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } > "$OUT/test/standard-output" 2> "$OUT/test/standard-error"
+                                                                        echo "$$" >> "$OUT/0/pid"
+                                                                        cat > "$OUT/0/command" <<EOF
+                                                                        MOUNT="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                        EOF
+                                                                        if MOUNT="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
                                                                         then
-                                                                            if [[ ! -f "$OUT/test/standard-output" ]]
-                                                                            then
-                                                                                ${ failures_ "be0cdb02" }
-                                                                            fi
-                                                                            MOUNT="$( < "$OUT/test/standard-output" )"
                                                                             if [[ ! -d "$MOUNT" ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not a directory" >&2
@@ -138,7 +139,8 @@
                                                                 runtimeInputs = [ coreutils diffutils findutils flock invoke-resource setup ] ;
                                                                 text =
                                                                     ''
-                                                                        setup
+                                                                        echo "The derivation for this check is $OUT"
+                                                                        bash setup
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
                                                                         if [[ -e ${ resources-directory }/debug ]]
                                                                         then
@@ -176,7 +178,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "setup" ;
-                                                                runtimeInputs = [ coreutils diffutils flock invoke-resource ] ;
+                                                                runtimeInputs = [ bash coreutils diffutils flock invoke-resource ] ;
                                                                 text =
                                                                     ''
                                                                         if [[ -e ${ resources-directory } ]]
@@ -185,7 +187,7 @@
                                                                             ${ failures_ "a6e628b6" }
                                                                         fi
                                                                         mkdir "$OUT/test"
-                                                                        invoke-resource
+                                                                        bash invoke-resource
                                                                         sleep 10s #KLUDGE
                                                                         exec 200> ${ resources-directory }/test.setup.lock
                                                                         flock -x 200
@@ -534,7 +536,8 @@
                                                                                 rm "$STANDARD_INPUT_FILE"
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
-                                                                            export ORIGINATOR_PID="$PPID"
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
+                                                                            export ORIGINATOR_PID
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
@@ -596,7 +599,8 @@
                                                                             ARGUMENTS=( "$@" )
                                                                             TRANSIENT=${ transient_ }
                                                                             export TRANSIENT
-                                                                            export ORIGINATOR_PID=$PPID
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
+                                                                            export ORIGINATOR_PID
                                                                             HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
                                                                             exec 210> "${ resources-directory }/locks/$HASH"
@@ -853,7 +857,7 @@
                                                         in
                                                             ''
                                                                 mkdir --parents $out/scripts
-                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock jq ps uuidlib yq-go ] }" ) scripts ) ) }
+                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock gawk jq ps uuidlib yq-go ] }" ) scripts ) ) }
                                                             '' ;
                                                 name = "derivation" ;
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
@@ -869,8 +873,6 @@
                                         visitor.lib.implementation
                                             {
                                                 bool = path : value : if value then ''"$( uuidgen )" || exit ${ builtins.toString uuid-error }'' else "" ;
-                                                int = path : value : if value > 0 then ''"$(( $( date ) / ${ builtins.toString value } ))" || exit ${ builtins.toString uuid-error }'' else builtins.throw "non-positive time does not make sense" ;
-                                                null = path : value : "" ;
                                                 string = path : value : ''"$( ${ value } )" || exit ${ builtins.toString uuid-error }'' ;
                                             }
                                             transient ;
