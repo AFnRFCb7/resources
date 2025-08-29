@@ -61,16 +61,18 @@
                                                                             text =
                                                                                 let
                                                                                     command = builtins.elemAt commands index ;
+                                                                                    j = builtins.toString ( index + 1 ) ;
                                                                                     in
                                                                                         ''
                                                                                             OUT="$1"
-                                                                                            echo ${ command.command } > "$OUT/${ builtins.toString index }/command"
+                                                                                            mkdir --parents "$OUT/${ j }"
+                                                                                            echo ${ command.command } > "$OUT/${ j }/command"
                                                                                             ${ command.command }
-                                                                                            cp --recursive ${ resources-directory } "$OUT/${ builtins.toString index }/checkpoint"
-                                                                                            find "$OUT/${ builtins.toString index }/checkpoint" -type d -exec touch {}/.gitkeep \;
-                                                                                            if ! diff --recursive ${ command.checkpoint } "$OUT/${ builtins.toString index }/checkpoint"
+                                                                                            cp --recursive ${ resources-directory } "$OUT/${ j }/checkpoint"
+                                                                                            find "$OUT/${ j }/checkpoint" -type d -exec touch {}/.gitkeep \;
+                                                                                            if ! diff --recursive ${ command.checkpoint } "$OUT/${ j }/checkpoint"
                                                                                             then
-                                                                                                echo We expected the result of the ${ builtins.toString index }th command ${ command.command } to be $OUT/${ builtins.toString index }/checkpoint but it was ${ resources-directory } >&2
+                                                                                                echo "We expected the result of the ${ j }-th command ${ command.command } to be ${ resources-directory } but it was $OUT/${ j }/checkpoint" >&2
                                                                                                 ${ failures_ "df837f22" }
                                                                                             fi
                                                                                         '' ;
@@ -468,9 +470,9 @@
                                                                         flock -x 211
                                                                         GOOD="$( sequential )" || ${ failures_ "f696cd77" }
                                                                         mkdir --parents ${ resources-directory }/temporary
-                                                                        rm --recursive --force "$LINK"
-                                                                        mv "$MOUNT" "${ resources-directory }/temporary/$GOOD"
-                                                                        rm --recusive --force "$RECOVERY"
+                                                                        rm --recursive --force "${ resources-directory }/links/$MOUNT_INDEX"
+                                                                        mv "${ resources-directory }/mounts/$MOUNT_INDEX" "${ resources-directory }/temporary/$GOOD"
+                                                                        rm --recursive --force "${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         if read -t 0
                                                                         then
                                                                             RESOLUTION="$( cat )" || ${ failures_ "d8a96cd7" }
