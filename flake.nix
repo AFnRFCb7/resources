@@ -313,12 +313,11 @@
                                                             {
                                                                 bad =
                                                                     ''
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "a1b19aa5" }
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
                                                                         TARGETS="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "f3ead1ff" }
-                                                                        rm "${ resources-directory }/canonical/$HASH"
                                                                         RECOVERY="${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         mkdir --parents "$RECOVERY"
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
@@ -651,7 +650,9 @@
                                                                                     fi
                                                                                 fi
                                                                                 export STATUS
-                                                                                if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --bytes -128 )" == ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) } ]]
+                                                                                TARGET_HASH_EXPECTED=${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) }
+                                                                                TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failures_ "db2517b1" }
+                                                                                if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                                 then
                                                                                     NOHUP="$( temporary )" || ${ failures_ "605463b2" }
                                                                                     nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1
@@ -660,7 +661,7 @@
                                                                                     echo -n "$MOUNT"
                                                                                 else
                                                                                     NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
-                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1
+                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
                                                                                     ${ failures_ "b385d889" }
                                                                                 fi
                                                                             fi
