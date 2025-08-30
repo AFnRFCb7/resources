@@ -290,7 +290,7 @@
                                                                     {
                                                                         extraBwrapArgs =
                                                                             [
-                                                                                "--bind $LINK /link"
+                                                                                "--bind $LINK /links"
                                                                                 "--bind $MOUNT /mount"
                                                                                 "--tmpfs /scratch"
                                                                             ] ;
@@ -318,7 +318,7 @@
                                                                         ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "a1b19aa5" }
-                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
+                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
                                                                         TARGETS="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "f3ead1ff" }
                                                                         RECOVERY="${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         mkdir --parents "$RECOVERY"
@@ -372,7 +372,7 @@
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
-                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
+                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "dc662c73" }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
