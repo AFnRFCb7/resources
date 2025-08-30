@@ -486,7 +486,7 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --arg ACTION "$ACTION" \
-                                                                            --argjson ARGUMENT "$ARGUMENTS" \
+                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg MOUNT_INDEX "$MOUNT_INDEX" \
