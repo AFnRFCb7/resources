@@ -18,7 +18,6 @@
                         makeBinPath ,
                         makeWrapper ,
                         mkDerivation ,
-                        name ? "setup" ,
                         ps ,
                         release ? null ,
                         resources-directory ,
@@ -259,7 +258,7 @@
                                         in "exit ${ builtins.toString ( reduced + 10 ) }" ;
                             implementation =
                                 let
-                                    inner-derivation =
+                                    derivation =
                                         mkDerivation
                                             {
                                                 installPhase =
@@ -860,19 +859,7 @@
                                                                 mkdir --parents $out/scripts
                                                                 ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock gawk jq ps uuidlib yq-go ] }" ) scripts ) ) }
                                                             '' ;
-                                                name = "inner-derivation" ;
-                                                nativeBuildInputs = [ coreutils makeWrapper ] ;
-                                                src = ./. ;
-                                            } ;
-                                    outer-derivation =
-                                        mkDerivation
-                                            {
-                                                installPhase =
-                                                    ''
-                                                        mkdir --parents $out/name
-                                                        makeWrapper ${ inner-derivation }/bin/setup $out/bin/${ name }
-                                                    '' ;
-                                                name = "outer-derivation" ;
+                                                name = "derivation" ;
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
                                                 src = ./. ;
                                             } ;
@@ -889,7 +876,7 @@
                                                 string = path : value : ''"$( ${ value } )" || exit ${ builtins.toString uuid-error }'' ;
                                             }
                                             transient ;
-                                    in "${ outer-derivation }/bin/${ name }" ;
+                                    in "${ derivation }/bin/setup" ;
                             in
                                 {
                                     check = check ;
