@@ -480,7 +480,7 @@
                                                                             STANDARD_INPUT="$( cat )" || ${ failures_ "d8a96cd7" }
                                                                         else
                                                                             HAS_STANDARD_INPUT=false
-                                                                            STANDARD_INPUT
+                                                                            STANDARD_INPUT=
                                                                         fi
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "26030b9e" }
                                                                         jq \
@@ -515,6 +515,10 @@
                                                                             OLD="0"
                                                                         fi
                                                                         NEW=$(( OLD + 1 ))
+                                                                        if [[ "$NEW" -eq "9999999999999999" ]]
+                                                                        then
+                                                                            NEW="0"
+                                                                        fi
                                                                         echo "$NEW" > ${ resources-directory }/counter.increment
                                                                         chmod 0644 ${ resources-directory }/counter.increment
                                                                         printf "%016d\n" "$NEW"
