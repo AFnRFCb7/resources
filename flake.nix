@@ -481,7 +481,6 @@
                                                                         else
                                                                             HAS_STANDARD_INPUT=false
                                                                             STANDARD_INPUT
-                                                                            RESOLUTION="${ builtins.concatStringsSep "" [ "$" "{" "*" "}" ] }"
                                                                         fi
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "26030b9e" }
                                                                         jq \
@@ -491,7 +490,6 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg MOUNT_INDEX "$MOUNT_INDEX" \
-                                                                            --arg RESOLUTION "$RESOLUTION" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -500,7 +498,6 @@
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
                                                                                 "mount-index" : $MOUNT_INDEX ,
-                                                                                "resolution" : $RESOLUTION ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
                                                                                 "type" : $TYPE
                                                                             }' | yq --prettyPrint "[.]" > log
