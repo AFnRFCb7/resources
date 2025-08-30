@@ -72,7 +72,7 @@
                                                                                             find "$OUT/${ j }/checkpoint" -type d -exec touch {}/.gitkeep \;
                                                                                             if ! diff --recursive ${ command.checkpoint } "$OUT/${ j }/checkpoint"
                                                                                             then
-                                                                                                echo "We expected the result of the ${ j }-th command ${ command.command } to be ${ resources-directory } but it was $OUT/${ j }/checkpoint" >&2
+                                                                                                echo "${ label } We expected the result of the ${ j }-th command ${ command.command } to be ${ resources-directory } but it was $OUT/${ j }/checkpoint" >&2
                                                                                                 ${ failures_ "df837f22" }
                                                                                             fi
                                                                                         '' ;
