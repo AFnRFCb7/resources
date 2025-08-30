@@ -473,25 +473,35 @@
                                                                         rm --recursive --force "${ resources-directory }/links/$MOUNT_INDEX"
                                                                         mv "${ resources-directory }/mounts/$MOUNT_INDEX" "${ resources-directory }/temporary/$GOOD"
                                                                         rm --recursive --force "${ resources-directory }/recovery/$MOUNT_INDEX"
+                                                                        ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "8a335213" }
                                                                         if read -t 0
                                                                         then
-                                                                            RESOLUTION="$( cat )" || ${ failures_ "d8a96cd7" }
+                                                                            HAS_STANDARD_INPUT=true
+                                                                            STANDARD_INPUT="$( cat )" || ${ failures_ "d8a96cd7" }
                                                                         else
+                                                                            HAS_STANDARD_INPUT=false
+                                                                            STANDARD_INPUT
                                                                             RESOLUTION="${ builtins.concatStringsSep "" [ "$" "{" "*" "}" ] }"
                                                                         fi
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "26030b9e" }
                                                                         jq \
                                                                             --null-input \
                                                                             --arg ACTION "$ACTION" \
+                                                                            --argjson ARGUMENT "$ARGUMENTS" \
+                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg MOUNT_INDEX "$MOUNT_INDEX" \
                                                                             --arg RESOLUTION "$RESOLUTION" \
+                                                                            --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "action" : $ACTION ,
+                                                                                "arguments" : $ARGUMENTS ,
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
                                                                                 "mount-index" : $MOUNT_INDEX ,
                                                                                 "resolution" : $RESOLUTION ,
+                                                                                "standard-input" : $STANDARD_INPUT ,
                                                                                 "type" : $TYPE
                                                                             }' | yq --prettyPrint "[.]" > log
                                                                         log
@@ -834,6 +844,8 @@
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "f2409776" }
                                                                         GOOD="$( temporary )" || ${ failures_ "b82279bb" }
                                                                         mkdir --parents "$GOOD"
+                                                                        export HAS_STANDARD_INPUT=false
+                                                                        export STANDARD_INPUT=
                                                                         ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "$LINK"'' }
                                                                         mv "$MOUNT" "$GOOD"
                                                                         jq \
