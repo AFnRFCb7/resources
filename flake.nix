@@ -906,8 +906,8 @@
                                                                         mkdir --parents "$GOOD"
                                                                         export HAS_STANDARD_INPUT=false
                                                                         export STANDARD_INPUT=
-                                                                        trash "$LINK" # KLUDGE
-                                                                        # ${ if builtins.typeOf init == "null" then "#" else ''trash --recursive --force "$LINK"'' }
+                                                                        # trash "$LINK" # KLUDGE
+                                                                        ${ if builtins.typeOf init == "null" then "#" else ''trash "$LINK"'' }
                                                                         mv "$MOUNT" "$GOOD"
                                                                         jq \
                                                                             --null-input \
