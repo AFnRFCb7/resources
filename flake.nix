@@ -455,14 +455,12 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
-                                                                            --argjson SEED '${ builtins.toJSON seed }' \
                                                                             --argjson TARGETS '${ builtins.toJSON targets }' \
                                                                             --argjson OBSERVED "$OBSERVED" \
                                                                             '{
                                                                                 "expected" :
                                                                                     {
                                                                                         "hash" : $HASH ,
-                                                                                        "seed" : $SEED ,
                                                                                         "targets": $TARGETS
                                                                                     } ,
                                                                               "observed" : $OBSERVED
