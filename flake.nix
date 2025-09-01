@@ -314,7 +314,6 @@
                                                                             string = seed ;
                                                                         }
                                                                         primary ;
-                                                        hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                                                         init-application =
                                                             if builtins.typeOf init == "null" then null
                                                             else
@@ -329,6 +328,7 @@
                                                                         name = "init-application" ;
                                                                         runScript = init "${ resources-directory }/mounts/$HASH" ;
                                                                     } ;
+                                                        pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                                                         release-application =
                                                             if builtins.typeOf release == "null" then null
                                                             else
@@ -607,7 +607,7 @@
                                                                             TRANSIENT=${ transient_ }
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
                                                                             export ORIGINATOR_PID
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
+                                                                            HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks/$HASH"
                                                                             exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
@@ -670,7 +670,7 @@
                                                                             export TRANSIENT
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
                                                                             export ORIGINATOR_PID
-                                                                            HASH="$( echo "${ hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
+                                                                            HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
                                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                                             flock -s 210
