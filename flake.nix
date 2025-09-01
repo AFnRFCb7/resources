@@ -74,6 +74,7 @@
                                                                                                 echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/${ j }/checkpoint expected/${ label }/${ j }/checkpoint /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/${ j }/checkpoint"
                                                                                                 ${ failures_ "df837f22" }
                                                                                             fi
+                                                                                            rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
                                                                                         '' ;
                                                                         } ;
                                                                     in "${ command }" ;
@@ -142,6 +143,7 @@
                                                                             echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-pre expected/${ label }/0/checkpoint-pre /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-pre"
                                                                             ${ failures_ "a6f0de4f" }
                                                                         fi
+                                                                        rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
                                                                     '' ;
                                                             } ;
                                                     root =
@@ -238,6 +240,7 @@
                                                                             echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-post expected/${ label }/0/checkpoint-post /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-post"
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
+                                                                        rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
                                                                     '' ;
                                                             } ;
                                                     in
