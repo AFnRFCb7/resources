@@ -375,7 +375,6 @@
                                                                         makeWrapper "$RECOVERY_BIN" "$RECOVERY/recovery.sh" --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
                                                                         STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failures_ "c141fe3b" }
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "f13f84ae" }
-                                                                        rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e5fa2135" }
                                                                         INIT_APPLICATION=${ if builtins.typeOf init-application == "null" then "null" else "${ init-application }/bin/init-application" }
                                                                         RELEASE_APPLICATION=${ if builtins.typeOf release-application == "null" then "null" else "${ release-application }/bin/release-application" }
@@ -426,7 +425,6 @@
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "dc662c73" }
-                                                                        rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "cd255035" }
                                                                         INIT_APPLICATION=${ if builtins.typeOf init-application == "null" then "null" else "${ init-application }/bin/init-application" }
                                                                         RELEASE_APPLICATION=${ if builtins.typeOf release-application == "null" then "null" else "${ release-application }/bin/release-application" }
@@ -530,9 +528,9 @@
                                                                         ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         GOOD="$( temporary )" || ${ failures_ "f696cd77" }
                                                                         mkdir --parents ${ resources-directory }/temporary
-                                                                        rm --recursive --force "${ resources-directory }/links/$MOUNT_INDEX"
+                                                                        trash "${ resources-directory }/links/$MOUNT_INDEX"
                                                                         mv "${ resources-directory }/mounts/$MOUNT_INDEX" "$GOOD"
-                                                                        rm --recursive --force "${ resources-directory }/recovery/$MOUNT_INDEX"
+                                                                        trash "${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "8a335213" }
                                                                         if read -t 0
                                                                         then
@@ -602,7 +600,6 @@
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 timeout 1m cat > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "fbb0e2f8" }
-                                                                                rm "$STANDARD_INPUT_FILE"
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
@@ -711,7 +708,6 @@
                                                                                     else
                                                                                         STATUS="$?"
                                                                                     fi
-                                                                                    rm "$STANDARD_INPUT_FILE"
                                                                                 else
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
@@ -907,8 +903,8 @@
                                                                         mkdir --parents "$GOOD"
                                                                         export HAS_STANDARD_INPUT=false
                                                                         export STANDARD_INPUT=
-                                                                        rm --recursive --force "$LINK" # KLUDGE
-                                                                        # ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "$LINK"'' }
+                                                                        trash "$LINK" # KLUDGE
+                                                                        # ${ if builtins.typeOf init == "null" then "#" else ''trash --recursive --force "$LINK"'' }
                                                                         mv "$MOUNT" "$GOOD"
                                                                         jq \
                                                                             --null-input \
@@ -926,6 +922,12 @@
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         SEQUENCE="$( sequential )" || ${ failures_ "09d1282d" }
                                                                         echo "${ resources-directory }/temporary/$SEQUENCE"
+                                                                    '' ;
+                                                                trash =
+                                                                    ''
+                                                                        TRASH="$1"
+                                                                        TEMPORARY="$( temporary )" || ${ failures_ "cd1cddbf" }
+                                                                        mv "$TRASH" "$TEMPORARY"
                                                                     '' ;
                                                             } ;
                                                         in
