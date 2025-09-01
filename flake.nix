@@ -396,6 +396,7 @@
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
+                                                                        DESCRIPTION='${ builtins.toJSON description }'
                                                                         LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "dc662c73" }
@@ -406,6 +407,7 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                            --argjson DESCRIPTION "$DESCRIPTION" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg INIT_APPLICATION "$INIT_APPLICATION" \
@@ -419,6 +421,8 @@
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
+                                                                                "arguments" : $ARGUMENTS ,
+                                                                                "description" : $DESCRIPTION ,
                                                                                 "hash" : $HASH ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
