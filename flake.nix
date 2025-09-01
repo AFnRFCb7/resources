@@ -26,8 +26,6 @@
                         testing-locks ? false ,
                         targets ? [ ] ,
                         transient ? false ,
-                        uuidlib ,
-                        uuid-error ? 112 ,
                         visitor ,
                         yq-go ,
                         writeShellApplication
@@ -87,24 +85,27 @@
                                                                     ''
                                                                         mkdir --parents "$OUT/0"
                                                                         echo "$$" >> "$OUT/0/pid"
-                                                                        cat > "$OUT/0/command" <<EOF
-                                                                        MOUNT="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
-                                                                        EOF
-                                                                        if MOUNT="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                        if MOUNT_1="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
                                                                         then
-                                                                            if [[ ! -d "$MOUNT" ]]
+                                                                            if [[ ! -d "$MOUNT_1" ]]
                                                                             then
-                                                                                echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not a directory" >&2
+                                                                                echo "${ label } command ${ implementation } succeeded but MOUNT_1 $MOUNT is not a directory" >&2
                                                                                 ${ failures_ "e551352c" }
-                                                                            elif [[ "$MOUNT" != "${ mount }" ]]
+                                                                            elif [[ "$MOUNT_1" != "${ mount }" ]]
                                                                             then
-                                                                                echo "${ label } command ${ implementation } succeeded but mount $MOUNT is not the expected directory ${ mount }" >&2
+                                                                                echo "${ label } command ${ implementation } succeeded but MOUNT_1 $MOUNT_1 is not the expected directory ${ mount }" >&2
                                                                                 ${ failures_ "e484b646" }
                                                                             fi
                                                                             if [[ -s ${ resources-directory }/test/standard-error ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } succeeded but it generated standard-error" >&2
                                                                                 ${ failures_ "eede733e" }
+                                                                            fi
+                                                                            MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                            if [[ "$MOUNT_1" ${ if transient then "==" else "!=" } "$MOUNT_2" ]]
+                                                                            then
+                                                                                echo "${ label } the second invocation ${ if transient then "should" else "should not" } generate the same result as the first invocation" >&2
+                                                                                ${ failures_ "9167f049" }
                                                                             fi
                                                                             ${ if status != 0 then ''exit 148'' else "# " }
                                                                         else
@@ -123,6 +124,12 @@
                                                                             then
                                                                                 echo "${ label } command ${ implementation } failed but it generated standard-error"
                                                                                 ${ failures_ "dde5524a" }
+                                                                            fi
+                                                                            MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                            if [[ -n "$MOUNT_2" ]]
+                                                                            then
+                                                                                echo "${ label } the first invocation generated an empty result and the second generation generated $MOUNT_2" >&2
+                                                                                ${ failures_ "5f8b5de3" }
                                                                             fi
                                                                         fi
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
@@ -315,22 +322,90 @@
                                                             {
                                                                 bad =
                                                                     ''
+                                                                        echo "4bd3ccf2-9439-4174-bce8-70cddfe0b5ec BAD" >> ${ resources-directory }/debug
                                                                         ${ if testing-locks_ then "flock -s 200" else "#" }
+                                                                        echo "11a2f19f-c1c9-4aa5-9b2e-35d17b391758" >> ${ resources-directory }/debug
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
-                                                                        ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "a1b19aa5" }
-                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "$LINK" -mindepth 1 -maxdepth 1 -type l \; | jq --raw-input --slurp )" || ${ failures_ "bf995f33" }'' }
-                                                                        TARGETS="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq --raw-input --slurp )" || ${ failures_ "f3ead1ff" }
+                                                                        echo "f06c6fe9-7fba-451d-8950-c47b4b704cd8" >> ${ resources-directory }/debug
+                                                                        ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
+                                                                        echo "acf828db-bb89-4bbd-be7b-e21519d04693 LINK=$LINK" >> ${ resources-directory }/debug
+                                                                        LINKS_TEMPORARY="$( temporary )" || ${ failures_ "cabcc321" }
+                                                                        echo "fc436fe0-ae8c-4d33-a21f-d764c078883d $0" >> ${ resources-directory }/debug
+                                                                        ${ if builtins.typeOf init == "null" then "#" else ''find "$LINK" -mindepth 1 -maxdepth 1 -type l > "$LINKS_TEMPORARY"'' }
+                                                                        if [[ ! -s "$LINKS_TEMPORARY" ]]
+                                                                        then
+                                                                            echo "d08a4755-e274-435f-aa7e-1655da23ba73" >> ${ resources-directory }/debug
+                                                                            LINKS='[]'
+                                                                        else
+                                                                            echo "d51de357-9f49-40de-a46c-1a6493afd6b7" >> ${ resources-directory }/debug
+                                                                            LINKS="$( jq --raw-input --slurp < "$LINKS_TEMPORARY" )" || ${ failures_ "bf995f33" }
+                                                                        fi
+                                                                        echo "a878ccc7-2cbd-4f64-8452-36929241ae59" >> ${ resources-directory }/debug
+                                                                        TARGET_TEMPORARY="$( temporary )" || ${ failures_ "2c083157" }
+                                                                        find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; > "$TARGET_TEMPORARY"
+                                                                        if [[ ! -s "$TARGET_TEMPORARY" ]]
+                                                                        then
+                                                                            TARGETS='[]'
+                                                                        else
+                                                                            TARGETS="$( jq --raw-input --slurp 'split("\n") | map(select(length>0))' < "$TARGET_TEMPORARY" )" || ${ failures_ "1623725f" }
+                                                                        fi
+                                                                        echo "ddabdb24-5dc9-4857-bbde-6713622d1edb" >> ${ resources-directory }/debug
                                                                         RECOVERY="${ resources-directory }/recovery/$MOUNT_INDEX"
+                                                                        echo "9989248b-28f7-43cb-8d7a-97c622758d3f" >> ${ resources-directory }/debug
                                                                         mkdir --parents "$RECOVERY"
+                                                                        echo "f8009177-c05a-40f9-95a6-4a3792289680" >> ${ resources-directory }/debug
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
+                                                                        echo "aa31b015-2bbf-4c36-921b-71b9ebda217d" >> ${ resources-directory }/debug
                                                                         # shellcheck source=/dev/null
                                                                         source "$MAKE_WRAPPER/nix-support/setup-hook"
                                                                         makeWrapper "$RECOVERY_BIN" "$RECOVERY/repair" --set ACTION repair --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
+                                                                        echo "47e96801-beee-4189-ad7b-d416900e5835" >> ${ resources-directory }/debug
                                                                         makeWrapper "$RECOVERY_BIN" "$RECOVERY/settle" --set ACTION settle --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
+                                                                        echo "54ff48fb-c945-4890-9a4b-5fded662742b" >> ${ resources-directory }/debug
                                                                         STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failures_ "c141fe3b" }
+                                                                        echo "79440eb9-fd6f-40c1-8014-62ba61af49e8" >> ${ resources-directory }/debug
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "f13f84ae" }
+                                                                        echo "3738d83e-5397-41ff-9e06-c4b109275054" >> ${ resources-directory }/debug
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
+                                                                        echo "a8736b62-ffb8-41e1-9fcd-6878e17d5fa7" >> ${ resources-directory }/debug
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e5fa2135" }
+                                                                        INIT_APPLICATION=${ if builtins.typeOf init-application == "null" then "null" else "${ init-application }/bin/init-application" }
+                                                                        RELEASE_APPLICATION=${ if builtins.typeOf release-application == "null" then "null" else "${ release-application }/bin/release-application" }
+                                                                        echo "b83448d7-d4ef-45c2-9d59-00769e42c746 LINKS=$LINKS ARGUMENTS=$ARGUMENTS TARGETS=$TARGETS $0" >> ${ resources-directory }/debug
+                                                                        cat >> ${ resources-directory }/debug <<EOF
+                                                                        jq \
+                                                                            --null-input \
+                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                            --arg HASH "$HASH" \
+                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                            --arg INIT_APPLICATION "$INIT_APPLICATION" \
+                                                                            --argjson LINKS "$LINKS" \
+                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX" \
+                                                                            --arg RELEASE_APPLICATION "$RELEASE_APPLICATION" \
+                                                                            --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                            --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                            --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                            --arg STATUS "$STATUS" \
+                                                                            --argjson TARGETS "$TARGETS" \
+                                                                            --arg TRANSIENT "$TRANSIENT" \
+                                                                            --arg TYPE "$TYPE" \
+                                                                            '{
+                                                                                "arguments" : $ARGUMENTS ,
+                                                                                "hash" : $HASH ,
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                                "init-application" : $INIT_APPLICATION ,
+                                                                                "links" : $LINKS ,
+                                                                                "mount-index" : $MOUNT_INDEX ,
+                                                                                "release-application" : $RELEASE_APPLICATION ,
+                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                "standard-input" : $STANDARD_INPUT ,
+                                                                                "standard-output" : $STANDARD_OUTPUT ,
+                                                                                "status" : $STATUS ,
+                                                                                "targets" : $TARGETS ,
+                                                                                "transient" : $TRANSIENT ,
+                                                                                "type" : $TYPE
+                                                                            }' | yq --prettyPrint "[.]"
+                                                                        EOF
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
@@ -362,7 +437,8 @@
                                                                                 "targets" : $TARGETS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | log-bad
+                                                                            }' | log-bad
+                                                                            echo "09e0af4e-a086-4bbd-ac3c-26ff02123daf FINISHED" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 good =
                                                                     ''
@@ -418,20 +494,50 @@
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
+                                                                        echo "86597ef0-1b51-4300-8231-c00172fe7014 log-bad" >> ${ resources-directory }/debug
                                                                         TEMPORARY_LOG="$( temporary )" || ${ failures_ "cebabd7e" }
+                                                                        echo "c25d4a13-374a-4e74-bddb-1fa1c22823f4" >> ${ resources-directory }/debug
                                                                         cat > "$TEMPORARY_LOG"
-                                                                        yq --null-input eval '
-                                                                            {
+                                                                        cat "$TEMPORARY_LOG" >> ${ resources-directory }/debug
+                                                                        echo "eea6f93f-85f4-4a6d-b98f-9b9c499118dc" >> ${ resources-directory }/debug
+                                                                        mkdir --parents "${ resources-directory }/recovery/$MOUNT_INDEX"
+                                                                        echo "9f43d8e7-b17c-4f9b-9f8f-3400ba3173b8 $0" >> ${ resources-directory }/debug
+                                                                        # jq --version >> ${ resources-directory }/debug
+                                                                        jq \
+                                                                            --null-input \
+                                                                            --arg HASH "$HASH" \
+                                                                            --argjson SEED '${ builtins.toJSON seed }' \
+                                                                            --argjson TARGETS '${ builtins.toJSON targets }' \
+                                                                            --arg OBSERVED "$( < "$TEMPORARY_LOG" )" \
+                                                                            '{
                                                                                 "expected" :
                                                                                     {
-                                                                                        "hash" : strenv(HASH) ,
-                                                                                        "seed" : ${ builtins.toJSON seed } ,
-                                                                                        "targets": ${ builtins.toJSON targets }
+                                                                                        "hash" : $HASH ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "targets": $TARGETS
                                                                                     } ,
-                                                                              "observed" : load(strenv(TEMPORARY_LOG))
-                                                                            }' | yq eval '.expected.targets |= to_entries | .expected.targets[] |= .value' > "$BAD/log.yaml"
-                                                                        log < "$TEMPORARY_LOG"
+                                                                              "observed" : $OBSERVED
+                                                                            }' >> ${ resources-directory }/debug
+                                                                        jq \
+                                                                            --null-input \
+                                                                            --arg HASH "$HASH" \
+                                                                            --argjson SEED '${ builtins.toJSON seed }' \
+                                                                            --argjson TARGETS '${ builtins.toJSON targets }' \
+                                                                            --argfile OBSERVED "$TEMPORARY_LOG" \
+                                                                            '{
+                                                                                "expected" :
+                                                                                    {
+                                                                                        "hash" : $HASH ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "targets": $TARGETS
+                                                                                    } ,
+                                                                              "observed" : $OBSERVED
+                                                                            }' | yq --prettyPrint > "${ resources-directory }/recovery/$MOUNT_INDEX/log.yaml"
+                                                                        echo "e593fbd8-f2c3-491d-9a13-3dd7e9ff37e6" >> ${ resources-directory }/debug
+                                                                        yq --prettyPrint < "$TEMPORARY_LOG" | log
+                                                                        echo "1bc6c96d-acbb-41be-ac81-112a44b0e3ec" >> ${ resources-directory }/debug
                                                                         rm "$TEMPORARY_LOG"
+                                                                        echo "acff4afd-0c67-480f-8e94-588610474a3c" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 no-init =
                                                                     ''
@@ -759,8 +865,10 @@
                                                                                     "type" : $TYPE
                                                                                 }' | yq --prettyPrint "[.]" | log
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
-                                                                        NOHUP="$( temporary )" || ${ failures_ "ee645658" }
-                                                                        nohup stall-for-cleanup > "$NOHUP" 2>&1 &
+                                                                        NOHUP1="$( temporary )" || ${ failures_ "ee645658" }
+                                                                        nohup stall-for-cleanup > "$NOHUP1" 2>&1 &
+                                                                        NOHUP2="$( temporary )" || ${ failures_ "59978ab6" }
+                                                                        nohup teardown > "$NOHUP2" 2>&1 &
                                                                     '' ;
                                                                 stall-for-symlink =
                                                                     ''
@@ -778,19 +886,23 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
+                                                                        echo "91b2de3a-27fc-4827-956e-c835f02326ef" >> ${ resources-directory }/debug
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
                                                                         flock -s 211
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
+                                                                            echo "86626421-bcb2-4184-aee1-dbe461401d6f" >> ${ resources-directory }/debug
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
                                                                             NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
+                                                                                echo "bb582fa1-8715-434d-92db-c6d827aeb152" >> ${ resources-directory }/debug
                                                                                 rm "${ resources-directory }/canonical/$HASH"
                                                                                 nohup teardown-completed > "$NOHUP" 2>&1 &
                                                                             else
+                                                                                echo "4f9f47d7-965e-4f7c-8e15-93a488fb4bb1" >> ${ resources-directory }/debug
                                                                                 nohup teardown-aborted > "$NOHUP" 2>&1 &
                                                                             fi
                                                                         else
@@ -820,6 +932,7 @@
                                                                         ''
                                                                     else
                                                                         ''
+                                                                            echo "2f84b5c8-8bc9-44aa-93db-d5184d210985 teardown-completed" >> ${ resources-directory }/debug
                                                                             ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                             flock -s 211
                                                                             STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "a0721efc" }
@@ -833,10 +946,13 @@
                                                                                 STATUS="$?"
                                                                             fi
                                                                             export STATUS
+                                                                            echo "aa7cbff7-adf8-4d02-acae-457aabfd1d58 STATUS=$STATUS" >> ${ resources-directory }/debug
                                                                             if [[ "$STATUS" == "0" ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                             then
+                                                                                echo "e61bb8df-32b0-4e23-ba44-dc6db172bf4d BAD" >> ${ resources-directory }/debug
                                                                                 teardown-final
                                                                             else
+                                                                                echo "a7117bf9-cd98-4035-9971-cb83f0a09af8 GOOD" >> ${ resources-directory }/debug
                                                                                 bad
                                                                             fi
                                                                         '' ;
@@ -847,7 +963,8 @@
                                                                         mkdir --parents "$GOOD"
                                                                         export HAS_STANDARD_INPUT=false
                                                                         export STANDARD_INPUT=
-                                                                        ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "$LINK"'' }
+                                                                        rm --recursive --force "$LINK" # KLUDGE
+                                                                        # ${ if builtins.typeOf init == "null" then "#" else ''rm --recursive --force "$LINK"'' }
                                                                         mv "$MOUNT" "$GOOD"
                                                                         jq \
                                                                             --null-input \
@@ -870,7 +987,7 @@
                                                         in
                                                             ''
                                                                 mkdir --parents $out/scripts
-                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock gawk jq ps uuidlib yq-go ] }" ) scripts ) ) }
+                                                                ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "makeWrapper ${ writeShellApplication { name = name ; text = value ; } }/bin/${ name } $out/bin/${ name } --set MAKE_WRAPPER ${ makeWrapper } --set OUT $out --set PATH $out/bin:${ makeBinPath [ coreutils findutils flock gawk jq ps yq-go ] }" ) scripts ) ) }
                                                             '' ;
                                                 name = "derivation" ;
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
@@ -885,8 +1002,7 @@
                                     transient_ =
                                         visitor.lib.implementation
                                             {
-                                                bool = path : value : if value then ''"$( uuidgen )" || exit ${ builtins.toString uuid-error }'' else "" ;
-                                                string = path : value : ''"$( ${ value } )" || exit ${ builtins.toString uuid-error }'' ;
+                                                bool = path : value : if value then ''"$( sequential )" || ${ failures_ "ea21ca9e" }"'' else "" ;
                                             }
                                             transient ;
                                     in "${ derivation }/bin/setup" ;
