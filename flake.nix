@@ -5,7 +5,6 @@
 		    {
 		        lib =
                     {
-                        actions ? [ "repair" "settle" ] ,
                         buildFHSUserEnv ,
                         coreutils ,
                         description ? null ,
