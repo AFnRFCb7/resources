@@ -475,14 +475,17 @@
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 204" else "#" }
                                                                         flock -s 211
+                                                                        DESCRIPTION='${ builtins.toJSON description }'
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
                                                                         jq \
+                                                                            --argjson DESCRIPTION "$DESCRIPTION" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             --null-input \
                                                                             '{
+                                                                                "description" : "$DESCRIPTION" ,
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "type" : $TYPE
