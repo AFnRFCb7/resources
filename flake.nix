@@ -271,26 +271,24 @@
                                             {
                                                 installPhase =
                                                     let
-                                                        hash =
+                                                        description =
                                                             let
-                                                                seed =
-                                                                    let
-                                                                        seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
-                                                                        in
-                                                                            visitor.lib.implementation
-                                                                                {
-                                                                                    bool = seed ;
-                                                                                    float = seed ;
-                                                                                    int = seed ;
-                                                                                    lambda = seed ;
-                                                                                    list = seed ;
-                                                                                    null = seed ;
-                                                                                    path = seed ;
-                                                                                    set = seed ;
-                                                                                    string = seed ;
-                                                                                }
-                                                                                primary ;
-                                                                in builtins.hashString "sha512" ( builtins.toJSON seed ) ;
+                                                                seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
+                                                                in
+                                                                    visitor.lib.implementation
+                                                                        {
+                                                                            bool = seed ;
+                                                                            float = seed ;
+                                                                            int = seed ;
+                                                                            lambda = seed ;
+                                                                            list = seed ;
+                                                                            null = seed ;
+                                                                            path = seed ;
+                                                                            set = seed ;
+                                                                            string = seed ;
+                                                                        }
+                                                                        primary ;
+                                                        hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                                                         init-application =
                                                             if builtins.typeOf init == "null" then null
                                                             else
@@ -326,6 +324,7 @@
                                                                         ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
+                                                                        DESCRIPTION='${ builtins.toJSON description }'
                                                                         LINKS_TEMPORARY="$( temporary )" || ${ failures_ "cabcc321" }
                                                                         ${ if builtins.typeOf init == "null" then "#" else ''find "$LINK" -mindepth 1 -maxdepth 1 -type l > "$LINKS_TEMPORARY"'' }
                                                                         if [[ ! -s "$LINKS_TEMPORARY" ]]
@@ -357,6 +356,7 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                            --argjson DESCRIPTION "$DESCRIPTION" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg INIT_APPLICATION "$INIT_APPLICATION" \
@@ -372,6 +372,7 @@
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "arguments" : $ARGUMENTS ,
+                                                                                "description" : $DESCRIPTION ,
                                                                                 "hash" : $HASH ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
