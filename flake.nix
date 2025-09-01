@@ -373,7 +373,7 @@
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
                                                                         # shellcheck source=/dev/null
                                                                         source "$MAKE_WRAPPER/nix-support/setup-hook"
-                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( action : ''makeWrapper "$RECOVERY_BIN" "$RECOVERY/${ action }.sh" --set ACTION ${ action } --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"'' ) actions ) }
+                                                                        makeWrapper "$RECOVERY_BIN" "$RECOVERY/recovery.sh" --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
                                                                         STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failures_ "c141fe3b" }
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "f13f84ae" }
                                                                         rm --force "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
@@ -546,7 +546,6 @@
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "26030b9e" }
                                                                         jq \
                                                                             --null-input \
-                                                                            --arg ACTION "$ACTION" \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
@@ -554,7 +553,6 @@
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
-                                                                                "action" : $ACTION ,
                                                                                 "arguments" : $ARGUMENTS ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
