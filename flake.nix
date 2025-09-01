@@ -23,7 +23,6 @@
                         release ? null ,
                         resources-directory ,
                         seed ? null ,
-                        self ? "SELF" ,
                         testing-locks ? false ,
                         targets ? [ ] ,
                         transient ? false ,
@@ -72,6 +71,8 @@
                                                                                             if ! diff --recursive ${ command.checkpoint } "$OUT/${ j }/checkpoint"
                                                                                             then
                                                                                                 echo "${ label } We expected the result of the ${ j }-th command ${ command.command } to be ${ resources-directory } but it was $OUT/${ j }/checkpoint" >&2
+                                                                                                echo >&2
+                                                                                                echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/${ j }/checkpoint expected/${ label }/${ j }/checkpoint /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/${ j }/checkpoint"
                                                                                                 ${ failures_ "df837f22" }
                                                                                             fi
                                                                                         '' ;
@@ -138,6 +139,8 @@
                                                                         if ! diff --recursive ${ checkpoint-pre } "$OUT/0/checkpoint-pre"
                                                                         then
                                                                             echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
+                                                                            echo >&2
+                                                                            echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-pre expected/${ label }/0/checkpoint-pre /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-pre"
                                                                             ${ failures_ "a6f0de4f" }
                                                                         fi
                                                                     '' ;
@@ -184,6 +187,27 @@
                                                                         done
                                                                     '' ;
                                                             } ;
+                                                    func =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "func" ;
+                                                                text =
+                                                                    ''
+                                                                        export GIT_DIR="$1"
+                                                                        export GIT_WORK_TREE="$2"
+                                                                        INPUT="$3"
+                                                                        OUTPUT_RELATIVE="$4"
+                                                                        OUTPUT_ABSOLUTE="$5"
+                                                                        if [[ -e "$OUTPUT_ABSOLUTE" ]]
+                                                                        then
+                                                                            git rm -r "$OUTPUT_RELATIVE"
+                                                                        fi
+                                                                        mkdir --parents "$( dirname "$OUTPUT_ABSOLUTE" )"
+                                                                        cp --recursive "$INPUT" "$OUTPUT_ABSOLUTE"
+                                                                        git add "$OUTPUT_RELATIVE"
+                                                                        git commit -am "" --allow-empty --allow-empty-message
+                                                                    '' ;
+                                                            } ;
                                                     setup =
                                                         writeShellApplication
                                                             {
@@ -211,6 +235,8 @@
                                                                         if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
                                                                         then
                                                                             echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
+                                                                            echo >&2
+                                                                            echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-post expected/${ label }/0/checkpoint-post /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-post"
                                                                             ${ failures_ "b42acd0d" }
                                                                         fi
                                                                     '' ;
@@ -222,6 +248,7 @@
                                                             makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out
                                                             makeWrapper ${ setup }/bin/setup $out/bin/setup
                                                             makeWrapper ${ stall }/bin/stall $out/bin/stall
+                                                            makeWrapper ${ func }/bin/func $out/bin/func
                                                             $out/bin/root
                                                         '' ;
                                             name = "test-expected" ;
