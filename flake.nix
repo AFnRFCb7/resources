@@ -950,7 +950,7 @@
                                     transient_ =
                                         visitor.lib.implementation
                                             {
-                                                bool = path : value : if value then ''"$( sequential )" || ${ failures_ "ea21ca9e" }"'' else "" ;
+                                                bool = path : value : if value then ''"$( sequential )" || ${ failures_ "ea21ca9e" }'' else "" ;
                                             }
                                             transient ;
                                     in "${ derivation }/bin/setup" ;
