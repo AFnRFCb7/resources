@@ -435,7 +435,7 @@
                                                                                 "status" : $STATUS ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | log
+                                                                            }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "8d2d5a45" }
                                                                         nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
@@ -444,7 +444,7 @@
                                                                         mkdir --parents ${ resources-directory }/logs
                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                         flock -x 203
-                                                                        cat >> ${ resources-directory }/logs/log.yaml
+                                                                        cat | yq --prettyPrint "[.]" >> ${ resources-directory }/logs/log.yaml
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
@@ -465,8 +465,7 @@
                                                                                     } ,
                                                                               "observed" : $OBSERVED
                                                                             }' | yq --prettyPrint > "${ resources-directory }/recovery/$MOUNT_INDEX/log.yq"
-                                                                        yq --prettyPrint < "$TEMPORARY_LOG" | log
-                                                                        rm "$TEMPORARY_LOG"
+                                                                        log < "$TEMPORARY_LOG"
                                                                     '' ;
                                                                 no-init =
                                                                     ''
@@ -489,7 +488,7 @@
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]"
+                                                                            }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "8192be99" }
                                                                         nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
@@ -535,7 +534,7 @@
                                                                                 "mount-index" : $MOUNT_INDEX ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" > log
+                                                                            }' | log
                                                                         log
                                                                     '' ;
                                                                 sequential =
@@ -733,7 +732,7 @@
                                                                                 "hash" : $HASH ,
                                                                                 "mount-index" : $MOUNT_INDEX ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | nohup log
+                                                                            }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "290a9299" }
                                                                         nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
@@ -753,7 +752,7 @@
                                                                                     "hash" : $HASH ,
                                                                                     "head" : $HEAD ,
                                                                                     "type" : $TYPE
-                                                                                }' | yq --prettyPrint "[.]" | log
+                                                                                }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
                                                                         if [[ -n "$HEAD" ]]
                                                                         then
@@ -792,7 +791,7 @@
                                                                                     "hash" : $HASH ,
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "type" : $TYPE
-                                                                                }' | yq --prettyPrint "[.]" | log
+                                                                                }' | log
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
                                                                         NOHUP1="$( temporary )" || ${ failures_ "ee645658" }
                                                                         nohup stall-for-cleanup > "$NOHUP1" 2>&1 &
@@ -810,7 +809,7 @@
                                                                             '{
                                                                                 "symlink" : $SYMLINK ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | log
+                                                                            }' | log
                                                                         inotifywait --event move_self "$SYMLINK" --quiet
                                                                     '' ;
                                                                 teardown =
@@ -846,7 +845,7 @@
                                                                             '{
                                                                                 "hash" : $HASH ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | log
+                                                                            }' | log
                                                                     '' ;
                                                                 teardown-completed =
                                                                     if builtins.typeOf release == "null" then
@@ -896,7 +895,7 @@
                                                                                 "good" : $GOOD ,
                                                                                 "hash" : $HASH ,
                                                                                 "type" : $TYPE
-                                                                            }' | yq --prettyPrint "[.]" | log
+                                                                            }' | log
                                                                     '' ;
                                                                 temporary =
                                                                     ''
