@@ -358,7 +358,6 @@
                                                             {
                                                                 bad =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
@@ -427,11 +426,10 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
@@ -506,11 +504,10 @@
                                                                     '' ;
                                                                 no-init =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 204" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         DESCRIPTION='${ builtins.toJSON description }'
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
@@ -606,6 +603,7 @@
                                                                             ${ if testing-locks_ then "flock -s 202" else "#" }
                                                                             ${ if testing-locks_ then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
                                                                             ${ if testing-locks_ then "flock -s 203" else "#" }
+                                                                            ${ if testing-locks_ then "exec 204> ${ resources-directory }/locks/test.inner.lock" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
@@ -751,11 +749,10 @@
                                                                         '' ;
                                                                 stale =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 204" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "d6df365c" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "d2cc81ec" }
@@ -775,9 +772,8 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
@@ -815,10 +811,9 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a3bc4273" }
                                                                         jq \
@@ -839,8 +834,7 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
-                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
                                                                         flock -s 211
@@ -861,7 +855,7 @@
                                                                     '' ;
                                                                 teardown-aborted =
                                                                     ''
-                                                                        ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "f75c4adf" }
                                                                         jq \
@@ -876,13 +870,13 @@
                                                                 teardown-completed =
                                                                     if builtins.typeOf release == "null" then
                                                                         ''
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                             flock -s 211
                                                                             teardown-final
                                                                         ''
                                                                     else
                                                                         ''
-                                                                            ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
+                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                             flock -s 211
                                                                             STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "a0721efc" }
                                                                             export STANDARD_OUTPUT_FILE
