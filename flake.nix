@@ -89,6 +89,7 @@
                                                                         echo "$$" >> "$OUT/0/pid"
                                                                         if MOUNT_1="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
                                                                         then
+                                                                            sleep 10s # KLUDGE
                                                                             if [[ ! -d "$MOUNT_1" ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } succeeded but MOUNT_1 $MOUNT is not a directory" >&2
@@ -104,6 +105,7 @@
                                                                                 ${ failures_ "eede733e" }
                                                                             fi
                                                                             MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                            sleep 10s # KLUDGE
                                                                             if [[ "$MOUNT_1" ${ if transient then "==" else "!=" } "$MOUNT_2" ]]
                                                                             then
                                                                                 echo "${ label } the second invocation ${ if transient then "should" else "should not" } generate the same result as the first invocation" >&2
@@ -112,6 +114,7 @@
                                                                             ${ if status != 0 then ''exit 148'' else "# " }
                                                                         else
                                                                             STATUS="$?"
+                                                                            sleep 10s # KLUDGE
                                                                             if [[ "$STATUS" != "${ builtins.toString status }" ]]
                                                                             then
                                                                                 echo "${ label } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
@@ -128,6 +131,7 @@
                                                                                 ${ failures_ "dde5524a" }
                                                                             fi
                                                                             MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                            sleep 10s # KLUDGE
                                                                             if [[ -n "$MOUNT_2" ]]
                                                                             then
                                                                                 echo "${ label } the first invocation generated an empty result and the second generation generated $MOUNT_2" >&2
@@ -136,6 +140,10 @@
                                                                         fi
                                                                         cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
                                                                         find "$OUT/0/checkpoint-pre" -type d -exec touch {}/.gitkeep \;
+                                                                        # echo EXPECTED
+                                                                        # find ${ checkpoint-pre }
+                                                                        # echo OBSERVED
+                                                                        # find "$OUT/0/checkpoint-pre"
                                                                         if ! diff --recursive ${ checkpoint-pre } "$OUT/0/checkpoint-pre"
                                                                         then
                                                                             echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
