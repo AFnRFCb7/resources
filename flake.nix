@@ -358,6 +358,7 @@
                                                             {
                                                                 bad =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                         LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
@@ -426,6 +427,7 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
@@ -504,6 +506,7 @@
                                                                     '' ;
                                                                 no-init =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
@@ -594,6 +597,7 @@
                                                                     if builtins.typeOf init == "null" then
                                                                         ''
                                                                             mkdir --parents ${ resources-directory }/locks
+                                                                            ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                             ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                             ${ if testing-locks_ then "flock -s 200" else "#" }
                                                                             ${ if testing-locks_ then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
@@ -650,6 +654,7 @@
                                                                         ''
                                                                     else
                                                                         ''
+                                                                            ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                             mkdir --parents ${ resources-directory }
                                                                             mkdir --parents "${ resources-directory }/locks"
                                                                             ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
@@ -746,6 +751,7 @@
                                                                         '' ;
                                                                 stale =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 200" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
@@ -769,6 +775,7 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         flock -s 211
@@ -808,6 +815,7 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 201" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 202" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
@@ -829,22 +837,9 @@
                                                                         NOHUP2="$( temporary )" || ${ failures_ "59978ab6" }
                                                                         nohup teardown > "$NOHUP2" 2>&1 &
                                                                     '' ;
-                                                                stall-for-symlink =
-                                                                    ''
-                                                                        SYMLINK="$1"
-                                                                        TYPE="$( basename "$0" )" || ${ failures_ "99ddfc39" }
-                                                                        jq \
-                                                                            --null-input \
-                                                                            --arg SYMLINK "$SYMLINK" \
-                                                                            --arg TYPE "$TYPE" \
-                                                                            '{
-                                                                                "symlink" : $SYMLINK ,
-                                                                                "type" : $TYPE
-                                                                            }' | log
-                                                                        inotifywait --event move_self "$SYMLINK" --quiet
-                                                                    '' ;
                                                                 teardown =
                                                                     ''
+                                                                        ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                         ${ if builtins.typeOf testing-locks == "bool" && testing-locks then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
