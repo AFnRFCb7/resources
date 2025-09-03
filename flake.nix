@@ -47,6 +47,10 @@
                                         {
                                             installPhase =
                                                 let
+                                                    notes =
+                                                        ''
+                                                            yq eval '.events |= sort_by(.hash, .type)' log.yaml > log_sorted.yaml
+                                                        '' ;
                                                     command =
                                                         index :
                                                             let
@@ -397,7 +401,6 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg INIT_APPLICATION "$INIT_APPLICATION" \
                                                                             --argjson LINKS "$LINKS" \
-                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX" \
                                                                             --arg RELEASE_APPLICATION "$RELEASE_APPLICATION" \
                                                                             --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
@@ -413,7 +416,6 @@
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
                                                                                 "links" : $LINKS ,
-                                                                                "mount-index" : $MOUNT_INDEX ,
                                                                                 "release-application" : $RELEASE_APPLICATION ,
                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
@@ -447,7 +449,6 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg INIT_APPLICATION "$INIT_APPLICATION" \
                                                                             --argjson LINKS "$LINKS" \
-                                                                            --arg MOUNT "$MOUNT" \
                                                                             --arg RELEASE_APPLICATION "$RELEASE_APPLICATION" \
                                                                             --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
@@ -462,7 +463,6 @@
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "init-application" : $INIT_APPLICATION ,
                                                                                 "links" : $LINKS ,
-                                                                                "mount" : $MOUNT ,
                                                                                 "release-application" : $RELEASE_APPLICATION ,
                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
@@ -557,14 +557,12 @@
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "arguments" : $ARGUMENTS ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
-                                                                                "mount-index" : $MOUNT_INDEX ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
                                                                                 "type" : $TYPE
                                                                             }' | log
@@ -594,6 +592,7 @@
                                                                     if builtins.typeOf init == "null" then
                                                                         ''
                                                                             mkdir --parents ${ resources-directory }/locks
+                                                                            ${ if testing-locks_ then "touch ${ resources-directory }/testing.setup.${ seed }.ready"
                                                                             ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                             ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
                                                                             ${ if testing-locks_ then "flock -s 200" else "#" }
@@ -652,6 +651,7 @@
                                                                         ''
                                                                     else
                                                                         ''
+                                                                            ${ if testing-locks_ then "touch ${ resources-directory }/testing.setup.${ seed }.ready"
                                                                             ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
                                                                             mkdir --parents ${ resources-directory }
                                                                             mkdir --parents "${ resources-directory }/locks"
@@ -759,12 +759,10 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg MOUNT_INDEX "$MOUNT_INDEX" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
-                                                                                "mount-index" : $MOUNT_INDEX ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "290a9299" }
@@ -772,6 +770,8 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
+                                                                        ${ if testing_ && seed == "outer" then "" else "" }
+                                                                        ${ if testing then "touch ${ resources-directory }/testing.stall-for-cleanup.${ seed }.ready" else "" }
                                                                         ${ if testing-locks_ then "flock -s 202" else "#" }
                                                                         ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
@@ -811,6 +811,10 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
+                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.setup.inner.ready ]] ; do sleep 1s ; fi" else "#" }
+                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.stall-for-process.inner.ready ]] ; do sleep 1s ; fi" else "#" }
+                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.stall-for-cleanup.inner.ready ]] ; do sleep 1s ; fi" else "#" }
+                                                                        ${ if test-locks_ then "touch ${ resources-directory }/testing.stall-for-process.${ seed }.ready"
                                                                         ${ if testing-locks_ then "flock -s 201" else "#" }
                                                                         ${ if testing-locks_ then "flock -s 202" else "#" }
                                                                         ${ if testing-locks_ then "flock -s 203" else "#" }
