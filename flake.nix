@@ -100,6 +100,7 @@
                                                                         export GIT_DIR="$FIX_GIT_DIR"
                                                                         export GIT_WORK_TREE="$FIX_GIT_WORK_TREE"
                                                                         OUTPUT_ABSOLUTE="$GIT_WORK_TREE/$OUTPUT_RELATIVE"
+                                                                        "$GIT" commit -am "" --allow-empty --allow-empty-message
                                                                         if [[ -f "$OUTPUT_ABSOLUTE/$EXPECTED" ]]
                                                                         then
                                                                             "$GIT" rm "$OUTPUT_RELATIVE/$EXPECTED"
