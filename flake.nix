@@ -675,8 +675,6 @@
                                                                         then
                                                                             inotifywait --event move_self "$HEAD" --quiet
                                                                             nohup stall-for-cleanup > "$NOHUP" 2>&1 &
-                                                                        else
-                                                                            nohup teardown > "$NOHUP" 2>&1 &
                                                                         fi
                                                                     '' ;
                                                                 stall-for-cleanup-head =
@@ -717,19 +715,21 @@
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
                                                                         flock -s 211
+                                                                        NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             CANDIDATE="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "cfb26c78" }
-                                                                            NOHUP="$( temporary )" || ${ failures_ "0d5ebafc" }
                                                                             if [[ "$MOUNT" == "$CANDIDATE" ]]
                                                                             then
                                                                                 rm "${ resources-directory }/canonical/$HASH"
                                                                                 nohup teardown-completed > "$NOHUP" 2>&1 &
                                                                             else
+                                                                                export MODE="not-equals"
                                                                                 nohup teardown-aborted > "$NOHUP" 2>&1 &
                                                                             fi
                                                                         else
-                                                                            teardown-aborted
+                                                                            export MODE="no-symbolic-link"
+                                                                            nohup teardown-aborted > "$NOHUP" 2>&1 &
                                                                         fi
                                                                     '' ;
                                                                 teardown-aborted =
@@ -739,9 +739,11 @@
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
+                                                                            --arg MODE "$MODE" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
+                                                                                "mode" : $MODE ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
