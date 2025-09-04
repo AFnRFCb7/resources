@@ -62,20 +62,23 @@
                                                                         INDEX="$4"
                                                                         mkdir --parents "$CHECKPOINTS/$INDEX"
                                                                         yq eval "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
-                                                                        yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
-                                                                        yq eval 'sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
-                                                                        if ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                        if [[ -f "$EXPECTED" ]]
                                                                         then
-                                                                            echo "We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.expected.yaml" >&2
+                                                                            yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                        fi
+                                                                        yq eval 'sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                        if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                        then
+                                                                            echo "We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
                                                                             echo >&2
-                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX/log.observed.yaml expected/${ label }/0/log.expected.yaml" >&2
+                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/0 events.observed.yaml log.yaml" >&2
                                                                             echo >&2
                                                                             ${ failures_ "9c47c5a4" }
                                                                         fi
-                                                                        ORDER_VIOLATIONS="$( ${ order } < ${ fresh } )" || ${ failures_ "ceb89766" }
+                                                                        ORDER_VIOLATIONS="$( ${ order } "$OBSERVED" )" || ${ failures_ "ceb89766" }
                                                                         if [[ "$ORDER_VIOLATIONS" != 0 ]]
                                                                         then
-                                                                            echo "We detected $ORDER_VIOLATIONS partial order violations" >&2
+                                                                            echo "We detected $ORDER_VIOLATIONS order violations" >&2
                                                                             ${ failures_ "85443db0" }
                                                                         fi
                                                                     '' ;
@@ -92,16 +95,18 @@
                                                                         : "${ builtins.concatStringsSep "" [ "$" "{" "GIT:?GIT must be set" "}" ] }"
                                                                         INPUT_ABSOLUTE="$1"
                                                                         OUTPUT_RELATIVE="$2"
+                                                                        OBSERVED="$3"
+                                                                        EXPECTED="$4"
                                                                         export GIT_DIR="$FIX_GIT_DIR"
                                                                         export GIT_WORK_TREE="$FIX_GIT_WORK_TREE"
                                                                         OUTPUT_ABSOLUTE="$GIT_WORK_TREE/$OUTPUT_RELATIVE"
-                                                                        if [[ -e "$OUTPUT_ABSOLUTE" ]]
+                                                                        if [[ -f "$OUTPUT_ABSOLUTE/$EXPECTED" ]]
                                                                         then
-                                                                            "$GIT" rm "$OUTPUT_RELATIVE"
+                                                                            "$GIT" rm "$OUTPUT_RELATIVE/$EXPECTED"
                                                                         fi
-                                                                        OUTPUT_DIRECTORY="$( dirname "$OUTPUT_ABSOLUTE" )" || ${ failures_ "4bd0bc32" }
-                                                                        mkdir --parents "$OUTPUT_DIRECTORY"
-                                                                        cp "$INPUT_ABSOLUTE" "$OUTPUT_DIRECTORY"
+                                                                        OBSERVED_DIRECTORY="$( dirname "$OUTPUT_ABSOLUTE/$EXPECTED" )" || ${ failures_ "534f754e" }
+                                                                        mkdir --parents "$OBSERVED_DIRECTORY"
+                                                                        cp "$INPUT_ABSOLUTE/$OBSERVED" "$OUTPUT_ABSOLUTE/$EXPECTED"
                                                                         "$GIT" add "$OUTPUT_RELATIVE"
                                                                         "$GIT" commit -am "" --allow-empty --allow-empty-message
                                                                     '' ;
