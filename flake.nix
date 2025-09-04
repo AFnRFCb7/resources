@@ -34,7 +34,6 @@
                                     arguments ,
                                     bash ,
                                     commands ,
-                                    delay ? 1 ,
                                     diffutils ,
                                     fresh ,
                                     label ,
@@ -42,6 +41,7 @@
                                     order ,
                                     post ,
                                     stale ,
+                                    stall ,
                                     standard-input  ,
                                     status
                                 } :
@@ -138,7 +138,7 @@
                                                                             echo "We expected the status to be ${ builtins.toString status } but it was $STATUS_1" >&2
                                                                             ${ failures_ "ce28a4e9" }
                                                                         fi
-                                                                        sleep ${ builtins.toString delay }
+                                                                        ${ stall }
                                                                         assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0
                                                                         rm ${ resources-directory }/logs/log.yaml
                                                                     '' ;
