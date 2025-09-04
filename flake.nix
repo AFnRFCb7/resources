@@ -148,6 +148,9 @@
                                                                         ${ stall }
                                                                         assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0
                                                                         rm ${ resources-directory }/logs/log.yaml
+                                                                        ${ stall }
+                                                                        assert-validity ${ stale } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 1
+                                                                        rm ${ resources-directory }/logs/log.yaml
                                                                     '' ;
                                                             } ;
                                                     root =
