@@ -72,10 +72,11 @@
                                                                             echo >&2
                                                                             ${ failures_ "9c47c5a4" }
                                                                         fi
-                                                                        if ! ${ order } "$OBSERVED"
+                                                                        ORDER_VIOLATIONS="$( ${ order } < ${ fresh } )" || ${ failures_ "ceb89766" }
+                                                                        if [[ "$ORDER_VIOLATIONS" != 0 ]]
                                                                         then
-                                                                            echo "We expected the $INDEX log to be well ordered but it was not" >&2
-                                                                            ${ failures_ "1d338e3a" }
+                                                                            echo "We detected $ORDER_VIOLATIONS partial order violations" >&2
+                                                                            ${ failures_ "85443db0" }
                                                                         fi
                                                                     '' ;
                                                             } ;
