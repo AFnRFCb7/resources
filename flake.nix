@@ -22,7 +22,6 @@
                         release ? null ,
                         resources-directory ,
                         seed ? null ,
-                        testing-locks ? false ,
                         targets ? [ ] ,
                         transient ? false ,
                         visitor ,
@@ -34,12 +33,15 @@
                                 {
                                     arguments ,
                                     bash ,
-                                    checkpoint-pre ,
-                                    checkpoint-post ,
                                     commands ,
+                                    delay ? 1 ,
                                     diffutils ,
+                                    fresh ,
                                     label ,
                                     mount ,
+                                    order ,
+                                    post ,
+                                    stale ,
                                     standard-input  ,
                                     status
                                 } :
@@ -47,225 +49,125 @@
                                         {
                                             installPhase =
                                                 let
-                                                    notes =
-                                                        ''
-                                                            yq eval '.events |= sort_by(.hash, .type)' log.yaml > log_sorted.yaml
-                                                        '' ;
-                                                    command =
-                                                        index :
-                                                            let
-                                                                command =
-                                                                    writeShellApplication
-                                                                        {
-                                                                            name = "command" ;
-                                                                            runtimeInputs = [ diffutils ] ;
-                                                                            text =
-                                                                                let
-                                                                                    command = builtins.elemAt commands index ;
-                                                                                    j = builtins.toString ( index + 1 ) ;
-                                                                                    in
-                                                                                        ''
-                                                                                            OUT="$1"
-                                                                                            mkdir --parents "$OUT/${ j }"
-                                                                                            echo ${ command.command } > "$OUT/${ j }/command"
-                                                                                            ${ command.command }
-                                                                                            cp --recursive ${ resources-directory } "$OUT/${ j }/checkpoint"
-                                                                                            find "$OUT/${ j }/checkpoint" -type d -exec touch {}/.gitkeep \;
-                                                                                            if ! diff --recursive ${ command.checkpoint } "$OUT/${ j }/checkpoint"
-                                                                                            then
-                                                                                                echo "${ label } We expected the result of the ${ j }-th command ${ command.command } to be ${ resources-directory } but it was $OUT/${ j }/checkpoint" >&2
-                                                                                                echo >&2
-                                                                                                echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/${ j }/checkpoint expected/${ label }/${ j }/checkpoint /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/${ j }/checkpoint"
-                                                                                                ${ failures_ "df837f22" }
-                                                                                            fi
-                                                                                            rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
-                                                                                        '' ;
-                                                                        } ;
-                                                                    in "${ command }" ;
+                                                    assert-validity =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "assert-validity" ;
+                                                                runtimeInputs = [ coreutils diffutils fix yq-go ] ;
+                                                                text =
+                                                                    ''
+                                                                        EXPECTED="$1"
+                                                                        OBSERVED="$2"
+                                                                        CHECKPOINTS="$3"
+                                                                        INDEX="$4"
+                                                                        mkdir --parents "$CHECKPOINTS/$INDEX"
+                                                                        yq eval "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+                                                                        yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                        yq eval 'sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                        if ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                        then
+                                                                            echo "We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.expected.yaml" >&2
+                                                                            echo >&2
+                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX/log.observed.yaml expected/${ label }/0/log.expected.yaml" >&2
+                                                                            echo >&2
+                                                                            ${ failures_ "9c47c5a4" }
+                                                                        fi
+                                                                        if ! ${ order } "$OBSERVED"
+                                                                        then
+                                                                            echo "We expected the $INDEX log to be well ordered but it was not" >&2
+                                                                            ${ failures_ "1d338e3a" }
+                                                                        fi
+                                                                    '' ;
+                                                            } ;
+                                                    fix =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "fix" ;
+                                                                runtimeInputs = [ coreutils ] ;
+                                                                text =
+                                                                    ''
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "FIX_GIT_DIR:?FIX_GIT_DIR must be set" "}" ] }"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "FIX_GIT_WORK_TREE:?FIX_GIT_WORK_TREE must be set" "}" ] }"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GIT:?GIT must be set" "}" ] }"
+                                                                        INPUT_ABSOLUTE="$1"
+                                                                        OUTPUT_RELATIVE="$2"
+                                                                        export GIT_DIR="$FIX_GIT_DIR"
+                                                                        export GIT_WORK_TREE="$FIX_GIT_WORK_TREE"
+                                                                        OUTPUT_ABSOLUTE="$GIT_WORK_TREE/$OUTPUT_RELATIVE"
+                                                                        if [[ -e "$OUTPUT_ABSOLUTE" ]]
+                                                                        then
+                                                                            "$GIT" rm "$OUTPUT_RELATIVE"
+                                                                        fi
+                                                                        OUTPUT_DIRECTORY="$( dirname "$OUTPUT_ABSOLUTE" )" || ${ failures_ "4bd0bc32" }
+                                                                        mkdir --parents "$OUTPUT_DIRECTORY"
+                                                                        cp "$INPUT_ABSOLUTE" "$OUTPUT_DIRECTORY"
+                                                                        "$GIT" add "$OUTPUT_RELATIVE"
+                                                                        "$GIT" commit -am "" --allow-empty --allow-empty-message
+                                                                    '' ;
+                                                            } ;
                                                     invoke-resource =
                                                         writeShellApplication
                                                             {
                                                                 name = "invoke-resource" ;
-                                                                runtimeInputs = [ coreutils flock ] ;
+                                                                runtimeInputs = [ assert-validity coreutils diffutils yq-go ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents "$OUT/0"
-                                                                        echo "$$" >> "$OUT/0/pid"
-                                                                        if MOUNT_1="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
+                                                                        STANDARD_ERROR=$OUT/standard-error
+                                                                        mkdir --parents "$STANDARD_ERROR"
+                                                                        if RESOURCE_1="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$STANDARD_ERROR/1" )"
                                                                         then
-                                                                            sleep 10s # KLUDGE
-                                                                            if [[ ! -d "$MOUNT_1" ]]
-                                                                            then
-                                                                                echo "${ label } command ${ implementation } succeeded but MOUNT_1 $MOUNT is not a directory" >&2
-                                                                                ${ failures_ "e551352c" }
-                                                                            elif [[ "$MOUNT_1" != "${ mount }" ]]
-                                                                            then
-                                                                                echo "${ label } command ${ implementation } succeeded but MOUNT_1 $MOUNT_1 is not the expected directory ${ mount }" >&2
-                                                                                ${ failures_ "e484b646" }
-                                                                            fi
-                                                                            if [[ -s ${ resources-directory }/test/standard-error ]]
-                                                                            then
-                                                                                echo "${ label } command ${ implementation } succeeded but it generated standard-error" >&2
-                                                                                ${ failures_ "eede733e" }
-                                                                            fi
-                                                                            MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
-                                                                            sleep 10s # KLUDGE
-                                                                            if [[ "$MOUNT_1" ${ if transient then "==" else "!=" } "$MOUNT_2" ]]
-                                                                            then
-                                                                                echo "${ label } the second invocation ${ if transient then "should" else "should not" } generate the same result as the first invocation" >&2
-                                                                                ${ failures_ "9167f049" }
-                                                                            fi
-                                                                            ${ if status != 0 then ''exit 148'' else "# " }
+                                                                            STATUS_1="$?"
                                                                         else
-                                                                            STATUS="$?"
-                                                                            sleep 10s # KLUDGE
-                                                                            if [[ "$STATUS" != "${ builtins.toString status }" ]]
-                                                                            then
-                                                                                echo "${ label } command ${ implementation } failed but we expected the status to be ${ builtins.toString status } and we observed $STATUS" >&2
-                                                                                ${ failures_ "e3be9f66" }
-                                                                            fi
-                                                                            if [[ -s ${ resources-directory }/test/standard-output ]]
-                                                                            then
-                                                                                echo "${ label } command failed but it generated standard-output" >&2
-                                                                                ${ failures_ "c4cb3838" }
-                                                                            fi
-                                                                            if [[ -s ${ resources-directory }/test/standard-error ]]
-                                                                            then
-                                                                                echo "${ label } command ${ implementation } failed but it generated standard-error"
-                                                                                ${ failures_ "dde5524a" }
-                                                                            fi
-                                                                            MOUNT_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/test/standard-error" )"
-                                                                            sleep 10s # KLUDGE
-                                                                            if [[ -n "$MOUNT_2" ]]
-                                                                            then
-                                                                                echo "${ label } the first invocation generated an empty result and the second generation generated $MOUNT_2" >&2
-                                                                                ${ failures_ "5f8b5de3" }
-                                                                            fi
+                                                                            STATUS_1="$?"
                                                                         fi
-                                                                        cp --recursive ${ resources-directory } "$OUT/0/checkpoint-pre"
-                                                                        find "$OUT/0/checkpoint-pre" -type d -exec touch {}/.gitkeep \;
-                                                                        # echo EXPECTED
-                                                                        # find ${ checkpoint-pre }
-                                                                        # echo OBSERVED
-                                                                        # find "$OUT/0/checkpoint-pre"
-                                                                        if ! diff --recursive ${ checkpoint-pre } "$OUT/0/checkpoint-pre"
+                                                                        if [[ "${ mount }" != "$RESOURCE_1" ]]
                                                                         then
-                                                                            echo "${ label } We expected the resources-directory pre initial clean to exactly match ${ checkpoint-pre } but it was $OUT/0/checkpoint-pre" >&2
-                                                                            echo >&2
-                                                                            echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-pre expected/${ label }/0/checkpoint-pre /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-pre"
-                                                                            ${ failures_ "a6f0de4f" }
+                                                                            echo "We expected the result of resource invocation to be ${ mount } but it was $RESOURCE_1" >&2
+                                                                            ${ failures_ "d84d4b61" }
                                                                         fi
-                                                                        rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
+                                                                        echo "$RESOURCE_1" > "$OUT/resource"
+                                                                        echo "$STATUS_1" > "$OUT/status"
+                                                                        if [[ -s "$STANDARD_ERROR/1" ]]
+                                                                        then
+                                                                            STANDARD_ERROR="$( < "$STANDARD_ERROR/1" )" || ${ failures_ "09e5d318" }
+                                                                            echo "We expected STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
+                                                                            ${ failures_ "ff88af1a" }
+                                                                        fi
+                                                                        if [[ "${ builtins.toString status }" != "$STATUS_1" ]]
+                                                                        then
+                                                                            echo "We expected the status to be ${ builtins.toString status } but it was $STATUS_1" >&2
+                                                                            ${ failures_ "ce28a4e9" }
+                                                                        fi
+                                                                        sleep ${ builtins.toString delay }
+                                                                        assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0
+                                                                        rm ${ resources-directory }/logs/log.yaml
                                                                     '' ;
                                                             } ;
                                                     root =
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ coreutils diffutils findutils flock invoke-resource setup ] ;
+                                                                runtimeInputs = [ bash coreutils invoke-resource ] ;
                                                                 text =
                                                                     ''
-                                                                        echo "The derivation for this check is $OUT"
-                                                                        bash setup
-                                                                        ${ builtins.concatStringsSep "\n" ( builtins.genList ( index : let c = command index ; in ''${ c }/bin/command "$OUT"'' ) ( builtins.length commands ) ) }
-                                                                        if [[ -e ${ resources-directory }/debug ]]
-                                                                        then
-                                                                            echo ${ label } We expected the debug to be non-existant >&2
-                                                                            cat ${ resources-directory }/debug
-                                                                            ${ failures_ "bf77ed8c" }
-                                                                        fi
-                                                                        if [[ -n "$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" ]]
-                                                                        then
-                                                                            echo ${ label } We expected ${ resources-directory }/mounts to be an empty directory >&2
-                                                                            ${ failures_ "65eb34ce" }
-                                                                        fi
-                                                                        if [[ -n "$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" ]]
-                                                                        then
-                                                                            echo ${ label } We expected the canonical directory ${ resources-directory }/canonical to be empty >&2
-                                                                            ${ failures_ "4705e39e" }
-                                                                        fi
-                                                                    '' ;
-                                                            } ;
-                                                    stall =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "stall" ;
-                                                                runtimeInputs = [ flock ] ;
-                                                                text =
-                                                                    ''
-                                                                        find ${ resources-directory }/locks -type f | while read -r LOCK
-                                                                        do
-                                                                            exec 210> "$LOCK"
-                                                                            flock -x 210
-                                                                        done
-                                                                    '' ;
-                                                            } ;
-                                                    func =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "func" ;
-                                                                text =
-                                                                    ''
-                                                                        export GIT_DIR="$1"
-                                                                        export GIT_WORK_TREE="$2"
-                                                                        INPUT="$3"
-                                                                        OUTPUT_RELATIVE="$4"
-                                                                        OUTPUT_ABSOLUTE="$5"
-                                                                        if [[ -e "$OUTPUT_ABSOLUTE" ]]
-                                                                        then
-                                                                            git rm -r "$OUTPUT_RELATIVE"
-                                                                        fi
-                                                                        mkdir --parents "$( dirname "$OUTPUT_ABSOLUTE" )"
-                                                                        cp --recursive "$INPUT" "$OUTPUT_ABSOLUTE"
-                                                                        git add "$OUTPUT_RELATIVE"
-                                                                        git commit -am "" --allow-empty --allow-empty-message
-                                                                    '' ;
-                                                            } ;
-                                                    setup =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "setup" ;
-                                                                runtimeInputs = [ bash coreutils diffutils flock invoke-resource ] ;
-                                                                text =
-                                                                    ''
+                                                                        echo "The check derivation is $OUT"
                                                                         if [[ -e ${ resources-directory } ]]
                                                                         then
-                                                                            echo ${ label } We expected the resources directory to not initially exist >&2
-                                                                            ${ failures_ "a6e628b6" }
+                                                                            echo "${ label } : We were expecting the resources directory ${ resources-directory } to be initially non-existant" >&2
+                                                                            ${ failures_ "a29ee37a" }
                                                                         fi
-                                                                        mkdir "$OUT/test"
                                                                         bash invoke-resource
-                                                                        exec 200> ${ resources-directory }/locks/test.setup.lock
-                                                                        flock -x 200
-                                                                        exec 201> ${ resources-directory }/locks/test.stall-for-process.lock
-                                                                        flock -x 201
-                                                                        exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock
-                                                                        flock -x 202
-                                                                        exec 203> ${ resources-directory }/locks/test.teardown.lock
-                                                                        flock -x 203
-                                                                        cp --recursive ${ resources-directory } "$OUT/0/checkpoint-post"
-                                                                        find "$OUT/0/checkpoint-post" -type d -exec touch {}/.gitkeep \;
-                                                                        if ! diff --recursive ${ checkpoint-post } "$OUT/0/checkpoint-post"
-                                                                        then
-                                                                            echo ${ label } We expected the resources-directory post initial clean to exactly match ${ checkpoint-post } but it was "$OUT/0/checkpoint-post" >&2
-                                                                            echo >&2
-                                                                            echo "$OUT/bin/func /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/git /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree $OUT/0/checkpoint-post expected/${ label }/0/checkpoint-post /home/emory/resources/d6aa3612e1f5bb476970d9ef9bcdb2b2dfa34054d7dfb3771b4093984eb7d7a8/mount/work-tree/expected/${ label }/0/checkpoint-post"
-                                                                            ${ failures_ "b42acd0d" }
-                                                                        fi
-                                                                        rm --recursive --force ${ resources-directory }/logs ${ resources-directory }/temporary
                                                                     '' ;
                                                             } ;
                                                     in
                                                         ''
                                                             mkdir --parents $out/bin
+                                                            makeWrapper ${ fix }/bin/fix "$out/bin/fix" --set OUT $out
                                                             makeWrapper ${ invoke-resource }/bin/invoke-resource $out/bin/invoke-resource --set OUT $out
-                                                            makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out
-                                                            makeWrapper ${ setup }/bin/setup $out/bin/setup
-                                                            makeWrapper ${ stall }/bin/stall $out/bin/stall
-                                                            makeWrapper ${ func }/bin/func $out/bin/func
+                                                            makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out --set PATH $out
                                                             $out/bin/root
                                                         '' ;
-                                            name = "test-expected" ;
+                                            name = "test-observed" ;
                                             nativeBuildInputs = [ makeWrapper ] ;
                                             src = ./. ;
                                         } ;
@@ -362,12 +264,9 @@
                                                             {
                                                                 bad =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                        LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
                                                                         LINKS_TEMPORARY="$( temporary )" || ${ failures_ "cabcc321" }
-                                                                        ${ if builtins.typeOf init == "null" then "#" else ''find "$LINK" -mindepth 1 -maxdepth 1 -type l > "$LINKS_TEMPORARY"'' }
                                                                         if [[ ! -s "$LINKS_TEMPORARY" ]]
                                                                         then
                                                                             LINKS='[]'
@@ -428,14 +327,16 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
-                                                                        LINKS=${ if builtins.typeOf init == "null" then "" else ''"$( find "${ resources-directory }/links/$MOUNT_INDEX" -mindepth 1 -maxdepth 1 -type l | jq --raw-input --slurp )" || ${ failures_ "a7486bbb" }'' }
+                                                                        LINKS_TEMPORARY="$( temporary )" || ${ failures_ "c86d99c2" }
+                                                                        if [[ ! -s "$LINKS_TEMPORARY" ]]
+                                                                        then
+                                                                            LINKS='[]'
+                                                                        else
+                                                                            LINKS="$( jq --raw-input --slurp < "$LINKS_TEMPORARY" )" || ${ failures_ "bf995f33" }
+                                                                        fi
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "dc662c73" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "cd255035" }
@@ -474,6 +375,28 @@
                                                                         NOHUP="$( temporary )" || ${ failures_ "8d2d5a45" }
                                                                         nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
+                                                                links =
+                                                                    if builtins.typeOf init == "null" then
+                                                                        ''
+                                                                            LINKS_TEMPORARY="$( temporary )" || ${ failures_ "f97d30fa" }
+                                                                            echo "$LINKS_TEMPORARY"
+                                                                        ''
+                                                                    else
+                                                                        ''
+                                                                            LINKS_TEMPORARY="$( temporary )" || ${ failures_ "f97d30fa" }
+                                                                            LINK=${ builtins.concatStringsSep "" [ "$" "{" "LINK:?LINK must be set" "}" ] }
+                                                                            find "$LINK" -mindepth 1 -maxdepth 1 -type l -exec readlink {} \; | while read -r FROM_LINK
+                                                                            do
+                                                                                find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 -type l -exec readlink {} \; | while read -r FROM_CANONICAL
+                                                                                do
+                                                                                    if [[ "$FROM_LINK" == "$FROM_CANONICAL" ]]
+                                                                                    then
+                                                                                        echo "$FROM_LINK" >> "$LINKS_TEMPORARY"
+                                                                                    fi
+                                                                                done
+                                                                            done
+                                                                            echo "$LINKS_TEMPORARY"
+                                                                        '' ;
                                                                 log =
                                                                     ''
                                                                         mkdir --parents ${ resources-directory }/logs
@@ -504,10 +427,6 @@
                                                                     '' ;
                                                                 no-init =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         DESCRIPTION='${ builtins.toJSON description }'
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a32a15dc" }
@@ -529,14 +448,6 @@
                                                                     '' ;
                                                                 recovery =
                                                                     ''
-                                                                        ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                        ${ if testing-locks_ then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                        ${ if testing-locks_ then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         GOOD="$( temporary )" || ${ failures_ "f696cd77" }
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         trash "${ resources-directory }/links/$MOUNT_INDEX"
@@ -591,18 +502,6 @@
                                                                 setup =
                                                                     if builtins.typeOf init == "null" then
                                                                         ''
-                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                            ${ if testing-locks_ then "touch ${ resources-directory }/testing.setup.${ seed }.ready"
-                                                                            ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                            ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                            ${ if testing-locks_ then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                            ${ if testing-locks_ then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                            ${ if testing-locks_ then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
-                                                                            ${ if testing-locks_ then "exec 204> ${ resources-directory }/locks/test.inner.lock" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
@@ -618,7 +517,7 @@
                                                                             export ORIGINATOR_PID
                                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                                             export HASH
-                                                                            mkdir --parents "${ resources-directory }/locks/$HASH"
+                                                                            mkdir --parents "${ resources-directory }/locks"
                                                                             exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
                                                                             flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
@@ -651,18 +550,6 @@
                                                                         ''
                                                                     else
                                                                         ''
-                                                                            ${ if testing-locks_ then "touch ${ resources-directory }/testing.setup.${ seed }.ready"
-                                                                            ${ if testing-locks_ then "sleep ${ builtins.toString seed }" else "#" }
-                                                                            mkdir --parents ${ resources-directory }
-                                                                            mkdir --parents "${ resources-directory }/locks"
-                                                                            ${ if testing-locks_ then "exec 200> ${ resources-directory }/locks/test.setup.lock" else "#" }
-                                                                            ${ if testing-locks_ && testing-locks then "flock -s 200" else "#" }
-                                                                            ${ if testing-locks_ then "exec 201> ${ resources-directory }/locks/test.stall-for-process.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                            ${ if testing-locks_ then "exec 202> ${ resources-directory }/locks/test.stall-for-cleanup.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                            ${ if testing-locks_ then "exec 203> ${ resources-directory }/locks/test.teardown.lock" else "#" }
-                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
@@ -683,6 +570,7 @@
                                                                             export ORIGINATOR_PID
                                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
+                                                                            mkdir --parents "${ resources-directory }/locks"
                                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                                             flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
@@ -749,12 +637,7 @@
                                                                         '' ;
                                                                 stale =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 200" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
-                                                                        MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "d6df365c" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "d2cc81ec" }
                                                                         jq \
                                                                             --null-input \
@@ -765,15 +648,9 @@
                                                                                 "hash" : $HASH ,
                                                                                 "type" : $TYPE
                                                                             }' | log
-                                                                        NOHUP="$( temporary )" || ${ failures_ "290a9299" }
-                                                                        nohup stall-for-process > "$NOHUP" 2>&1 &
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
-                                                                        ${ if testing_ && seed == "outer" then "" else "" }
-                                                                        ${ if testing then "touch ${ resources-directory }/testing.stall-for-cleanup.${ seed }.ready" else "" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
@@ -811,13 +688,6 @@
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
-                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.setup.inner.ready ]] ; do sleep 1s ; fi" else "#" }
-                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.stall-for-process.inner.ready ]] ; do sleep 1s ; fi" else "#" }
-                                                                        ${ if testing-locks_ && seed == "outer" then "while [[ ! -f ${ resources-directory }/testing.stall-for-cleanup.inner.ready ]] ; do sleep 1s ; fi" else "#" }
-                                                                        ${ if test-locks_ then "touch ${ resources-directory }/testing.stall-for-process.${ seed }.ready"
-                                                                        ${ if testing-locks_ then "flock -s 201" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 202" else "#" }
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "a3bc4273" }
                                                                         jq \
@@ -838,7 +708,6 @@
                                                                     '' ;
                                                                 teardown =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         exec 210> "${ resources-directory }/locks/$HASH"
                                                                         flock -x 210
                                                                         flock -s 211
@@ -859,7 +728,6 @@
                                                                     '' ;
                                                                 teardown-aborted =
                                                                     ''
-                                                                        ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                         flock -s 211
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "f75c4adf" }
                                                                         jq \
@@ -874,13 +742,11 @@
                                                                 teardown-completed =
                                                                     if builtins.typeOf release == "null" then
                                                                         ''
-                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                             flock -s 211
                                                                             teardown-final
                                                                         ''
                                                                     else
                                                                         ''
-                                                                            ${ if testing-locks_ then "flock -s 203" else "#" }
                                                                             flock -s 211
                                                                             STANDARD_OUTPUT_FILE="$( temporary )" || ${ failures_ "a0721efc" }
                                                                             export STANDARD_OUTPUT_FILE
@@ -942,12 +808,6 @@
                                                 nativeBuildInputs = [ coreutils makeWrapper ] ;
                                                 src = ./. ;
                                             } ;
-                                    testing-locks_ =
-                                        visitor.lib.implementation
-                                            {
-                                                bool = path : value : value ;
-                                            }
-                                            testing-locks ;
                                     transient_ =
                                         visitor.lib.implementation
                                             {
