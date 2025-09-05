@@ -197,7 +197,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ bash coreutils invoke-resource ] ;
+                                                                runtimeInputs = [ assert-validity bash coreutils invoke-resource ] ;
                                                                 text =
                                                                     ''
                                                                         echo "The check derivation is $OUT"
