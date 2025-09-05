@@ -69,20 +69,38 @@
                                                                         yq eval 'sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         then
-                                                                            echo "We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
+                                                                            echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
                                                                             echo >&2
-                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/0 events.observed.yaml log.yaml" >&2
+                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/$INDEX events.observed.yaml log.yaml" >&2
                                                                             echo >&2
                                                                             ${ failures_ "9c47c5a4" }
                                                                         fi
-                                                                        ORDER_VIOLATIONS="$( ${ order } "$OBSERVED" )" || ${ failures_ "ceb89766" }
+                                                                        ORDER_VIOLATIONS="$( ${ order } < "$OBSERVED" )" || ${ failures_ "ceb89766" }
                                                                         if [[ "$ORDER_VIOLATIONS" != 0 ]]
                                                                         then
-                                                                            echo "We detected $ORDER_VIOLATIONS order violations" >&2
+                                                                            echo "${ label }:  We detected $ORDER_VIOLATIONS order violations in the $INDEX generation" >&2
                                                                             ${ failures_ "85443db0" }
                                                                         fi
                                                                     '' ;
                                                             } ;
+                                                    cmmnds =
+                                                        index :
+                                                            let
+                                                                i = builtins.toString ( index + 3 ) ;
+                                                                command = builtins.elemAt commands index ;
+                                                                c =
+                                                                    writeShellApplication
+                                                                        {
+                                                                            name = "command" ;
+                                                                            runtimeInputs = [ assert-validity coreutils ] ;
+                                                                            text =
+                                                                                ''
+                                                                                    ${ stall }
+                                                                                    ${ command.command }
+                                                                                    assert-validity ${ command.checkpoint } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" ${ i }
+                                                                                '' ;
+                                                                        } ;
+                                                                in "${ c }/bin/command" ;
                                                     fix =
                                                         writeShellApplication
                                                             {
@@ -129,7 +147,7 @@
                                                                         fi
                                                                         if [[ "${ mount }" != "$RESOURCE_1" ]]
                                                                         then
-                                                                            echo "We expected the result of resource invocation to be ${ mount } but it was $RESOURCE_1" >&2
+                                                                            echo "${ label }:  We expected the result of resource invocation 0 to be ${ mount } but it was $RESOURCE_1" >&2
                                                                             ${ failures_ "d84d4b61" }
                                                                         fi
                                                                         echo "$RESOURCE_1" > "$OUT/resource"
@@ -137,17 +155,39 @@
                                                                         if [[ -s "$STANDARD_ERROR/1" ]]
                                                                         then
                                                                             STANDARD_ERROR="$( < "$STANDARD_ERROR/1" )" || ${ failures_ "09e5d318" }
-                                                                            echo "We expected STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
+                                                                            echo "${ label }:  We expected 0th generation STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
                                                                             ${ failures_ "ff88af1a" }
                                                                         fi
                                                                         if [[ "${ builtins.toString status }" != "$STATUS_1" ]]
                                                                         then
-                                                                            echo "We expected the status to be ${ builtins.toString status } but it was $STATUS_1" >&2
+                                                                            echo "${ label }:  We expected the 0th generation status to be ${ builtins.toString status } but it was $STATUS_1" >&2
                                                                             ${ failures_ "ce28a4e9" }
                                                                         fi
                                                                         ${ stall }
                                                                         assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0
                                                                         rm ${ resources-directory }/logs/log.yaml
+                                                                        if RESOURCE_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$STANDARD_ERROR/2" )"
+                                                                        then
+                                                                            STATUS_2="$?"
+                                                                        else
+                                                                            STATUS_2="$?"
+                                                                        fi
+                                                                        if [[ "${ mount }" ${ if transient then "==" else "!=" } "$RESOURCE_2" ]]
+                                                                        then
+                                                                            echo "${ label }:  We expected the result of resource invocation 2 to be ${ if transient then "not identical" else "identical" } ${ mount } because it is ${ if transient then "transient" else "not transient" } but it was $RESOURCE_2" >&2
+                                                                            ${ failures_ "bbfe2de8" }
+                                                                        fi
+                                                                        if [[ -s "$STANDARD_ERROR/2" ]]
+                                                                        then
+                                                                            STANDARD_ERROR="$( < "$STANDARD_ERROR/2" )" || ${ failures_ "09e5d318" }
+                                                                            echo "${ label }:  We expected 1th generation STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
+                                                                            ${ failures_ "bbc4c0c6" }
+                                                                        fi
+                                                                        if [[ "${ builtins.toString status }" != "$STATUS_2" ]]
+                                                                        then
+                                                                            echo "${ label }:  We expected the 1rst generation status to be ${ builtins.toString status } but it was $STATUS_2" >&2
+                                                                            ${ failures_ "f147aef0" }
+                                                                        fi
                                                                         ${ stall }
                                                                         assert-validity ${ stale } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 1
                                                                         rm ${ resources-directory }/logs/log.yaml
@@ -167,6 +207,9 @@
                                                                             ${ failures_ "a29ee37a" }
                                                                         fi
                                                                         bash invoke-resource
+                                                                        ${ stall }
+                                                                        assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
+                                                                        ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
                                                                     '' ;
                                                             } ;
                                                     in
