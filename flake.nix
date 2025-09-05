@@ -185,10 +185,10 @@
                                                                             echo "${ label }:  We expected the 0th generation status to be ${ builtins.toString status } but it was $STATUS" >> "$OUT/assertions/invoke-resource-fresh"
                                                                         fi
                                                                         ${ stall }
-                                                                        # assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0 >> "$OUT/assertions/invoke-resource-fresh"
+                                                                        # echo assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0 >> "$OUT/assertions/invoke-resource-fresh"
                                                                         rm ${ resources-directory }/logs/log.yaml
                                                                         rm "$OUT/flags/invoke-resource-fresh-start"
-                                                                        # inotifywait --event delete_self "$OUT/flags/invoke-resource-fresh-stop"
+                                                                        inotifywait --event delete_self "$OUT/flags/invoke-resource-fresh-stop"
                                                                     '' ;
                                                             } ;
                                                     root =
@@ -209,7 +209,7 @@
                                                                         touch "$OUT/flags/invoke-resource-fresh-stop"
                                                                         nohup invoke-resource-fresh "$OUT/flags/invoke-resource-fresh-start" "$OUT/flags/invoke-resource-fresh-stop" "$OUT/assertions/invoke-resource-fresh" >> "$OUT/nohup" 2>&1 &
                                                                         catch-errors "$OUT/flags/invoke-resource-fresh-start" "$OUT/assertions"
-                                                                        # rm "$OUT/flags/invoke-resource-fresh-stop"
+                                                                        rm "$OUT/flags/invoke-resource-fresh-stop"
                                                                         # ${ stall }
                                                                         # assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
                                                                         # ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
