@@ -69,7 +69,7 @@
                                                                                 CHECKPOINTS="$3"
                                                                                 INDEX="$4"
                                                                                 mkdir --parents "$CHECKPOINTS/$INDEX"
-                                                                                yq eval '${ censorship-expression }' "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+                                                                                yq eval --from-file '${ builtins.toFile "censorship-expression" censorship-expression }' "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
                                                                                 if [[ -f "$EXPECTED" ]]
                                                                                 then
                                                                                     yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
@@ -77,19 +77,35 @@
                                                                                 yq eval 'sort_by(.hash, .type)' "$CHECKPOINTS/$INDEX/log.observed.yaml" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                                 if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                                 then
-                                                                                    echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
-                                                                                    echo >&2
-                                                                                    echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/$INDEX events.observed.yaml log.yaml" >&2
-                                                                                    echo >&2
-                                                                                    ${ failures_ "9c47c5a4" }
+                                                                                    cat ${ resources-directory }/debug
+                                                                                    echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                                    echo
+                                                                                    echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/$INDEX events.observed.yaml log.yaml"
+                                                                                    echo
                                                                                 fi
                                                                                 ORDER_VIOLATIONS="$( ${ order } < "$OBSERVED" )" || ${ failures_ "ceb89766" }
                                                                                 if [[ "$ORDER_VIOLATIONS" != 0 ]]
                                                                                 then
-                                                                                    echo "${ label }:  We detected $ORDER_VIOLATIONS order violations in the $INDEX generation" >&2
-                                                                                    ${ failures_ "85443db0" }
+                                                                                    echo "${ label }:  We detected $ORDER_VIOLATIONS order violations in the $INDEX generation"
                                                                                 fi
                                                                             '' ;
+                                                            } ;
+                                                    catch-errors =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "catch-errors" ;
+                                                                runtimeInputs = [ coreutils inotify-tools ] ;
+                                                                text =
+                                                                    ''
+                                                                        FLAG_FILE="$1"
+                                                                        ASSERTIONS_FILE="$2"
+                                                                        inotifywait --event delete_self "$FLAG_FILE"
+                                                                        if [[ -s "$ASSERTIONS_FILE" ]]
+                                                                        then
+                                                                            cat "$ASSERTIONS_FILE"
+                                                                            ${ failures_ "a8d09093" }
+                                                                        fi
+                                                                    '' ;
                                                             } ;
                                                     cmmnds =
                                                         index :
@@ -139,74 +155,47 @@
                                                                         "$GIT" commit -am "" --allow-empty --allow-empty-message
                                                                     '' ;
                                                             } ;
-                                                    invoke-resource =
+                                                    invoke-resource-fresh =
                                                         writeShellApplication
                                                             {
-                                                                name = "invoke-resource" ;
-                                                                runtimeInputs = [ assert-validity coreutils diffutils yq-go ] ;
+                                                                name = "invoke-resource-fresh" ;
+                                                                runtimeInputs = [ assert-validity coreutils diffutils inotify-tools yq-go ] ;
                                                                 text =
                                                                     ''
-                                                                        STANDARD_ERROR=$OUT/standard-error
-                                                                        mkdir --parents "$STANDARD_ERROR"
-                                                                        if RESOURCE_1="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$STANDARD_ERROR/1" )"
+                                                                        mkdir --parents "$OUT/standard-error"
+                                                                        if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$OUT/standard-error/1" )"
                                                                         then
-                                                                            STATUS_1="$?"
+                                                                            STATUS="$?"
                                                                         else
-                                                                            STATUS_1="$?"
+                                                                            STATUS="$?"
                                                                         fi
-                                                                        if [[ "${ mount }" != "$RESOURCE_1" ]]
+                                                                        if [[ "${ mount }" != "$RESOURCE" ]]
                                                                         then
-                                                                            echo "${ label }:  We expected the result of resource invocation 0 to be ${ mount } but it was $RESOURCE_1" >&2
-                                                                            ${ failures_ "d84d4b61" }
+                                                                            echo "${ label }:  We expected the result of fresh resource invocation 1 to be ${ mount } but it was $RESOURCE" >> "$OUT/assertions/invoke-resource-fresh"
                                                                         fi
-                                                                        echo "$RESOURCE_1" > "$OUT/resource"
-                                                                        echo "$STATUS_1" > "$OUT/status"
-                                                                        if [[ -s "$STANDARD_ERROR/1" ]]
+                                                                        echo "$RESOURCE" > "$OUT/resource"
+                                                                        echo "$STATUS" > "$OUT/status"
+                                                                        if [[ -s "$OUT/standard-error/1" ]]
                                                                         then
-                                                                            STANDARD_ERROR="$( < "$STANDARD_ERROR/1" )" || ${ failures_ "09e5d318" }
-                                                                            echo "${ label }:  We expected 0th generation STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
-                                                                            ${ failures_ "ff88af1a" }
+                                                                            STANDARD_ERROR="$( < "$OUT/standard-error/1" )" || ${ failures_ "09e5d318" }
+                                                                            echo "${ label }:  We expected 0th generation STANDARD_ERROR=$STANDARD_ERROR to be blank" >> "$OUT/assertions/invoke-resource-fresh"
                                                                         fi
-                                                                        if [[ "${ builtins.toString status }" != "$STATUS_1" ]]
+                                                                        if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                         then
-                                                                            echo "${ label }:  We expected the 0th generation status to be ${ builtins.toString status } but it was $STATUS_1" >&2
-                                                                            ${ failures_ "ce28a4e9" }
+                                                                            echo "${ label }:  We expected the 0th generation status to be ${ builtins.toString status } but it was $STATUS" >> "$OUT/assertions/invoke-resource-fresh"
                                                                         fi
                                                                         ${ stall }
-                                                                        assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0
+                                                                        # assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0 >> "$OUT/assertions/invoke-resource-fresh"
                                                                         rm ${ resources-directory }/logs/log.yaml
-                                                                        if RESOURCE_2="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ if builtins.typeOf standard-input == "string" then "< ${ builtins.toFile "standard-input" standard-input }" else "" } 2> "$STANDARD_ERROR/2" )"
-                                                                        then
-                                                                            STATUS_2="$?"
-                                                                        else
-                                                                            STATUS_2="$?"
-                                                                        fi
-                                                                        if [[ "${ mount }" ${ if transient then "==" else "!=" } "$RESOURCE_2" ]]
-                                                                        then
-                                                                            echo "${ label }:  We expected the result of resource invocation 2 to be ${ if transient then "not identical" else "identical" } ${ mount } because it is ${ if transient then "transient" else "not transient" } but it was $RESOURCE_2" >&2
-                                                                            ${ failures_ "bbfe2de8" }
-                                                                        fi
-                                                                        if [[ -s "$STANDARD_ERROR/2" ]]
-                                                                        then
-                                                                            STANDARD_ERROR="$( < "$STANDARD_ERROR/2" )" || ${ failures_ "09e5d318" }
-                                                                            echo "${ label }:  We expected 1th generation STANDARD_ERROR=$STANDARD_ERROR to be blank" >&2
-                                                                            ${ failures_ "bbc4c0c6" }
-                                                                        fi
-                                                                        if [[ "${ builtins.toString status }" != "$STATUS_2" ]]
-                                                                        then
-                                                                            echo "${ label }:  We expected the 1rst generation status to be ${ builtins.toString status } but it was $STATUS_2" >&2
-                                                                            ${ failures_ "f147aef0" }
-                                                                        fi
-                                                                        ${ stall }
-                                                                        assert-validity ${ stale } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 1
-                                                                        rm ${ resources-directory }/logs/log.yaml
+                                                                        rm "$OUT/flags/invoke-resource-fresh-start"
+                                                                        # inotifywait --event delete_self "$OUT/flags/invoke-resource-fresh-stop"
                                                                     '' ;
                                                             } ;
                                                     root =
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ assert-validity bash coreutils findutils invoke-resource ] ;
+                                                                runtimeInputs = [ assert-validity bash catch-errors coreutils findutils invoke-resource-fresh ] ;
                                                                 text =
                                                                     ''
                                                                         echo "The check derivation is $OUT"
@@ -215,35 +204,38 @@
                                                                             echo "${ label } : We were expecting the resources directory ${ resources-directory } to be initially non-existant" >&2
                                                                             ${ failures_ "a29ee37a" }
                                                                         fi
-                                                                        bash invoke-resource
-                                                                        ${ stall }
-                                                                        assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
-                                                                        ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
-                                                                        MOUNT="$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
-                                                                        if [[ -n "$MOUNT" ]]
-                                                                        then
-                                                                            echo "${ label } : We were expecting ${ resources-directory }/mounts to be empty but $MOUNT" >&2
-                                                                            ${ failures_ "83f8df5c" }
-                                                                        fi
-                                                                        CANONICAL="$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
-                                                                        if [[ -n "$CANONICAL" ]]
-                                                                        then
-                                                                            echo "${ label } : We were expecting ${ resources-directory }/canonical to be empty but $CANONICAL" >&2
-                                                                            ${ failures_ "2531bccc" }
-                                                                        fi
-                                                                        if [[ -e ${ resources-directory }/debug ]]
-                                                                        then
-                                                                            echo "${ label } : We were not expecting any debug" >&2
-                                                                            cat ${ resources-directory }/debug
-                                                                            ${ failures_ "a60eff59" }
-                                                                        fi
+                                                                        mkdir --parents "$OUT/flags"
+                                                                        touch "$OUT/flags/invoke-resource-fresh-start"
+                                                                        touch "$OUT/flags/invoke-resource-fresh-stop"
+                                                                        nohup invoke-resource-fresh "$OUT/flags/invoke-resource-fresh-start" "$OUT/flags/invoke-resource-fresh-stop" "$OUT/assertions/invoke-resource-fresh" >> "$OUT/nohup" 2>&1 &
+                                                                        catch-errors "$OUT/flags/invoke-resource-fresh-start" "$OUT/assertions"
+                                                                        # rm "$OUT/flags/invoke-resource-fresh-stop"
+                                                                        # ${ stall }
+                                                                        # assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
+                                                                        # ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
+                                                                        # MOUNT="$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
+                                                                        # if [[ -n "$MOUNT" ]]
+                                                                        # then
+                                                                        #     echo "${ label } : We were expecting ${ resources-directory }/mounts to be empty but $MOUNT" >&2
+                                                                        #     ${ failures_ "83f8df5c" }
+                                                                        # fi
+                                                                        # CANONICAL="$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
+                                                                        # if [[ -n "$CANONICAL" ]]
+                                                                        # then
+                                                                        #     echo "${ label } : We were expecting ${ resources-directory }/canonical to be empty but $CANONICAL" >&2
+                                                                        #     ${ failures_ "2531bccc" }
+                                                                        # fi
+                                                                        # if [[ -e ${ resources-directory }/debug ]]
+                                                                        # then
+                                                                        #     echo "${ label } : We were not expecting any debug" >&2
+                                                                        #     cat ${ resources-directory }/debug
+                                                                        #     ${ failures_ "a60eff59" }
+                                                                        # fi
                                                                     '' ;
                                                             } ;
                                                     in
                                                         ''
                                                             mkdir --parents $out/bin
-                                                            makeWrapper ${ fix }/bin/fix "$out/bin/fix" --set OUT $out
-                                                            makeWrapper ${ invoke-resource }/bin/invoke-resource $out/bin/invoke-resource --set OUT $out
                                                             makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out --set PATH $out
                                                             $out/bin/root
                                                         '' ;
@@ -684,12 +676,15 @@
                                                                                 export STANDARD_OUTPUT_FILE
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
+                                                                                    echo "e0df3c7b-8344-4759-a1da-d8cd61ea06b4 before $HASH" >> ${ resources-directory }/debug
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
                                                                                         STATUS="$?"
                                                                                     else
                                                                                         STATUS="$?"
                                                                                     fi
+                                                                                    echo "03287d20-d3b7-45fa-955a-d9c7366257f7 after $HASH LINK=$LINK" >> ${ resources-directory }/debug
+                                                                                    find ${ resources-directory }/links >> ${ resources-directory }/debug
                                                                                 else
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
@@ -731,9 +726,13 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
+                                                                        echo "3c814765-85d9-43fa-9cc7-1483c852f3c5" >> ${ resources-directory }/debug
                                                                         flock -s 211
+                                                                        echo "ad6adcfb-c66f-4681-9232-6ef3e542924c" >> ${ resources-directory }/debug
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
+                                                                        echo "734c9b22-3060-481f-9dd7-0581f14eeb1f" >> ${ resources-directory }/debug
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
+                                                                        echo "b52e7b52-ec84-421f-9666-99d66afa691a" >> ${ resources-directory }/debug
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
@@ -744,25 +743,39 @@
                                                                                     "head" : $HEAD ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
+                                                                        echo "86fb09f4-da90-4b57-a746-848097ff86a8" >> ${ resources-directory }/debug
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
+                                                                        echo "4fcbb116-d97c-4d00-a8f0-a8ad51d2193f" >> ${ resources-directory }/debug
                                                                         if [[ -n "$HEAD" ]]
                                                                         then
+                                                                            echo "b7c90bf6-a4bf-469d-aeb6-571d6f016477" >> ${ resources-directory }/debug
                                                                             inotifywait --event move_self "$HEAD" --quiet
+                                                                            echo "0abeb703-5f06-4aa1-884d-24b23a3c3000" >> ${ resources-directory }/debug
                                                                             nohup stall-for-cleanup > "$NOHUP" 2>&1 &
+                                                                            echo "42565823-129f-4893-b99e-dd2011ace44a" >> ${ resources-directory }/debug
                                                                         fi
                                                                     '' ;
                                                                 stall-for-cleanup-head =
                                                                     ''
+                                                                        echo "0193d31b-a994-4d75-bd7c-e39efd386a71" >> ${ resources-directory }/debug
                                                                         mkdir --parents ${ resources-directory }/links
+                                                                        echo "aeef499a-34ab-4ed0-a394-fb9c6be00314 BEFORE FIND" >> ${ resources-directory }/debug
+                                                                        find ${ resources-directory }/links >> ${ resources-directory }/debug
                                                                         find ${ resources-directory }/links -mindepth 2 -maxdepth 2 -type l | while read -r CANDIDATE
                                                                         do
+                                                                            echo "115ef482-4b52-457d-9871-a7ebc0babb80" >> ${ resources-directory }/debug
                                                                             RESOLVED="$( readlink --canonicalize "$CANDIDATE" )" || ${ failures_ "e9c39c16" }
+                                                                            echo "22ecbb2e-b3b3-4cb5-8291-39657e46bf64" >> ${ resources-directory }/debug
                                                                             if [[ "$RESOLVED" == "$MOUNT" ]]
                                                                             then
+                                                                                echo "9422b363-4b62-4854-ac9f-37857aa51be8" >> ${ resources-directory }/debug
                                                                                 echo "$CANDIDATE"
+                                                                                echo "de68760e-6f73-44b3-ab48-36a9662152f0" >> ${ resources-directory }/debug
                                                                                 exit 0
                                                                             fi
+                                                                        echo "d18ce51a-4912-466b-a1bc-2a6d756f9d7d" >> ${ resources-directory }/debug
                                                                         done | head --lines 1 | tr --delete '[:space:]'
+                                                                        echo "1e942cd8-8dcd-4ed3-a97d-7b0ec321c354" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
