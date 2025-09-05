@@ -185,7 +185,7 @@
                                                                             echo "${ label }:  We expected the 0th generation status to be ${ builtins.toString status } but it was $STATUS" >> "$OUT/assertions/invoke-resource-fresh"
                                                                         fi
                                                                         ${ stall }
-                                                                        # echo assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0 >> "$OUT/assertions/invoke-resource-fresh"
+                                                                        assert-validity ${ fresh } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 0 >> ${ resources-directory }/debug 2>&1 || true
                                                                         rm ${ resources-directory }/logs/log.yaml
                                                                         rm "$OUT/flags/invoke-resource-fresh-start"
                                                                         inotifywait --event delete_self "$OUT/flags/invoke-resource-fresh-stop"
@@ -209,7 +209,10 @@
                                                                         touch "$OUT/flags/invoke-resource-fresh-stop"
                                                                         nohup invoke-resource-fresh "$OUT/flags/invoke-resource-fresh-start" "$OUT/flags/invoke-resource-fresh-stop" "$OUT/assertions/invoke-resource-fresh" >> "$OUT/nohup" 2>&1 &
                                                                         catch-errors "$OUT/flags/invoke-resource-fresh-start" "$OUT/assertions"
+                                                                        echo "STATUS=$?"
                                                                         rm "$OUT/flags/invoke-resource-fresh-stop"
+                                                                        sleep 10s
+                                                                        # exit 99
                                                                         # ${ stall }
                                                                         # assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
                                                                         # ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
@@ -676,15 +679,12 @@
                                                                                 export STANDARD_OUTPUT_FILE
                                                                                 if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                 then
-                                                                                    echo "e0df3c7b-8344-4759-a1da-d8cd61ea06b4 before $HASH" >> ${ resources-directory }/debug
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
                                                                                         STATUS="$?"
                                                                                     else
                                                                                         STATUS="$?"
                                                                                     fi
-                                                                                    echo "03287d20-d3b7-45fa-955a-d9c7366257f7 after $HASH LINK=$LINK" >> ${ resources-directory }/debug
-                                                                                    find ${ resources-directory }/links >> ${ resources-directory }/debug
                                                                                 else
                                                                                     if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                     then
@@ -726,13 +726,9 @@
                                                                     '' ;
                                                                 stall-for-cleanup =
                                                                     ''
-                                                                        echo "3c814765-85d9-43fa-9cc7-1483c852f3c5" >> ${ resources-directory }/debug
                                                                         flock -s 211
-                                                                        echo "ad6adcfb-c66f-4681-9232-6ef3e542924c" >> ${ resources-directory }/debug
                                                                         HEAD="$( stall-for-cleanup-head | tr --delete '[:space:]' )" || ${ failures_ "f9b0e418" }
-                                                                        echo "734c9b22-3060-481f-9dd7-0581f14eeb1f" >> ${ resources-directory }/debug
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e4782f79" }
-                                                                        echo "b52e7b52-ec84-421f-9666-99d66afa691a" >> ${ resources-directory }/debug
                                                                         jq \
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
@@ -743,39 +739,25 @@
                                                                                     "head" : $HEAD ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
-                                                                        echo "86fb09f4-da90-4b57-a746-848097ff86a8" >> ${ resources-directory }/debug
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
-                                                                        echo "4fcbb116-d97c-4d00-a8f0-a8ad51d2193f" >> ${ resources-directory }/debug
                                                                         if [[ -n "$HEAD" ]]
                                                                         then
-                                                                            echo "b7c90bf6-a4bf-469d-aeb6-571d6f016477" >> ${ resources-directory }/debug
                                                                             inotifywait --event move_self "$HEAD" --quiet
-                                                                            echo "0abeb703-5f06-4aa1-884d-24b23a3c3000" >> ${ resources-directory }/debug
                                                                             nohup stall-for-cleanup > "$NOHUP" 2>&1 &
-                                                                            echo "42565823-129f-4893-b99e-dd2011ace44a" >> ${ resources-directory }/debug
                                                                         fi
                                                                     '' ;
                                                                 stall-for-cleanup-head =
                                                                     ''
-                                                                        echo "0193d31b-a994-4d75-bd7c-e39efd386a71" >> ${ resources-directory }/debug
                                                                         mkdir --parents ${ resources-directory }/links
-                                                                        echo "aeef499a-34ab-4ed0-a394-fb9c6be00314 BEFORE FIND" >> ${ resources-directory }/debug
-                                                                        find ${ resources-directory }/links >> ${ resources-directory }/debug
                                                                         find ${ resources-directory }/links -mindepth 2 -maxdepth 2 -type l | while read -r CANDIDATE
                                                                         do
-                                                                            echo "115ef482-4b52-457d-9871-a7ebc0babb80" >> ${ resources-directory }/debug
                                                                             RESOLVED="$( readlink --canonicalize "$CANDIDATE" )" || ${ failures_ "e9c39c16" }
-                                                                            echo "22ecbb2e-b3b3-4cb5-8291-39657e46bf64" >> ${ resources-directory }/debug
                                                                             if [[ "$RESOLVED" == "$MOUNT" ]]
                                                                             then
-                                                                                echo "9422b363-4b62-4854-ac9f-37857aa51be8" >> ${ resources-directory }/debug
                                                                                 echo "$CANDIDATE"
-                                                                                echo "de68760e-6f73-44b3-ab48-36a9662152f0" >> ${ resources-directory }/debug
                                                                                 exit 0
                                                                             fi
-                                                                        echo "d18ce51a-4912-466b-a1bc-2a6d756f9d7d" >> ${ resources-directory }/debug
                                                                         done | head --lines 1 | tr --delete '[:space:]'
-                                                                        echo "1e942cd8-8dcd-4ed3-a97d-7b0ec321c354" >> ${ resources-directory }/debug
                                                                     '' ;
                                                                 stall-for-process =
                                                                     ''
