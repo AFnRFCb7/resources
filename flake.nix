@@ -55,40 +55,41 @@
                                                                 name = "assert-validity" ;
                                                                 runtimeInputs = [ coreutils diffutils fix yq-go ] ;
                                                                 text =
-                                                                    ''
-                                                                        EXPECTED="$1"
-                                                                        OBSERVED="$2"
-                                                                        CHECKPOINTS="$3"
-                                                                        INDEX="$4"
-                                                                        mkdir --parents "$CHECKPOINTS/$INDEX"
-yq --version
-yq eval '
-  (.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application" |
-  (.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application" |
-  (.[] | select(has("transient")) | .["transient"]) = ""
-' "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
-
-
-                                                                        if [[ -f "$EXPECTED" ]]
-                                                                        then
-                                                                            yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
-                                                                        fi
-                                                                        yq eval 'sort_by(.hash, .type)' "$CHECKPOINTS/$INDEX/log.observed.yaml" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
-                                                                        if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
-                                                                        then
-                                                                            echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
-                                                                            echo >&2
-                                                                            echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/$INDEX events.observed.yaml log.yaml" >&2
-                                                                            echo >&2
-                                                                            ${ failures_ "9c47c5a4" }
-                                                                        fi
-                                                                        ORDER_VIOLATIONS="$( ${ order } < "$OBSERVED" )" || ${ failures_ "ceb89766" }
-                                                                        if [[ "$ORDER_VIOLATIONS" != 0 ]]
-                                                                        then
-                                                                            echo "${ label }:  We detected $ORDER_VIOLATIONS order violations in the $INDEX generation" >&2
-                                                                            ${ failures_ "85443db0" }
-                                                                        fi
-                                                                    '' ;
+                                                                    let
+                                                                        censorship-expression =
+                                                                            ''
+                                                                                (.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application" |
+                                                                                (.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application" |
+                                                                                (.[] | select(has("transient")) | .["transient"]) = ""
+                                                                            '' ;
+                                                                        in
+                                                                            ''
+                                                                                EXPECTED="$1"
+                                                                                OBSERVED="$2"
+                                                                                CHECKPOINTS="$3"
+                                                                                INDEX="$4"
+                                                                                mkdir --parents "$CHECKPOINTS/$INDEX"
+                                                                                yq eval '${ censorship-expression }' "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+                                                                                if [[ -f "$EXPECTED" ]]
+                                                                                then
+                                                                                    yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
+                                                                                fi
+                                                                                yq eval 'sort_by(.hash, .type)' "$CHECKPOINTS/$INDEX/log.observed.yaml" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                                if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                                then
+                                                                                    echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
+                                                                                    echo >&2
+                                                                                    echo "$OUT/bin/fix $CHECKPOINTS/$INDEX expected/${ label }/$INDEX events.observed.yaml log.yaml" >&2
+                                                                                    echo >&2
+                                                                                    ${ failures_ "9c47c5a4" }
+                                                                                fi
+                                                                                ORDER_VIOLATIONS="$( ${ order } < "$OBSERVED" )" || ${ failures_ "ceb89766" }
+                                                                                if [[ "$ORDER_VIOLATIONS" != 0 ]]
+                                                                                then
+                                                                                    echo "${ label }:  We detected $ORDER_VIOLATIONS order violations in the $INDEX generation" >&2
+                                                                                    ${ failures_ "85443db0" }
+                                                                                fi
+                                                                            '' ;
                                                             } ;
                                                     cmmnds =
                                                         index :
