@@ -61,12 +61,19 @@
                                                                         CHECKPOINTS="$3"
                                                                         INDEX="$4"
                                                                         mkdir --parents "$CHECKPOINTS/$INDEX"
-                                                                        yq eval '(.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application"' "$OBSERVED" | yq eval '(.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application"' | yq eval 'sort_by(.hash, .type)' > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+yq --version
+yq eval '
+  (.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application" |
+  (.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application" |
+  (.[] | select(has("transient")) | .["transient"]) = ""
+' "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+
+
                                                                         if [[ -f "$EXPECTED" ]]
                                                                         then
                                                                             yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
                                                                         fi
-                                                                        yq eval '(.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application" | (.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application" | sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                        yq eval 'sort_by(.hash, .type)' "$CHECKPOINTS/$INDEX/log.observed.yaml" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         then
                                                                             echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
