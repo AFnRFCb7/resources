@@ -61,12 +61,12 @@
                                                                         CHECKPOINTS="$3"
                                                                         INDEX="$4"
                                                                         mkdir --parents "$CHECKPOINTS/$INDEX"
-                                                                        yq eval "$OBSERVED" > "$CHECKPOINTS/$INDEX/log.observed.yaml"
+                                                                        yq eval '(.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application"' "$OBSERVED" | yq eval '(.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application"' | yq eval 'sort_by(.hash, .type)' > "$CHECKPOINTS/$INDEX/log.observed.yaml"
                                                                         if [[ -f "$EXPECTED" ]]
                                                                         then
                                                                             yq eval 'sort_by(.hash, .type)' < "$EXPECTED" > "$CHECKPOINTS/$INDEX/events.expected.yaml"
                                                                         fi
-                                                                        yq eval 'sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
+                                                                        yq eval '(.[] | select(has("init-application")) | .["init-application"]) = "../bin/init-application" | (.[] | select(has("release-application")) | .["release-application"]) = "../bin/release-application" | sort_by(.hash, .type)' < "$OBSERVED" > "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         if [[ ! -f "$CHECKPOINTS/$INDEX/events.expected.yaml" ]] || ! diff --unified "$CHECKPOINTS/$INDEX/events.expected.yaml" "$CHECKPOINTS/$INDEX/events.observed.yaml"
                                                                         then
                                                                             echo "${ label }:  We expected the events of the $INDEX generation to be identical to $CHECKPOINTS/$INDEX/events.expected.yaml but we got $CHECKPOINTS/$INDEX/events.observed.yaml" >&2
@@ -95,9 +95,10 @@
                                                                             runtimeInputs = [ assert-validity coreutils ] ;
                                                                             text =
                                                                                 ''
-                                                                                    ${ stall }
                                                                                     ${ command.command }
+                                                                                    ${ stall }
                                                                                     assert-validity ${ command.checkpoint } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" ${ i }
+                                                                                    rm ${ resources-directory }/logs/log.yaml
                                                                                 '' ;
                                                                         } ;
                                                                 in "${ c }/bin/command" ;
@@ -197,7 +198,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "root" ;
-                                                                runtimeInputs = [ assert-validity bash coreutils invoke-resource ] ;
+                                                                runtimeInputs = [ assert-validity bash coreutils findutils invoke-resource ] ;
                                                                 text =
                                                                     ''
                                                                         echo "The check derivation is $OUT"
@@ -210,6 +211,24 @@
                                                                         ${ stall }
                                                                         assert-validity ${ post } ${ resources-directory }/logs/log.yaml "$OUT/checkpoints" 2
                                                                         ${ builtins.concatStringsSep "\n" ( builtins.genList cmmnds ( builtins.length commands ) ) }
+                                                                        MOUNT="$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
+                                                                        if [[ -n "$MOUNT" ]]
+                                                                        then
+                                                                            echo "${ label } : We were expecting ${ resources-directory }/mounts to be empty but $MOUNT" >&2
+                                                                            ${ failures_ "83f8df5c" }
+                                                                        fi
+                                                                        CANONICAL="$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" || ${ failures_ "b4210f0e" }
+                                                                        if [[ -n "$CANONICAL" ]]
+                                                                        then
+                                                                            echo "${ label } : We were expecting ${ resources-directory }/canonical to be empty but $CANONICAL" >&2
+                                                                            ${ failures_ "2531bccc" }
+                                                                        fi
+                                                                        if [[ -e ${ resources-directory }/debug ]]
+                                                                        then
+                                                                            echo "${ label } : We were not expecting any debug" >&2
+                                                                            cat ${ resources-directory }/debug
+                                                                            ${ failures_ "a60eff59" }
+                                                                        fi
                                                                     '' ;
                                                             } ;
                                                     in
