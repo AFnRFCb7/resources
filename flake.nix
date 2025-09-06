@@ -75,6 +75,8 @@
                                                                         ASSERTIONS_FILE="$1"
                                                                         STANDARD_ERROR_FILE="$3"
                                                                         EXPECTED_RESOURCE="$4"
+                                                                        EXPECTED_LOG_FILE="$5"
+                                                                        OBSERVED_LOG_FILE="$6"
                                                                         flock -x 220
                                                                         if OBSERVED_RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input } > "$STANDARD_ERROR_FILE" )"
                                                                         then
@@ -96,7 +98,13 @@
                                                                             echo "We expected the STATUS to be ${ builtins.toString status } but it was $STATUS" >> "$ASSERTIONS_FILE"
                                                                         fi
                                                                         ${ stall }
+                                                                        cat ${ resources-directory }/logs/log.yaml > "$OBSERVED_LOG_FILE"
+                                                                        rm ${ resources-directory }/logs/log.yaml
                                                                         flock -u 220
+                                                                        if diff --unified "$EXPECTED_LOG_FILE" "$OBSERVED_LOG_FILE"
+                                                                        then
+                                                                            echo "We expected the LOG_FILE to be $EXPECTED_LOG_FILE but it was $OBSERVED_LOG_FILE"
+                                                                        fi
                                                                     '' ;
                                                             } ;
                                                     root =
@@ -114,8 +122,9 @@
                                                                         fi
                                                                         mkdir --parents "$OUT/assertions"
                                                                         mkdir --parents "$OUT/standard-error"
+                                                                        mkdir --parents "$OUT/logs"
                                                                         exec 220> "$OUT/lock"
-                                                                        nohup invoke-resource "$OUT/assertions/fresh" "$OUT/standard-error/fresh" ${ resource } &
+                                                                        nohup invoke-resource "$OUT/assertions/fresh" "$OUT/standard-error/fresh" ${ resource } fresh "$OUT/logs/fresh" &
                                                                         flock -x 220
                                                                         catch-assertions "$OUT/assertions/fresh"
                                                                     '' ;
