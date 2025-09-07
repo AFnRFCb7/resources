@@ -31,20 +31,9 @@
                         let
                             check =
                                 {
-                                    arguments ,
-                                    bash ,
                                     commands ,
-                                    diffutils ,
-                                    fresh-checkpoint ,
-                                    fresh-resource ,
-                                    label ,
-                                    order ,
-                                    post ,
-                                    stale-checkpoint ,
-                                    stale-resource ,
-                                    stall ,
-                                    standard-input  ,
-                                    status
+                                    processes ,
+                                    stall
                                 } :
                                     mkDerivation
                                         {
@@ -54,21 +43,53 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "check" ;
-                                                                runtimeInputs = [ coreutils process-invocation run-invocation ] ;
+                                                                runtimeInputs = [ coreutils start-process yq-go ] ;
                                                                 text =
-                                                                    ''
-                                                                        PIPES=$OUT/pipes
-                                                                        mkdir --parents "$PIPES"
-                                                                        process-invocation "$PIPES/fresh" &
-                                                                        run-invocation fresh "$PIPES/fresh" "$PIPES/standard-output" "$PIPES/standard-error" "$PIPES/status"
-                                                                        echo "exit" > "$PIPES/fresh"
-                                                                        echo "exit" > "$PIPES/stale"
-                                                                    '' ;
+                                                                    let
+                                                                        p =
+                                                                            let
+                                                                                generator = index : let value = builtins.elemAt processes index ; in { name = value ; value = value ; } ;
+                                                                                in builtins.listToAttrs ( builtins.genList generator ( builtins.length processes ) ) ;
+                                                                        mapper =
+                                                                            let
+                                                                                in
+                                                                                    { command , expected-checkpoint , expected-standard-error , expected-standard-output , expected-status , process } :
+                                                                                        ''
+                                                                                            cat > "$PIPES/${ process p }" <<EOF
+                                                                                            ${ command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } }
+                                                                                            ${ stall }
+                                                                                            EOF
+                                                                                            STANDARD_OUTPUT="$( "$PIPES/standard-output" )" || ${ failures_ "cf621865" }
+                                                                                            if [[ "${ expected-standard-output }" != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                            then
+                                                                                                echo "We expected the standard output to be ${ expected-standard-output } but we observed $OBSERVED_STANDARD_OUTPUT" >&2
+                                                                                                ${ failures_ "b31e7ba7" }
+                                                                                            fi
+                                                                                            OBSERVED_STANDARD_ERROR="$( "$PIPES/standard-error" )" || ${ failures_ "7b9dbb0d" }
+                                                                                            if [[ "${ expected-standard-error }" != "$OBSERVED_STANDARD_ERROR" ]]
+                                                                                            then
+                                                                                                echo "We expected the standard error to be ${ expected-standard-error } but we observed $OBSERVED_STANDARD_ERROR" >&2
+                                                                                                ${ failures_ "f1fa4def" }
+                                                                                            STATUS="( "$PIPES/status" )" || ${ failures_ "c029a693" }
+                                                                                            if [[ "${ builtins.toString expected-status }" != "$OBSERVED_STATUS" ]]
+                                                                                            then
+                                                                                                echo "We expected the status to be ${ builtins.toString expected-status } but we observed $OBSERVED_STATUS" >&2
+                                                                                                ${ failures_ "1f8f29a3" }
+                                                                                            fi
+                                                                                            # yq '. |= map(select(. != "init-application" and . != "release-application"))' ${ resources-directory }/logs.log.yaml
+                                                                                        '' ;
+                                                                                in
+                                                                                    ''
+                                                                                        PIPES=$OUT/pipes
+                                                                                        mkdir --parents "$PIPES"
+                                                                                        ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process $PIPES/${ process } &'' ) processes ) }
+                                                                                        ${ builtins.concatStringsSep "/" ( builtins.map mapper commands ) }
+                                                                                    '' ;
                                                             } ;
-                                                    process-invocation =
+                                                    start-process =
                                                         writeShellApplication
                                                             {
-                                                                name = "process-invocation" ;
+                                                                name = "start-process" ;
                                                                 runtimeInputs = [ coreutils inotify-tools ] ;
                                                                 text =
                                                                     ''
@@ -85,35 +106,6 @@
                                                                             fi
                                                                             LAST_LINE="$(( LAST_LINE + LINE_COUNT ))" || ${ failures_ "fb470694" }
                                                                         done
-                                                                    '' ;
-                                                            } ;
-                                                    run-invocation =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "run-invocation" ;
-                                                                runtimeInputs = [ coreutils ] ;
-                                                                text =
-                                                                    ''
-                                                                        MODE="$1"
-                                                                        COMMAND_PIPE="$2"
-                                                                        STANDARD_OUTPUT_PIPE="$3"
-                                                                        STANDARD_ERROR_PIPE="$4"
-                                                                        STATUS_PIPE="$5"
-                                                                        touch "$STANDARD_OUTPUT_PIPE"
-                                                                        touch "$STANDARD_ERROR_PIPE"
-                                                                        touch "$STATUS_PIPE"
-                                                                        cat >> "$COMMAND_PIPE" <<EOF
-                                                                        RESOURCE="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ builtins.toFile "standard-input" standard-input } 2>> "$STANDARD_ERROR_PIPE" )"
-                                                                        EOF
-                                                                        echo >> "$COMMAND_PIPE"
-                                                                        STANDARD_ERROR="$( cat "$STANDARD_ERROR_PIPE" )" || ${ failures_ "cbae1dd4" }
-                                                                        if [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            echo "${ label }:  $MODE :  We expected STANDARD_ERROR to be empty but it was $STANDARD_ERROR" >&2
-                                                                            ${ failures_ "19b97294" }
-                                                                        fi
-                                                                        export STATUS_PIPE
-                                                                        export STANDARD_OUTPUT_PIPE
                                                                     '' ;
                                                             } ;
                                                 in
