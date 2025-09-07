@@ -35,12 +35,13 @@
                                     bash ,
                                     commands ,
                                     diffutils ,
-                                    fresh ,
+                                    fresh-checkpoint ,
+                                    fresh-resource ,
                                     label ,
                                     order ,
                                     post ,
-                                    resource ,
-                                    stale ,
+                                    stale-checkpoint ,
+                                    stale-resource ,
                                     stall ,
                                     standard-input  ,
                                     status
@@ -49,92 +50,78 @@
                                         {
                                             installPhase =
                                                 let
-                                                    catch-assertions =
+                                                    check =
                                                         writeShellApplication
                                                             {
-                                                                name = "catch-assertions" ;
+                                                                name = "check" ;
+                                                                runtimeInputs = [ coreutils process-invocation run-invocation ] ;
+                                                                text =
+                                                                    ''
+                                                                        PIPES=$OUT/pipes
+                                                                        mkdir --parents "$PIPES"
+                                                                        process-invocation "$PIPES/fresh" &
+                                                                        run-invocation fresh "$PIPES/fresh" "$PIPES/standard-output" "$PIPES/standard-error" "$PIPES/status"
+                                                                        echo "exit" > "$PIPES/fresh"
+                                                                        echo "exit" > "$PIPES/stale"
+                                                                    '' ;
+                                                            } ;
+                                                    process-invocation =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "process-invocation" ;
+                                                                runtimeInputs = [ coreutils inotify-tools ] ;
+                                                                text =
+                                                                    ''
+                                                                        PIPE="$1"
+                                                                        touch "$PIPE"
+                                                                        LAST_LINE=0
+                                                                        inotifywait --monitor --event modify --format "%w" "$PIPE" | while read -r FILE
+                                                                        do
+                                                                            NEW_LINES="$( tail -n +"$((LAST_LINE + 1))" "$FILE" )" || ${ failures_ "b9aa57b2" }
+                                                                            LINE_COUNT="$( echo "$NEW_LINES" | wc -l )" || ${ failures_ "f9006afa" }
+                                                                            if [[ -n "$NEW_LINES" ]]
+                                                                            then
+                                                                                eval "$NEW_LINES"
+                                                                            fi
+                                                                            LAST_LINE="$(( LAST_LINE + LINE_COUNT ))" || ${ failures_ "fb470694" }
+                                                                        done
+                                                                    '' ;
+                                                            } ;
+                                                    run-invocation =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "run-invocation" ;
                                                                 runtimeInputs = [ coreutils ] ;
                                                                 text =
                                                                     ''
-                                                                        ASSERTIONS_FILE="$1"
-                                                                        if [[ -s "$ASSERTIONS_FILE" ]]
+                                                                        MODE="$1"
+                                                                        COMMAND_PIPE="$2"
+                                                                        STANDARD_OUTPUT_PIPE="$3"
+                                                                        STANDARD_ERROR_PIPE="$4"
+                                                                        STATUS_PIPE="$5"
+                                                                        touch "$STANDARD_OUTPUT_PIPE"
+                                                                        touch "$STANDARD_ERROR_PIPE"
+                                                                        touch "$STATUS_PIPE"
+                                                                        cat >> "$COMMAND_PIPE" <<EOF
+                                                                        RESOURCE="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ builtins.toFile "standard-input" standard-input } 2>> "$STANDARD_ERROR_PIPE" )"
+                                                                        EOF
+                                                                        echo >> "$COMMAND_PIPE"
+                                                                        STANDARD_ERROR="$( cat "$STANDARD_ERROR_PIPE" )" || ${ failures_ "cbae1dd4" }
+                                                                        if [[ -n "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            echo "We found assertion violations" >&2
-                                                                            cat "$ASSERTIONS_FILE" >&2
-                                                                            ${ failures_ "18ab268f" }
+                                                                            echo "${ label }:  $MODE :  We expected STANDARD_ERROR to be empty but it was $STANDARD_ERROR" >&2
+                                                                            ${ failures_ "19b97294" }
                                                                         fi
+                                                                        export STATUS_PIPE
+                                                                        export STANDARD_OUTPUT_PIPE
                                                                     '' ;
                                                             } ;
-                                                    invoke-resource =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "invoke-resource" ;
-                                                                runtimeInputs = [ coreutils flock ] ;
-                                                                text =
-                                                                    ''
-                                                                        ASSERTIONS_FILE="$1"
-                                                                        STANDARD_ERROR_FILE="$3"
-                                                                        EXPECTED_RESOURCE="$4"
-                                                                        EXPECTED_LOG_FILE="$5"
-                                                                        OBSERVED_LOG_FILE="$6"
-                                                                        flock -x 220
-                                                                        if OBSERVED_RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input } > "$STANDARD_ERROR_FILE" )"
-                                                                        then
-                                                                            STATUS="$?"
-                                                                        else
-                                                                            STATUS="$?"
-                                                                        fi
-                                                                        if [[ "$EXPECTED_RESOURCE" != "$OBSERVED_RESOURCE" ]]
-                                                                        then
-                                                                            echo "We expected the RESOURCE to be $EXPECTED_RESOURCE but it was $OBSERVED_RESOURCE" >> "$ASSERTIONS_FILE"
-                                                                        fi
-                                                                        if [[ -s "$STANDARD_ERROR_FILE" ]]
-                                                                        then
-                                                                            STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failures_ "1c49e2cf" }
-                                                                            echo "We expected the STANDARD_ERROR to be empty but it was $STANDARD_ERROR" >> "$ASSERTIONS_FILE"
-                                                                        fi
-                                                                        if [[ "${ builtins.toString status }" != "$STATUS" ]]
-                                                                        then
-                                                                            echo "We expected the STATUS to be ${ builtins.toString status } but it was $STATUS" >> "$ASSERTIONS_FILE"
-                                                                        fi
-                                                                        ${ stall }
-                                                                        cat ${ resources-directory }/logs/log.yaml > "$OBSERVED_LOG_FILE"
-                                                                        rm ${ resources-directory }/logs/log.yaml
-                                                                        flock -u 220
-                                                                        if diff --unified "$EXPECTED_LOG_FILE" "$OBSERVED_LOG_FILE"
-                                                                        then
-                                                                            echo "We expected the LOG_FILE to be $EXPECTED_LOG_FILE but it was $OBSERVED_LOG_FILE"
-                                                                        fi
-                                                                    '' ;
-                                                            } ;
-                                                    root =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "root" ;
-                                                                runtimeInputs = [ catch-assertions coreutils findutils flock invoke-resource ] ;
-                                                                text =
-                                                                    ''
-                                                                        echo "The check derivation is $OUT"
-                                                                        if [[ -e ${ resources-directory } ]]
-                                                                        then
-                                                                            echo "${ label } : We were expecting the resources directory ${ resources-directory } to be initially non-existant" >&2
-                                                                            ${ failures_ "a29ee37a" }
-                                                                        fi
-                                                                        mkdir --parents "$OUT/assertions"
-                                                                        mkdir --parents "$OUT/standard-error"
-                                                                        mkdir --parents "$OUT/logs"
-                                                                        exec 220> "$OUT/lock"
-                                                                        nohup invoke-resource "$OUT/assertions/fresh" "$OUT/standard-error/fresh" ${ resource } fresh "$OUT/logs/fresh" &
-                                                                        flock -x 220
-                                                                        catch-assertions "$OUT/assertions/fresh"
-                                                                    '' ;
-                                                            } ;
-                                                    in
-                                                        ''
-                                                            mkdir --parents $out/bin
-                                                            makeWrapper ${ root }/bin/root $out/bin/root --set OUT $out --set PATH $out
-                                                            $out/bin/root
-                                                        '' ;
+                                                in
+                                                    ''
+                                                        mkdir --parents $out/bin
+                                                        makeWrapper ${ check }/bin/check $out/bin/check --set OUT $out
+                                                        $out/bin/check
+                                                    '' ;
                                             name = "test-observed" ;
                                             nativeBuildInputs = [ makeWrapper ] ;
                                             src = ./. ;
