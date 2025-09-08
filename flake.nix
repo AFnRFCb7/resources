@@ -167,6 +167,7 @@
                                                                 runtimeInputs = [ coreutils ] ;
                                                                 text =
                                                                     ''
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT:?GOLDEN_GIT must be defined in the environment" "}" ] }"
                                                                     '' ;
                                                             } ;
                                                     start-process =
