@@ -32,6 +32,7 @@
                             check =
                                 {
                                     commands ,
+                                    diffutils ,
                                     processes ,
                                     stall
                                 } :
@@ -46,44 +47,73 @@
                                                                 runtimeInputs = [ coreutils start-process yq-go ] ;
                                                                 text =
                                                                     let
-                                                                        p =
-                                                                            let
-                                                                                generator = index : let value = builtins.elemAt processes index ; in { name = value ; value = value ; } ;
-                                                                                in builtins.listToAttrs ( builtins.genList generator ( builtins.length processes ) ) ;
                                                                         mapper =
-                                                                            let
-                                                                                in
-                                                                                    { command , expected-checkpoint , expected-standard-error , expected-standard-output , expected-status , process } :
+                                                                            { command , expected-checkpoint , expected-standard-error , expected-standard-output , expected-status , index , process } :
+                                                                                let
+                                                                                    files = builtins.mapAttrs ( name : value : builtins.toFile name value ) ;
+                                                                                    strings =
+                                                                                        {
+                                                                                            command = command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } ;
+                                                                                            expected-standard-error = expected-standard-error ;
+                                                                                            expected-standard-output = expected-standard-output ;
+                                                                                            expected-status = builtins.toString expected-status ;
+                                                                                            index = builtins.toString index ;
+                                                                                            process =
+                                                                                                let
+                                                                                                    p =
+                                                                                                        let
+                                                                                                            generator = index : let value = builtins.elemAt processes index ; in { name = value ;  value = value ; } ;
+                                                                                                            in builtins.listToAttrs ( builtins.genList generator ( builtins.length processes ) ) ;
+                                                                                                    in process p ;
+                                                                                        } ;
+                                                                                    in
                                                                                         ''
-                                                                                            cat > "$PIPES/${ process p }" <<EOF
-                                                                                            ${ command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } }
+                                                                                            echo > "$PIPES/standard-output"
+                                                                                            echo > "$PIPES/standard-error"
+                                                                                            echo > "$PIPES/status"
+                                                                                            cat ${ files.command } >> "$PIPES/${ strings.index }"
+                                                                                            mkdir --parents "$OUT/${ strings.index }"
+                                                                                            cat ${ files.process } > "$OUT/${ strings.index }/process"
+                                                                                            cat ${ files.command } > "$OUT/${ strings.index }/command"
+                                                                                            mkdir --parents "$OUT/${ strings.index }/expected"
+                                                                                            cat "${ files.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
+                                                                                            cat "${ files.expected-standard-error }" > "$OUT/${ strings.index }/expected/standard-error"
+                                                                                            cat "${ files.expected-status }" > "$OUT/${ strings.index }/expected/status"
+                                                                                            cat "${ files.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
+                                                                                            mkdir --parents "$OUT/${ strings.index }/observed"
                                                                                             ${ stall }
-                                                                                            EOF
-                                                                                            STANDARD_OUTPUT="$( "$PIPES/standard-output" )" || ${ failures_ "cf621865" }
-                                                                                            if [[ "${ expected-standard-output }" != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                            cat "$PIPES/standard-output" > "$OUT/${ strings.index }/observed/standard-output"
+                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/standard-output" "$OUT/${ strings.index }/observed/standard-output"
                                                                                             then
-                                                                                                echo "We expected the standard output to be ${ expected-standard-output } but we observed $OBSERVED_STANDARD_OUTPUT" >&2
+                                                                                                echo "We expected the standard output to be $OUT/${ strings.index }/expected/standard-output but we observed $OUT/${ strings.index }/observed/standard-output" >&2
                                                                                                 ${ failures_ "b31e7ba7" }
                                                                                             fi
-                                                                                            OBSERVED_STANDARD_ERROR="$( "$PIPES/standard-error" )" || ${ failures_ "7b9dbb0d" }
-                                                                                            if [[ "${ expected-standard-error }" != "$OBSERVED_STANDARD_ERROR" ]]
+                                                                                            echo > "$PIPES/standard-output"
+                                                                                            cat "$PIPES/standard-error" > "$OUT/${ strings.index }/observed/standard-error"
+                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/standard-error" "$OUT/${ strings.index }/observed/standard-error"
                                                                                             then
-                                                                                                echo "We expected the standard error to be ${ expected-standard-error } but we observed $OBSERVED_STANDARD_ERROR" >&2
+                                                                                                echo "We expected the standard error to be $OUT/${ strings.index }/expected/standard-error but we observed $OUT/${ strings.index }/observed/standard-error" >&2
                                                                                                 ${ failures_ "f1fa4def" }
-                                                                                            STATUS="( "$PIPES/status" )" || ${ failures_ "c029a693" }
-                                                                                            if [[ "${ builtins.toString expected-status }" != "$OBSERVED_STATUS" ]]
+                                                                                            echo > "$PIPES/standard-error"
+                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/status" "$OUT/${ strings.index }/observed/status"
                                                                                             then
-                                                                                                echo "We expected the status to be ${ builtins.toString expected-status } but we observed $OBSERVED_STATUS" >&2
+                                                                                                echo "We expected the status to be $OUT/${ strings.index }/expected/status but we observed $OUT/${ strings.index }/observed/status" >&2
                                                                                                 ${ failures_ "1f8f29a3" }
                                                                                             fi
-                                                                                            # yq '. |= map(select(. != "init-application" and . != "release-application"))' ${ resources-directory }/logs.log.yaml
+                                                                                            echo > "$PIPES/status"
+                                                                                            yq '. |= map(select(. != "init-application" and . != "release-application"))' ${ resources-directory }/logs.log.yaml > "$OUT/${ strings.index }/observed/log.yaml"
+                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/log.yaml" "$OUT/${ strings.index }/observed/log.yaml"
+                                                                                            then
+                                                                                                echo "We expected the log to be $OUT/${ strings.index }/expected/log.yaml but it was $OUT/${ strings.index }/observed/log.yaml" >&2
+                                                                                                ${ failures_ "f25793f3" }
+                                                                                            fi
                                                                                         '' ;
                                                                                 in
                                                                                     ''
                                                                                         PIPES=$OUT/pipes
                                                                                         mkdir --parents "$PIPES"
                                                                                         ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process $PIPES/${ process } &'' ) processes ) }
-                                                                                        ${ builtins.concatStringsSep "/" ( builtins.map mapper commands ) }
+                                                                                        ${ builtins.concatStringsSep "/" ( builtins.genList ( index : builtins.elemAt commands // index ) ( builtins.length commands ) ) }
                                                                                     '' ;
                                                             } ;
                                                     start-process =
