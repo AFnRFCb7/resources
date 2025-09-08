@@ -49,12 +49,13 @@
                                                                 text =
                                                                     let
                                                                         mapper =
-                                                                            { command , expected-checkpoint , expected-standard-error , expected-standard-output , expected-status , index , process } :
+                                                                            { command , expected-log , expected-standard-error , expected-standard-output , expected-status , index , process } :
                                                                                 let
-                                                                                    files = builtins.mapAttrs ( name : value : builtins.toFile name value ) ;
+                                                                                    files = builtins.mapAttrs ( name : value : builtins.toFile name value ) strings ;
                                                                                     strings =
                                                                                         {
                                                                                             command = command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } ;
+                                                                                            expected-log = expected-log ;
                                                                                             expected-standard-error = expected-standard-error ;
                                                                                             expected-standard-output = expected-standard-output ;
                                                                                             expected-status = builtins.toString expected-status ;
@@ -88,7 +89,7 @@
                                                                                             then
                                                                                                 echo "We expected the standard output to be $OUT/${ strings.index }/expected/standard-output but we observed $OUT/${ strings.index }/observed/standard-output" >&2
                                                                                                 echo >&2
-                                                                                                echo ${ fix }/bin/fix expected/${ prefix }/standard-output $OUT/${ strings.index }/observed/standard-output"
+                                                                                                echo "${ fix }/bin/fix expected/${ prefix }/standard-output $OUT/${ strings.index }/observed/standard-output"
                                                                                                 echo >&2
                                                                                                 ${ failures_ "b31e7ba7" }
                                                                                             fi
@@ -98,6 +99,7 @@
                                                                                             then
                                                                                                 echo "We expected the standard error to be $OUT/${ strings.index }/expected/standard-error but we observed $OUT/${ strings.index }/observed/standard-error" >&2
                                                                                                 ${ failures_ "f1fa4def" }
+                                                                                            fi
                                                                                             echo > "$PIPES/standard-error"
                                                                                             if ! diff --unified "$OUT/${ strings.index }/expected/status" "$OUT/${ strings.index }/observed/status"
                                                                                             then
@@ -129,7 +131,7 @@
                                                                                 PIPES=$OUT/pipes
                                                                                 mkdir --parents "$PIPES"
                                                                                 ${ builtins.concatStringsSep "/n" ( builtins.map process-mapper processes ) }
-                                                                                ${ builtins.concatStringsSep "/" ( builtins.genList ( index : builtins.elemAt commands // index ) ( builtins.length commands ) ) }
+                                                                                ${ builtins.concatStringsSep "/" ( builtins.map mapper ( builtins.genList ( index : ( builtins.elemAt commands index ) // { index = index ; } ) ( builtins.length commands ) ) ) }
                                                                                 for PID in "${ builtins.concatStringsSep "" [ "$" "{" "PIDS[@]" "}" ] }"
                                                                                 do
                                                                                     if kill -0 "$PID"
