@@ -134,10 +134,28 @@
                                                                                 do
                                                                                     if kill -0 "$PID"
                                                                                     then
-                                                                                        echo "We expected all the processes to have ended but $PID is still running" >&2
+                                                                                        echo "We expected all the processes to have ended but $PID is still running $0" >&2
                                                                                         ${ failures_ "7be56340" }
                                                                                     fi
                                                                                 done
+                                                                                MOUNTS="$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" || ${ failures_ "1592b883" }
+                                                                                if [[ -n "$MOUNTS" ]]
+                                                                                then
+                                                                                    echo "We expected the mounts to be released but we observed $MOUNTS" >&2
+                                                                                    ${ failures_ "f09aedbb" }
+                                                                                fi
+                                                                                CANONICAL="$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" || ${ failures_ "bb937ef3" }
+                                                                                if [[ -n "$MOUNTS" ]]
+                                                                                then
+                                                                                    echo "We expected the canonical to be released but we observed $CANONICAL" >&2
+                                                                                    ${ failures_ "43d1afd7" }
+                                                                                fi
+                                                                                LINKS="$( find ${ resources-directory }/links -mindepth 1 -maxdepth 1 )" || ${ failures_ "3cfc8838" }
+                                                                                if [[ -n "$MOUNTS" ]]
+                                                                                then
+                                                                                    echo "We expected the links to be released but we observed $LINKS" >&2
+                                                                                    ${ failures_ "92fca982" }
+                                                                                fi
                                                                             '' ;
                                                             } ;
                                                     fix =
