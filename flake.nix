@@ -33,6 +33,7 @@
                                 {
                                     commands ,
                                     diffutils ,
+                                    prefix ,
                                     processes ,
                                     stall
                                 } :
@@ -86,6 +87,9 @@
                                                                                             if ! diff --unified "$OUT/${ strings.index }/expected/standard-output" "$OUT/${ strings.index }/observed/standard-output"
                                                                                             then
                                                                                                 echo "We expected the standard output to be $OUT/${ strings.index }/expected/standard-output but we observed $OUT/${ strings.index }/observed/standard-output" >&2
+                                                                                                echo >&2
+                                                                                                echo ${ fix }/bin/fix expected/${ prefix }/standard-output $OUT/${ strings.index }/observed/standard-output"
+                                                                                                echo >&2
                                                                                                 ${ failures_ "b31e7ba7" }
                                                                                             fi
                                                                                             echo > "$PIPES/standard-output"
@@ -112,9 +116,18 @@
                                                                                     ''
                                                                                         PIPES=$OUT/pipes
                                                                                         mkdir --parents "$PIPES"
-                                                                                        ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process $PIPES/${ process } &'' ) processes ) }
+                                                                                        ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process "$PIPES/${ process }" &'' ) processes ) }
                                                                                         ${ builtins.concatStringsSep "/" ( builtins.genList ( index : builtins.elemAt commands // index ) ( builtins.length commands ) ) }
                                                                                     '' ;
+                                                            } ;
+                                                    fix =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "fix" ;
+                                                                runtimeInputs = [ coreutils ] ;
+                                                                text =
+                                                                    ''
+                                                                    '' ;
                                                             } ;
                                                     start-process =
                                                         writeShellApplication
