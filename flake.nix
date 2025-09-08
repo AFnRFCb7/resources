@@ -112,18 +112,33 @@
                                                                                                 ${ failures_ "f25793f3" }
                                                                                             fi
                                                                                         '' ;
-                                                                                in
-                                                                                    ''
-                                                                                        if [[ -e ${ resources-directory } ]]
-                                                                                        then
-                                                                                            echo "We expected the resources-directory ${ resources-directory } to not exist initially" >&2
-                                                                                            ${ failures_ "2968484c" }
-                                                                                        fi
-                                                                                        PIPES=$OUT/pipes
-                                                                                        mkdir --parents "$PIPES"
-                                                                                        ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process "$PIPES/${ process }" &'' ) processes ) }
-                                                                                        ${ builtins.concatStringsSep "/" ( builtins.genList ( index : builtins.elemAt commands // index ) ( builtins.length commands ) ) }
-                                                                                    '' ;
+                                                                        process-mapper =
+                                                                            process :
+                                                                                ''
+                                                                                    start-process "$PIPES/${ process }" &
+                                                                                    PIDS+=( "$!" )
+                                                                                '' ;
+                                                                        in
+                                                                            ''
+                                                                                if [[ -e ${ resources-directory } ]]
+                                                                                then
+                                                                                    echo "We expected the resources-directory ${ resources-directory } to not exist initially" >&2
+                                                                                    ${ failures_ "2968484c" }
+                                                                                fi
+                                                                                PIDS=()
+                                                                                PIPES=$OUT/pipes
+                                                                                mkdir --parents "$PIPES"
+                                                                                ${ builtins.concatStringsSep "/n" ( builtins.map process-mapper processes ) }
+                                                                                ${ builtins.concatStringsSep "/" ( builtins.genList ( index : builtins.elemAt commands // index ) ( builtins.length commands ) ) }
+                                                                                for PID in "${ builtins.concatStringsSep "" [ "$" "{" "PIDS[@]" "}" ] }"
+                                                                                do
+                                                                                    if kill -0 "$PID"
+                                                                                    then
+                                                                                        echo "We expected all the processes to have ended but $PID is still running" >&2
+                                                                                        ${ failures_ "7be56340" }
+                                                                                    fi
+                                                                                done
+                                                                            '' ;
                                                             } ;
                                                     fix =
                                                         writeShellApplication
