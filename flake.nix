@@ -114,6 +114,11 @@
                                                                                         '' ;
                                                                                 in
                                                                                     ''
+                                                                                        if [[ -e ${ resources-directory } ]]
+                                                                                        then
+                                                                                            echo "We expected the resources-directory ${ resources-directory } to not exist initially" >&2
+                                                                                            ${ failures_ "2968484c" }
+                                                                                        fi
                                                                                         PIPES=$OUT/pipes
                                                                                         mkdir --parents "$PIPES"
                                                                                         ${ builtins.concatStringsSep "/n" ( builtins.map ( process : ''start-process "$PIPES/${ process }" &'' ) processes ) }
