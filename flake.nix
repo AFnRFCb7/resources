@@ -86,7 +86,7 @@
                                                                                                 cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
                                                                                             fi
                                                                                             cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
-                                                                                            cat "${ files.expected-status }" > "$OUT/${ strings.index }/expected/status"
+                                                                                            cat  "${ strings.expected-status }" > "$OUT/${ strings.index }/expected/status"
                                                                                             cat "${ files.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
                                                                                             mkdir --parents "$OUT/${ strings.index }/observed"
                                                                                             ${ stall }
