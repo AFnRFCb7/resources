@@ -81,7 +81,7 @@
                                                                                             ${ strings.command }
                                                                                             EOF
                                                                                             mkdir --parents "$OUT/${ strings.index }/expected"
-                                                                                            if [[ -f ${ builtins.trace strings.expected-standard-output strings.expected-standard-output } ]]
+                                                                                            if [[ -f ${ strings.expected-standard-output } ]]
                                                                                             then
                                                                                                 cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
                                                                                             fi
