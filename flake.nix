@@ -49,14 +49,13 @@
                                                                 text =
                                                                     let
                                                                         mapper =
-                                                                            { command , expected-log , expected-standard-error , expected-standard-output , expected-status , index , process } :
+                                                                            { command , expected-log , expected-standard-output , expected-status , index , process } :
                                                                                 let
                                                                                     files = builtins.mapAttrs ( name : value : builtins.toFile name value ) strings ;
                                                                                     strings =
                                                                                         {
                                                                                             command = command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } ;
                                                                                             expected-log = expected-log ;
-                                                                                            expected-standard-error = expected-standard-error ;
                                                                                             expected-standard-output = expected-standard-output ;
                                                                                             expected-status = builtins.toString expected-status ;
                                                                                             index = builtins.toString index ;
@@ -70,16 +69,23 @@
                                                                                         } ;
                                                                                     in
                                                                                         ''
-                                                                                            echo > "$PIPES/standard-output"
-                                                                                            echo > "$PIPES/standard-error"
-                                                                                            echo > "$PIPES/status"
-                                                                                            cat ${ files.command } >> "$PIPES/${ strings.index }"
+                                                                                            echo -n > "$PIPES/standard-output"
+                                                                                            echo -n > "$PIPES/standard-error"
+                                                                                            echo -n > "$PIPES/status"
+                                                                                            cat >> "$PIPES/${ strings.index }" <<EOF
+                                                                                            ${ strings.command }
+                                                                                            EOF
                                                                                             mkdir --parents "$OUT/${ strings.index }"
                                                                                             cat ${ files.process } > "$OUT/${ strings.index }/process"
-                                                                                            cat ${ files.command } > "$OUT/${ strings.index }/command"
+                                                                                            cat > "$OUT/${ strings.index }/command" <<EOF
+                                                                                            ${ strings.command }
+                                                                                            EOF
                                                                                             mkdir --parents "$OUT/${ strings.index }/expected"
-                                                                                            cat "${ files.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
-                                                                                            cat "${ files.expected-standard-error }" > "$OUT/${ strings.index }/expected/standard-error"
+                                                                                            if [[ -f ${ builtins.trace strings.expected-standard-output strings.expected-standard-output } ]]
+                                                                                            then
+                                                                                                cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
+                                                                                            fi
+                                                                                            cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
                                                                                             cat "${ files.expected-status }" > "$OUT/${ strings.index }/expected/status"
                                                                                             cat "${ files.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
                                                                                             mkdir --parents "$OUT/${ strings.index }/observed"
@@ -89,21 +95,25 @@
                                                                                             then
                                                                                                 echo "We expected the standard output to be $OUT/${ strings.index }/expected/standard-output but we observed $OUT/${ strings.index }/observed/standard-output" >&2
                                                                                                 echo >&2
-                                                                                                echo "${ fix }/bin/fix expected/${ prefix }/standard-output $OUT/${ strings.index }/observed/standard-output"
+                                                                                                echo "${ fix }/bin/fix expected/${ prefix } standard-output $OUT/${ strings.index }/observed/standard-output"
                                                                                                 echo >&2
                                                                                                 ${ failures_ "b31e7ba7" }
                                                                                             fi
-                                                                                            echo > "$PIPES/standard-output"
+                                                                                            echo -n > "$PIPES/standard-output"
                                                                                             cat "$PIPES/standard-error" > "$OUT/${ strings.index }/observed/standard-error"
-                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/standard-error" "$OUT/${ strings.index }/observed/standard-error"
+                                                                                            if [[ -s "$OUT/${ strings.index }/observed/standard-error" ]]
                                                                                             then
-                                                                                                echo "We expected the standard error to be $OUT/${ strings.index }/expected/standard-error but we observed $OUT/${ strings.index }/observed/standard-error" >&2
+                                                                                                echo "We expected the standard error to be blank but we observed $OUT/${ strings.index }/observed/standard-error" >&2
                                                                                                 ${ failures_ "f1fa4def" }
                                                                                             fi
                                                                                             echo > "$PIPES/standard-error"
+                                                                                            cat "$PIPES/standard-error" > "$OUT/${ strings.index }/observed/status"
                                                                                             if ! diff --unified "$OUT/${ strings.index }/expected/status" "$OUT/${ strings.index }/observed/status"
                                                                                             then
                                                                                                 echo "We expected the status to be $OUT/${ strings.index }/expected/status but we observed $OUT/${ strings.index }/observed/status" >&2
+                                                                                                echo >&2
+                                                                                                echo "${ fix }/bin/fix expected/${ prefix } status $OUT/${ strings.index }/observed/status"
+                                                                                                echo >&2
                                                                                                 ${ failures_ "1f8f29a3" }
                                                                                             fi
                                                                                             echo > "$PIPES/status"
@@ -167,7 +177,23 @@
                                                                 runtimeInputs = [ coreutils ] ;
                                                                 text =
                                                                     ''
+                                                                        EXPECTED_DIRECTORY="$1"
+                                                                        EXPECTED_FILE="$2"
+                                                                        OBSERVED="$3"
                                                                         : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT:?GOLDEN_GIT must be defined in the environment" "}" ] }"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT_DIR:?GOLDEN_GIT_DIR must be defined in the environment" "}" ] }"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT_WORK_TREE:?GOLDEN_GIT_WORK_TREE must be defined in the environment" "}" ] }"
+                                                                        GIT="$GOLDEN_GIT"
+                                                                        export GIT_DIR="$GOLDEN_GIT_DIR"
+                                                                        export GIT_WORK_TREE="$GOLDEN_GIT_WORK_TREE"
+                                                                        if [[ -e "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE" ]]
+                                                                        then
+                                                                            "$GIT" rm "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
+                                                                        fi
+                                                                        mkdir --parents "$GIT_WORK_TREE/$EXPECTED_DIRECTORY"
+                                                                        cat "$OBSERVED" > "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE"
+                                                                        git add "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
+                                                                        git commit -am "" --allow-empty --allow-empty-message
                                                                     '' ;
                                                             } ;
                                                     start-process =
