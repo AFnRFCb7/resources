@@ -85,9 +85,18 @@
                                                                                             then
                                                                                                 cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
                                                                                             fi
-                                                                                            cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
-                                                                                            cat  "${ strings.expected-status }" > "$OUT/${ strings.index }/expected/status"
-                                                                                            cat "${ files.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
+                                                                                            if [[ -f ${ strings.expected-standard-output } ]]
+                                                                                            then
+                                                                                                cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
+                                                                                            fi
+                                                                                            if [[ -f ${ strings.expected-status } ]]
+                                                                                            then
+                                                                                                cat  "${ strings.expected-status }" > "$OUT/${ strings.index }/expected/status"
+                                                                                            fi
+                                                                                            if [[ -f ${ strings.expected-log } ]]
+                                                                                            then
+                                                                                                cat "${ strings.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
+                                                                                            fi
                                                                                             mkdir --parents "$OUT/${ strings.index }/observed"
                                                                                             ${ stall }
                                                                                             cat "$PIPES/standard-output" > "$OUT/${ strings.index }/observed/standard-output"
@@ -188,11 +197,16 @@
                                                                         export GIT_WORK_TREE="$GOLDEN_GIT_WORK_TREE"
                                                                         if [[ -e "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE" ]]
                                                                         then
+                                                                            echo "Since there does exist $GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE we are going to remove it with:  $GIT rm $EXPECTED_DIRECTORY/$EXPECTED_FILE"
                                                                             "$GIT" rm "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
                                                                         fi
+                                                                        echo "We are going go to create the directory with:  mkdir --parents $GIT_WORK_TREE/$EXPECTED_DIRECTORY"
                                                                         mkdir --parents "$GIT_WORK_TREE/$EXPECTED_DIRECTORY"
+                                                                        echo "We are going to populate the file with:  cat $OBSERVED > $GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE"
                                                                         cat "$OBSERVED" > "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE"
+                                                                        echo "We are:  git add $EXPECTED_DIRECTORY/$EXPECTED_FILE"
                                                                         git add "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
+                                                                        echo "We are:  git commit -am \"\" --allow-empty --allow-empty-message"
                                                                         git commit -am "" --allow-empty --allow-empty-message
                                                                     '' ;
                                                             } ;
