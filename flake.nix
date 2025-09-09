@@ -33,7 +33,6 @@
                                 {
                                     commands ,
                                     diffutils ,
-                                    prefix ,
                                     processes ,
                                     stall
                                 } :
@@ -45,192 +44,121 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "check" ;
-                                                                runtimeInputs = [ coreutils start-process yq-go ] ;
-                                                                text =
+                                                                runtimeInputs =
                                                                     let
-                                                                        mapper =
-                                                                            { command , expected-log , expected-standard-output , expected-status , index , process } :
-                                                                                let
-                                                                                    files = builtins.mapAttrs ( name : value : builtins.toFile name value ) strings ;
-                                                                                    strings =
-                                                                                        {
-                                                                                            command = command { exit = "exit" ; implementation = implementation ; noop = "${ coreutils }/bin/true" ; } ;
-                                                                                            expected-log = expected-log ;
-                                                                                            expected-standard-output = expected-standard-output ;
-                                                                                            expected-status = builtins.toString expected-status ;
-                                                                                            index = builtins.toString index ;
-                                                                                            process =
-                                                                                                let
-                                                                                                    p =
-                                                                                                        let
-                                                                                                            generator = index : let value = builtins.elemAt processes index ; in { name = value ;  value = value ; } ;
-                                                                                                            in builtins.listToAttrs ( builtins.genList generator ( builtins.length processes ) ) ;
-                                                                                                    in process p ;
-                                                                                        } ;
-                                                                                    in
+                                                                        assert-empty =
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "assert-empty" ;
+                                                                                    runtimeInputs = [ coreutils findutils ] ;
+                                                                                    text =
                                                                                         ''
-                                                                                            echo -n > "$PIPES/standard-output"
-                                                                                            echo -n > "$PIPES/standard-error"
-                                                                                            echo -n > "$PIPES/status"
-                                                                                            cat >> "$PIPES/${ strings.index }" <<EOF
-                                                                                            ${ strings.command }
-                                                                                            EOF
-                                                                                            mkdir --parents "$OUT/${ strings.index }"
-                                                                                            cat ${ files.process } > "$OUT/${ strings.index }/process"
-                                                                                            cat > "$OUT/${ strings.index }/command" <<EOF
-                                                                                            ${ strings.command }
-                                                                                            EOF
-                                                                                            mkdir --parents "$OUT/${ strings.index }/expected"
-                                                                                            if [[ -f ${ strings.expected-standard-output } ]]
+                                                                                            DIRECTORY="$1"
+                                                                                            if [[ -d "${ resources-directory }/$DIRECTORY" ]]
                                                                                             then
-                                                                                                cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
-                                                                                            fi
-                                                                                            if [[ -f ${ strings.expected-standard-output } ]]
-                                                                                            then
-                                                                                                cat "${ strings.expected-standard-output }" > "$OUT/${ strings.index }/expected/standard-output"
-                                                                                            fi
-                                                                                            if [[ -f ${ strings.expected-status } ]]
-                                                                                            then
-                                                                                                cat  "${ strings.expected-status }" > "$OUT/${ strings.index }/expected/status"
-                                                                                            fi
-                                                                                            if [[ -f ${ strings.expected-log } ]]
-                                                                                            then
-                                                                                                cat "${ strings.expected-log }" > "$OUT/${ strings.index }/expected/log.expected"
-                                                                                            fi
-                                                                                            mkdir --parents "$OUT/${ strings.index }/observed"
-                                                                                            ${ stall }
-                                                                                            cat "$PIPES/standard-output" > "$OUT/${ strings.index }/observed/standard-output"
-                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/standard-output" "$OUT/${ strings.index }/observed/standard-output"
-                                                                                            then
-                                                                                                echo "We expected the standard output to be $OUT/${ strings.index }/expected/standard-output but we observed $OUT/${ strings.index }/observed/standard-output" >&2
-                                                                                                echo >&2
-                                                                                                echo "${ fix }/bin/fix expected/${ prefix } standard-output $OUT/${ strings.index }/observed/standard-output"
-                                                                                                echo >&2
-                                                                                                ${ failures_ "b31e7ba7" }
-                                                                                            fi
-                                                                                            echo -n > "$PIPES/standard-output"
-                                                                                            cat "$PIPES/standard-error" > "$OUT/${ strings.index }/observed/standard-error"
-                                                                                            if [[ -s "$OUT/${ strings.index }/observed/standard-error" ]]
-                                                                                            then
-                                                                                                echo "We expected the standard error to be blank but we observed $OUT/${ strings.index }/observed/standard-error" >&2
-                                                                                                ${ failures_ "f1fa4def" }
-                                                                                            fi
-                                                                                            echo > "$PIPES/standard-error"
-                                                                                            cat "$PIPES/standard-error" > "$OUT/${ strings.index }/observed/status"
-                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/status" "$OUT/${ strings.index }/observed/status"
-                                                                                            then
-                                                                                                echo "We expected the status to be $OUT/${ strings.index }/expected/status but we observed $OUT/${ strings.index }/observed/status" >&2
-                                                                                                echo >&2
-                                                                                                echo "${ fix }/bin/fix expected/${ prefix } status $OUT/${ strings.index }/observed/status"
-                                                                                                echo >&2
-                                                                                                ${ failures_ "1f8f29a3" }
-                                                                                            fi
-                                                                                            echo > "$PIPES/status"
-                                                                                            yq '. |= map(select(. != "init-application" and . != "release-application"))' ${ resources-directory }/logs.log.yaml > "$OUT/${ strings.index }/observed/log.yaml"
-                                                                                            if ! diff --unified "$OUT/${ strings.index }/expected/log.yaml" "$OUT/${ strings.index }/observed/log.yaml"
-                                                                                            then
-                                                                                                echo "We expected the log to be $OUT/${ strings.index }/expected/log.yaml but it was $OUT/${ strings.index }/observed/log.yaml" >&2
-                                                                                                ${ failures_ "f25793f3" }
+                                                                                                CONTENTS="$( find "${ resources-directory }/$DIRECTORY" -mindepth 1 -exec basename {} \; )" || ${ failures_ "4fcd6c4d" }
+                                                                                                if [[ -n "$CONTENTS" ]]
+                                                                                                then
+                                                                                                    echo "We expected $DIRECTORY to be empty but found $CONTENTS" >&2
+                                                                                                    ${ failures_ "ab669425" }
+                                                                                                fi
                                                                                             fi
                                                                                         '' ;
+                                                                                } ;
+                                                                        in [ assert-empty coreutils ] ;
+                                                                text =
+                                                                    let
+                                                                        commands_ =
+                                                                            let
+                                                                                v =
+                                                                                    visitor.lib.implementation
+                                                                                        {
+                                                                                            string =
+                                                                                                path : value :
+                                                                                                    let
+                                                                                                        file = builtins.concatStringsSep "/" ( builtins.concatLists [ path [ value ] ] ) ;
+                                                                                                        in
+                                                                                                            if builtins.pathExists file then
+                                                                                                                if builtins.readFileType ( builtins.trace "7bc913e5-feb4-4c33-b1be-8225d65d4627" file ) == "directory" then [ ( builtins.listToAttrs ( builtins.concatLists ( builtins.attrValues ( builtins.mapAttrs ( name : value : [ { name = name ; value = v "${ path }/${ name }" ; } ] ) ( builtins.readDir file ) ) ) ) ) ]
+                                                                                                                else if builtins.readFileType file == "regular" then [ { name = value ; value = builtins.import file ; } ]
+                                                                                                                else builtins.trace "9709672e-6aac-44c2-8a0b-4bef4b06fee9" [ ]
+                                                                                                            else builtins.trace "f785afc2-7a77-458b-91b3-668ac8c7f67f" [ ] ;
+                                                                                        } ;
+                                                                                in v commands ;
+                                                                        command-mapper =
+                                                                            { index , order } :
+                                                                                let
+                                                                                    application =
+                                                                                        writeShellApplication
+                                                                                            {
+                                                                                                name = "run-command" ;
+                                                                                                runtimeInputs = [ process ] ;
+                                                                                                text =
+                                                                                                    ''
+                                                                                                        COMMANDS="$1"
+                                                                                                        mkdir --parents "$COMMANDS/${ index }"
+                                                                                                        echo ${ order } > "$COMMANDS/${ index }/order"
+                                                                                                    '' ;
+                                                                                            } ;
+                                                                                    in ''${ application }/bin/run-command "$OUT/commands"'' ;
+                                                                        process =
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "process" ;
+                                                                                    runtimeInputs = [ coreutils inotify-tools ] ;
+                                                                                    text =
+                                                                                        ''
+                                                                                            PIPE="$1"
+                                                                                            touch "$PIPE"
+                                                                                            CURRENT_LINE=0
+                                                                                            inotifywait --event modify "$PIPE" | while read -r
+                                                                                            do
+                                                                                                NEW_LINES="$( tail )" || ${ failures_ "a6f9cc4a" }
+                                                                                                NUM_NEW_LINES="$( echo "$NEW_LINES" | wc --lines )" || ${ failures_ "5e1f27c6" }
+                                                                                                CURRENT_LINE=$(( CURRENT_LINE + NUM_NEW_LINES ))
+                                                                                                eval "$NEW_LINES"
+                                                                                            done
+                                                                                        '' ;
+                                                                                } ;
                                                                         process-mapper =
-                                                                            process :
-                                                                                ''
-                                                                                    start-process "$PIPES/${ process }" &
-                                                                                    PIDS+=( "$!" )
-                                                                                '' ;
+                                                                            name :
+                                                                                let
+                                                                                    application =
+                                                                                        writeShellApplication
+                                                                                            {
+                                                                                                name = "start-process" ;
+                                                                                                runtimeInputs = [ process ] ;
+                                                                                                text =
+                                                                                                    ''
+                                                                                                        PROCESSES="$1"
+                                                                                                        mkdir --parents "$PROCESSES"
+                                                                                                        process "$PROCESSES/${ name }.pipe" &
+                                                                                                        echo "$!" > "$PROCESSES/${ name }.pid"
+                                                                                                    '' ;
+                                                                                            } ;
+                                                                                    in ''${ application }/bin/start-process "$OUT/processes"'' ;
                                                                         in
                                                                             ''
-                                                                                if [[ -e ${ resources-directory } ]]
-                                                                                then
-                                                                                    echo "We expected the resources-directory ${ resources-directory } to not exist initially" >&2
-                                                                                    ${ failures_ "2968484c" }
-                                                                                fi
-                                                                                PIDS=()
-                                                                                PIPES=$OUT/pipes
-                                                                                mkdir --parents "$PIPES"
-                                                                                ${ builtins.concatStringsSep "/n" ( builtins.map process-mapper processes ) }
-                                                                                ${ builtins.concatStringsSep "/" ( builtins.map mapper ( builtins.genList ( index : ( builtins.elemAt commands index ) // { index = index ; } ) ( builtins.length commands ) ) ) }
-                                                                                for PID in "${ builtins.concatStringsSep "" [ "$" "{" "PIDS[@]" "}" ] }"
+                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map process-mapper processes ) }
+                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map command-mapper commands_ ) }
+                                                                                echo ${ builtins.typeOf commands_ }
+                                                                                echo ${ builtins.toString ( builtins.length commands_ ) }
+                                                                                echo "OUT=$OUT $0"
+                                                                                if true ; then exit 99 ; fi
+                                                                                find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
-                                                                                    if kill -0 "$PID"
+                                                                                    PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
+                                                                                    if ! kill -0 "$PID"
                                                                                     then
-                                                                                        echo "We expected all the processes to have ended but $PID is still running $0" >&2
-                                                                                        ${ failures_ "7be56340" }
+                                                                                        BASE="$( basename "PROCESS" )" || ${ failures_ "0ef41434" }
+                                                                                        echo "We expected PROCESS $PID $BASE to be finished" >&2
+                                                                                        ${ failures_ "23abd5bc" }
                                                                                     fi
                                                                                 done
-                                                                                MOUNTS="$( find ${ resources-directory }/mounts -mindepth 1 -maxdepth 1 )" || ${ failures_ "1592b883" }
-                                                                                if [[ -n "$MOUNTS" ]]
-                                                                                then
-                                                                                    echo "We expected the mounts to be released but we observed $MOUNTS" >&2
-                                                                                    ${ failures_ "f09aedbb" }
-                                                                                fi
-                                                                                CANONICAL="$( find ${ resources-directory }/canonical -mindepth 1 -maxdepth 1 )" || ${ failures_ "bb937ef3" }
-                                                                                if [[ -n "$MOUNTS" ]]
-                                                                                then
-                                                                                    echo "We expected the canonical to be released but we observed $CANONICAL" >&2
-                                                                                    ${ failures_ "43d1afd7" }
-                                                                                fi
-                                                                                LINKS="$( find ${ resources-directory }/links -mindepth 1 -maxdepth 1 )" || ${ failures_ "3cfc8838" }
-                                                                                if [[ -n "$MOUNTS" ]]
-                                                                                then
-                                                                                    echo "We expected the links to be released but we observed $LINKS" >&2
-                                                                                    ${ failures_ "92fca982" }
-                                                                                fi
+                                                                                assert-empty "mounts"
+                                                                                assert-empty "links"
+                                                                                assert-empty "canonical"
                                                                             '' ;
-                                                            } ;
-                                                    fix =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "fix" ;
-                                                                runtimeInputs = [ coreutils ] ;
-                                                                text =
-                                                                    ''
-                                                                        EXPECTED_DIRECTORY="$1"
-                                                                        EXPECTED_FILE="$2"
-                                                                        OBSERVED="$3"
-                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT:?GOLDEN_GIT must be defined in the environment" "}" ] }"
-                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT_DIR:?GOLDEN_GIT_DIR must be defined in the environment" "}" ] }"
-                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_GIT_WORK_TREE:?GOLDEN_GIT_WORK_TREE must be defined in the environment" "}" ] }"
-                                                                        GIT="$GOLDEN_GIT"
-                                                                        export GIT_DIR="$GOLDEN_GIT_DIR"
-                                                                        export GIT_WORK_TREE="$GOLDEN_GIT_WORK_TREE"
-                                                                        if [[ -e "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE" ]]
-                                                                        then
-                                                                            echo "Since there does exist $GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE we are going to remove it with:  $GIT rm $EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                            "$GIT" rm "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                        fi
-                                                                        echo "We are going go to create the directory with:  mkdir --parents $GIT_WORK_TREE/$EXPECTED_DIRECTORY"
-                                                                        mkdir --parents "$GIT_WORK_TREE/$EXPECTED_DIRECTORY"
-                                                                        echo "We are going to populate the file with:  cat $OBSERVED > $GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                        cat "$OBSERVED" > "$GIT_WORK_TREE/$EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                        echo "We are:  git add $EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                        git add "$EXPECTED_DIRECTORY/$EXPECTED_FILE"
-                                                                        echo "We are:  git commit -am \"\" --allow-empty --allow-empty-message"
-                                                                        git commit -am "" --allow-empty --allow-empty-message
-                                                                    '' ;
-                                                            } ;
-                                                    start-process =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "start-process" ;
-                                                                runtimeInputs = [ coreutils inotify-tools ] ;
-                                                                text =
-                                                                    ''
-                                                                        PIPE="$1"
-                                                                        touch "$PIPE"
-                                                                        LAST_LINE=0
-                                                                        inotifywait --monitor --event modify --format "%w" "$PIPE" | while read -r FILE
-                                                                        do
-                                                                            NEW_LINES="$( tail -n +"$((LAST_LINE + 1))" "$FILE" )" || ${ failures_ "b9aa57b2" }
-                                                                            LINE_COUNT="$( echo "$NEW_LINES" | wc -l )" || ${ failures_ "f9006afa" }
-                                                                            if [[ -n "$NEW_LINES" ]]
-                                                                            then
-                                                                                eval "$NEW_LINES"
-                                                                            fi
-                                                                            LAST_LINE="$(( LAST_LINE + LINE_COUNT ))" || ${ failures_ "fb470694" }
-                                                                        done
-                                                                    '' ;
                                                             } ;
                                                 in
                                                     ''
