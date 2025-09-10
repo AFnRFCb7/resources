@@ -65,28 +65,122 @@
                                                                                             fi
                                                                                         '' ;
                                                                                 } ;
-                                                                        in [ assert-empty coreutils ] ;
+                                                                        run-command =
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "run-command" ;
+                                                                                    runtimeInputs = [ coreutils findutils yq-go ] ;
+                                                                                    text =
+                                                                                        ''
+                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "OUT:?OUT must be set" "}" ] }"
+                                                                                            ORDER="$1"
+                                                                                            COMMAND_DIRECTORY="$2"
+                                                                                            mkdir --parents "$OUT/commands/$ORDER"
+                                                                                            echo "$ORDER" > "$OUT/commands/$ORDER/order"
+                                                                                            PROCESS="$( < "$COMMAND_DIRECTORY/process" )" || ${ failures_ "cf9df67c" }
+                                                                                            if [[ ! -f "$OUT/processes/$PROCESS.pipe" ]] && [[ ! -f "$OUT/processes/$PROCESS.pid" ]]
+                                                                                            then
+                                                                                                echo "We expected there to be a process $PROCESS but there was not" >&2
+                                                                                                ${ failures_ "2f257e3e" }
+                                                                                            fi
+                                                                                            if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/log.yaml" ]]
+                                                                                            then
+                                                                                                mkdir --parents "$OUT/commands/$ORDER/expected"
+                                                                                                ln --symbolic "$COMMAND_DIRECTORY/log.yaml" "$OUT/commands/$ORDER/expected"
+                                                                                                mkdir --parents "$OUT/commands/$ORDER/observed"
+                                                                                                cat ${ resources-directory }/logs/log.yaml > "$OUT/commands/$ORDER/observed"
+                                                                                                if ! diff --unified "$OUT/commands/$ORDER/expected" "$OUT/commands/$ORDER/observed"
+                                                                                                then
+                                                                                                    echo "We expected the logs of the $ORDER command to be $OUT/commands/$ORDER/expected but we observed $OUT/commands/$ORDER/observed" >&2
+                                                                                                    echo >&2
+                                                                                                    echo cp "$OUT/commands/$ORDER/observed/log.yaml" "$GOLDEN/commands/$ORDER/log.yaml">&2
+                                                                                                    echo >&2
+                                                                                                fi
+                                                                                                LOG="$( yq eval '.' "$OUT/commands/observed/log.yaml" )" || ${ failures_ "53034396" }
+                                                                                                # shellcheck disable=SC2016
+                                                                                                yq --inplace --null-input --arg LOG "$LOG" --prettyPrint '. += [ { "log" : ( $LOG | from_yaml ) } ]' "$OUT/log.yaml"
+                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]] && [[ -f "$COMMAND_DIRECTORY/log.yaml" ]]
+                                                                                            then
+                                                                                                COMMAND_RAW="$( < "$COMMAND_DIRECTORY/command" )" || ${ failures_ "e50bd79d" }
+                                                                                                COMMAND_SUBSTITUTED="${ builtins.concatStringsSep "" [ "$" "{" "COMMAND_RAW//\$IMPLEMENTATION/$IMPLEMENTATION" "}" ] }"
+                                                                                                mkdir --parents "$OUT/commands/$ORDER/expected"
+                                                                                                ln --symbolic "$COMMAND_DIRECTORY/standard-output" "$OUT/commands/$ORDER/expected"
+                                                                                                ln --symbolic "$COMMAND_DIRECTORY/status" "$OUT/commands/$ORDER/expected"
+                                                                                                ln --symbolic "$COMMAND_DIRECTORY/log.yaml" "$OUT/commands/$ORDER/expected"
+                                                                                                mkdir --parents "$OUT/commands/$ORDER/observed"
+                                                                                                cat > "$OUT/processes/$PROCESS.pipe" <<EOF
+                                                                                            if RESOURCE="\$( "$COMMAND_SUBSTITUTED" 2> "$OUT/commands/$ORDER/observed/standard-error" )"
+                                                                                            then
+                                                                                                echo "$RESOURCE" > "$OUT/commands/$ORDER/observed/standard-output"
+                                                                                                echo "$?" > "$OUT/commands/$ORDER/observed/status"
+                                                                                            else
+                                                                                                echo "$RESOURCE" > "$OUT/commands/$ORDER/observed/standard-output"
+                                                                                                echo "$?" > "$OUT/commands/$ORDER/observed/status"
+                                                                                            fi
+                                                                                            EOF
+                                                                                                cat > "$OUT/processes/$PROCESS.pipe" <<EOF
+                                                                                            cat ${ resources-directory }/logs/log.yaml > "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            EOF
+                                                                                                cat > "$OUT/processes/$PROCESS.pipe" <<EOF
+                                                                                            rm ${ resources-directory }/logs/log.yaml
+                                                                                            EOF
+                                                                                                if ! diff --unified "$OUT/commands/$ORDER/expected/standard-output" "$OUT/commands/$ORDER/observed/standard-output"
+                                                                                                then
+                                                                                                    echo "We expected the standard output of the $ORDER command to be $OUT/commands/$ORDER/expected/standard-output but it was $OUT/commands/$ORDER/observed/standard-output" >&2
+                                                                                                    echo >&2
+                                                                                                    echo cp "$OUT/commands/$ORDER/observed/standard-output" "$GOLDEN/commands/$ORDER/standard-output" >&2
+                                                                                                    echo >&2
+                                                                                                    ${ failures_ "ed07854e" }
+                                                                                                fi
+                                                                                                if [[ ! -f "$OUT/commands/$ORDER/observed/standard-error" ]]
+                                                                                                then
+                                                                                                    echo "We expected the standard error of the $ORDER command to exist but it does not exist" >&2
+                                                                                                    ${ failures_ "231188dc" }
+                                                                                                elif [[ -s "$OUT/commands/$ORDER/observed/standard-error" ]]
+                                                                                                then
+                                                                                                    echo "We expected the standard error of the $ORDER command to be blank but it was not blank" >&2
+                                                                                                    ${ failures_ "28512133" }
+                                                                                                fi
+                                                                                                EXPECTED_STATUS="$( < "$OUT/commands/expected/status" )" || ${ failures_ "9bfd8524" }
+                                                                                                OBSERVED_STATUS="$( < "$OUT/commands/observed/status" )" || ${ failures_ "f5a2fae1" }
+                                                                                                if ! diff --unified "$OUT/commands/$ORDER/expected/status" "$OUT/commands/$ORDER/observed/status"
+                                                                                                then
+                                                                                                    echo "We expected the status of the $ORDER command to be $EXPECTED_STATUS but it was $OBSERVED_STATUS" >&2
+                                                                                                    echo >&2
+                                                                                                    echo cp "$OUT/commands/$ORDER/observed/status" "$GOLDEN/commands/$ORDER/status" >&2
+                                                                                                    echo >&2
+                                                                                                    ${ failures_ "ed408cfe" }
+                                                                                                fi
+                                                                                                if ! diff --unified "$OUT/commands/$ORDER/expected/log.yaml" "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                                then
+                                                                                                    echo "We expected the log of the $ORDER command to be $OUT/commands/$ORDER/expected/log.yaml but it was $OUT/commands/$ORDER/observed/log.yaml" >&2
+                                                                                                    echo >&2
+                                                                                                    echo cp "$OUT/commands/$ORDER/observed/log.yaml" "$GOLDEN/commands/$ORDER/log.yaml" >&2
+                                                                                                    echo >&2
+                                                                                                    ${ failures_ "0760ec2f" }
+                                                                                                fi
+                                                                                                STANDARD_OUTPUT="$( < "$OUT/commands/observed/standard-output" )" || ${ failures_ "68f2d853" }
+                                                                                                LOG="$( yq eval '.' "$OUT/commands/observed/log.yaml" )" || ${ failures_ "53034396" }
+                                                                                                # shellcheck disable=SC2016
+                                                                                                yq --inplace --null-input --arg COMMAND "$COMMAND_RAW" --arg LOG "$LOG" --arg PROCESS "$PROCESS" --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" --arg STATUS "$OBSERVED_STATUS" --prettyPrint '.+= [ { "command" : $COMMAND , "log" : ( $LOG | from_yaml ) , "process" : $PROCESS , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS } ]' "$OUT/log.yaml"
+                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-exit" ]]
+                                                                                            then
+                                                                                                echo "exit" >> "$OUT/processes/$PROCESS.pipe"
+                                                                                                # shellcheck disable=SC2016
+                                                                                                yq --inplace --null-input --arg PROCESS "$PROCESS" --prettyPrint '. += [ { "exit" : true , "process" : $PROCESS } ]' "$OUT/log.yaml"
+                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-stall" ]]
+                                                                                            then
+                                                                                                ${ stall }
+                                                                                                # shellcheck disable=SC2016
+                                                                                                yq --inplace --null-input --prettyPrint '. += [ { "stall" : true } ]' "$OUT/log.yaml"
+                                                                                            fi
+                                                                                        '' ;
+                                                                                } ;
+                                                                        in [ assert-empty coreutils run-command ] ;
                                                                 text =
                                                                     let
-                                                                        commands_ =
-                                                                            let
-                                                                                v =
-                                                                                    visitor.lib.implementation
-                                                                                        {
-                                                                                            string =
-                                                                                                path : value :
-                                                                                                    let
-                                                                                                        file = builtins.concatStringsSep "/" ( builtins.concatLists [ path [ value ] ] ) ;
-                                                                                                        in
-                                                                                                            if builtins.pathExists file then
-                                                                                                                if builtins.readFileType ( builtins.trace "7bc913e5-feb4-4c33-b1be-8225d65d4627" file ) == "directory" then [ ( builtins.listToAttrs ( builtins.concatLists ( builtins.attrValues ( builtins.mapAttrs ( name : value : [ { name = name ; value = v "${ path }/${ name }" ; } ] ) ( builtins.readDir file ) ) ) ) ) ]
-                                                                                                                else if builtins.readFileType file == "regular" then [ { name = value ; value = builtins.import file ; } ]
-                                                                                                                else builtins.trace "9709672e-6aac-44c2-8a0b-4bef4b06fee9" [ ]
-                                                                                                            else builtins.trace "f785afc2-7a77-458b-91b3-668ac8c7f67f" [ ] ;
-                                                                                        } ;
-                                                                                in v commands ;
                                                                         command-mapper =
-                                                                            { index , order } :
+                                                                            { index ? 0 , order } :
                                                                                 let
                                                                                     application =
                                                                                         writeShellApplication
@@ -140,11 +234,24 @@
                                                                         in
                                                                             ''
                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map process-mapper processes ) }
-                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map command-mapper commands_ ) }
-                                                                                echo ${ builtins.typeOf commands_ }
-                                                                                echo ${ builtins.toString ( builtins.length commands_ ) }
                                                                                 echo "OUT=$OUT $0"
-                                                                                if true ; then exit 99 ; fi
+                                                                                find ${ commands } -mindepth 1 -maxdepth 1 -type d | while read -r COMMAND_DIRECTORY
+                                                                                do
+                                                                                    ORDER="$( < "$COMMAND_DIRECTORY/order" )" || ${ failures_ "acdfc2c8" }
+                                                                                    echo "$ORDER $COMMAND_DIRECTORY"
+                                                                                done | sort --numeric --key 1 > "$OUT/order"
+                                                                                uniq "$OUT/order" > "$OUT/uniq"
+                                                                                if ! diff --unified "$OUT/order" "$OUT/uniq"
+                                                                                then
+                                                                                    echo "We expected the order to be unique but it was not" >&2
+                                                                                    ${ failures_ "67149273" }
+                                                                                fi
+                                                                                while read -r ORDER COMMAND
+                                                                                do
+                                                                                    run-command "$ORDER" "$COMMAND"
+                                                                                done < "$OUT/uniq"
+                                                                                rm "$OUT/order" "$OUT/uniq"
+                                                                                if true ; then echo "$OUT" && exit 99 ; fi
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
