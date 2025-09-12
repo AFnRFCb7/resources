@@ -32,6 +32,7 @@
                             check =
                                 {
                                     commands ,
+                                    delay ,
                                     diffutils ,
                                     processes ,
                                     stall
@@ -53,13 +54,14 @@
                                                                                     runtimeInputs = [ coreutils findutils ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            DIRECTORY="$1"
+                                                                                            OUT="$1"
+                                                                                            DIRECTORY="$2"
                                                                                             if [[ -d "${ resources-directory }/$DIRECTORY" ]]
                                                                                             then
                                                                                                 CONTENTS="$( find "${ resources-directory }/$DIRECTORY" -mindepth 1 -exec basename {} \; )" || ${ failures_ "4fcd6c4d" }
                                                                                                 if [[ -n "$CONTENTS" ]]
                                                                                                 then
-                                                                                                    echo "We expected $DIRECTORY to be empty but found $CONTENTS" >&2
+                                                                                                    echo "We expected $DIRECTORY to be empty but found $CONTENTS OUT=$OUT" >&2
                                                                                                     ${ failures_ "ab669425" }
                                                                                                 fi
                                                                                             fi
@@ -69,35 +71,46 @@
                                                                             writeShellApplication
                                                                                 {
                                                                                     name = "checkpoint-post" ;
-                                                                                    runtimeInputs = [ coreutils ] ;
+                                                                                    runtimeInputs = [ coreutils yq-go ] ;
                                                                                     text =
                                                                                         ''
                                                                                             NAME="$1"
-                                                                                            ORDER="$2"
-                                                                                            OUT="$3"
+                                                                                            OBSERVED="$2"
+                                                                                            ORDER="$3"
+                                                                                            OUT="$4"
+                                                                                            while [[ ! -f "$OBSERVED/log.yaml" ]]
+                                                                                            do
+                                                                                                sleep 0
+                                                                                            done
                                                                                             mv "$OBSERVED" "$OUT/commands/$ORDER/observed"
                                                                                             if ! diff --unified "$OUT/commands/$ORDER/expected/log.yaml" "$OUT/commands/$ORDER/observed/log.yaml"
                                                                                             then
                                                                                                 echo "We expected the logs of the $ORDER command to be $OUT/commands/$ORDER/expected/log.yaml but we observed $OUT/commands/$ORDER/observed/log.yaml" >&2
                                                                                                 echo >&2
-                                                                                                echo "${ fix }/bin/fix $OUT/commands/$NAME/observed/log.yaml $GOLDEN/commands/$NAME/log.yaml" >&2
+                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
                                                                                                 echo >&2
                                                                                                 ${ failures_ "f638de3c" }
                                                                                             fi
                                                                                             LOG="$( yq eval '.' "$OUT/commands/$ORDER/observed/log.yaml" )" || ${ failures_ "53034396" }
+                                                                                            export LOG
                                                                                             # shellcheck disable=SC2016
-                                                                                            yq --inplace --null-input --arg LOG "$LOG" --prettyPrint '. += [ { "log" : ( $LOG | from_yaml ) } ]' "$OUT/log.yaml"
+                                                                                            yq eval --inplace --pretty-print '. += [ { "log" : ( strenv(LOG) | from_yaml ) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         checkpoint-run =
                                                                             writeShellApplication
                                                                                 {
                                                                                     name = "checkpoint-run" ;
-                                                                                    runtimeInputs = [ coreutils log ] ;
+                                                                                    runtimeInputs = [ coreutils yq-go ] ;
                                                                                     text =
                                                                                         ''
                                                                                             OBSERVED="$1"
-                                                                                            log "$OBSERVED"
+                                                                                            sleep 10s #KLUDGE
+                                                                                            yq eval '
+                                                                                              (.[] | select(has("init-application"))."init-application") = "[REDACTED]"
+                                                                                              | (.[] | select(has("release-application"))."release-application") = "[REDACTED]"
+                                                                                            ' "${ resources-directory }/logs/log.yaml" > "$OBSERVED/log.yaml"
+                                                                                            rm ${ resources-directory }/logs/log.yaml
                                                                                         '' ;
                                                                                 } ;
                                                                         command-post =
@@ -157,7 +170,6 @@
                                                                                             STANDARD_OUTPUT="$( < "$OUT/commands/$ORDER/observed/standard-output" )" || ${ failures_ "68f2d853" }
                                                                                             export STANDARD_OUTPUT
                                                                                             touch "$OUT/log.yaml"
-                                                                                            yq --version
                                                                                             # shellcheck disable=SC2016
                                                                                             yq eval --inplace --prettyPrint '. += [ { "command": strenv(COMMAND), "process": strenv(PROCESS), "standard-output": strenv(STANDARD_OUTPUT), "status": strenv(STATUS) } ]' "$OUT/log.yaml"
                                                                                         '' ;
@@ -223,18 +235,6 @@
                                                                                             cat "$INPUT" > "$GOLDEN/$OUTPUT"
                                                                                         '' ;
                                                                                 } ;
-                                                                        log =
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "log" ;
-                                                                                    runtimeInputs = [ yq-go ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            OBSERVED="$1"
-                                                                                            yq 'map( if has("init-application") then .init-application = "[REDACTED]" else . end | if has("release-application") then .release-application = "[REDACTED]" else . end )' \ "${ resources-directory }/logs/log.yaml" > "$OBSERVED/log.yaml"
-                                                                                            rm ${ resources-directory }/logs/log.yaml
-                                                                                        '' ;
-                                                                                } ;
                                                                         prepare-command =
                                                                             writeShellApplication
                                                                                 {
@@ -250,6 +250,8 @@
                                                                                             if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/log.yaml" ]]
                                                                                             then
                                                                                                 NAME="$( basename "$COMMAND_DIRECTORY" )" || ${ failures_ "52791884" }
+                                                                                                OBSERVED="$( mktemp --directory )" || ${ failures_ "be0e1e19" }
+                                                                                                chmod 0755 "$OBSERVED"
                                                                                                 mkdir --parents "$OUT/commands/$ORDER/expected"
                                                                                                 cat "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/log.yaml"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
@@ -259,7 +261,7 @@
                                                                                                 PROCESS="$( < "$COMMAND_DIRECTORY/process" )" || ${ failures_ "cf9df67c" }
                                                                                                 if [[ ! -f "$OUT/processes/$PROCESS.pipe" ]] && [[ ! -f "$OUT/processes/$PROCESS.pid" ]]
                                                                                                 then
-                                                                                                    echo "We expected there to be a process $PROCESS but there was not" >&2
+                                                                                                    echo "We expected there to be a process $PROCESS but there was not OUT=$OUT" >&2
                                                                                                     ${ failures_ "2f257e3e" }
                                                                                                 fi
                                                                                                 OBSERVED="$( mktemp --directory )" || ${ failures_ "7006794a" }
@@ -282,31 +284,10 @@
                                                                                                 echo "stall-run \"$OUT\"" >> "$OUT/run"
                                                                                                 echo "stall-post \"$OUT\"" >> "$OUT/post"
                                                                                             fi
+                                                                                            echo "sleep ${ builtins.toString delay }" >> "$OUT/run"
                                                                                         '' ;
                                                                                 } ;
-                                                                        stall-post =
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "stall-post" ;
-                                                                                    runtimeInputs = [ coreutils yq-go ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            OUT="$1"
-                                                                                            # shellcheck disable=SC2016
-                                                                                            yq --inplace --null-input --prettyPrint '. += [ { "stall" : true } ]' "$OUT/log.yaml"
-                                                                                        '' ;
-                                                                                } ;
-                                                                        stall-run =
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "stall-run" ;
-                                                                                    runtimeInputs = [ coreutils ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            sleep 1s
-                                                                                        '' ;
-                                                                                } ;
-                                                                        in [ assert-empty checkpoint-post checkpoint-run command-post command-run exit-post exit-run coreutils prepare-command stall-run stall-post ] ;
+                                                                        in [ assert-empty checkpoint-post checkpoint-run command-post command-run exit-post exit-run coreutils prepare-command ] ;
                                                                 text =
                                                                     let
                                                                         command-mapper =
@@ -394,16 +375,16 @@
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
-                                                                                    if ! kill -0 "$PID"
+                                                                                    if kill -0 "$PID"
                                                                                     then
-                                                                                        BASE="$( basename "PROCESS" )" || ${ failures_ "0ef41434" }
-                                                                                        echo "We expected PROCESS $PID $BASE to be finished" >&2
+                                                                                        BASE="$( basename "$PROCESS" )" || ${ failures_ "0ef41434" }
+                                                                                        echo "We expected PROCESS $PID $BASE to be finished OUT=$OUT" >&2
                                                                                         ${ failures_ "23abd5bc" }
                                                                                     fi
                                                                                 done
-                                                                                assert-empty "mounts"
-                                                                                assert-empty "links"
-                                                                                assert-empty "canonical"
+                                                                                assert-empty "$OUT" "mounts"
+                                                                                assert-empty "$OUT" "links"
+                                                                                assert-empty "$OUT" "canonical"
                                                                             '' ;
                                                             } ;
                                                 in
