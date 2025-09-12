@@ -23,6 +23,15 @@
                         resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
+                        token-bad ? 0 ,
+                        token-good ? 0 ,
+                        token-no-init ? 0 ,
+                        token-recovery ? 0 ,
+                        token-stall-for-cleanup ? 0 ,
+                        token-stall-for-process ? 0 ,
+                        token-stale ? 0 ,
+                        token-teardown-aborted ? 0 ,
+                        token-teardown-final ? 0 ,
                         transient ? false ,
                         visitor ,
                         yq-go ,
@@ -532,6 +541,7 @@
                                                                             --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                             --arg STATUS "$STATUS" \
                                                                             --argjson TARGETS "$TARGETS" \
+                                                                            --arg TOKEN ${ builtins.toString token-bad } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -547,6 +557,7 @@
                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                 "status" : $STATUS ,
                                                                                 "targets" : $TARGETS ,
+                                                                                "token" : $TOKEN ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
                                                                             }' | log-bad
@@ -581,6 +592,7 @@
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                             --arg STATUS "$STATUS" \
+                                                                            --arg TOKEN ${ builtins.toString token-good } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -595,6 +607,7 @@
                                                                                 "standard-input" : $STANDARD_INPUT ,
                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                 "status" : $STATUS ,
+                                                                                "token" : $TOKEN ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
                                                                             }' | log
@@ -628,7 +641,8 @@
                                                                         mkdir --parents ${ resources-directory }/logs
                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                         flock -x 203
-                                                                        cat | yq --prettyPrint "[.]" >> ${ resources-directory }/logs/log.yaml
+                                                                        cat | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
+                                                                        yq eval --inplace --prettyPrint 'sort_by(.hash, .type)' ${ resources-directory }/logs/log.yaml
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
@@ -660,6 +674,7 @@
                                                                             --argjson DESCRIPTION "$DESCRIPTION" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                            --arg TOKEN ${ builtins.toString token-no-init } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             --null-input \
@@ -667,6 +682,7 @@
                                                                                 "description" : "$DESCRIPTION" ,
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
+                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "8192be99" }
@@ -695,12 +711,14 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                            --arg TOKEN ${ builtins.toString token-recovery } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "arguments" : $ARGUMENTS ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
+                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                         log
@@ -869,9 +887,11 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
+                                                                            --arg TOKEN ${ builtins.toString token-stale } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
+                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
@@ -884,10 +904,12 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HEAD "<$HEAD>" \
+                                                                            --arg TOKEN ${ builtins.toString token-stall-for-cleanup } \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
                                                                                     "head" : $HEAD ,
+                                                                                    "token" : $TOKEN ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
@@ -918,10 +940,12 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                            --arg TOKEN ${ builtins.toString token-stall-for-process } \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "token" : $TOKEN ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
@@ -960,10 +984,12 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg MODE "$MODE" \
+                                                                            --arg TOKEN ${ builtins.toString token-teardown-aborted } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
                                                                                 "mode" : $MODE ,
+                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
@@ -1007,10 +1033,12 @@
                                                                             --null-input \
                                                                             --arg GOOD "$GOOD" \
                                                                             --arg HASH "$HASH" \
+                                                                            --arg TOKEN ${ builtins.toString token-teardown-final } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "good" : $GOOD ,
                                                                                 "hash" : $HASH ,
+                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
