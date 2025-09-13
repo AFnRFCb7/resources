@@ -391,12 +391,6 @@
                                                                                 done < "$OUT/uniq"
                                                                                 chmod 0500 "$OUT/run"
                                                                                 "$OUT/run"
-                                                                                # KLUDGE
-                                                                                # find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
-                                                                                # do
-                                                                                #     PID="$( < "$PROCESS" )" || ${ failures_ "58a2f3e9" }
-                                                                                #     tail --follow /dev/null --pid "$PID"
-                                                                                # done
                                                                                 chmod 0500 "$OUT/post"
                                                                                 "$OUT/post"
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
