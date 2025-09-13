@@ -26,7 +26,8 @@
                         token-bad ? 0 ,
                         token-good ? 0 ,
                         token-no-init ? 0 ,
-                        token-recovery ? 0 ,
+                        token-recovery-setup ? 0 ,
+                        token-recovery-teardown ? 0 ,
                         token-stall-for-cleanup ? 0 ,
                         token-stall-for-process ? 0 ,
                         token-stale ? 0 ,
@@ -44,7 +45,7 @@
                                     delay ,
                                     diffutils ,
                                     processes ,
-                                    stall
+                                    redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f"
                                 } :
                                     mkDerivation
                                         {
@@ -91,19 +92,37 @@
                                                                                             do
                                                                                                 sleep 0
                                                                                             done
-                                                                                            mv "$OBSERVED" "$OUT/commands/$ORDER/observed"
-                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/log.yaml" "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            mkdir "$OUT/commands/$ORDER/observed"
+                                                                                            yq --prettyPrint eval '
+                                                                                                (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
+                                                                                                (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
+                                                                                                (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
+                                                                                            ' "$OBSERVED/log.yaml" > "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            yq --prettyPrint eval 'sort_by(.hash, .type)' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/events.yaml"
+                                                                                            yq eval '[.[].token]' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/order.yaml"
+                                                                                            rm --recursive "$OBSERVED"
+                                                                                            if ! diff --recursive --unified "$OUT/commands/$ORDER/expected/events.yaml" "$OUT/commands/$ORDER/observed/events.yaml"
                                                                                             then
-                                                                                                echo "We expected the logs of the $ORDER command to be $OUT/commands/$ORDER/expected/log.yaml but we observed $OUT/commands/$ORDER/observed/log.yaml" >&2
+                                                                                                echo "We expected the events of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/events.yaml but we observed $OUT/commands/$ORDER/observed/events.yaml" >&2
                                                                                                 echo >&2
                                                                                                 echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
                                                                                                 echo >&2
                                                                                                 ${ failures_ "f638de3c" }
                                                                                             fi
-                                                                                            LOG="$( yq eval '.' "$OUT/commands/$ORDER/observed/log.yaml" )" || ${ failures_ "53034396" }
-                                                                                            export LOG
+                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/order.yaml" "$OUT/commands/$ORDER/observed/order.yaml"
+                                                                                            then
+                                                                                                echo "We expected the order of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/order.yaml but we observed $OUT/commands/$ORDER/observed/order.yaml" >&2
+                                                                                                echo >&2
+                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
+                                                                                                echo >&2
+                                                                                                ${ failures_ "65add455" }
+                                                                                            fi
+                                                                                            EVENTS="$( yq eval '.' "$OUT/commands/$ORDER/observed/events.yaml" )" || ${ failures_ "53034396" }
+                                                                                            export EVENTS
+                                                                                            ORDER="$( yq eval "." "$OUT/commands/$ORDER/observed/order.yaml" )" || ${ failures_ "e7c4924d" }
+                                                                                            export ORDER
                                                                                             # shellcheck disable=SC2016
-                                                                                            yq eval --inplace --pretty-print '. += [ { "log" : ( strenv(LOG) | from_yaml ) } ]' "$OUT/log.yaml"
+                                                                                            yq eval --inplace --prettyPrint '. += [ { "events" : ( strenv(EVENTS) | from_yaml ) , "order" : ( strenv(ORDER) | from_yaml ) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         checkpoint-run =
@@ -115,10 +134,11 @@
                                                                                         ''
                                                                                             OBSERVED="$1"
                                                                                             sleep 10s #KLUDGE
-                                                                                            yq eval '
-                                                                                              (.[] | select(has("init-application"))."init-application") = "[REDACTED]"
-                                                                                              | (.[] | select(has("release-application"))."release-application") = "[REDACTED]"
-                                                                                            ' "${ resources-directory }/logs/log.yaml" > "$OBSERVED/log.yaml"
+                                                                                            echo 8a6978d0
+                                                                                            ls ${ resources-directory }/logs/log.yaml
+                                                                                            echo acd75010
+                                                                                            cat ${ resources-directory }/logs/log.yaml > "$OBSERVED/log.yaml"
+                                                                                            echo 70062a4d
                                                                                             rm ${ resources-directory }/logs/log.yaml
                                                                                         '' ;
                                                                                 } ;
@@ -248,7 +268,7 @@
                                                                             writeShellApplication
                                                                                 {
                                                                                     name = "prepare-command" ;
-                                                                                    runtimeInputs = [ coreutils ] ;
+                                                                                    runtimeInputs = [ coreutils yq-go ] ;
                                                                                     text =
                                                                                         ''
                                                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "OUT:?OUT must be set" "}" ] }"
@@ -262,7 +282,8 @@
                                                                                                 OBSERVED="$( mktemp --directory )" || ${ failures_ "be0e1e19" }
                                                                                                 chmod 0755 "$OBSERVED"
                                                                                                 mkdir --parents "$OUT/commands/$ORDER/expected"
-                                                                                                cat "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/log.yaml"
+                                                                                                yq eval --prettyPrint 'sort_by(.hash, .type)' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/events.yaml"
+                                                                                                yq eval --prettyPrint '[.[].token]' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/order.yaml"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
                                                                                                 echo "checkpoint-post \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\"" >> "$OUT/post"
                                                                                             elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
@@ -290,8 +311,8 @@
                                                                                                 echo "exit-run \"$OUT\" \"$PROCESS\"" >> "$OUT/run"
                                                                                                 echo "exit-post \"$OUT\" \"$PROCESS\"" >> "$OUT/post"
                                                                                             else
-                                                                                                echo "stall-run \"$OUT\"" >> "$OUT/run"
-                                                                                                echo "stall-post \"$OUT\"" >> "$OUT/post"
+                                                                                                echo "Unexpected Configuration OUT=$OUT" >&2
+                                                                                                ${ failures_ "a1aba4ed" }
                                                                                             fi
                                                                                             echo "sleep ${ builtins.toString delay }" >> "$OUT/run"
                                                                                         '' ;
@@ -499,6 +520,7 @@
                                                             {
                                                                 bad =
                                                                     ''
+                                                                        STAGE="$( cat )" || ${ failures_ "4e2a429a" }
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n") | map(select(length>0))' )" || ${ failures_ "a1b19aa5" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
                                                                         LINKS_TEMPORARY="$( temporary )" || ${ failures_ "cabcc321" }
@@ -521,7 +543,7 @@
                                                                         RECOVERY_BIN="$OUT/bin/recovery"
                                                                         # shellcheck source=/dev/null
                                                                         source "$MAKE_WRAPPER/nix-support/setup-hook"
-                                                                        makeWrapper "$RECOVERY_BIN" "$RECOVERY/recovery.sh" --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX"
+                                                                        makeWrapper "$RECOVERY_BIN" "$RECOVERY/recovery.sh" --set HASH "$HASH" --set MOUNT_INDEX "$MOUNT_INDEX" --set STAGE "$STAGE"
                                                                         STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failures_ "c141fe3b" }
                                                                         STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "f13f84ae" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "e5fa2135" }
@@ -539,6 +561,7 @@
                                                                             --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                            --arg STAGE "$STAGE" \
                                                                             --arg STATUS "$STATUS" \
                                                                             --argjson TARGETS "$TARGETS" \
                                                                             --arg TOKEN ${ builtins.toString token-bad } \
@@ -642,7 +665,6 @@
                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                         flock -x 203
                                                                         cat | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
-                                                                        yq eval --inplace --prettyPrint 'sort_by(.hash, .type)' ${ resources-directory }/logs/log.yaml
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
@@ -696,6 +718,12 @@
                                                                         mv "${ resources-directory }/mounts/$MOUNT_INDEX" "$GOOD"
                                                                         trash "${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "8a335213" }
+                                                                        if [[ "$STAGE" == "setup" ]]
+                                                                        then
+                                                                            TOKEN=${ builtins.toString token-recovery-setup }
+                                                                        else
+                                                                            TOKEN=${ builtins.toString token-recovery-teardown }
+                                                                        fi
                                                                         if read -t 0
                                                                         then
                                                                             HAS_STANDARD_INPUT=true
@@ -711,7 +739,8 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                            --arg TOKEN ${ builtins.toString token-recovery } \
+                                                                            --arg TOKEN "$TOKEN
+                                                                            " \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "arguments" : $ARGUMENTS ,
@@ -874,7 +903,7 @@
                                                                                     echo -n "$MOUNT"
                                                                                 else
                                                                                     NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
-                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
+                                                                                    echo setup | nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
                                                                                     ${ failures_ "b385d889" }
                                                                                 fi
                                                                             fi
@@ -1017,7 +1046,7 @@
                                                                             then
                                                                                 teardown-final
                                                                             else
-                                                                                bad
+                                                                                echo teardown | bad
                                                                             fi
                                                                         '' ;
                                                                 teardown-final =
