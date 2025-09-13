@@ -241,9 +241,9 @@
                                                                                     text =
                                                                                         ''
                                                                                             OUT="$1"
-                                                                                            PROCESS="$2"
+                                                                                            export PROCESS="$2"
                                                                                             # shellcheck disable=SC2016
-                                                                                            yq --inplace --null-input --arg PROCESS "$PROCESS" --prettyPrint '. += [ { "exit" : true , "process" : $PROCESS } ]' "$OUT/log.yaml"
+                                                                                            yq --inplace --null-input --prettyPrint '. += [ { "exit" : true , "process" : strenv(PROCESS) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         exit-run =
