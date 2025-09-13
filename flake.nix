@@ -145,7 +145,6 @@
                                                                                     text =
                                                                                         ''
                                                                                             OBSERVED="$1"
-                                                                                            ls ${ resources-directory }/logs/log.yaml
                                                                                             cat ${ resources-directory }/logs/log.yaml > "$OBSERVED/log.yaml"
                                                                                             rm ${ resources-directory }/logs/log.yaml
                                                                                         '' ;
