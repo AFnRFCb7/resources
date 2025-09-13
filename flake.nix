@@ -101,16 +101,28 @@
                                                                                             yq --prettyPrint eval 'sort_by(.hash, .type)' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/events.yaml"
                                                                                             yq eval '[.[].token]' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/order.yaml"
                                                                                             rm --recursive "$OBSERVED"
-                                                                                            if ! diff --recursive --unified "$OUT/commands/$ORDER/expected/events.yaml" "$OUT/commands/$ORDER/observed/events.yaml"
+                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/events.yaml" "$OUT/commands/$ORDER/observed/events.yaml"
                                                                                             then
                                                                                                 echo "We expected the events of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/events.yaml but we observed $OUT/commands/$ORDER/observed/events.yaml" >&2
                                                                                                 echo >&2
                                                                                                 echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
                                                                                                 echo >&2
-                                                                                                ${ failures_ "f638de3c" }
+                                                                                                ${ failures_ "6a73f3fe" }
                                                                                             fi
                                                                                             if ! diff --unified "$OUT/commands/$ORDER/expected/order.yaml" "$OUT/commands/$ORDER/observed/order.yaml"
                                                                                             then
+                                                                                                cat "$OUT/commands/$ORDER/observed/order.yaml" >&2
+                                                                                                echo >&2
+                                                                                                echo "We expected the order of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/order.yaml but we observed $OUT/commands/$ORDER/observed/order.yaml" >&2
+                                                                                                echo >&2
+                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
+                                                                                                echo >&2
+                                                                                                ${ failures_ "65add455" }
+                                                                                            fi
+                                                                                            if ! yq eval '. == sort' "$OUT/commands/$ORDER/observed/order.yaml"
+                                                                                            then
+                                                                                                cat "$OUT/commands/$ORDER/observed/order.yaml" >&2
+                                                                                                echo >&2
                                                                                                 echo "We expected the order of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/order.yaml but we observed $OUT/commands/$ORDER/observed/order.yaml" >&2
                                                                                                 echo >&2
                                                                                                 echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
