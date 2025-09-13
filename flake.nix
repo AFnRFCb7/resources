@@ -134,11 +134,8 @@
                                                                                         ''
                                                                                             OBSERVED="$1"
                                                                                             sleep 10s #KLUDGE
-                                                                                            echo 8a6978d0
                                                                                             ls ${ resources-directory }/logs/log.yaml
-                                                                                            echo acd75010
                                                                                             cat ${ resources-directory }/logs/log.yaml > "$OBSERVED/log.yaml"
-                                                                                            echo 70062a4d
                                                                                             rm ${ resources-directory }/logs/log.yaml
                                                                                         '' ;
                                                                                 } ;
@@ -286,7 +283,7 @@
                                                                                                 yq eval --prettyPrint '[.[].token]' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/order.yaml"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
                                                                                                 echo "checkpoint-post \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\"" >> "$OUT/post"
-                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
+                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/process" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
                                                                                             then
                                                                                                 PROCESS="$( < "$COMMAND_DIRECTORY/process" )" || ${ failures_ "cf9df67c" }
                                                                                                 if [[ ! -f "$OUT/processes/$PROCESS.pipe" ]] && [[ ! -f "$OUT/processes/$PROCESS.pid" ]]
@@ -305,7 +302,7 @@
                                                                                                 ln --symbolic "$COMMAND_DIRECTORY/status" "$OUT/commands/$ORDER/expected"
                                                                                                 echo "command-run \"$COMMAND_SUBSTITUTED\" \"$OBSERVED\" \"$OUT\" \"$PROCESS\"" >> "$OUT/run"
                                                                                                 echo "command-post \"$COMMAND_RAW\" \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\" \"$PROCESS\"" >> "$OUT/post"
-                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-exit" ]]
+                                                                                            elif [[ -f "$COMMAND_DIRECTORY/is-exit" ]] && [[ -f "$COMMAND_DIRECTORY/process" ]]
                                                                                             then
                                                                                                 PROCESS="$( < "$COMMAND_DIRECTORY/process" )" || ${ failures_ "b9b62f51" }
                                                                                                 echo "exit-run \"$OUT\" \"$PROCESS\"" >> "$OUT/run"
