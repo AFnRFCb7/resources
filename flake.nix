@@ -23,16 +23,6 @@
                         resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
-                        token-bad ? 0 ,
-                        token-good ? 0 ,
-                        token-no-init ? 0 ,
-                        token-recovery-setup ? 0 ,
-                        token-recovery-teardown ? 0 ,
-                        token-stall-for-cleanup ? 0 ,
-                        token-stall-for-process ? 0 ,
-                        token-stale ? 0 ,
-                        token-teardown-aborted ? 0 ,
-                        token-teardown-final ? 0 ,
                         transient ? false ,
                         visitor ,
                         yq-go ,
@@ -99,7 +89,6 @@
                                                                                                 (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
                                                                                             ' "$OBSERVED/log.yaml" > "$OUT/commands/$ORDER/observed/log.yaml"
                                                                                             yq --prettyPrint eval 'sort_by(.hash, .type)' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/events.yaml"
-                                                                                            yq eval '[.[].token]' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/order.yaml"
                                                                                             rm --recursive "$OBSERVED"
                                                                                             if ! diff --unified "$OUT/commands/$ORDER/expected/events.yaml" "$OUT/commands/$ORDER/observed/events.yaml"
                                                                                             then
@@ -109,32 +98,10 @@
                                                                                                 echo >&2
                                                                                                 ${ failures_ "6a73f3fe" }
                                                                                             fi
-                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/order.yaml" "$OUT/commands/$ORDER/observed/order.yaml"
-                                                                                            then
-                                                                                                cat "$OUT/commands/$ORDER/observed/order.yaml" >&2
-                                                                                                echo >&2
-                                                                                                echo "We expected the order of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/order.yaml but we observed $OUT/commands/$ORDER/observed/order.yaml" >&2
-                                                                                                echo >&2
-                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
-                                                                                                echo >&2
-                                                                                                ${ failures_ "65add455" }
-                                                                                            fi
-                                                                                            if ! yq eval '. == sort' "$OUT/commands/$ORDER/observed/order.yaml"
-                                                                                            then
-                                                                                                cat "$OUT/commands/$ORDER/observed/order.yaml" >&2
-                                                                                                echo >&2
-                                                                                                echo "We expected the order of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/order.yaml but we observed $OUT/commands/$ORDER/observed/order.yaml" >&2
-                                                                                                echo >&2
-                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
-                                                                                                echo >&2
-                                                                                                ${ failures_ "65add455" }
-                                                                                            fi
                                                                                             EVENTS="$( yq eval '.' "$OUT/commands/$ORDER/observed/events.yaml" )" || ${ failures_ "53034396" }
                                                                                             export EVENTS
-                                                                                            ORDER="$( yq eval "." "$OUT/commands/$ORDER/observed/order.yaml" )" || ${ failures_ "e7c4924d" }
-                                                                                            export ORDER
                                                                                             # shellcheck disable=SC2016
-                                                                                            yq eval --inplace --prettyPrint '. += [ { "events" : ( strenv(EVENTS) | from_yaml ) , "order" : ( strenv(ORDER) | from_yaml ) } ]' "$OUT/log.yaml"
+                                                                                            yq eval --inplace --prettyPrint '. += [ { "events" : ( strenv(EVENTS) | from_yaml ) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         checkpoint-run =
@@ -243,7 +210,7 @@
                                                                                             OUT="$1"
                                                                                             export PROCESS="$2"
                                                                                             # shellcheck disable=SC2016
-                                                                                            yq --inplace --null-input --prettyPrint '. += [ { "exit" : true , "process" : strenv(PROCESS) } ]' "$OUT/log.yaml"
+                                                                                            yq --inplace  --prettyPrint '. += [ { "exit" : true , "process" : strenv(PROCESS) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         exit-run =
@@ -290,7 +257,6 @@
                                                                                                 chmod 0755 "$OBSERVED"
                                                                                                 mkdir --parents "$OUT/commands/$ORDER/expected"
                                                                                                 yq eval --prettyPrint 'sort_by(.hash, .type)' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/events.yaml"
-                                                                                                yq eval --prettyPrint '[.[].token]' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/order.yaml"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
                                                                                                 echo "checkpoint-post \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\"" >> "$OUT/post"
                                                                                             elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/process" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
@@ -402,9 +368,12 @@
                                                                                 chmod 0500 "$OUT/run"
                                                                                 "$OUT/run"
                                                                                 chmod 0500 "$OUT/post"
+                                                                                echo 60bde42b-cc5b-4473-ad06-8cfc68ac534d
                                                                                 "$OUT/post"
+                                                                                echo f3402c22-f308-46d7-bc52-11aeec00588d
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
+                                                                                    echo 4b2f70e2-c286-4b88-a808-3cb8c9c4fdd8
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
                                                                                     if kill -0 "$PID"
                                                                                     then
@@ -413,9 +382,13 @@
                                                                                         ${ failures_ "23abd5bc" }
                                                                                     fi
                                                                                 done
+                                                                                echo 6057d055-983f-4b20-adfd-555c93bef0e5
                                                                                 assert-empty "$OUT" "mounts"
+                                                                                echo 5fce94b5-4423-47e8-afd2-4ca3fde7edae
                                                                                 assert-empty "$OUT" "links"
+                                                                                dd4aa007-dd86-477b-bf41-4de775287194
                                                                                 assert-empty "$OUT" "canonical"
+                                                                                70e8001d-1d67-43ea-9036-262e3bf9a84c
                                                                             '' ;
                                                             } ;
                                                 in
@@ -565,7 +538,6 @@
                                                                             --arg STAGE "$STAGE" \
                                                                             --arg STATUS "$STATUS" \
                                                                             --argjson TARGETS "$TARGETS" \
-                                                                            --arg TOKEN ${ builtins.toString token-bad } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -581,7 +553,6 @@
                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                 "status" : $STATUS ,
                                                                                 "targets" : $TARGETS ,
-                                                                                "token" : $TOKEN ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
                                                                             }' | log-bad
@@ -616,7 +587,6 @@
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                             --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                             --arg STATUS "$STATUS" \
-                                                                            --arg TOKEN ${ builtins.toString token-good } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
@@ -631,7 +601,6 @@
                                                                                 "standard-input" : $STANDARD_INPUT ,
                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                 "status" : $STATUS ,
-                                                                                "token" : $TOKEN ,
                                                                                 "transient" : $TRANSIENT ,
                                                                                 "type" : $TYPE
                                                                             }' | log
@@ -697,7 +666,6 @@
                                                                             --argjson DESCRIPTION "$DESCRIPTION" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                            --arg TOKEN ${ builtins.toString token-no-init } \
                                                                             --arg TRANSIENT "$TRANSIENT" \
                                                                             --arg TYPE "$TYPE" \
                                                                             --null-input \
@@ -705,7 +673,6 @@
                                                                                 "description" : "$DESCRIPTION" ,
                                                                                 "hash" : $HASH ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
-                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "8192be99" }
@@ -719,12 +686,6 @@
                                                                         mv "${ resources-directory }/mounts/$MOUNT_INDEX" "$GOOD"
                                                                         trash "${ resources-directory }/recovery/$MOUNT_INDEX"
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "8a335213" }
-                                                                        if [[ "$STAGE" == "setup" ]]
-                                                                        then
-                                                                            TOKEN=${ builtins.toString token-recovery-setup }
-                                                                        else
-                                                                            TOKEN=${ builtins.toString token-recovery-teardown }
-                                                                        fi
                                                                         if read -t 0
                                                                         then
                                                                             HAS_STANDARD_INPUT=true
@@ -740,15 +701,12 @@
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             --arg HASH "$HASH" \
                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                            --arg TOKEN "$TOKEN
-                                                                            " \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "arguments" : $ARGUMENTS ,
                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                 "hash" : $HASH ,
                                                                                 "standard-input" : $STANDARD_INPUT ,
-                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                         log
@@ -904,7 +862,7 @@
                                                                                     echo -n "$MOUNT"
                                                                                 else
                                                                                     NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
-                                                                                    echo setup | nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
+                                                                                    nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
                                                                                     ${ failures_ "b385d889" }
                                                                                 fi
                                                                             fi
@@ -917,11 +875,9 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg TRANSIENT "$TRANSIENT" \
-                                                                            --arg TOKEN ${ builtins.toString token-stale } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
-                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
@@ -934,12 +890,10 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg HEAD "<$HEAD>" \
-                                                                            --arg TOKEN ${ builtins.toString token-stall-for-cleanup } \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
                                                                                     "head" : $HEAD ,
-                                                                                    "token" : $TOKEN ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "c9e6586c" }
@@ -970,12 +924,10 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                            --arg TOKEN ${ builtins.toString token-stall-for-process } \
                                                                             --arg TYPE "$TYPE" \
                                                                                 '{
                                                                                     "hash" : $HASH ,
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "token" : $TOKEN ,
                                                                                     "type" : $TYPE
                                                                                 }' | log
                                                                         tail --follow /dev/null --pid "$ORIGINATOR_PID"
@@ -1014,12 +966,10 @@
                                                                             --null-input \
                                                                             --arg HASH "$HASH" \
                                                                             --arg MODE "$MODE" \
-                                                                            --arg TOKEN ${ builtins.toString token-teardown-aborted } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "hash" : $HASH ,
                                                                                 "mode" : $MODE ,
-                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
@@ -1047,7 +997,7 @@
                                                                             then
                                                                                 teardown-final
                                                                             else
-                                                                                echo teardown | bad
+                                                                                bad
                                                                             fi
                                                                         '' ;
                                                                 teardown-final =
@@ -1063,12 +1013,10 @@
                                                                             --null-input \
                                                                             --arg GOOD "$GOOD" \
                                                                             --arg HASH "$HASH" \
-                                                                            --arg TOKEN ${ builtins.toString token-teardown-final } \
                                                                             --arg TYPE "$TYPE" \
                                                                             '{
                                                                                 "good" : $GOOD ,
                                                                                 "hash" : $HASH ,
-                                                                                "token" : $TOKEN ,
                                                                                 "type" : $TYPE
                                                                             }' | log
                                                                     '' ;
