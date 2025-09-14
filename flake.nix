@@ -142,6 +142,7 @@
                                                                                     runtimeInputs = [ coreutils diffutils yq-go ] ;
                                                                                     text =
                                                                                         ''
+                                                                                            cat ${ resources-directory }/debug
                                                                                             export COMMAND="$1"
                                                                                             NAME="$2"
                                                                                             OBSERVED="$3"
@@ -386,11 +387,11 @@
                                                                                 chmod 0500 "$OUT/run"
                                                                                 "$OUT/run"
                                                                                 chmod 0500 "$OUT/post"
-                                                                                echo 60bde42b-cc5b-4473-ad06-8cfc68ac534d
                                                                                 "$OUT/post"
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
+                                                                                    echo "FIND MY PROCESS $PID"
                                                                                     if kill -0 "$PID"
                                                                                     then
                                                                                         BASE="$( basename "$PROCESS" )" || ${ failures_ "0ef41434" }
@@ -398,13 +399,9 @@
                                                                                         ${ failures_ "23abd5bc" }
                                                                                     fi
                                                                                 done
-                                                                                echo 6057d055-983f-4b20-adfd-555c93bef0e5
                                                                                 assert-empty "$OUT" "mounts"
-                                                                                echo 5fce94b5-4423-47e8-afd2-4ca3fde7edae
                                                                                 assert-empty "$OUT" "links"
-                                                                                dd4aa007-dd86-477b-bf41-4de775287194
                                                                                 assert-empty "$OUT" "canonical"
-                                                                                70e8001d-1d67-43ea-9036-262e3bf9a84c
                                                                             '' ;
                                                             } ;
                                                 in
@@ -575,6 +572,7 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
+                                                                        echo "6c4e454e-ed5f-4b0e-a62f-531e99d55ab8" >> ${ resources-directory }/debug
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
@@ -588,6 +586,7 @@
                                                                         STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ failures_ "a69f5bc2" }
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "dc662c73" }
                                                                         TYPE="$( basename "$0" )" || ${ failures_ "cd255035" }
+                                                                        export TYPE
                                                                         INIT_APPLICATION=${ if builtins.typeOf init-application == "null" then "null" else "${ init-application }/bin/init-application" }
                                                                         RELEASE_APPLICATION=${ if builtins.typeOf release-application == "null" then "null" else "${ release-application }/bin/release-application" }
                                                                         jq \
@@ -647,8 +646,8 @@
                                                                         '' ;
                                                                 log =
                                                                     ''
-                                                                        HASH="$1"
-                                                                        TYPE="$2"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "HASH:?HASH must be set" "}" ] }"
+                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "TYPE:?TYPE must be set" "}" ] }"
                                                                         mkdir --parents ${ resources-directory }/logs
                                                                         mkdir --parents ${ resources-directory }/logs/hash
                                                                         exec 203> ${ resources-directory }/logs/lock
@@ -895,11 +894,17 @@
                                                                                 TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failures_ "db2517b1" }
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                                 then
+                                                                                    echo "109e67ca-b24d-40c4-a546-26969ce90824" >> ${ resources-directory }/debug
                                                                                     NOHUP="$( temporary )" || ${ failures_ "605463b2" }
-                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1
+                                                                                    echo "3978e672-bbe8-4c8e-8b9a-e7644b9d5450" >> ${ resources-directory }/debug
+                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > ${ resources-directory }/debug 2>&1
+                                                                                    echo "2445a9ab-c9ed-4a29-a938-9bc718397a94" >> ${ resources-directory }/debug
                                                                                     mkdir --parents ${ resources-directory }/canonical
+                                                                                    echo "8f504d92-c24c-4336-817a-97485d02f4c1" >> ${ resources-directory }/debug
                                                                                     ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
+                                                                                    echo "0cbbc44f-7a6b-4871-8745-f1f517921ccc" >> ${ resources-directory }/debug
                                                                                     echo -n "$MOUNT"
+                                                                                    echo "09b50aa8-2a7a-4c99-bb84-3c011715741a" >> ${ resources-directory }/debug
                                                                                 else
                                                                                     NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
                                                                                     nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
