@@ -370,10 +370,8 @@
                                                                                 chmod 0500 "$OUT/post"
                                                                                 echo 60bde42b-cc5b-4473-ad06-8cfc68ac534d
                                                                                 "$OUT/post"
-                                                                                echo f3402c22-f308-46d7-bc52-11aeec00588d
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
-                                                                                    echo 4b2f70e2-c286-4b88-a808-3cb8c9c4fdd8
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
                                                                                     if kill -0 "$PID"
                                                                                     then
@@ -677,6 +675,20 @@
                                                                             }' | log
                                                                         NOHUP="$( temporary )" || ${ failures_ "8192be99" }
                                                                         nohup stall-for-process > "$NOHUP" 2>&1 &
+                                                                    '' ;
+                                                                queue-append =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/queue
+                                                                        exec 231> ${ resources-directory }/queue/queue.lock
+                                                                        flock -x 231
+                                                                        cat | yq eval --prettyPrint '+= [.]' ${ resources-directory }/queue/queue.yaml
+                                                                    '' ;
+                                                                queue-execute =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/queue
+                                                                        exec 231> ${ resources-directory }/queue/queue.lock
+                                                                        flock -x 231
+
                                                                     '' ;
                                                                 recovery =
                                                                     ''
