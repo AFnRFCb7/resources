@@ -78,30 +78,47 @@
                                                                                             OBSERVED="$2"
                                                                                             ORDER="$3"
                                                                                             OUT="$4"
-                                                                                            while [[ ! -f "$OBSERVED/log.yaml" ]]
-                                                                                            do
-                                                                                                sleep 0
-                                                                                            done
-                                                                                            mkdir "$OUT/commands/$ORDER/observed"
-                                                                                            yq --prettyPrint eval '
-                                                                                                (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
-                                                                                                (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
-                                                                                                (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
-                                                                                            ' "$OBSERVED/log.yaml" > "$OUT/commands/$ORDER/observed/log.yaml"
-                                                                                            yq --prettyPrint eval 'sort_by(.hash, .type)' "$OUT/commands/$ORDER/observed/log.yaml" > "$OUT/commands/$ORDER/observed/events.yaml"
+                                                                                            export NAME
+                                                                                            export OBSERVED
+                                                                                            export ORDER
+                                                                                            export OUT
+                                                                                            # while [[ ! -f "$OBSERVED/log.yaml" ]]
+                                                                                            # do
+                                                                                            #     sleep 0
+                                                                                            # done
+                                                                                            # mkdir --parents "$OUT/commands/$ORDER/observed"
+                                                                                            # yq --prettyPrint eval '
+                                                                                            #     (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
+                                                                                            #     (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
+                                                                                            #     (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
+                                                                                            # ' "$OBSERVED/terminal.yaml" > "$OUT/commands/$ORDER/observed/terminal.yaml"
+                                                                                            # if ! diff --unified "$OUT/commands/$ORDER/expected/terminal.yaml" "$OUT/commands/$ORDER/observed/terminal.yaml"
+                                                                                            # then
+                                                                                            #     echo "We expected the terminal logs of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/terminal.yaml but we observed $OUT/commands/$ORDER/observed/terminal.yaml" >&2
+                                                                                            #     echo >&2
+                                                                                            #     echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/terminal.yaml $NAME/log.yaml" >&2
+                                                                                            #     echo >&2
+                                                                                            #     ${ failures_ "6a73f3fe" }
+                                                                                            # fi
+                                                                                            # mkdir --parents "$OUT/commands/$ORDER/observed/hash"
+                                                                                            # while read -r FILE_NAME
+                                                                                            # do
+                                                                                            #     yq --prettyPrint eval '
+                                                                                            #         (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
+                                                                                            #         (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
+                                                                                            #         (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
+                                                                                            #     ' "$OBSERVED/hash/$FILE_NAME" > "$OUT/commands/$ORDER/observed/$FILE_NAME"
+                                                                                            #     if ! diff --unified "$OUT/commands/$ORDER/expected/hash/$FILE_NAME" "$OUT/commands/$ORDER/observed/hash/$FILE_NAME"
+                                                                                            #     then
+                                                                                            #         echo "We expected the hash $HASH logs of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/hash/$HASH.yaml but we observed $OUT/commands/$ORDER/observed/hash/$HASH.yaml" >&2
+                                                                                            #         echo >&2
+                                                                                            #         echo "${ fix }/bin/fix $OUT/commands/$ORDER/hash/$FILE_NAME $NAME/hash/$FILE_NAME" >&2
+                                                                                            #         echo >&2
+                                                                                            #         ${ failures_ "fb1c97d8" }
+                                                                                            #     fi
+                                                                                            # done < <( find "$OBSERVED/hash" -mindepth 1 -maxdepth 1 -name "*.yaml" -exec basename {} \; )
+                                                                                            yq eval --prettyPrint '[ { "log": . } ]' "$OBSERVED/log.yaml" >> "$OUT/log.yaml"
                                                                                             rm --recursive "$OBSERVED"
-                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/events.yaml" "$OUT/commands/$ORDER/observed/events.yaml"
-                                                                                            then
-                                                                                                echo "We expected the events of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/events.yaml but we observed $OUT/commands/$ORDER/observed/events.yaml" >&2
-                                                                                                echo >&2
-                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml $NAME/log.yaml" >&2
-                                                                                                echo >&2
-                                                                                                ${ failures_ "6a73f3fe" }
-                                                                                            fi
-                                                                                            EVENTS="$( yq eval '.' "$OUT/commands/$ORDER/observed/events.yaml" )" || ${ failures_ "53034396" }
-                                                                                            export EVENTS
-                                                                                            # shellcheck disable=SC2016
-                                                                                            yq eval --inplace --prettyPrint '. += [ { "events" : ( strenv(EVENTS) | from_yaml ) } ]' "$OUT/log.yaml"
                                                                                         '' ;
                                                                                 } ;
                                                                         checkpoint-run =
@@ -112,8 +129,10 @@
                                                                                     text =
                                                                                         ''
                                                                                             OBSERVED="$1"
+                                                                                            cat ${ resources-directory }/logs/terminal.yaml > "$OBSERVED/terminal.yaml"
+                                                                                            cp --recursive ${ resources-directory }/logs/hash "$OBSERVED/hash"
                                                                                             cat ${ resources-directory }/logs/log.yaml > "$OBSERVED/log.yaml"
-                                                                                            rm ${ resources-directory }/logs/log.yaml
+                                                                                            rm --recursive ${ resources-directory }/logs
                                                                                         '' ;
                                                                                 } ;
                                                                         command-post =
@@ -146,7 +165,7 @@
                                                                                             then
                                                                                                 echo "We expected the standard output of the $ORDER command to be $OUT/commands/$ORDER/expected/standard-output but it was $OUT/commands/$ORDER/observed/standard-output" >&2
                                                                                                 echo >&2
-                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/standard-output $NAME/standard-output" >&2
+                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/standard-output expected/$NAME/standard-output" >&2
                                                                                                 echo >&2
                                                                                                 ${ failures_ "ed07854e" }
                                                                                             fi
@@ -250,13 +269,12 @@
                                                                                             COMMAND_DIRECTORY="$2"
                                                                                             mkdir --parents "$OUT/commands/$ORDER"
                                                                                             echo "$ORDER" > "$OUT/commands/$ORDER/order"
-                                                                                            if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/log.yaml" ]]
+                                                                                            if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/terminal.yaml" ]] && [[ -d "$COMMAND_DIRECTORY/hash" ]]
                                                                                             then
                                                                                                 NAME="$( basename "$COMMAND_DIRECTORY" )" || ${ failures_ "52791884" }
                                                                                                 OBSERVED="$( mktemp --directory )" || ${ failures_ "be0e1e19" }
                                                                                                 chmod 0755 "$OBSERVED"
                                                                                                 mkdir --parents "$OUT/commands/$ORDER/expected"
-                                                                                                yq eval --prettyPrint 'sort_by(.hash, .type)' "$COMMAND_DIRECTORY/log.yaml" > "$OUT/commands/$ORDER/expected/events.yaml"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
                                                                                                 echo "checkpoint-post \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\"" >> "$OUT/post"
                                                                                             elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/process" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
@@ -629,10 +647,20 @@
                                                                         '' ;
                                                                 log =
                                                                     ''
+                                                                        HASH="$1"
+                                                                        TYPE="$2"
                                                                         mkdir --parents ${ resources-directory }/logs
+                                                                        mkdir --parents ${ resources-directory }/logs/hash
                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                         flock -x 203
-                                                                        cat | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
+                                                                        cat | yq --prettyPrint '.' >> ${ resources-directory }/logs/temporary.yaml
+                                                                        if [[ "$TYPE" == "bad" ]] || [[ "$TYPE" == "good" ]] || [[ "$TYPE" == "no-init" ]] || [[ "$TYPE" == "stale" ]] || [[ "$TYPE" == "teardown" ]] || [[ "$TYPE" == "recovery" ]]
+                                                                        then
+                                                                            cat | yq --prettyPrint '[.]' ${ resources-directory }/logs/temporary.yaml >> ${ resources-directory }/logs/terminal.yaml
+                                                                        fi
+                                                                        cat | yq --prettyPrint '[.]' ${ resources-directory }/logs/temporary.yaml >> "${ resources-directory }/logs/hash/$HASH.yaml"
+                                                                        cat | yq --prettyPrint '[.]' ${ resources-directory }/logs/temporary.yaml >> ${ resources-directory }/logs/log.yaml
+                                                                        rm ${ resources-directory }/logs/temporary.yaml
                                                                     '' ;
                                                                 log-bad =
                                                                     ''
