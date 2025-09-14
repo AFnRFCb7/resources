@@ -337,7 +337,7 @@
                                                                                             PIPE="$1"
                                                                                             touch "$PIPE"
                                                                                             CURRENT_LINE=0
-                                                                                            inotifywait --event modify "$PIPE" | while read -r
+                                                                                            inotifywait --monitor --event modify "$PIPE" | while read -r
                                                                                             do
                                                                                                 NEW_LINES="$( tail --lines +"$CURRENT_LINE" "$PIPE" )" || ${ failures_ "a6f9cc4a" }
                                                                                                 NUM_NEW_LINES="$( echo "$NEW_LINES" | wc --lines )" || ${ failures_ "5e1f27c6" }
@@ -390,7 +390,6 @@
                                                                                 find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
                                                                                 do
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
-                                                                                    echo "FIND MY PROCESS $PID"
                                                                                     if kill -0 "$PID"
                                                                                     then
                                                                                         BASE="$( basename "$PROCESS" )" || ${ failures_ "0ef41434" }
@@ -401,6 +400,7 @@
                                                                                 assert-empty "$OUT" "mounts"
                                                                                 assert-empty "$OUT" "links"
                                                                                 assert-empty "$OUT" "canonical"
+                                                                                ${ failures_ "debug" }
                                                                             '' ;
                                                             } ;
                                                 in
