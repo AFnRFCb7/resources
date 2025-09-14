@@ -142,7 +142,6 @@
                                                                                     runtimeInputs = [ coreutils diffutils yq-go ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            cat ${ resources-directory }/debug
                                                                                             export COMMAND="$1"
                                                                                             NAME="$2"
                                                                                             OBSERVED="$3"
@@ -572,7 +571,6 @@
                                                                     '' ;
                                                                 good =
                                                                     ''
-                                                                        echo "6c4e454e-ed5f-4b0e-a62f-531e99d55ab8" >> ${ resources-directory }/debug
                                                                         flock -s 211
                                                                         ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input --slurp 'split("\n")[:-1]' )" || ${ failures_ "ea11161a" }
                                                                         DESCRIPTION='${ builtins.toJSON description }'
@@ -894,17 +892,11 @@
                                                                                 TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failures_ "db2517b1" }
                                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                                 then
-                                                                                    echo "109e67ca-b24d-40c4-a546-26969ce90824" >> ${ resources-directory }/debug
                                                                                     NOHUP="$( temporary )" || ${ failures_ "605463b2" }
-                                                                                    echo "3978e672-bbe8-4c8e-8b9a-e7644b9d5450" >> ${ resources-directory }/debug
-                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > ${ resources-directory }/debug 2>&1
-                                                                                    echo "2445a9ab-c9ed-4a29-a938-9bc718397a94" >> ${ resources-directory }/debug
+                                                                                    nohup good "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$NOHUP" 2>&1
                                                                                     mkdir --parents ${ resources-directory }/canonical
-                                                                                    echo "8f504d92-c24c-4336-817a-97485d02f4c1" >> ${ resources-directory }/debug
                                                                                     ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
-                                                                                    echo "0cbbc44f-7a6b-4871-8745-f1f517921ccc" >> ${ resources-directory }/debug
                                                                                     echo -n "$MOUNT"
-                                                                                    echo "09b50aa8-2a7a-4c99-bb84-3c011715741a" >> ${ resources-directory }/debug
                                                                                 else
                                                                                     NOHUP="$( temporary )" || ${ failures_ "c56f63a4" }
                                                                                     nohup bad "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" >> "$NOHUP" 2>&1 &
