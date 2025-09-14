@@ -208,14 +208,7 @@
                                                                                             OUT="$3"
                                                                                             PROCESS="$4"
                                                                                             cat >> "$OUT/processes/$PROCESS.pipe" <<EOF
-                                                                                            if RESOURCE="\$( $COMMAND 2> "$OBSERVED/standard-error" )"
-                                                                                            then
-                                                                                                echo "\$RESOURCE" > "$OBSERVED/standard-output"
-                                                                                                echo "\$?" > "$OBSERVED/status"
-                                                                                            else
-                                                                                                echo "\$RESOURCE" > "$OBSERVED/standard-output"
-                                                                                                echo "\$?" > "$OBSERVED/status"
-                                                                                            fi
+                                                                                            if RESOURCE="\$( $COMMAND 2> "$OBSERVED/standard-error" )" ; then echo "\$RESOURCE" > "$OBSERVED/standard-output" && echo "\$?" > "$OBSERVED/status" ; else echo "\$RESOURCE" > "$OBSERVED/standard-output" && echo "\$?" > "$OBSERVED/status" ; fi
                                                                                             EOF
                                                                                         '' ;
                                                                                 } ;
@@ -400,7 +393,6 @@
                                                                                 assert-empty "$OUT" "mounts"
                                                                                 assert-empty "$OUT" "links"
                                                                                 assert-empty "$OUT" "canonical"
-                                                                                ${ failures_ "debug" }
                                                                             '' ;
                                                             } ;
                                                 in
