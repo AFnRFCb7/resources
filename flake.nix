@@ -34,6 +34,7 @@
                                     commands ,
                                     delay ,
                                     diffutils ,
+                                    golden-path ,
                                     processes ,
                                     redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f"
                                 } :
@@ -78,45 +79,25 @@
                                                                                             OBSERVED="$2"
                                                                                             ORDER="$3"
                                                                                             OUT="$4"
-                                                                                            export NAME
-                                                                                            export OBSERVED
-                                                                                            export ORDER
-                                                                                            export OUT
-                                                                                            # while [[ ! -f "$OBSERVED/log.yaml" ]]
-                                                                                            # do
-                                                                                            #     sleep 0
-                                                                                            # done
-                                                                                            # mkdir --parents "$OUT/commands/$ORDER/observed"
-                                                                                            # yq --prettyPrint eval '
-                                                                                            #     (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
-                                                                                            #     (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
-                                                                                            #     (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
-                                                                                            # ' "$OBSERVED/terminal.yaml" > "$OUT/commands/$ORDER/observed/terminal.yaml"
-                                                                                            # if ! diff --unified "$OUT/commands/$ORDER/expected/terminal.yaml" "$OUT/commands/$ORDER/observed/terminal.yaml"
-                                                                                            # then
-                                                                                            #     echo "We expected the terminal logs of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/terminal.yaml but we observed $OUT/commands/$ORDER/observed/terminal.yaml" >&2
-                                                                                            #     echo >&2
-                                                                                            #     echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/terminal.yaml $NAME/log.yaml" >&2
-                                                                                            #     echo >&2
-                                                                                            #     ${ failures_ "6a73f3fe" }
-                                                                                            # fi
-                                                                                            # mkdir --parents "$OUT/commands/$ORDER/observed/hash"
-                                                                                            # while read -r FILE_NAME
-                                                                                            # do
-                                                                                            #     yq --prettyPrint eval '
-                                                                                            #         (.[] | select(has("init-application"))."init-application") = "${ redacted }" |
-                                                                                            #         (.[] | select(has("release-application"))."release-application") = "${ redacted }" |
-                                                                                            #         (.[] | select(has("originator-pid"))."originator-pid") = "${ redacted }"
-                                                                                            #     ' "$OBSERVED/hash/$FILE_NAME" > "$OUT/commands/$ORDER/observed/$FILE_NAME"
-                                                                                            #     if ! diff --unified "$OUT/commands/$ORDER/expected/hash/$FILE_NAME" "$OUT/commands/$ORDER/observed/hash/$FILE_NAME"
-                                                                                            #     then
-                                                                                            #         echo "We expected the hash $HASH logs of the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/hash/$HASH.yaml but we observed $OUT/commands/$ORDER/observed/hash/$HASH.yaml" >&2
-                                                                                            #         echo >&2
-                                                                                            #         echo "${ fix }/bin/fix $OUT/commands/$ORDER/hash/$FILE_NAME $NAME/hash/$FILE_NAME" >&2
-                                                                                            #         echo >&2
-                                                                                            #         ${ failures_ "fb1c97d8" }
-                                                                                            #     fi
-                                                                                            # done < <( find "$OBSERVED/hash" -mindepth 1 -maxdepth 1 -name "*.yaml" -exec basename {} \; )
+                                                                                            while [[ ! -f "$OBSERVED/log.yaml" ]]
+                                                                                            do
+                                                                                                sleep 0
+                                                                                            done
+                                                                                            mkdir --parents "$OUT/commands/$ORDER/observed"
+                                                                                            # shellcheck disable=SC2016
+                                                                                            yq eval --prettyPrint '. as $doc | {"terminal": $doc}' "$OBSERVED/terminal.yaml" > "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            find "$OBSERVED/hash" -mindepth 1 -maxdepth 1 -type f -name '*.yaml' | sort | while read -r FILE_NAME
+                                                                                            do
+                                                                                                yq eval --prettyPrint "[.]" "$FILE_NAME" >> "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            done
+                                                                                            if ! diff --unified "$OUT/commands/$ORDER/expected/log.yaml" "$OUT/commands/$ORDER/observed/log.yaml"
+                                                                                            then
+                                                                                                echo "We expected the $ORDER checkpoint to be $OUT/commands/$ORDER/expected/log.yaml but we observed $OUT/commands/$ORDER/observed/log.yaml" >&2
+                                                                                                echo >&2
+                                                                                                echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/log.yaml expected/$NAME/log.yaml" >&2
+                                                                                                echo >&2
+                                                                                                ${ failures_ "6a73f3fe" }
+                                                                                            fi
                                                                                             yq eval --prettyPrint '[ { "log": . } ]' "$OBSERVED/log.yaml" >> "$OUT/log.yaml"
                                                                                             rm --recursive "$OBSERVED"
                                                                                         '' ;
@@ -244,10 +225,10 @@
                                                                                     runtimeInputs = [ coreutils ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN" ":?GOLDEN must be set" "}" ] }"
+                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "GOLDEN_ROOT" ":?GOLDEN_ROOT must be set" "}" ] }"
                                                                                             INPUT="$1"
                                                                                             OUTPUT="$2"
-                                                                                            cat "$INPUT" > "$GOLDEN/$OUTPUT"
+                                                                                            cat "$INPUT" > "$GOLDEN_ROOT/${ builtins.concatStringsSep "/" golden-path }/$OUTPUT"
                                                                                         '' ;
                                                                                 } ;
                                                                         prepare-command =
@@ -262,12 +243,13 @@
                                                                                             COMMAND_DIRECTORY="$2"
                                                                                             mkdir --parents "$OUT/commands/$ORDER"
                                                                                             echo "$ORDER" > "$OUT/commands/$ORDER/order"
-                                                                                            if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/terminal.yaml" ]] && [[ -d "$COMMAND_DIRECTORY/hash" ]]
+                                                                                            if [[ -f "$COMMAND_DIRECTORY/is-checkpoint" ]] && [[ -f "$COMMAND_DIRECTORY/log.yaml" ]]
                                                                                             then
                                                                                                 NAME="$( basename "$COMMAND_DIRECTORY" )" || ${ failures_ "52791884" }
                                                                                                 OBSERVED="$( mktemp --directory )" || ${ failures_ "be0e1e19" }
                                                                                                 chmod 0755 "$OBSERVED"
                                                                                                 mkdir --parents "$OUT/commands/$ORDER/expected"
+                                                                                                ln --symbolic "$COMMAND_DIRECTORY/log.yaml" "$OUT/commands/$ORDER/expected"
                                                                                                 echo "checkpoint-run \"$OBSERVED\"" >> "$OUT/run"
                                                                                                 echo "checkpoint-post \"$NAME\" \"$OBSERVED\" \"$ORDER\" \"$OUT\"" >> "$OUT/post"
                                                                                             elif [[ -f "$COMMAND_DIRECTORY/is-command" ]] && [[ -f "$COMMAND_DIRECTORY/process" ]] && [[ -f "$COMMAND_DIRECTORY/command" ]] && [[ -f "$COMMAND_DIRECTORY/standard-output" ]] && [[ -f "$COMMAND_DIRECTORY/status" ]]
@@ -330,14 +312,14 @@
                                                                                             PIPE="$1"
                                                                                             touch "$PIPE"
                                                                                             CURRENT_LINE=0
-                                                                                            inotifywait --monitor --event modify "$PIPE" | while read -r
+                                                                                            while read -r
                                                                                             do
                                                                                                 NEW_LINES="$( tail --lines +"$CURRENT_LINE" "$PIPE" )" || ${ failures_ "a6f9cc4a" }
                                                                                                 NUM_NEW_LINES="$( echo "$NEW_LINES" | wc --lines )" || ${ failures_ "5e1f27c6" }
                                                                                                 CURRENT_LINE=$(( CURRENT_LINE + NUM_NEW_LINES ))
                                                                                                 eval "$NEW_LINES"
-                                                                                                sleep 1s
-                                                                                            done
+                                                                                                sleep ${ builtins.toString delay }s
+                                                                                            done < <( inotifywait --monitor --event modify "$PIPE" )
                                                                                         '' ;
                                                                                 } ;
                                                                         process-mapper =
@@ -357,6 +339,7 @@
                                                                                                     '' ;
                                                                                             } ;
                                                                                     in ''${ application }/bin/start-process "$OUT/processes"'' ;
+                                                                        stub = writeShellApplication { name = "stub" ; text = "" ; } ;
                                                                         in
                                                                             ''
                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map process-mapper processes ) }
@@ -372,6 +355,9 @@
                                                                                     echo "We expected the order to be unique but it was not" >&2
                                                                                     ${ failures_ "67149273" }
                                                                                 fi
+                                                                                cat ${ stub }/bin/stub > "$OUT/run"
+                                                                                cat ${ stub }/bin/stub > "$OUT/post"
+                                                                                echo "IMPLEMENTATION='<implementation>'" >> "$OUT/post"
                                                                                 while read -r ORDER COMMAND
                                                                                 do
                                                                                     prepare-command "$ORDER" "$COMMAND"
@@ -380,7 +366,7 @@
                                                                                 "$OUT/run"
                                                                                 chmod 0500 "$OUT/post"
                                                                                 "$OUT/post"
-                                                                                find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read -r PROCESS
+                                                                                while read -r PROCESS
                                                                                 do
                                                                                     PID="$( < "$PROCESS" )" || ${ failures_ "c2823f07" }
                                                                                     if kill -0 "$PID"
@@ -389,7 +375,7 @@
                                                                                         echo "We expected PROCESS $PID $BASE to be finished OUT=$OUT" >&2
                                                                                         ${ failures_ "23abd5bc" }
                                                                                     fi
-                                                                                done
+                                                                                done < <( find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" )
                                                                                 assert-empty "$OUT" "mounts"
                                                                                 assert-empty "$OUT" "links"
                                                                                 assert-empty "$OUT" "canonical"
