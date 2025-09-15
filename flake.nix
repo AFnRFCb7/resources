@@ -35,7 +35,28 @@
                                     processes ,
                                     redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f"
                                 } :
-                                    null ;
+                                    mkDerivation
+                                        {
+                                            installPhase =
+                                                ''
+                                                    if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input } > /build/standard-error )"
+                                                    then
+                                                        STATUS="$?"
+                                                    else
+                                                        STATUS="?"
+                                                    fi
+                                                    if [[ "${ standard-output }" != "$RESOURCE" ]]
+                                                    then
+                                                        echo "We expected the standard output to be ${ standard-output } but it was $RESOURCE" >&2
+                                                        ${ failures_ "" }
+                                                    fi
+                                                    if [[ "${ builtins.toString status }" != "$STATUS" ]]
+                                                    then
+                                                    fi
+                                                '' ;
+                                            name = "check" ;
+                                            src = ./. ;
+                                        } ;
                             failures_ =
                                 unique :
                                     let
