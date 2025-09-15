@@ -144,6 +144,8 @@
                                                                                             mv "$OBSERVED" "$OUT/commands/$ORDER/observed"
                                                                                             if ! diff --unified "$OUT/commands/$ORDER/expected/standard-output" "$OUT/commands/$ORDER/observed/standard-output"
                                                                                             then
+                                                                                                cat ${ resources-directory }/debug >&2
+                                                                                                echo >&2
                                                                                                 echo "We expected the standard output of the $ORDER command to be $OUT/commands/$ORDER/expected/standard-output but it was $OUT/commands/$ORDER/observed/standard-output" >&2
                                                                                                 echo >&2
                                                                                                 echo "${ fix }/bin/fix $OUT/commands/$ORDER/observed/standard-output expected/$NAME/standard-output" >&2
@@ -215,7 +217,9 @@
                                                                                         ''
                                                                                             OUT="$1"
                                                                                             PROCESS="$2"
-                                                                                            echo "exit" >> "$OUT/processes/$PROCESS.pipe"
+                                                                                            cat >> "$OUT/processes/$PROCESS.pipe" <<EOF
+                                                                                            exit
+                                                                                            EOF
                                                                                         '' ;
                                                                                 } ;
                                                                         fix =
@@ -318,7 +322,8 @@
                                                                                                 NUM_NEW_LINES="$( echo "$NEW_LINES" | wc --lines )" || ${ failures_ "5e1f27c6" }
                                                                                                 CURRENT_LINE=$(( CURRENT_LINE + NUM_NEW_LINES ))
                                                                                                 eval "$NEW_LINES"
-                                                                                                sleep ${ builtins.toString delay }s
+                                                                                                echo >> ${ resources-directory }/debug
+                                                                                                echo "NEW_LINES=$NEW_LINES" >> ${ resources-directory }/debug
                                                                                             done < <( inotifywait --monitor --event modify "$PIPE" )
                                                                                         '' ;
                                                                                 } ;
@@ -373,6 +378,10 @@
                                                                                     then
                                                                                         BASE="$( basename "$PROCESS" )" || ${ failures_ "0ef41434" }
                                                                                         echo "We expected PROCESS $PID $BASE to be finished OUT=$OUT" >&2
+                                                                                        echo >&2
+                                                                                        cat ${ resources-directory }/debug >&2
+                                                                                        echo >&2
+                                                                                        cat "$OUT/run"
                                                                                         ${ failures_ "23abd5bc" }
                                                                                     fi
                                                                                 done < <( find "$OUT/processes" -mindepth 1 -maxdepth 1 -type f -name "*.pid" )
@@ -818,10 +827,12 @@
                                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                                             export HASH
                                                                             mkdir --parents "${ resources-directory }/locks"
+                                                                            echo "aed692f6-0204-4204-a105-8696b9b270d5 HASH=$HASH ORIGINATOR_PID=$ORIGINATOR_PID TRANSIENT=$TRANSIENT" >> ${ resources-directory }/debug
                                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                                             flock -s 210
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
+                                                                                echo "2d52430a-41e5-45f6-b582-ff37acfbc39b" >> ${ resources-directory }/debug
                                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
                                                                                 export MOUNT
                                                                                 MOUNT_INDEX="$( basename "$MOUNT" )" || ${ failures_ "277afc07" }
@@ -833,6 +844,7 @@
                                                                                 nohup stale > "$NOHUP" 2>&1 &
                                                                                 echo -n "$MOUNT"
                                                                             else
+                                                                                echo "ee9dff3d-60fb-4606-a6ea-5d1773b0c969" >> ${ resources-directory }/debug
                                                                                 MOUNT_INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                                 export MOUNT_INDEX
                                                                                 mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
