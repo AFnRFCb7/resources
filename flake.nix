@@ -47,7 +47,15 @@
                                                                 runtimeInputs = [ coreutils redis ] ;
                                                                 text =
                                                                     ''
-                                                                        redis-cli SUBSCRIBE ${ channel } | head --lines 6 | tail --lines 1 > /build/payload
+                                                                        redis-cli --raw SUBSCRIBE "${ channel }" | {
+                                                                            read -r _     # skip "subscribe"
+                                                                            read -r _     # skip channel name
+                                                                            read -r _     # skip
+                                                                            read -r _     # skip
+                                                                            read -r _
+                                                                            read -r PAYLOAD
+                                                                            echo "$PAYLOAD" > /build/payload
+                                                                        }
                                                                     '' ;
                                                             } ;
                                                     test =
@@ -75,7 +83,7 @@
                                                                                     sleep 1
                                                                                 done
                                                                                 subscribe &
-                                                                                SUBSCRIPTION_PID="$!"
+                                                                                sleep 1m
                                                                                 if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } > /build/standard-error )"
                                                                                 then
                                                                                     STATUS="$?"
@@ -107,7 +115,7 @@
                                                                                 fi
                                                                                 while [[ ! -f /build/payload ]]
                                                                                 do
-                                                                                    sleep 0s
+                                                                                    redis-cli PUBLISH ${ channel } '{"test" : true}'
                                                                                 done
                                                                                 PAYLOAD="$( < /build/payload )" || ${ failures_ "a94f732b" }
                                                                                 if [[ "${ builtins.toJSON payload }" != "$PAYLOAD" ]]
@@ -115,7 +123,6 @@
                                                                                     echo "We expected the payload to be ${ builtins.toJSON payload } but it was $PAYLOAD"
                                                                                     ${ failures_ "2ce1635f" }
                                                                                 fi
-                                                                                kill "$SUBSCRIPTION_PID"
                                                                             '' ;
                                                             } ;
                                                         in "${ test }/bin/test $out" ;
@@ -199,7 +206,8 @@
                                                 runtimeInputs = [ coreutils jq redis ] ;
                                                 text =
                                                     ''
-                                                        cat | jq "." | redis-cli PUBLISH "${ channel }"
+                                                        cat | jq '. + { "description" : "description" }' | redis-cli PUBLISH "${ channel }"
+                                                        # cat | jq '. + { description : ${ builtins.toJSON description } }' | redis-cli PUBLISH "${ channel }"
                                                     '' ;
                                             } ;
                                     setup =
