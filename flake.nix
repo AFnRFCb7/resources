@@ -12,6 +12,7 @@
                         findutils ,
                         flock ,
                         init ? null ,
+                        jq ,
                         makeBinPath ,
                         makeWrapper ,
                         mkDerivation ,
@@ -28,32 +29,96 @@
                         let
                             check =
                                 {
-                                    commands ,
-                                    delay ,
-                                    diffutils ,
-                                    golden-path ,
-                                    processes ,
-                                    redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f"
+                                    arguments ? [ ] ,
+                                    payload ,
+                                    redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f" ,
+                                    standard-input ? null ,
+                                    standard-output ,
+                                    status ? 0
                                 } :
                                     mkDerivation
                                         {
                                             installPhase =
-                                                ''
-                                                    if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input } > /build/standard-error )"
-                                                    then
-                                                        STATUS="$?"
-                                                    else
-                                                        STATUS="?"
-                                                    fi
-                                                    if [[ "${ standard-output }" != "$RESOURCE" ]]
-                                                    then
-                                                        echo "We expected the standard output to be ${ standard-output } but it was $RESOURCE" >&2
-                                                        ${ failures_ "" }
-                                                    fi
-                                                    if [[ "${ builtins.toString status }" != "$STATUS" ]]
-                                                    then
-                                                    fi
-                                                '' ;
+                                                let
+                                                    subscribe =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "subscribe" ;
+                                                                runtimeInputs = [ coreutils redis ] ;
+                                                                text =
+                                                                    ''
+                                                                        redis-cli SUBSCRIBE ${ channel } | head --lines 6 | tail --lines 1 > /build/payload
+                                                                    '' ;
+                                                            } ;
+                                                    test =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "test" ;
+                                                                runtimeInputs = [ coreutils redis subscribe ] ;
+                                                                text =
+                                                                    let
+                                                                        standard-input_ =
+                                                                            visitor.lib.implementation
+                                                                                {
+                                                                                    null = path : value : "" ;
+                                                                                    string = path : value : "< ${ builtins.toFile "standard-input" value }" ;
+                                                                                }
+                                                                                standard-input ;
+                                                                        in
+                                                                            ''
+                                                                                OUT="$1"
+                                                                                touch "$OUT"
+                                                                                mkdir --parents /build/redis
+                                                                                redis-server --dir /build/redis --daemonize yes
+                                                                                while ! redis-cli ping
+                                                                                do
+                                                                                    sleep 1
+                                                                                done
+                                                                                subscribe &
+                                                                                SUBSCRIPTION_PID="$!"
+                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } > /build/standard-error )"
+                                                                                then
+                                                                                    STATUS="$?"
+                                                                                else
+                                                                                    STATUS="$?"
+                                                                                fi
+                                                                                if [[ "${ standard-output }" != "$RESOURCE" ]]
+                                                                                then
+                                                                                    echo "We expected the standard output to be ${ standard-output } but it was $RESOURCE" >&2
+                                                                                    ${ failures_ "c727ba4d" }
+                                                                                fi
+                                                                                if [[ "${ builtins.toString status }" != "$STATUS" ]]
+                                                                                then
+                                                                                    echo ${ implementation }
+                                                                                    cat ${ resources-directory }/debug
+                                                                                    echo "We expected the status to be ${ builtins.toString status } but it was $STATUS" >&2
+                                                                                    ${ failures_ "57cd83f9" }
+                                                                                fi
+                                                                                if [[ ! -f /build/standard-error ]]
+                                                                                then
+                                                                                    echo "We expected the standard error file to exist" >&2
+                                                                                    ${ failures_ "da8b2593" }
+                                                                                fi
+                                                                                if [[ ! -s /build/standard-error ]]
+                                                                                then
+                                                                                    STANDARD_ERROR="$( < /build/standard-error )" || ${ failures_ "1c4d6ced" }
+                                                                                    echo "We expected the standard error file to be empty but it was $STANDARD_ERROR" >&2
+                                                                                    ${ failures_ "a6d0f7ed" }
+                                                                                fi
+                                                                                while [[ ! -f /build/payload ]]
+                                                                                do
+                                                                                    sleep 0s
+                                                                                done
+                                                                                PAYLOAD="$( < /build/payload )" || ${ failures_ "a94f732b" }
+                                                                                if [[ "${ builtins.toJSON payload }" != "$PAYLOAD" ]]
+                                                                                then
+                                                                                    echo "We expected the payload to be ${ builtins.toJSON payload } but it was $PAYLOAD"
+                                                                                    ${ failures_ "2ce1635f" }
+                                                                                fi
+                                                                                kill "$SUBSCRIPTION_PID"
+                                                                            '' ;
+                                                            } ;
+                                                        in "${ test }/bin/test $out" ;
                                             name = "check" ;
                                             src = ./. ;
                                         } ;
@@ -131,11 +196,10 @@
                                         writeShellApplication
                                             {
                                                 name = "publish" ;
-                                                runtimeInputs = [ coreutils redis ] ;
+                                                runtimeInputs = [ coreutils jq redis ] ;
                                                 text =
                                                     ''
-                                                        TEMPORARY_FILE="$( mktemp )" || ${ failures_ "74a1c409" }
-                                                        cat | yq eval "." "$CHANNEL" "$TEMPORARY_FILE"
+                                                        cat | jq "." | redis-cli PUBLISH "${ channel }"
                                                     '' ;
                                             } ;
                                     setup =
@@ -143,14 +207,14 @@
                                             writeShellApplication
                                                 {
                                                     name = "setup" ;
-                                                    runtimeInputs = [ coreutils ps publish sequential ] ;
+                                                    runtimeInputs = [ coreutils flock jq ps publish sequential yq-go ] ;
                                                     text =
                                                         ''
                                                             if [[ -t 0 ]]
                                                             then
                                                                 HAS_STANDARD_INPUT=false
                                                                 STANDARD_INPUT=
-                                                                STANDARD_INPUT_FILE="$( temporary )" || ${ failures_ "7f77cdad" }
+                                                                STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "7f77cdad" }
                                                             else
                                                                 HAS_STANDARD_INPUT=true
                                                                 timeout 1m cat > "$STANDARD_INPUT_FILE"
@@ -160,8 +224,8 @@
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                             mkdir --parents "${ resources-directory }/locks"
-                                                            ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s .)" || ${ failures_ "" }
-                                                            export ARGUMENTS_JSON
+                                                            ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ failures_ "fc776602" }
+                                                            export ARGUMENTS_YAML
                                                             export HAS_STANDARD_INPUT
                                                             export HASH
                                                             export STANDARD_INPUT
@@ -179,20 +243,20 @@
                                                                 mkdir --parents "${ resources-directory }/locks/$INDEX"
                                                                 exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
                                                                 flock -s 211
-                                                                yq eval '{ arguments : strenv(ARGUMENTS) , has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish ${ channel }
+                                                                yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
                                                             else
-                                                                MOUNT_INDEX="$( sequential )" || ${ failures_ "d162db9f" }
-                                                                export MOUNT_INDEX
+                                                                INDEX="$( sequential )" || ${ failures_ "d162db9f" }
+                                                                export INDEX
                                                                 export PROVENANCE=new
-                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
-                                                                exec 211> "${ resources-directory }/locks/$MOUNT_INDEX/setup.lock"
+                                                                mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
                                                                 flock -s 211
-                                                                MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
+                                                                MOUNT="${ resources-directory }/mounts/$INDEX"
                                                                 mkdir --parents "$MOUNT"
                                                                 mkdir --parents ${ resources-directory }/canonical
-                                                                yq eval '{ arguments : strenv(ARGUMENTS) , has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish ${ channel }
+                                                                yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
                                                             fi
@@ -202,7 +266,7 @@
                                             writeShellApplication
                                                 {
                                                     name = "setup" ;
-                                                    runtimeInputs = [ coreutils ps redis sequential ] ;
+                                                    runtimeInputs = [ coreutils flock jq ps publish redis sequential yq-go ] ;
                                                     text =
                                                         ''
                                                             if [[ -t 0 ]]
@@ -210,12 +274,14 @@
                                                                 HAS_STANDARD_INPUT=false
                                                                 STANDARD_INPUT=
                                                             else
-                                                                STANDARD_INPUT_FILE="$( temporary )" || ${ failures_ "f66f966d" }
+                                                                STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "f66f966d" }
                                                                 export STANDARD_INPUT_FILE
                                                                 HAS_STANDARD_INPUT=true
                                                                 cat > "$STANDARD_INPUT_FILE"
                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
                                                             fi
+                                                            mkdir --parents ${ resources-directory }
+                                                            echo "ff3e1ecc-d3ff-4d22-990e-aa5b46101b80" >> ${ resources-directory }/debug
                                                             ARGUMENTS=( "$@" )
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
@@ -223,8 +289,6 @@
                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                             export HASH
                                                             mkdir --parents "${ resources-directory }/locks"
-                                                            ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s .)" || ${ failures_ "" }
-                                                            export ARGUMENTS_JSON
                                                             export HAS_STANDARD_INPUT
                                                             export HASH
                                                             export STANDARD_INPUT
@@ -232,6 +296,7 @@
                                                             export TRANSIENT
                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                             flock -s 210
+                                                            echo "d15953fb-cf83-4e51-b4d6-1b1e2da8e537" >> ${ resources-directory }/debug
                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                             then
                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
@@ -239,10 +304,12 @@
                                                                 INDEX="$( basename "$MOUNT" )" || ${ failures_ "277afc07" }
                                                                 export INDEX
                                                                 export PROVENANCE=cached
-                                                                mkdir --parents "${ resources-directory }/locks/$MOUNT_INDEX"
-                                                                yq eval '{ arguments : strenv(ARGUMENTS) , has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish ${ channel }
+                                                                mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                # shellcheck disable=SC2016
+                                                                # yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
                                                                 echo -n "$MOUNT"
                                                             else
+                                                                echo "88955509-3f2a-4a8a-924a-01600cfd6e22" >> ${ resources-directory }/debug
                                                                 INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                 export INDEX
                                                                 export PROVENANCE=new
@@ -252,7 +319,7 @@
                                                                 LINK="${ resources-directory }/links/$INDEX"
                                                                 export LINK
                                                                 mkdir --parents "$LINK"
-                                                                MOUNT="${ resources-directory }/mounts/$MOUNT_INDEX"
+                                                                MOUNT="${ resources-directory }/mounts/$INDEX"
                                                                 mkdir --parents "$MOUNT"
                                                                 export MOUNT
                                                                 mkdir --parents "$MOUNT"
@@ -283,11 +350,17 @@
                                                                 export STANDARD_ERROR
                                                                 STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "d1b1f5be" }
                                                                 export STANDARD_OUTPUT
+                                                                echo "e92fe93b-346b-4c4a-8e3d-48a038323ff2" >> ${ resources-directory }/debug
                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                 then
-                                                                    yq eval '{ arguments : strenv(ARGUMENTS) , has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , init-application : "${ init-application }" , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-error: strenv(STANDARD_ERROR) , standard-input: strenv(STANDARD_INPUT) , standard-output: strenv(STANDARD_OUTPUT) , status : strenv(STATUS) , transient : strenv(TRANSIENT) }' | publish ${ channel }
+                                                                    echo "706dfc3c-1715-4b62-868f-f793f201460b $0" >> ${ resources-directory }/debug
+                                                                    # shellcheck disable=SC2016
+                                                                    jq --null-input '{ "has-standard-input" : 1 }'| publish
+                                                                    # yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , init-application : "${ init-application }" , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-error: strenv(STANDARD_ERROR) , standard-input: strenv(STANDARD_INPUT) , standard-output: strenv(STANDARD_OUTPUT) , status : strenv(STATUS) , transient : strenv(TRANSIENT) }' | publish
+                                                                    echo "6256e8bf-bcb7-4fbe-aeca-825061bb220d STATUS=$STATUS" >> ${ resources-directory }/debug
                                                                     echo -n "$MOUNT"
                                                                 else
+                                                                    echo "fa214ed2-5613-4c42-baa3-05f0d68f2c4d" >> ${ resources-directory }/debug
                                                                     ${ failures_ "b385d889" }
                                                                 fi
                                                             fi
@@ -309,7 +382,7 @@
                                                         else
                                                             CURRENT=0
                                                         fi
-                                                        NEXT=$(( CURRENT + 1 ))
+                                                        NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
                                                         echo "$NEXT" > ${ resources-directory }/sequential/sequential.counter
                                                         printf "%016d\n" "$CURRENT"
                                                     '' ;
