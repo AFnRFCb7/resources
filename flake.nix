@@ -121,6 +121,7 @@
                                                                                 if [[ "${ builtins.toJSON payload }" != "$PAYLOAD" ]]
                                                                                 then
                                                                                     echo "We expected the payload to be ${ builtins.toJSON payload } but it was $PAYLOAD"
+                                                                                    cat ${ resources-directory }/debug
                                                                                     ${ failures_ "2ce1635f" }
                                                                                 fi
                                                                             '' ;
@@ -206,7 +207,10 @@
                                                 runtimeInputs = [ coreutils jq redis ] ;
                                                 text =
                                                     ''
-                                                        cat | jq '. + { "description" : "description" }' | redis-cli PUBLISH "${ channel }"
+                                                        echo "22b880d3-4d59-4763-936e-e6bec70cf03d" >> ${ resources-directory }/debug
+                                                        # redis-cli PUBLISH "${ channel }" '{ "test" : "no standard-input" }'
+                                                        JSON="$( jq --null-input '{ "description" : "description" }' )" || ${ failures_ "7b8f1293" }
+                                                        redis-cli PUBLISH "${ channel }" "$JSON"
                                                         # cat | jq '. + { description : ${ builtins.toJSON description } }' | redis-cli PUBLISH "${ channel }"
                                                     '' ;
                                             } ;
@@ -251,7 +255,12 @@
                                                                 mkdir --parents "${ resources-directory }/locks/$INDEX"
                                                                 exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
                                                                 flock -s 211
-                                                                yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
+                                                                jq \
+                                                                    --null-input \
+                                                                    --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                    '{
+                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                    }' | publish
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
                                                             else
@@ -264,7 +273,12 @@
                                                                 MOUNT="${ resources-directory }/mounts/$INDEX"
                                                                 mkdir --parents "$MOUNT"
                                                                 mkdir --parents ${ resources-directory }/canonical
-                                                                yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
+                                                                jq \
+                                                                    --null-input \
+                                                                    --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                    '{
+                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                    }' | publish
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
                                                             fi
@@ -289,7 +303,6 @@
                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
                                                             fi
                                                             mkdir --parents ${ resources-directory }
-                                                            echo "ff3e1ecc-d3ff-4d22-990e-aa5b46101b80" >> ${ resources-directory }/debug
                                                             ARGUMENTS=( "$@" )
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
@@ -304,7 +317,6 @@
                                                             export TRANSIENT
                                                             exec 210> "${ resources-directory }/locks/$HASH"
                                                             flock -s 210
-                                                            echo "d15953fb-cf83-4e51-b4d6-1b1e2da8e537" >> ${ resources-directory }/debug
                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                             then
                                                                 MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failures_ "ae2d1658" }
@@ -313,11 +325,14 @@
                                                                 export INDEX
                                                                 export PROVENANCE=cached
                                                                 mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                # shellcheck disable=SC2016
-                                                                # yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-input: strenv(STANDARD_INPUT) , transient : strenv(TRANSIENT) }' | publish
+                                                                jq \
+                                                                    --null-input \
+                                                                    --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                    '{
+                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                    }' | publish
                                                                 echo -n "$MOUNT"
                                                             else
-                                                                echo "88955509-3f2a-4a8a-924a-01600cfd6e22" >> ${ resources-directory }/debug
                                                                 INDEX="$( sequential )" || ${ failures_ "cab66847" }
                                                                 export INDEX
                                                                 export PROVENANCE=new
@@ -358,17 +373,23 @@
                                                                 export STANDARD_ERROR
                                                                 STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "d1b1f5be" }
                                                                 export STANDARD_OUTPUT
-                                                                echo "e92fe93b-346b-4c4a-8e3d-48a038323ff2" >> ${ resources-directory }/debug
                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                 then
-                                                                    echo "706dfc3c-1715-4b62-868f-f793f201460b $0" >> ${ resources-directory }/debug
                                                                     # shellcheck disable=SC2016
-                                                                    jq --null-input '{ "has-standard-input" : 1 }'| publish
-                                                                    # yq eval '{ has-standard-input : strenv(HAS_STANDARD_INPUT) , hash : strenv(HASH) , index : strenv(INDEX) , init-application : "${ init-application }" , originator-pid : strenv(ORIGINATOR_PID) , provenance : strenv(PROVENANCE) , standard-error: strenv(STANDARD_ERROR) , standard-input: strenv(STANDARD_INPUT) , standard-output: strenv(STANDARD_OUTPUT) , status : strenv(STATUS) , transient : strenv(TRANSIENT) }' | publish
-                                                                    echo "6256e8bf-bcb7-4fbe-aeca-825061bb220d STATUS=$STATUS" >> ${ resources-directory }/debug
+                                                                    jq \
+                                                                        --null-input \
+                                                                        --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                        '{
+                                                                            "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                        }' | publish
                                                                     echo -n "$MOUNT"
                                                                 else
-                                                                    echo "fa214ed2-5613-4c42-baa3-05f0d68f2c4d" >> ${ resources-directory }/debug
+                                                                    jq \
+                                                                        --null-input \
+                                                                        --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                        '{
+                                                                            "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                        }' | publish
                                                                     ${ failures_ "b385d889" }
                                                                 fi
                                                             fi
