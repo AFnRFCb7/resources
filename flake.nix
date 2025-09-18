@@ -38,14 +38,35 @@
                                     expected-status ,
                                     expected-targets ,
                                     expected-transient ,
+                                    resources-directory-fixture ? null ,
                                     standard-input ? null ,
                                     standard-output ,
-                                    status
+                                    status ? 0
                                 } :
                                     mkDerivation
                                         {
                                             installPhase =
                                                 let
+                                                    fixture =
+                                                        if builtins.typeOf resources-directory-fixture == "null" then
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "fixture" ;
+                                                                    runtimeInputs = [ ] ;
+                                                                    text = "" ;
+                                                                }
+                                                        else
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "fixture" ;
+                                                                    runtimeInputs = [ coreutils ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ resources-directory }
+                                                                            rm --recursive ${ resources-directory }
+                                                                            cp --recursive ${ resources-directory-fixture } ${ resources-directory }
+                                                                        '' ;
+                                                                } ;
                                                     subscribe =
                                                         writeShellApplication
                                                             {
@@ -68,7 +89,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "test" ;
-                                                                runtimeInputs = [ coreutils jq redis subscribe ] ;
+                                                                runtimeInputs = [ coreutils fixture jq redis subscribe ] ;
                                                                 text =
                                                                     let
                                                                         standard-input_ =
@@ -84,6 +105,7 @@
                                                                                 touch "$OUT"
                                                                                 mkdir --parents /build/redis
                                                                                 redis-server --dir /build/redis --daemonize yes
+                                                                                fixture
                                                                                 while ! redis-cli ping
                                                                                 do
                                                                                     sleep 0
