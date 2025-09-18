@@ -72,6 +72,9 @@
                                                                 runtimeInputs = [ coreutils jq redis subscribe ] ;
                                                                 text =
                                                                     let
+                                                                        expected-hash =
+                                                                            let
+
                                                                         standard-input_ =
                                                                             visitor.lib.implementation
                                                                                 {
@@ -144,13 +147,6 @@
                                                                                     echo "We expected the payload description to be $EXPECTED_DESCRIPTION but it was $OBSERVED_DESCRIPTION" >&2
                                                                                     ${ failures_ "4656e7d5" }
                                                                                 fi
-                                                                                EXPECTED_HASH="${ expected-hash }"
-                                                                                OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
-                                                                                if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
-                                                                                then
-                                                                                    echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
-                                                                                    ${ failures_ "9c498620" }
-                                                                                fi
                                                                                 EXPECTED_INDEX="${ expected-index }"
                                                                                 OBSERVED_INDEX="$( jq --raw-output ".index" /build/payload )" || ${ failures_ "abdf3e25" }
                                                                                 if [[ "$EXPECTED_INDEX" != "$OBSERVED_INDEX" ]]
@@ -213,6 +209,13 @@
                                                                                 then
                                                                                     echo "We expected the payload transient to be $EXPECTED_TRANSIENT but it was $OBSERVED_TRANSIENT" >&2
                                                                                     ${ failures_ "e6815070" }
+                                                                                fi
+                                                                                EXPECTED_HASH="$( echo -n "${ pre-hash } $EXPECTED_TRANSIENT $EXPECTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
+                                                                                OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
+                                                                                if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
+                                                                                then
+                                                                                    echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
+                                                                                    ${ failures_ "9c498620" }
                                                                                 fi
                                                                                 EXPECTED_KEYS="$( echo '${ builtins.toJSON [ "arguments" "dependencies" "description" "has-standard-input" "hash" "index" "originator-pid" "provenance" "standard-error" "standard-input" "standard-output" "status" "targets" "transient" ] }' | jq --raw-output "." )" || ${ failures_ "ecaa9ff9" }
                                                                                 OBSERVED_KEYS="$( jq --raw-output "[keys[]]" /build/payload )" || ${ failures_ "04699ea8" }
@@ -328,7 +331,7 @@
                                                             fi
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
-                                                            HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
+                                                            HASH="$( echo -n "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "bc3e1b88" }
                                                             mkdir --parents "${ resources-directory }/locks"
                                                             ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ failures_ "fc776602" }
                                                             export ARGUMENTS_YAML
@@ -402,7 +405,7 @@
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
                                                             export ORIGINATOR_PID
-                                                            HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
+                                                            HASH="$( echo -n "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                             export HASH
                                                             mkdir --parents "${ resources-directory }/locks"
                                                             export HAS_STANDARD_INPUT
