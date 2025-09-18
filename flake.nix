@@ -88,7 +88,7 @@
                                                                                 redis-server --dir /build/redis --daemonize yes
                                                                                 while ! redis-cli ping
                                                                                 do
-                                                                                    sleep 1
+                                                                                    sleep 0
                                                                                 done
                                                                                 subscribe &
                                                                                 if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } > /build/standard-error )"
