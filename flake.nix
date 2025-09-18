@@ -8,6 +8,7 @@
                         buildFHSUserEnv ,
                         channel ? "resource" ,
                         coreutils ,
+                        error ? 177 ,
                         findutils ,
                         flock ,
                         init ? null ,
@@ -178,7 +179,7 @@
                                                                                     echo "We expected the payload provenance to be $EXPECTED_PROVENANCE but it was $OBSERVED_PROVENANCE" >&2
                                                                                     ${ failures_ "c07c110c" }
                                                                                 fi
-                                                                                EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON targets }' )" || ${ failures_ "e9fa75bf" }
+                                                                                EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON expected-targets }' )" || ${ failures_ "e9fa75bf" }
                                                                                 OBSERVED_TARGETS="$( jq ".targets" /build/payload )" || ${ failures_ "ad928300" }
                                                                                 if [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                                 then
@@ -486,6 +487,7 @@
                                                                 TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                 then
+                                                                    # COVERAGE 9fa46607359f0135bc334656397596a9d53760152b243a7f7781e0e006184b55ce7e77716b1477273b9d2139ee67b1f88b6b8ae3f728ba7bed7cee6cee8d6185
                                                                     # shellcheck disable=SC2016
                                                                     jq \
                                                                         --null-input \
@@ -520,13 +522,42 @@
                                                                         }' | publish
                                                                     echo -n "$MOUNT"
                                                                 else
+                                                                    # COVERAGE cc71c31856d494c0fa6298238c3a88465a027005abb5a35f1adf0d1f5f70bd127dd0fc8c7f3143403fe2707aec2aa596424388676d733a8999ed14274bbb7257 when the targets do not match
+                                                                    # COVERAGE b6685e582f11196ead4fa3459fd16d9111f0fbba91c26c7e8d72357d1a363e9cb2a8f5b002ca50b0a6227082922c66bebbc0baf07bb8abec3bc72e4faed24410 when there is standard error
+                                                                    # COVERAGE 18bcee8bb15fcb7bc19928b5f59f311c3892ed31c6941b94bb7f2193020730889c79d0ab473c680630bcb96ed3c900ef7c67583682dbdbed6044f046c725e0a9 when there is a non-zero status
+                                                                    # shellcheck disable=SC2016
                                                                     jq \
                                                                         --null-input \
+                                                                        --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                        --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                        --arg HASH "$HASH" \
+                                                                        --arg INDEX "$INDEX" \
                                                                         --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                        --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                        --arg PROVENANCE "$PROVENANCE" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
+                                                                        --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                        --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                        --arg STATUS "$STATUS" \
+                                                                        --argjson TARGETS "$TARGETS" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
                                                                         '{
-                                                                            "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                            "arguments" : $ARGUMENTS ,
+                                                                            "dependencies" : $DEPENDENCIES ,
+                                                                            "hash" : $HASH ,
+                                                                            "index" : $INDEX ,
+                                                                            "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                            "provenance" : $PROVENANCE ,
+                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                            "standard-input" : $STANDARD_INPUT ,
+                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                            "status" : $STATUS ,
+                                                                            "targets" : $TARGETS ,
+                                                                            "transient" : $TRANSIENT
                                                                         }' | publish
-                                                                    ${ failures_ "b385d889" }
+                                                                    exit ${ builtins.toString error }
                                                                 fi
                                                             fi
                                                         '' ;
