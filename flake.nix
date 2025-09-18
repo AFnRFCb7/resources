@@ -144,13 +144,6 @@
                                                                                     echo "We expected the payload description to be $EXPECTED_DESCRIPTION but it was $OBSERVED_DESCRIPTION" >&2
                                                                                     ${ failures_ "4656e7d5" }
                                                                                 fi
-                                                                                EXPECTED_HASH="${ expected-hash }"
-                                                                                OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
-                                                                                if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
-                                                                                then
-                                                                                    echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
-                                                                                    ${ failures_ "9c498620" }
-                                                                                fi
                                                                                 EXPECTED_INDEX="${ expected-index }"
                                                                                 OBSERVED_INDEX="$( jq --raw-output ".index" /build/payload )" || ${ failures_ "abdf3e25" }
                                                                                 if [[ "$EXPECTED_INDEX" != "$OBSERVED_INDEX" ]]
@@ -193,6 +186,13 @@
                                                                                     echo "We expected the payload standard-error to be $EXPECTED_STANDARD_ERROR but it was $OBSERVED_STANDARD_ERROR" >&2
                                                                                     ${ failures_ "dcea8e50" }
                                                                                 fi
+                                                                                EXPECTED_STANDARD_INPUT="${ if builtins.typeOf standard-input == "null" then "" else standard-input }"
+                                                                                OBSERVED_STANDARD_INPUT="$( jq --raw-output '."standard-input"' /build/payload )" || ${ failures_ "714592cd" }
+                                                                                if [[ "$EXPECTED_STANDARD_INPUT" != "$OBSERVED_STANDARD_INPUT" ]]
+                                                                                then
+                                                                                    echo "We expected the payload standard-input to be $EXPECTED_STANDARD_INPUT but it was $OBSERVED_STANDARD_INPUT" >&2
+                                                                                    ${ failures_ "11e3a4aa" }
+                                                                                fi
                                                                                 EXPECTED_STANDARD_OUTPUT="${ expected-standard-output }"
                                                                                 OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ failures_ "714592cd" }
                                                                                 if [[ "$EXPECTED_STANDARD_OUTPUT" != "$OBSERVED_STANDARD_OUTPUT" ]]
@@ -207,12 +207,28 @@
                                                                                     echo "We expected the payload status to be $EXPECTED_STATUS but it was $OBSERVED_STATUS" >&2
                                                                                     ${ failures_ "d1054818" }
                                                                                 fi
-                                                                                EXPECTED_TRANSIENT="${ expected-transient }"
+                                                                                EXPECTED_TRANSIENT="${ builtins.toString expected-transient }"
                                                                                 OBSERVED_TRANSIENT="$( jq --raw-output ".transient" /build/payload )" || ${ failures_ "85ad88e4" }
                                                                                 if [[ "$EXPECTED_TRANSIENT" != "$OBSERVED_TRANSIENT" ]]
                                                                                 then
                                                                                     echo "We expected the payload transient to be $EXPECTED_TRANSIENT but it was $OBSERVED_TRANSIENT" >&2
                                                                                     ${ failures_ "e6815070" }
+                                                                                fi
+                                                                                cat >> ${ resources-directory }/debug <<EOF
+                                                                                EOF
+                                                                                PRE_HASH="${ pre-hash }"
+                                                                                FORMATTED_ARGUMENTS="${ builtins.concatStringsSep " " arguments }"
+                                                                                cat >> ${ resources-directory }/debug <<EOF
+                                                                                JASH="\$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
+                                                                                EOF
+                                                                                EXPECTED_HASH="$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
+                                                                                # EXPECTED_HASH="${ expected-hash }"
+                                                                                OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
+                                                                                if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
+                                                                                then
+                                                                                    cat ${ resources-directory }/debug
+                                                                                    echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
+                                                                                    ${ failures_ "9c498620" }
                                                                                 fi
                                                                                 EXPECTED_KEYS="$( echo '${ builtins.toJSON [ "arguments" "dependencies" "description" "has-standard-input" "hash" "index" "originator-pid" "provenance" "standard-error" "standard-input" "standard-output" "status" "targets" "transient" ] }' | jq --raw-output "." )" || ${ failures_ "ecaa9ff9" }
                                                                                 OBSERVED_KEYS="$( jq --raw-output "[keys[]]" /build/payload )" || ${ failures_ "04699ea8" }
@@ -296,7 +312,6 @@
                                                     name = "init-application" ;
                                                     runScript = init "${ resources-directory }/mounts/$HASH" ;
                                                 } ;
-                                    pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                                     publish =
                                         writeShellApplication
                                             {
@@ -402,6 +417,9 @@
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
                                                             export ORIGINATOR_PID
+                                                            cat >> ${ resources-directory }/debug <<EOF
+                                                            HASH="\$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
+                                                            EOF
                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                             export HASH
                                                             mkdir --parents "${ resources-directory }/locks"
@@ -541,10 +559,11 @@
                                         transient_ =
                                             visitor.lib.implementation
                                                 {
-                                                    bool = path : value : if value then "$( sequential ) || ${ failures_ "808f8e2c" }" else "" ;
+                                                    bool = path : value : if value then "$( sequential ) || ${ failures_ "808f8e2c" }" else "-1" ;
                                                 }
                                                 transient ;
                                     in "${ setup }/bin/setup" ;
+                            pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
                                     check = check ;
