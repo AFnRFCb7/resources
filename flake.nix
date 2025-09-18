@@ -102,8 +102,6 @@
                                                                                 fi
                                                                                 if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                                 then
-                                                                                    echo ${ implementation }
-                                                                                    cat ${ resources-directory }/debug
                                                                                     echo "We expected the status to be ${ builtins.toString status } but it was $STATUS" >&2
                                                                                     ${ failures_ "57cd83f9" }
                                                                                 fi
@@ -213,18 +211,12 @@
                                                                                     echo "We expected the payload transient to be $EXPECTED_TRANSIENT but it was $OBSERVED_TRANSIENT" >&2
                                                                                     ${ failures_ "e6815070" }
                                                                                 fi
-                                                                                cat >> ${ resources-directory }/debug <<EOF
-                                                                                EOF
                                                                                 PRE_HASH="${ pre-hash }"
                                                                                 FORMATTED_ARGUMENTS="${ builtins.concatStringsSep " " arguments }"
-                                                                                cat >> ${ resources-directory }/debug <<EOF
-                                                                                JASH="\$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
-                                                                                EOF
                                                                                 EXPECTED_HASH="$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
                                                                                 OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
                                                                                 if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                 then
-                                                                                    cat ${ resources-directory }/debug
                                                                                     echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
                                                                                     ${ failures_ "9c498620" }
                                                                                 fi
@@ -415,9 +407,6 @@
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
                                                             export ORIGINATOR_PID
-                                                            cat >> ${ resources-directory }/debug <<EOF
-                                                            HASH="\$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
-                                                            EOF
                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                             export HASH
                                                             mkdir --parents "${ resources-directory }/locks"
