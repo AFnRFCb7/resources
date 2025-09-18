@@ -39,7 +39,6 @@
                                     expected-status ,
                                     expected-targets ,
                                     expected-transient ,
-                                    redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f" ,
                                     standard-input ? null ,
                                     standard-output ,
                                     status
