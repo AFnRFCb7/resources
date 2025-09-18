@@ -48,25 +48,12 @@
                                             installPhase =
                                                 let
                                                     fixture =
-                                                        if builtins.typeOf resources-directory-fixture == "null" then
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "fixture" ;
-                                                                    runtimeInputs = [ ] ;
-                                                                    text = "" ;
-                                                                }
-                                                        else
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "fixture" ;
-                                                                    runtimeInputs = [ coreutils ] ;
-                                                                    text =
-                                                                        ''
-                                                                            mkdir --parents ${ resources-directory }
-                                                                            rm --recursive ${ resources-directory }
-                                                                            cp --recursive ${ resources-directory-fixture } ${ resources-directory }
-                                                                        '' ;
-                                                                } ;
+                                                        writeShellApplication
+                                                            {
+                                                                name = "fixture" ;
+                                                                runtimeInputs = [ coreutils ] ;
+                                                                text = if builtins.typeOf resources-directory-fixture == "null" then "" else resources-directory-fixture resources-directory ;
+                                                            } ;
                                                     subscribe =
                                                         writeShellApplication
                                                             {
