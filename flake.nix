@@ -91,7 +91,6 @@
                                                                                     sleep 1
                                                                                 done
                                                                                 subscribe &
-                                                                                sleep 1m
                                                                                 if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } > /build/standard-error )"
                                                                                 then
                                                                                     STATUS="$?"
