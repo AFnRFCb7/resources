@@ -29,7 +29,6 @@
                             check =
                                 {
                                     arguments ? [ ] ,
-                                    expected-hash ,
                                     expected-dependencies ,
                                     expected-index ,
                                     expected-originator-pid ,
@@ -222,7 +221,6 @@
                                                                                 JASH="\$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
                                                                                 EOF
                                                                                 EXPECTED_HASH="$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "e5f7b54d" }
-                                                                                # EXPECTED_HASH="${ expected-hash }"
                                                                                 OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
                                                                                 if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                 then
