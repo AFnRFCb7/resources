@@ -8,7 +8,6 @@
                         buildFHSUserEnv ,
                         channel ? "resource" ,
                         coreutils ,
-                        description ? null ,
                         findutils ,
                         flock ,
                         init ? null ,
@@ -30,11 +29,20 @@
                             check =
                                 {
                                     arguments ? [ ] ,
-                                    payload ,
+                                    expected-hash ,
+                                    expected-dependencies ,
+                                    expected-index ,
+                                    expected-originator-pid ,
+                                    expected-provenance ,
+                                    expected-standard-error ,
+                                    expected-standard-output ,
+                                    expected-status ,
+                                    expected-targets ,
+                                    expected-transient ,
                                     redacted ? "1f41874b0cedd39ac838e4ef32976598e2bec5b858e6c1400390821c99948e9e205cff9e245bc6a42d273742bb2c48b9338e7d7e0d38c09a9f3335412b97f02f" ,
                                     standard-input ? null ,
                                     standard-output ,
-                                    status ? 0
+                                    status
                                 } :
                                     mkDerivation
                                         {
@@ -62,7 +70,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "test" ;
-                                                                runtimeInputs = [ coreutils redis subscribe ] ;
+                                                                runtimeInputs = [ coreutils jq redis subscribe ] ;
                                                                 text =
                                                                     let
                                                                         standard-input_ =
@@ -117,12 +125,103 @@
                                                                                 do
                                                                                     redis-cli PUBLISH ${ channel } '{"test" : true}'
                                                                                 done
-                                                                                PAYLOAD="$( < /build/payload )" || ${ failures_ "a94f732b" }
-                                                                                if [[ "${ builtins.toJSON payload }" != "$PAYLOAD" ]]
+                                                                                EXPECTED_ARGUMENTS="$( jq --null-input '${ builtins.toJSON arguments }' )" || ${ failures_ "c0a73187" }
+                                                                                OBSERVED_ARGUMENTS="$( jq ".arguments" /build/payload )" || ${ failures_ "44440f2d" }
+                                                                                if [[ "$EXPECTED_ARGUMENTS" != "$OBSERVED_ARGUMENTS" ]]
                                                                                 then
-                                                                                    echo "We expected the payload to be ${ builtins.toJSON payload } but it was $PAYLOAD"
-                                                                                    cat ${ resources-directory }/debug
-                                                                                    ${ failures_ "2ce1635f" }
+                                                                                    echo "We expected the payload arguments to be $EXPECTED_ARGUMENTS but it was $OBSERVED_ARGUMENTS" >&2
+                                                                                    ${ failures_ "d3fb3e9b" }
+                                                                                fi
+                                                                                EXPECTED_DEPENDENCIES="$( jq --null-input '${ builtins.toJSON expected-dependencies }' )" || ${ failures_ "2c5c7ae4" }
+                                                                                OBSERVED_DEPENDENCIES="$( jq ".dependencies" /build/payload )" || ${ failures_ "8d52f2db" }
+                                                                                if [[ "$EXPECTED_DEPENDENCIES" != "$OBSERVED_DEPENDENCIES" ]]
+                                                                                then
+                                                                                    echo "We expected the payload dependencies to be $EXPECTED_DEPENDENCIES but it was $OBSERVED_DEPENDENCIES" >&2
+                                                                                    ${ failures_ "12073df9" }
+                                                                                fi
+                                                                                EXPECTED_DESCRIPTION="$( echo '${ builtins.toJSON description }' | jq '.' )" || ${ failures_ "f7b03966" }
+                                                                                OBSERVED_DESCRIPTION="$( jq ".description" /build/payload )" || ${ failures_ "4f4a2232" }
+                                                                                if [[ "$EXPECTED_DESCRIPTION" != "$OBSERVED_DESCRIPTION" ]]
+                                                                                then
+                                                                                    echo "We expected the payload description to be $EXPECTED_DESCRIPTION but it was $OBSERVED_DESCRIPTION" >&2
+                                                                                    ${ failures_ "4656e7d5" }
+                                                                                fi
+                                                                                EXPECTED_HASH="${ expected-hash }"
+                                                                                OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failures_ "a3fb933c" }
+                                                                                if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
+                                                                                then
+                                                                                    echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
+                                                                                    ${ failures_ "9c498620" }
+                                                                                fi
+                                                                                EXPECTED_INDEX="${ expected-index }"
+                                                                                OBSERVED_INDEX="$( jq --raw-output ".index" /build/payload )" || ${ failures_ "abdf3e25" }
+                                                                                if [[ "$EXPECTED_INDEX" != "$OBSERVED_INDEX" ]]
+                                                                                then
+                                                                                    echo "We expected the payload index to be $EXPECTED_INDEX but it was $OBSERVED_INDEX" >&2
+                                                                                    ${ failures_ "7a3de836" }
+                                                                                fi
+                                                                                EXPECTED_HAS_STANDARD_INPUT="${ if builtins.typeOf standard-input == "null" then "false" else "true" }"
+                                                                                OBSERVED_HAS_STANDARD_INPUT="$( jq --raw-output '."has-standard-input"' /build/payload )" || ${ failures_ "1de78471" }
+                                                                                if [[ "$EXPECTED_HAS_STANDARD_INPUT" != "$OBSERVED_HAS_STANDARD_INPUT" ]]
+                                                                                then
+                                                                                    echo "We expected the payload has-standard-input to be $EXPECTED_STANDARD_INPUT but it was $OBSERVED_STANDARD_INPUT" >&2
+                                                                                    ${ failures_ "89b51e3a" }
+                                                                                fi
+                                                                                EXPECTED_ORIGINATOR_PID="${ builtins.toString expected-originator-pid }"
+                                                                                OBSERVED_ORIGINATOR_PID="$( jq --raw-output '."originator-pid"' /build/payload )" || ${ failures_ "26e0cb2b" }
+                                                                                if [[ "$EXPECTED_ORIGINATOR_PID" != "$OBSERVED_ORIGINATOR_PID" ]]
+                                                                                then
+                                                                                    echo "We expected the payload originator-pid to be $EXPECTED_ORIGINATOR_PID but it was $OBSERVED_ORIGINATOR_PID" >&2
+                                                                                    ${ failures_ "db64a1c9" }
+                                                                                fi
+                                                                                EXPECTED_PROVENANCE="${ expected-provenance }"
+                                                                                OBSERVED_PROVENANCE="$( jq --raw-output ".provenance" /build/payload )" || ${ failures_ "26e0cb2b" }
+                                                                                if [[ "$EXPECTED_PROVENANCE" != "$OBSERVED_PROVENANCE" ]]
+                                                                                then
+                                                                                    echo "We expected the payload provenance to be $EXPECTED_PROVENANCE but it was $OBSERVED_PROVENANCE" >&2
+                                                                                    ${ failures_ "c07c110c" }
+                                                                                fi
+                                                                                EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON targets }' )" || ${ failures_ "e9fa75bf" }
+                                                                                OBSERVED_TARGETS="$( jq ".targets" /build/payload )" || ${ failures_ "ad928300" }
+                                                                                if [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
+                                                                                then
+                                                                                    echo "We expected the payload targets to be $EXPECTED_TARGETS but it was $OBSERVED_TARGETS" >&2
+                                                                                    ${ failures_ "85ad88e4" }
+                                                                                fi
+                                                                                EXPECTED_STANDARD_ERROR="${ expected-standard-error }"
+                                                                                OBSERVED_STANDARD_ERROR="$( jq --raw-output '."standard-error"' /build/payload )" || ${ failures_ "714592cd" }
+                                                                                if [[ "$EXPECTED_STANDARD_ERROR" != "$OBSERVED_STANDARD_ERROR" ]]
+                                                                                then
+                                                                                    echo "We expected the payload standard-error to be $EXPECTED_STANDARD_ERROR but it was $OBSERVED_STANDARD_ERROR" >&2
+                                                                                    ${ failures_ "dcea8e50" }
+                                                                                fi
+                                                                                EXPECTED_STANDARD_OUTPUT="${ expected-standard-output }"
+                                                                                OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ failures_ "714592cd" }
+                                                                                if [[ "$EXPECTED_STANDARD_OUTPUT" != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                then
+                                                                                    echo "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OBSERVED_STANDARD_OUTPUT" >&2
+                                                                                    ${ failures_ "d1054818" }
+                                                                                fi
+                                                                                EXPECTED_STATUS="${ builtins.toString expected-status }"
+                                                                                OBSERVED_STATUS="$( jq --raw-output ".status" /build/payload )" || ${ failures_ "714592cd" }
+                                                                                if [[ "$EXPECTED_STATUS" != "$OBSERVED_STATUS" ]]
+                                                                                then
+                                                                                    echo "We expected the payload status to be $EXPECTED_STATUS but it was $OBSERVED_STATUS" >&2
+                                                                                    ${ failures_ "d1054818" }
+                                                                                fi
+                                                                                EXPECTED_TRANSIENT="${ expected-transient }"
+                                                                                OBSERVED_TRANSIENT="$( jq --raw-output ".transient" /build/payload )" || ${ failures_ "85ad88e4" }
+                                                                                if [[ "$EXPECTED_TRANSIENT" != "$OBSERVED_TRANSIENT" ]]
+                                                                                then
+                                                                                    echo "We expected the payload transient to be $EXPECTED_TRANSIENT but it was $OBSERVED_TRANSIENT" >&2
+                                                                                    ${ failures_ "e6815070" }
+                                                                                fi
+                                                                                EXPECTED_KEYS="$( echo '${ builtins.toJSON [ "arguments" "dependencies" "description" "has-standard-input" "hash" "index" "originator-pid" "provenance" "standard-error" "standard-input" "standard-output" "status" "targets" "transient" ] }' | jq --raw-output "." )" || ${ failures_ "ecaa9ff9" }
+                                                                                OBSERVED_KEYS="$( jq --raw-output "[keys[]]" /build/payload )" || ${ failures_ "04699ea8" }
+                                                                                if [[ "$EXPECTED_KEYS" != "$OBSERVED_KEYS" ]]
+                                                                                then
+                                                                                    echo "We expected the payload keys to be $EXPECTED_KEYS but it was $OBSERVED_KEYS" >&2
+                                                                                    ${ failures_ "d68a978e" }
                                                                                 fi
                                                                             '' ;
                                                             } ;
@@ -130,6 +229,23 @@
                                             name = "check" ;
                                             src = ./. ;
                                         } ;
+                            description =
+                                let
+                                    seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
+                                    in
+                                        visitor.lib.implementation
+                                            {
+                                                bool = seed ;
+                                                float = seed ;
+                                                int = seed ;
+                                                lambda = seed ;
+                                                list = seed ;
+                                                null = seed ;
+                                                path = seed ;
+                                                set = seed ;
+                                                string = seed ;
+                                            }
+                                            primary ;
                             failures_ =
                                 unique :
                                     let
@@ -168,23 +284,6 @@
                                         in "exit ${ builtins.toString ( reduced + 10 ) }" ;
                             implementation =
                                 let
-                                    description =
-                                        let
-                                            seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
-                                            in
-                                                visitor.lib.implementation
-                                                    {
-                                                        bool = seed ;
-                                                        float = seed ;
-                                                        int = seed ;
-                                                        lambda = seed ;
-                                                        list = seed ;
-                                                        null = seed ;
-                                                        path = seed ;
-                                                        set = seed ;
-                                                        string = seed ;
-                                                    }
-                                                    primary ;
                                     init-application =
                                         if builtins.typeOf init == "null" then null
                                         else
@@ -207,11 +306,8 @@
                                                 runtimeInputs = [ coreutils jq redis ] ;
                                                 text =
                                                     ''
-                                                        echo "22b880d3-4d59-4763-936e-e6bec70cf03d" >> ${ resources-directory }/debug
-                                                        # redis-cli PUBLISH "${ channel }" '{ "test" : "no standard-input" }'
-                                                        JSON="$( jq --null-input '{ "description" : "description" }' )" || ${ failures_ "7b8f1293" }
+                                                        JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failures_ "7b8f1293" }
                                                         redis-cli PUBLISH "${ channel }" "$JSON"
-                                                        # cat | jq '. + { description : ${ builtins.toJSON description } }' | redis-cli PUBLISH "${ channel }"
                                                     '' ;
                                             } ;
                                     setup =
@@ -304,6 +400,7 @@
                                                             fi
                                                             mkdir --parents ${ resources-directory }
                                                             ARGUMENTS=( "$@" )
+                                                            ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . )"
                                                             TRANSIENT=${ transient_ }
                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
                                                             export ORIGINATOR_PID
@@ -373,14 +470,41 @@
                                                                 export STANDARD_ERROR
                                                                 STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failures_ "d1b1f5be" }
                                                                 export STANDARD_OUTPUT
+                                                                DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
+                                                                TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                 then
                                                                     # shellcheck disable=SC2016
                                                                     jq \
                                                                         --null-input \
+                                                                        --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                        --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                        --arg HASH "$HASH" \
+                                                                        --arg INDEX "$INDEX" \
                                                                         --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                        --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                        --arg PROVENANCE "$PROVENANCE" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
+                                                                        --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                        --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                        --arg STATUS "$STATUS" \
+                                                                        --argjson TARGETS "$TARGETS" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
                                                                         '{
-                                                                            "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                            "arguments" : $ARGUMENTS ,
+                                                                            "dependencies" : $DEPENDENCIES ,
+                                                                            "hash" : $HASH ,
+                                                                            "index" : $INDEX ,
+                                                                            "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                            "provenance" : $PROVENANCE ,
+                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                            "standard-input" : $STANDARD_INPUT ,
+                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                            "status" : $STATUS ,
+                                                                            "targets" : $TARGETS ,
+                                                                            "transient" : $TRANSIENT
                                                                         }' | publish
                                                                     echo -n "$MOUNT"
                                                                 else
