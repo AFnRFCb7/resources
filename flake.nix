@@ -99,7 +99,7 @@
                                                                                     sleep 0
                                                                                 done
                                                                                 subscribe &
-                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } > /build/standard-error )"
+                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } 2> /build/standard-error )"
                                                                                 then
                                                                                     STATUS="$?"
                                                                                 else
@@ -108,6 +108,7 @@
                                                                                 if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                 then
                                                                                     echo "We expected the standard output to be ${ standard-output } but it was $RESOURCE" >&2
+                                                                                    cat ${ resources-directory }/debug >&2
                                                                                     ${ failures_ "c727ba4d" }
                                                                                 fi
                                                                                 if [[ "${ builtins.toString status }" != "$STATUS" ]]
@@ -120,7 +121,7 @@
                                                                                     echo "We expected the standard error file to exist" >&2
                                                                                     ${ failures_ "da8b2593" }
                                                                                 fi
-                                                                                if [[ ! -s /build/standard-error ]]
+                                                                                if [[ -s /build/standard-error ]]
                                                                                 then
                                                                                     STANDARD_ERROR="$( < /build/standard-error )" || ${ failures_ "1c4d6ced" }
                                                                                     echo "We expected the standard error file to be empty but it was $STANDARD_ERROR" >&2
@@ -487,7 +488,7 @@
                                                                 TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
                                                                 if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                 then
-                                                                    # COVERAGE 9fa46607359f0135bc334656397596a9d53760152b243a7f7781e0e006184b55ce7e77716b1477273b9d2139ee67b1f88b6b8ae3f728ba7bed7cee6cee8d6185
+                                                                    echo "ba5bfd7d-d507-4c8d-a18c-79d22d6e5dfd MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                     # shellcheck disable=SC2016
                                                                     jq \
                                                                         --null-input \
@@ -519,8 +520,10 @@
                                                                             "status" : $STATUS ,
                                                                             "targets" : $TARGETS ,
                                                                             "transient" : $TRANSIENT
-                                                                        }' | publish
+                                                                        }' | publish > /dev/null 2>&1
+                                                                    echo "aafcf4c2-2303-41ad-a3df-ee3daded2553 MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                     echo -n "$MOUNT"
+                                                                    echo "aa84788f-590a-4251-9c4f-ad68148a7f5b MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                 else
                                                                     # COVERAGE cc71c31856d494c0fa6298238c3a88465a027005abb5a35f1adf0d1f5f70bd127dd0fc8c7f3143403fe2707aec2aa596424388676d733a8999ed14274bbb7257 when the targets do not match
                                                                     # COVERAGE b6685e582f11196ead4fa3459fd16d9111f0fbba91c26c7e8d72357d1a363e9cb2a8f5b002ca50b0a6227082922c66bebbc0baf07bb8abec3bc72e4faed24410 when there is standard error
