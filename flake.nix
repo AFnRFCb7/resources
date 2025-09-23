@@ -339,7 +339,7 @@
                                                                 STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "7f77cdad" }
                                                             else
                                                                 HAS_STANDARD_INPUT=true
-                                                                timeout 1m cat > "$STANDARD_INPUT_FILE"
+                                                                cat <&0 > "$STANDARD_INPUT_FILE"
                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "fbb0e2f8" }
                                                             fi
                                                             TRANSIENT=${ transient_ }
@@ -409,14 +409,14 @@
                                                                 STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "f66f966d" }
                                                                 export STANDARD_INPUT_FILE
                                                                 HAS_STANDARD_INPUT=true
-                                                                cat > "$STANDARD_INPUT_FILE"
+                                                                cat <&0 > "$STANDARD_INPUT_FILE"
                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
                                                             fi
                                                             mkdir --parents ${ resources-directory }
                                                             ARGUMENTS=( "$@" )
                                                             ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . )"
                                                             TRANSIENT=${ transient_ }
-                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | awk '{print $1}' )" || ${ failures_ "833fbd3f" }
+                                                            ORIGINATOR_PID="$(ps -o ppid= -p "$PPID" | tr -d '[:space:]')" || ${ failures_ "833fbd3f" }
                                                             export ORIGINATOR_PID
                                                             HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failures_ "7849a979" }
                                                             export HASH
