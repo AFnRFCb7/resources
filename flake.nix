@@ -311,7 +311,7 @@
                                                             "--tmpfs /scratch"
                                                         ] ;
                                                     name = "init-application" ;
-                                                    runScript = init "${ resources-directory }/mounts/$HASH" ;
+                                                    runScript = init "${ resources-directory }/mounts/$INDEX" ;
                                                 } ;
                                     publish =
                                         writeShellApplication
