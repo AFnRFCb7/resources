@@ -321,7 +321,7 @@
                                                 text =
                                                     ''
                                                         JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failures_ "7b8f1293" }
-                                                        redis-cli PUBLISH "${ channel }" "$JSON"
+                                                        redis-cli PUBLISH "${ channel }" "$JSON" 2> /dev/null || true
                                                     '' ;
                                             } ;
                                     setup =
@@ -369,7 +369,7 @@
                                                                     --null-input \
                                                                     --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                     '{
-                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                        "has-standard-input" : $HAS_STANDARD_INPUT }
                                                                     }' | publish
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
@@ -387,8 +387,9 @@
                                                                     --null-input \
                                                                     --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                     '{
-                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
+                                                                        "has-standard-input" : $HAS_STANDARD_INPUT }
                                                                     }' | publish
+                                                                mkdir --parents ${ resources-directory }/canonical
                                                                 ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                 echo -n "$MOUNT"
                                                             fi
@@ -435,13 +436,35 @@
                                                                 INDEX="$( basename "$MOUNT" )" || ${ failures_ "277afc07" }
                                                                 export INDEX
                                                                 export PROVENANCE=cached
+                                                                DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
+                                                                TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failures_ "54d472fb" }
                                                                 mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                jq \
-                                                                    --null-input \
-                                                                    --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                    '{
-                                                                        "has-standard-input : $HAS_STANDARD_INPUT }"
-                                                                    }' | publish
+                                                                    # shellcheck disable=SC2016
+                                                                    jq \
+                                                                        --null-input \
+                                                                        --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                        --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                        --arg HASH "$HASH" \
+                                                                        --arg INDEX "$INDEX" \
+                                                                        --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                        --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                        --arg PROVENANCE "$PROVENANCE" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
+                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                        --argjson TARGETS "$TARGETS" \
+                                                                        --arg TRANSIENT "$TRANSIENT" \
+                                                                        '{
+                                                                            "arguments" : $ARGUMENTS ,
+                                                                            "dependencies" : $DEPENDENCIES ,
+                                                                            "hash" : $HASH ,
+                                                                            "index" : $INDEX ,
+                                                                            "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                            "provenance" : $PROVENANCE ,
+                                                                            "standard-input" : $STANDARD_INPUT ,
+                                                                            "targets" : $TARGETS ,
+                                                                            "transient" : $TRANSIENT
+                                                                        }' | publish > /dev/null 2>&1
                                                                 echo -n "$MOUNT"
                                                             else
                                                                 INDEX="$( sequential )" || ${ failures_ "cab66847" }
@@ -522,6 +545,8 @@
                                                                             "transient" : $TRANSIENT
                                                                         }' | publish > /dev/null 2>&1
                                                                     echo "aafcf4c2-2303-41ad-a3df-ee3daded2553 MOUNT=$MOUNT" >> ${ resources-directory }/debug
+                                                                    mkdir --parents ${ resources-directory }/canonical
+                                                                    ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                     echo -n "$MOUNT"
                                                                     echo "aa84788f-590a-4251-9c4f-ad68148a7f5b MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                 else
