@@ -617,7 +617,10 @@
                                                     bool = path : value : if value then "$( sequential ) || ${ failures_ "808f8e2c" }" else "-1" ;
                                                 }
                                                 transient ;
-                                    in "${ setup }/bin/setup" ;
+                                    in
+                                        {
+                                            setup = "${ setup }/bin/setup" ;
+                                        } ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
