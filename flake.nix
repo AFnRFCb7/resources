@@ -23,17 +23,18 @@
                                                 runtimeInputs = [ coreutils redis yq-go ] ;
                                                 text =
                                                     ''
-                                                        redis-cli --raw SUBSCRIBE "${ channel }" | {
-                                                            read -r _     # skip "subscribe"
-                                                            read -r _     # skip channel name
-                                                            read -r _     # skip
-                                                            read -r _     # skip
-                                                            read -r _
-                                                            read -r PAYLOAD
-                                                            mkdir --parents ${ resources-directory }/log
-                                                            exec 203> ${ resources-directory }/logs/lock
-                                                            flock -x 203
-                                                            echo "$PAYLOAD" | yq --prettyPrint "[.]" >> ${ resources-directory }/log.yaml
+                                                        redis-cli --raw SUBSCRIBE "${channel}" | {
+                                                            # Skip the first subscription confirmation
+                                                            read -r _     # "subscribe"
+                                                            read -r _     # channel name
+                                                            read -r _     # number of subscriptions
+                                                            while read -r PAYLOAD
+                                                            do
+                                                                mkdir --parents ${ resources-directory }/log
+                                                                exec 203> ${ resources-directory }/logs/lock
+                                                                flock -x 203
+                                                                echo "$PAYLOAD" | yq --prettyPrint "[.]" >> ${resources-directory}/log.yaml
+                                                            done
                                                         }
                                                     '' ;
 		                                    } ;
@@ -99,10 +100,6 @@
                                                                                             cat /build/test/expected >&2
                                                                                             echo but it was
                                                                                             cat ${ resources-directory }/logs/log.yaml >&2
-                                                                                            ls -lah ${ implementation }
-                                                                                            ls -lah ${ implementation }/bin
-                                                                                            ls -lah ${ implementation }/bin/event-listener
-                                                                                            cat ${ implementation }/bin/event-listener
                                                                                             exit 64
                                                                                         fi
                                                                                 '' ;
