@@ -5,6 +5,99 @@
 		    {
 		        lib =
 		            {
+		                event-listener =
+		                    {
+		                        channel ? resource ,
+		                        coreutils ,
+		                        flock ,
+		                        redis ,
+		                        resources-directory ,
+		                        yq-go
+		                    } :
+                                let
+		                            implementation =
+		                                writeShellApplication
+		                                    {
+		                                        name = "event-listener" ;
+                                                runtimeInputs = [ coreutils redis yq-go ] ;
+                                                text =
+                                                    ''
+                                                        redis-cli --raw SUBSCRIBE "${ channel }" | {
+                                                            read -r _     # skip "subscribe"
+                                                            read -r _     # skip channel name
+                                                            read -r _     # skip
+                                                            read -r _     # skip
+                                                            read -r _
+                                                            read -r PAYLOAD
+                                                            mkdir --parents ${ resources-directory }/log
+                                                            exec 203> ${ resources-directory }/logs/lock
+                                                            flock -x 203
+                                                            echo "$PAYLOAD" | yq --prettyPrint "[.]" >> "${ resources-directory }/log.yaml
+                                                    '' ;
+		                                    } ;
+                                    in
+                                        {
+                                            check =
+                                                {
+                                                    log-file ,
+                                                    message
+                                                } :
+                                                    mkDerivation
+                                                        {
+                                                            installPhase =
+                                                                let
+                                                                    test =
+                                                                        writeShellApplication
+                                                                            {
+                                                                                name = "test" ;
+                                                                                runtimeInputs = [ coreutils redis yq-g ] ;
+                                                                                text =
+                                                                                    ''
+                                                                                        OUT="$1"
+                                                                                        touch "$OUT"
+                                                                                        redis-server --dir /build/redis --daemonize yes
+                                                                                        mkdir --parents ${ resources-directory }/logs
+                                                                                        cat ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } | yq --prettyPrint > ${ resources-directory }/logs/log.yaml
+                                                                                        ${ redis }/bin/redis PUBLISH ${ channel } ${ builtins.toJSON message }
+                                                                                        mkdir --parents /build/test
+                                                                                        EXPECTED="$( cat ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } | yq --prettyPrint )" || exit 64
+                                                                                        ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
+                                                                                        exec 203> ${ resources-directory }/logs/lock
+                                                                                        flock -x 203
+                                                                                        OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
+                                                                                        if [[ "$EXPECTED" != "$OBSERVED" ]]
+                                                                                        then
+                                                                                            echo "We expected the log file to be:  $EXPECTED but we observed $OBSERVED" >&2
+                                                                                            exit 64
+                                                                                        fi
+                                                                                        if [[ ! -f /build/test/standard-output ]]
+                                                                                        then
+                                                                                            echo We expected a standard output file >&2
+                                                                                            exit 64
+                                                                                        elif [[ -s /build/test/standard-output ]]
+                                                                                        then
+                                                                                            echo We expected a BLANK standard output >&2
+                                                                                            exit 64
+                                                                                        fi
+                                                                                        if [[ ! -f /build/test/standard-error ]]
+                                                                                        then
+                                                                                            echo We expected a standard error file >&2
+                                                                                            exit 64
+                                                                                        elif [[ -s /build/test/standard-error ]]
+                                                                                        then
+                                                                                            echo We expected a BLANK standard error >&2
+                                                                                            exit 64
+                                                                                        fi
+                                                                                '' ;
+                                                                            } ;
+                                                                    in
+                                                                        ''
+                                                                        '' ;
+                                                            name = "check" ;
+                                                            src = ./. ;
+                                                        } ;
+                                            implementation = implementation ;
+                                        } ;
 		                setup =
                             {
                                 buildFHSUserEnv ,
