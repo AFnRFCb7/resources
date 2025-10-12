@@ -72,16 +72,6 @@
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
-                                                                                        EXPECTED="$( < /build/test/expected )" || exit 64
-                                                                                        OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
-                                                                                        if [[ "$EXPECTED" != "$OBSERVED" ]]
-                                                                                        then
-                                                                                            echo We expected the log file to be >&2
-                                                                                            cat /build/test/expected >&2
-                                                                                            echo but it was
-                                                                                            cat ${ resources-directory }/logs/log.yaml >&2
-                                                                                            exit 64
-                                                                                        fi
                                                                                         if [[ ! -f /build/test/standard-output ]]
                                                                                         then
                                                                                             echo We expected a standard output file >&2
@@ -98,6 +88,16 @@
                                                                                         elif [[ -s /build/test/standard-error ]]
                                                                                         then
                                                                                             echo We expected a BLANK standard error >&2
+                                                                                            exit 64
+                                                                                        fi
+                                                                                        EXPECTED="$( < /build/test/expected )" || exit 64
+                                                                                        OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
+                                                                                        if [[ "$EXPECTED" != "$OBSERVED" ]]
+                                                                                        then
+                                                                                            echo We expected the log file to be >&2
+                                                                                            cat /build/test/expected >&2
+                                                                                            echo but it was
+                                                                                            cat ${ resources-directory }/logs/log.yaml >&2
                                                                                             exit 64
                                                                                         fi
                                                                                 '' ;
