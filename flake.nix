@@ -68,7 +68,7 @@
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
                                                                                         redis-cli PUBLISH ${ channel } ${ builtins.toJSON message }
                                                                                         mkdir --parents /build/test
-                                                                                        yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/expected
+                                                                                        yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/test/expected
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
