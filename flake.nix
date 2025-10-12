@@ -7,7 +7,7 @@
 		            {
 		                event-listener =
 		                    {
-		                        channel ? resource ,
+		                        channel ? "resource" ,
 		                        coreutils ,
 		                        flock ,
 		                        redis ,
