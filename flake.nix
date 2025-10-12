@@ -76,7 +76,10 @@
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
                                                                                         then
-                                                                                            echo "We expected the log file to be:  $EXPECTED but we observed $OBSERVED" >&2
+                                                                                            echo We expected the log file to be >&2
+                                                                                            cat /build/test/expected >&2
+                                                                                            echo but it was
+                                                                                            cat ${ resources-directory }/logs/log.yaml >&2
                                                                                             exit 64
                                                                                         fi
                                                                                         if [[ ! -f /build/test/standard-output ]]
