@@ -63,11 +63,17 @@
                                                                                         cat ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } | yq --prettyPrint > ${ resources-directory }/logs/log.yaml
                                                                                         ${ redis }/bin/redis PUBLISH ${ channel } ${ builtins.toJSON message }
                                                                                         mkdir --parents /build/test
-                                                                                        EXPECTED="$( cat ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } | yq --prettyPrint )" || exit 64
+                                                                                        cat ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } | yq --prettyPrint > /build/expected
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
+                                                                                        EXPECTED="$( < /build/test/expected )" || exit 64
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
+                                                                                        if true
+                                                                                        then
+                                                                                            echo WTF >&1
+                                                                                            exit 64
+                                                                                        fi
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
                                                                                         then
                                                                                             echo "We expected the log file to be:  $EXPECTED but we observed $OBSERVED" >&2
