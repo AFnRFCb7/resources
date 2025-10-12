@@ -74,11 +74,6 @@
                                                                                         flock -x 203
                                                                                         EXPECTED="$( < /build/test/expected )" || exit 64
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
-                                                                                        if true
-                                                                                        then
-                                                                                            echo WTF >&2
-                                                                                            exit 64
-                                                                                        fi
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
                                                                                         then
                                                                                             echo "We expected the log file to be:  $EXPECTED but we observed $OBSERVED" >&2
