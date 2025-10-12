@@ -49,7 +49,7 @@
                                                         {
                                                             installPhase =
                                                                 let
-                                                                    test =
+                                                                    test2 =
                                                                         writeShellApplication
                                                                             {
                                                                                 name = "test" ;
@@ -105,7 +105,7 @@
                                                                             } ;
                                                                     in
                                                                         ''
-                                                                            ${ writeShellApplication "test" test }/bin/test $out
+                                                                            ${ writeShellApplication "test" test2 }/bin/test $out
                                                                         '' ;
                                                             name = "check" ;
                                                             src = ./. ;
