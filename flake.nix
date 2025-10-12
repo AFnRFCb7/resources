@@ -59,6 +59,10 @@
                                                                                         OUT="$1"
                                                                                         touch "$OUT"
                                                                                         redis-server --dir /build/redis --daemonize yes
+                                                                                        while ! redis-cli ping
+                                                                                        do
+                                                                                            sleep 0
+                                                                                        done
                                                                                         mkdir --parents ${ resources-directory }/logs
                                                                                         cat ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } | yq --prettyPrint > ${ resources-directory }/logs/log.yaml
                                                                                         ${ redis }/bin/redis PUBLISH ${ channel } ${ builtins.toJSON message }
@@ -71,7 +75,7 @@
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
                                                                                         if true
                                                                                         then
-                                                                                            echo WTF >&1
+                                                                                            echo WTF >&2
                                                                                             exit 64
                                                                                         fi
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
