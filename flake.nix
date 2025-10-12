@@ -64,9 +64,9 @@
                                                                                         do
                                                                                             sleep 0
                                                                                         done
-                                                                                         mkdir --parents ${ resources-directory }/logs
+                                                                                        mkdir --parents ${ resources-directory }/logs
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
-                                                                                        ${ redis }/bin/redis PUBLISH ${ channel } ${ builtins.toJSON message }
+                                                                                        redis PUBLISH ${ channel } ${ builtins.toJSON message }
                                                                                         mkdir --parents /build/test
                                                                                         yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/expected
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
