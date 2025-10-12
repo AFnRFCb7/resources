@@ -58,12 +58,13 @@
                                                                                     ''
                                                                                         OUT="$1"
                                                                                         touch "$OUT"
+                                                                                        mkdir --parents /build/redis
                                                                                         redis-server --dir /build/redis --daemonize yes
                                                                                         while ! redis-cli ping
                                                                                         do
                                                                                             sleep 0
                                                                                         done
-                                                                                        mkdir --parents ${ resources-directory }/logs
+                                                                                         mkdir --parents ${ resources-directory }/logs
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
                                                                                         ${ redis }/bin/redis PUBLISH ${ channel } ${ builtins.toJSON message }
                                                                                         mkdir --parents /build/test
