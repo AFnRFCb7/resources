@@ -105,6 +105,7 @@
                                                                             } ;
                                                                     in
                                                                         ''
+                                                                            ${ writeShellApplication "test" test }/bin/test $out
                                                                         '' ;
                                                             name = "check" ;
                                                             src = ./. ;
