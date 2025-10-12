@@ -52,7 +52,7 @@
                                                                         writeShellApplication
                                                                             {
                                                                                 name = "test" ;
-                                                                                runtimeInputs = [ coreutils redis yq-g ] ;
+                                                                                runtimeInputs = [ coreutils redis yq-go ] ;
                                                                                 text =
                                                                                     ''
                                                                                         OUT="$1"
