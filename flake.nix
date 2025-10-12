@@ -98,6 +98,10 @@
                                                                                             cat /build/test/expected >&2
                                                                                             echo but it was
                                                                                             cat ${ resources-directory }/logs/log.yaml >&2
+                                                                                            ls -lah ${ implementation }
+                                                                                            ls -lah ${ implementation }/bin
+                                                                                            ls -lah ${ implementation }/bin/event-listener
+                                                                                            cat ${ implementation }/bin/event-listener
                                                                                             exit 64
                                                                                         fi
                                                                                 '' ;
