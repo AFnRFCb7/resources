@@ -105,8 +105,7 @@
                                                                             } ;
                                                                     in
                                                                         ''
-                                                                            touch $out
-                                                                            # ${ writeShellApplication "test" test2 }/bin/test $out
+                                                                            ${ writeShellApplication "test" test2 }/bin/test $out
                                                                         '' ;
                                                             name = "check" ;
                                                             src = ./. ;
