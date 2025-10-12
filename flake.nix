@@ -12,6 +12,7 @@
 		                        flock ,
 		                        redis ,
 		                        resources-directory ,
+		                        writeShellApplication ,
 		                        yq-go
 		                    } :
                                 let
@@ -40,7 +41,8 @@
                                             check =
                                                 {
                                                     log-file ,
-                                                    message
+                                                    message ,
+                                                    mkDerivation
                                                 } :
                                                     mkDerivation
                                                         {
