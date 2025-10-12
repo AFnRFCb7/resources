@@ -23,17 +23,17 @@
                                                 runtimeInputs = [ coreutils redis yq-go ] ;
                                                 text =
                                                     ''
+                                                        exec 203> ${ resources-directory }/logs/lock
                                                         redis-cli --raw SUBSCRIBE "${channel}" | {
-                                                            # Skip the first subscription confirmation
                                                             read -r _     # "subscribe"
                                                             read -r _     # channel name
                                                             read -r _     # number of subscriptions
                                                             while read -r PAYLOAD
                                                             do
                                                                 mkdir --parents ${ resources-directory }/log
-                                                                exec 203> ${ resources-directory }/logs/lock
                                                                 flock -x 203
                                                                 echo "$PAYLOAD" | yq --prettyPrint "[.]" >> ${resources-directory}/log.yaml
+                                                                flock -u 203
                                                             done
                                                         }
                                                     '' ;
