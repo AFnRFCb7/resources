@@ -34,6 +34,7 @@
                                                             exec 203> ${ resources-directory }/logs/lock
                                                             flock -x 203
                                                             echo "$PAYLOAD" | yq --prettyPrint "[.]" >> "${ resources-directory }/log.yaml
+                                                        }
                                                     '' ;
 		                                    } ;
                                     in
