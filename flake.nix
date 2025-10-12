@@ -70,6 +70,7 @@
                                                                                         mkdir --parents /build/test
                                                                                         yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/test/expected
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
+                                                                                        sleep 10
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
                                                                                         if [[ ! -f /build/test/standard-output ]]
