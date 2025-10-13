@@ -69,7 +69,7 @@
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
                                                                                         mkdir --parents /build/test
                                                                                         yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/test/expected
-                                                                                        echo f9162b95-def7-4a53-8f48-bbc740938f8e
+                                                                                        echo f9162b95-def7-4a53-8f48-bbc740938f8e ${ implementation }
                                                                                         echo 38d4bb90-ef15-44d5-967b-7487a23a3ae8 >&2
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
                                                                                         echo fd13d69b-5a85-4986-a7fd-a291fec46b82
