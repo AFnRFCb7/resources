@@ -69,6 +69,8 @@
                                                                                         echo 7ee0cf02-5cc2-4daf-9715-c1f9dbf4fcec >&2
                                                                                         echo d29b98a1-3fdb-4d9d-b7de-3e55523ca8c3 >&2
                                                                                         redis-cli PUBLISH ${ channel } ${ builtins.toJSON message }
+                                                                                        echo 6b3e4a06-1392-4f98-a265-e6ced2149c9a
+                                                                                        sleep 10
                                                                                         echo 7b6f3afa-f212-4435-afb7-217f0afc4d8e >&2
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
