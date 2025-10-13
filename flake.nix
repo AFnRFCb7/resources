@@ -26,7 +26,7 @@
                                                         mkdir --parents ${ resources-directory }/logs
                                                         exec 203> ${ resources-directory }/logs/lock
                                                         redis-cli --raw SUBSCRIBE "resource" | tail -n +4 | while read -r PAYLOAD; do
-                                                            flock -x 203 -c "echo \"$PAYLOAD\" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml"
+                                                            echo "$PAYLOAD" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
                                                         done
                                                     '' ;
 		                                    } ;
