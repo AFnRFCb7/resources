@@ -24,9 +24,13 @@
                                                 text =
                                                     ''
                                                         mkdir --parents ${ resources-directory }/logs
-                                                        exec 203> ${ resources-directory }/logs/lock
-                                                        redis-cli --raw SUBSCRIBE "resource" | tail -n +4 | while read -r PAYLOAD; do
-                                                            echo "$PAYLOAD" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
+                                                        # exec 203> /build/resources/logs/lock
+                                                        redis-cli --raw SUBSCRIBE "resource" | while read -r type && read -r channel && read -r payload
+                                                        do
+                                                            if [[ "$type" == "message" ]]
+                                                            then
+                                                                echo "$payload" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml"
+                                                            fi
                                                         done
                                                     '' ;
 		                                    } ;
