@@ -771,7 +771,7 @@
                                                             text =
                                                                 ''
                                                                     RUNTIME_ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq -R . | jq -s . )" || exit 64
-                                                                    yq --prettyPrint "{ \"compile-time-arguments\" : ${ builtins.toJSON compile-time-arguments } }"
+                                                                    yq --prettyPrint "{ \"compile-time-arguments\" : ${ builtins.replaceStrings [ "\"" ] [ "\\\"" ] ( builtins.toJSON compile-time-arguments ) } , \"runtime-arguments\" : \"$RUNTIME_ARGUMENTS_JSON\" }"
                                                                     exit 64
                                                                 '' ;
                                                         } ;
