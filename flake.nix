@@ -771,7 +771,7 @@
                                                             text =
                                                                 ''
                                                                     RUNTIME_ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq -R . | jq -s . )" || exit 64
-                                                                    yq --prettyPrint "{ \"compile-time-arguments\" : \"${ builtins.replaceStrings [ "\"" ] [ "\\\"" ] ( builtins.replaceStrings [ "\"" ] [ "\\\"" ] ( builtins.toJSON compile-time-arguments ) ) }\" , \"runtime-arguments\" : $RUNTIME_ARGUMENTS_JSON }"
+                                                                    yq --prettyPrint "{ \"compile-time-arguments\" : \"${ builtins.replaceStrings [ "\"" ] [ "\\\"" ] ( builtins.replaceStrings [ "\"" ] [ "\\\"" ] ( builtins.toJSON compile-time-arguments ) ) }\""
                                                                     exit 64
                                                                 '' ;
                                                         } ;
@@ -808,7 +808,7 @@
                                                                                                     echo "We expected no standard output but we got $STANDARD_OUTPUT" >&2
                                                                                                     exit 64
                                                                                                 fi
-                                                                                                EXPECTED_STANDARD_ERROR="$( yq --null-input --prettyPrint "{ \"compile-time-arguments\" : ${ builtins.toJSON compile-time-arguments }, \"run-time-arguments\" : ${ builtins.toJSON run-time-arguments } " )" || exit 64
+                                                                                                EXPECTED_STANDARD_ERROR="$( yq --null-input --prettyPrint "{ \"compile-time-arguments\" : ${ builtins.toJSON compile-time-arguments }" )" || exit 64
                                                                                                 OBSERVED_STANDARD_ERROR="$( < /build/test/standard-error" )" || exit 64
                                                                                                 if [[ "$EXPECTED_STANDARD_ERROR" != "$OBSERVED_STANDARD_ERROR" ]]
                                                                                                 then
