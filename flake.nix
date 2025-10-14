@@ -25,11 +25,11 @@
                                                     ''
                                                         mkdir --parents ${ resources-directory }/logs
                                                         # exec 203> /build/resources/logs/lock
-                                                        redis-cli --raw SUBSCRIBE "resource" | while read -r type && read -r channel && read -r payload
+                                                        redis-cli --raw SUBSCRIBE "resource" | while read -r TYPE && read -r CHANNEL && read -r PAYLOAD
                                                         do
-                                                            if [[ "$type" == "message" ]]
+                                                            if [[ "$TYPE" == "message" ]] && [[ "$CHANNEL" == "${ channel }" ]]
                                                             then
-                                                                echo "$payload" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
+                                                                echo "$PAYLOAD" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
                                                             fi
                                                         done
                                                     '' ;
