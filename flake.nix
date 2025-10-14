@@ -61,20 +61,12 @@
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
                                                                                         mkdir --parents /build/test
                                                                                         yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/test/expected
-                                                                                        echo f9162b95-def7-4a53-8f48-bbc740938f8e ${ implementation }
-                                                                                        echo 38d4bb90-ef15-44d5-967b-7487a23a3ae8 >&2
                                                                                         ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
-                                                                                        echo fd13d69b-5a85-4986-a7fd-a291fec46b82
                                                                                         sleep 10
-                                                                                        echo 7ee0cf02-5cc2-4daf-9715-c1f9dbf4fcec >&2
-                                                                                        echo d29b98a1-3fdb-4d9d-b7de-3e55523ca8c3 >&2
                                                                                         redis-cli PUBLISH ${ channel } ${ builtins.toJSON message }
-                                                                                        echo 6b3e4a06-1392-4f98-a265-e6ced2149c9a
                                                                                         sleep 10
-                                                                                        echo 7b6f3afa-f212-4435-afb7-217f0afc4d8e >&2
                                                                                         exec 203> ${ resources-directory }/logs/lock
                                                                                         flock -x 203
-                                                                                        echo e6e3812b-f511-47c2-ac06-d75de0257adb >&2
                                                                                         if [[ ! -f /build/test/standard-output ]]
                                                                                         then
                                                                                             echo We expected a standard output file >&2
@@ -93,9 +85,7 @@
                                                                                             echo We expected a BLANK standard error >&2
                                                                                             exit 64
                                                                                         fi
-                                                                                        echo 5e914dfa-6b08-4fae-afbb-4937e26a99d2 >&2
                                                                                         EXPECTED="$( < /build/test/expected )" || exit 64
-                                                                                        echo 2a1d6612-7fac-4e4d-be39-99761092d03b >&2
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
                                                                                         then
