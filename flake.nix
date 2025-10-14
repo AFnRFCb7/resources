@@ -31,7 +31,7 @@
                                                                     text =
                                                                         ''
                                                                             mkdir --parents ${ resources-directory }/logs
-                                                                            exec 203 > ${ resources-directory }/logs/lock
+                                                                            exec 203> ${ resources-directory }/logs/lock
                                                                             flock -x 203
                                                                             cat | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
                                                                         '' ;
