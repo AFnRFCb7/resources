@@ -791,7 +791,7 @@
                                                                                 writeShellApplication
                                                                                     {
                                                                                         name = "test" ;
-                                                                                        runtimeInputs = [ coreutils ( implementation compile-time-arguments ) ] ;
+                                                                                        runtimeInputs = [ coreutils yq-go ( implementation compile-time-arguments ) ] ;
                                                                                         text =
                                                                                             ''
                                                                                                 OUT="$1"
