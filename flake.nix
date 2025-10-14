@@ -5,7 +5,7 @@
 		    {
 		        lib =
 		            {
-		                event-listener =
+		                log-event-listener =
 		                    {
 		                        channel ? "resource" ,
 		                        coreutils ,
@@ -19,7 +19,7 @@
 		                            implementation =
 		                                writeShellApplication
 		                                    {
-		                                        name = "event-listener" ;
+		                                        name = "log-event-listener" ;
                                                 runtimeInputs = [ coreutils redis yq-go ] ;
                                                 text =
                                                     let
@@ -78,7 +78,7 @@
                                                                                         yq --prettyPrint < ${ builtins.toFile "log.json" ( builtins.toJSON log-file ) } > ${ resources-directory }/logs/log.yaml
                                                                                         mkdir --parents /build/test
                                                                                         yq --prettyPrint < ${ builtins.toFile "expected.json" ( builtins.toJSON ( builtins.concatLists [ log-file [ message ] ] ) ) } > /build/test/expected
-                                                                                        ${ implementation }/bin/event-listener > /build/test/standard-output 2> /build/test/standard-error &
+                                                                                        ${ implementation }/bin/log-event-listener > /build/test/standard-output 2> /build/test/standard-error &
                                                                                         sleep 10
                                                                                         redis-cli PUBLISH ${ channel } ${ builtins.toJSON message }
                                                                                         sleep 10
