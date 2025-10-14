@@ -807,7 +807,7 @@
                                                                                                 if [[ -n "$STANDARD_OUTPUT" ]]
                                                                                                 then
                                                                                                     echo $out >&2
-                                                                                                    echo ${ implementation }/bin/failure 2>&2
+                                                                                                    echo ${ implementation "WTF" }/bin/failure 2>&2
                                                                                                     echo "We expected no standard output but we got $STANDARD_OUTPUT" >&2
                                                                                                     exit 64
                                                                                                 fi
