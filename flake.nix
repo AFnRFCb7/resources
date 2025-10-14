@@ -89,6 +89,7 @@
                                                                                         OBSERVED="$( < ${ resources-directory }/logs/log.yaml )" || exit 64
                                                                                         if [[ "$EXPECTED" != "$OBSERVED" ]]
                                                                                         then
+                                                                                            echo "${ implementation }/bin/implementation" >&2
                                                                                             echo We expected the log file to be >&2
                                                                                             cat /build/test/expected >&2
                                                                                             echo but it was
