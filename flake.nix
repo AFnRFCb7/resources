@@ -22,17 +22,30 @@
 		                                        name = "event-listener" ;
                                                 runtimeInputs = [ coreutils redis yq-go ] ;
                                                 text =
-                                                    ''
-                                                        mkdir --parents ${ resources-directory }/logs
-                                                        # exec 203> /build/resources/logs/lock
-                                                        redis-cli --raw SUBSCRIBE "resource" | while read -r TYPE && read -r CHANNEL && read -r PAYLOAD
-                                                        do
-                                                            if [[ "$TYPE" == "message" ]] && [[ "$CHANNEL" == "${ channel }" ]]
-                                                            then
-                                                                echo "$PAYLOAD" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
-                                                            fi
-                                                        done
-                                                    '' ;
+                                                    let
+                                                        append =
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "append" ;
+                                                                    runtimeInputs = [ coreutils flock yq-go ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ resources-directory }/logs
+                                                                            exec 203 > ${ resources-directory }/logs/lock
+                                                                            flock -x 203
+                                                                            cat | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
+                                                                        '' ;
+                                                                } ;
+                                                        in
+                                                            ''
+                                                                redis-cli --raw SUBSCRIBE "resource" | while read -r TYPE && read -r CHANNEL && read -r PAYLOAD
+                                                                do
+                                                                    if [[ "$TYPE" == "message" ]] && [[ "$CHANNEL" == "${ channel }" ]]
+                                                                    then
+                                                                        echo "$PAYLOAD" | ${ append }/bin/append
+                                                                    fi
+                                                                done
+                                                            '' ;
 		                                    } ;
                                     in
                                         {
