@@ -29,7 +29,7 @@
                                                         do
                                                             if [[ "$type" == "message" ]]
                                                             then
-                                                                echo "$payload" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml"
+                                                                echo "$payload" | yq --prettyPrint '[.]' >> ${ resources-directory }/logs/log.yaml
                                                             fi
                                                         done
                                                     '' ;
