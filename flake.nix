@@ -796,7 +796,7 @@
                                                                                                 OUT="$1"
                                                                                                 touch "$OUT"
                                                                                                 mkdir --parents /build/test
-                                                                                                if failure ${ builtins.concatStringsSep " " runtime-arguments } > /build/test/standard-output 2> /build/test/standard-error
+                                                                                                if failure ${ builtins.concatStringsSep " " run-time-arguments } > /build/test/standard-output 2> /build/test/standard-error
                                                                                                 then
                                                                                                     STATUS="$?"
                                                                                                 else
