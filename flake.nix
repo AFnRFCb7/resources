@@ -806,8 +806,6 @@
                                                                                                 STANDARD_OUTPUT="$( < /build/test/standard-output )" || exit 64
                                                                                                 if [[ -n "$STANDARD_OUTPUT" ]]
                                                                                                 then
-                                                                                                    echo "$OUT" >&2
-                                                                                                    echo ${ implementation "WTF" }/bin/failure >&2
                                                                                                     echo "We expected no standard output but we got $STANDARD_OUTPUT" >&2
                                                                                                     exit 64
                                                                                                 fi
