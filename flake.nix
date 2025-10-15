@@ -20,7 +20,28 @@
                                             '' ;
                                     } ;
                         setup =
-                            buildFHSUserEnv : channel : coreutils : error : findutils : flock : init : jq : makeBinPath :makeWrapper :mkDerivation : ps : redis : resources-directory : seed : targets : transient : visitor : writeShellApplication : yq-go :
+                            {
+                                buildFHSUserEnv ,
+                                channel ? "resource" ,
+                                coreutils ,
+                                error ? 177 ,
+                                findutils ,
+                                flock ,
+                                init ? null ,
+                                jq ,
+                                makeBinPath ,
+                                makeWrapper ,
+                                mkDerivation ,
+                                ps ,
+                                redis ,
+                                resources-directory ,
+                                seed ? null ,
+                                targets ? [ ] ,
+                                transient ? false ,
+                                visitor ,
+                                writeShellApplication ,
+                                yq-go
+                            } @primary :
                                 let
                                     description =
                                         let
@@ -598,7 +619,7 @@
                                                     in
                                                         {
                                                             check = check ;
-                                                            implementation = setup buildFHSUserEnv channel coreutils error findutils flock init jq makeBinPath makeWrapper mkDerivation ps redis resources-directory seed targets transient visitor writeShellApplication yq-go ;
+                                                            implementation = primary ;
                                                         } ;
                                     } ;
                                 listeners =
