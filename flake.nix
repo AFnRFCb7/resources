@@ -619,7 +619,7 @@
                                                     in
                                                         {
                                                             check = check ;
-                                                            implementation = primary ;
+                                                            implementation = setup primary ;
                                                         } ;
                                     } ;
                                 listeners =
