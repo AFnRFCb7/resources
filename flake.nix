@@ -87,8 +87,8 @@
                                                                                         standard-input_ =
                                                                                             visitor.lib.implementation
                                                                                                 {
-                                                                                                    null = path : value : "" ;
-                                                                                                    string = path : value : "< ${ builtins.toFile "standard-input" value }" ;
+                                                                                                    null = path : value : builtins.trace "FUCK YES" "" ;
+                                                                                                    string = path : value : builtins.trace "FUCK NO" "< ${ builtins.toFile "standard-input" value }" ;
                                                                                                 }
                                                                                                 standard-input ;
                                                                                         in
