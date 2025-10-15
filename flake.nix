@@ -355,6 +355,7 @@
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
                                     pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
+                                in implementation ;
 		                in
                             {
                                 factories =
