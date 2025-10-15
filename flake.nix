@@ -20,7 +20,7 @@
                                             '' ;
                                     } ;
                         setup =
-                            buildFHSUserEnv : coreutils : flock : jq : ps : redis : writeShellApplication : yq-go :
+                            buildFHSUserEnv : channel : coreutils : error : findutils : flock : init : jq : makeBinPath :makeWrapper :mkDerivation : ps : redis : resources-directory : seed : targets : transient : visitor : writeShellApplication : yq-go
                                 let
                                     description =
                                         let
@@ -598,7 +598,7 @@
                                                     in
                                                         {
                                                             check = check ;
-                                                            implementation = setup buildFHSUserEnv coreutils flock jq ps redis writeShellApplication yq-go ;
+                                                            implementation = setup buildFHSUserEnv channel coreutils error findutils flock init jq makeBinPath makeWrapper mkDerivation ps redis resources-directory seed targets transient visitor writeShellApplication yq-go ;
                                                         } ;
                                     } ;
                                 listeners =
