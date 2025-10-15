@@ -20,28 +20,7 @@
                                             '' ;
                                     } ;
                         setup =
-                            {
-                                buildFHSUserEnv ,
-                                channel ? "resource" ,
-                                coreutils ,
-                                error ? 177 ,
-                                findutils ,
-                                flock ,
-                                init ? null ,
-                                jq ,
-                                makeBinPath ,
-                                makeWrapper ,
-                                mkDerivation ,
-                                ps ,
-                                redis ,
-                                resources-directory ,
-                                seed ? null ,
-                                targets ? [ ] ,
-                                transient ? false ,
-                                visitor ,
-                                writeShellApplication ,
-                                yq-go
-                            } @primary :
+                            buildFHSUserEnv : channel : coreutils : error : findutils : flock : init : jq : makeBinPath :makeWrapper :mkDerivation : ps : redis : resources-directory : seed : targets : transient : visitor : writeShellApplication : yq-go
                                 let
                                     description =
                                         let
@@ -468,7 +447,10 @@
                                                                                                     sleep 0
                                                                                                 done
                                                                                                 subscribe &
-                                                                                                if RESOURCE="$( ${ setup primary } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
+                                                                                                cat >&2 <<EOF
+                                                                                                if RESOURCE="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
+                                                                                                EOF
+                                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
                                                                                                 then
                                                                                                     STATUS="$?"
                                                                                                 else
@@ -616,7 +598,28 @@
                                                     in
                                                         {
                                                             check = check ;
-                                                            implementation = setup primary ;
+                                                            implementation = setup
+buildFHSUserEnv
+channel ? "resource"
+coreutils
+error ? 177
+findutils
+flock
+init ? null
+jq
+makeBinPath
+makeWrapper
+mkDerivation
+ps
+redis
+resources-directory
+seed ? null
+targets ? [ ]
+transient ? false
+ visitor
+ writeShellApplication
+ yq-go
+ ;
                                                         } ;
                                     } ;
                                 listeners =
