@@ -19,6 +19,342 @@
                                                 exit 64
                                             '' ;
                                     } ;
+                        setup =
+                            buildFHSUserEnv : coreutils : flock : jq : ps : redis : writeShellApplication : yq-go :
+                                let
+                                    description =
+                                        let
+                                            seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
+                                            in
+                                                visitor.lib.implementation
+                                                    {
+                                                        bool = seed ;
+                                                        float = seed ;
+                                                        int = seed ;
+                                                        lambda = seed ;
+                                                        list = seed ;
+                                                        null = seed ;
+                                                        path = seed ;
+                                                        set = seed ;
+                                                        string = seed ;
+                                                    }
+                                                    primary ;
+                                    implementation =
+                                        let
+                                            init-application =
+                                                if builtins.typeOf init == "null" then null
+                                                else
+                                                    buildFHSUserEnv
+                                                        {
+                                                            extraBwrapArgs =
+                                                                [
+                                                                    "--bind $LINK /links"
+                                                                    "--bind $MOUNT /mount"
+                                                                    "--tmpfs /scratch"
+                                                                ] ;
+                                                            name = "init-application" ;
+                                                            runScript = init "${ resources-directory }/mounts/$INDEX" ;
+                                                        } ;
+                                            publish =
+                                                writeShellApplication
+                                                    {
+                                                        name = "publish" ;
+                                                        runtimeInputs = [ coreutils jq redis ] ;
+                                                        text =
+                                                            ''
+                                                                JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failure coreutils jq writeShellApplication yq-go "7b8f1293" }
+                                                                redis-cli PUBLISH "${ channel }" "$JSON" > /dev/null 2>&1 || true
+                                                            '' ;
+                                                    } ;
+                                            setup =
+                                                if builtins.typeOf init == "null" then
+                                                    writeShellApplication
+                                                        {
+                                                            name = "setup" ;
+                                                            runtimeInputs = [ coreutils flock jq ps publish sequential yq-go ] ;
+                                                            text =
+                                                                ''
+                                                                    if [[ -t 0 ]]
+                                                                    then
+                                                                        HAS_STANDARD_INPUT=false
+                                                                        STANDARD_INPUT=
+                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "7f77cdad" }
+                                                                    else
+                                                                        HAS_STANDARD_INPUT=true
+                                                                        cat <&0 > "$STANDARD_INPUT_FILE"
+                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "fbb0e2f8" }
+                                                                    fi
+                                                                    TRANSIENT=${ transient_ }
+                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failure coreutils jq writeShellApplication yq-go "833fbd3f" }
+                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "bc3e1b88" }
+                                                                    mkdir --parents "${ resources-directory }/locks"
+                                                                    ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ failure coreutils jq writeShellApplication yq-go "fc776602" }
+                                                                    export ARGUMENTS_YAML
+                                                                    export HAS_STANDARD_INPUT
+                                                                    export HASH
+                                                                    export STANDARD_INPUT
+                                                                    export ORIGINATOR_PID
+                                                                    export TRANSIENT
+                                                                    exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                    flock -s 210
+                                                                    if [[ -L "${ resources-directory }/canonical/$HASH" ]]
+                                                                    then
+                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure coreutils jq writeShellApplication yq-go "bf282501" }
+                                                                        export MOUNT
+                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure coreutils jq writeShellApplication yq-go "26213048" }
+                                                                        export INDEX
+                                                                        export PROVENENCE=cached
+                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
+                                                                        flock -s 211
+                                                                        jq \
+                                                                            --null-input \
+                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                            '{
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
+                                                                            }' | publish
+                                                                        ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
+                                                                        echo -n "$MOUNT"
+                                                                    else
+                                                                        INDEX="$( sequential )" || ${ failure coreutils jq writeShellApplication yq-go "d162db9f" }
+                                                                        export INDEX
+                                                                        export PROVENANCE=new
+                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
+                                                                        flock -s 211
+                                                                        MOUNT="${ resources-directory }/mounts/$INDEX"
+                                                                        mkdir --parents "$MOUNT"
+                                                                        mkdir --parents ${ resources-directory }/canonical
+                                                                        jq \
+                                                                            --null-input \
+                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                            '{
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
+                                                                            }' | publish
+                                                                        mkdir --parents ${ resources-directory }/canonical
+                                                                        ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
+                                                                        echo -n "$MOUNT"
+                                                                    fi
+                                                                '' ;
+                                                        }
+                                                else
+                                                    writeShellApplication
+                                                        {
+                                                            name = "setup" ;
+                                                            runtimeInputs = [ coreutils flock jq ps publish redis sequential yq-go ] ;
+                                                            text =
+                                                                ''
+                                                                    if [[ -t 0 ]]
+                                                                    then
+                                                                        HAS_STANDARD_INPUT=false
+                                                                        STANDARD_INPUT=
+                                                                    else
+                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "f66f966d" }
+                                                                        export STANDARD_INPUT_FILE
+                                                                        HAS_STANDARD_INPUT=true
+                                                                        cat <&0 > "$STANDARD_INPUT_FILE"
+                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "ffff1b30" }
+                                                                    fi
+                                                                    mkdir --parents ${ resources-directory }
+                                                                    ARGUMENTS=( "$@" )
+                                                                    ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . )"
+                                                                    TRANSIENT=${ transient_ }
+                                                                    ORIGINATOR_PID="$(ps -o ppid= -p "$PPID" | tr -d '[:space:]')" || ${ failure coreutils jq writeShellApplication yq-go "833fbd3f" }
+                                                                    export ORIGINATOR_PID
+                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "7849a979" }
+                                                                    export HASH
+                                                                    mkdir --parents "${ resources-directory }/locks"
+                                                                    export HAS_STANDARD_INPUT
+                                                                    export HASH
+                                                                    export STANDARD_INPUT
+                                                                    export ORIGINATOR_PID
+                                                                    export TRANSIENT
+                                                                    exec 210> "${ resources-directory }/locks/$HASH"
+                                                                    flock -s 210
+                                                                    if [[ -L "${ resources-directory }/canonical/$HASH" ]]
+                                                                    then
+                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure coreutils jq writeShellApplication yq-go "ae2d1658" }
+                                                                        export MOUNT
+                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure coreutils jq writeShellApplication yq-go"277afc07" }
+                                                                        export INDEX
+                                                                        export PROVENANCE=cached
+                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
+                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
+                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                            # shellcheck disable=SC2016
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                                --arg HASH "$HASH" \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                --arg PROVENANCE "$PROVENANCE" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                --argjson TARGETS "$TARGETS" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                '{
+                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                    "dependencies" : $DEPENDENCIES ,
+                                                                                    "hash" : $HASH ,
+                                                                                    "index" : $INDEX ,
+                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "provenance" : $PROVENANCE ,
+                                                                                    "standard-input" : $STANDARD_INPUT ,
+                                                                                    "targets" : $TARGETS ,
+                                                                                    "transient" : $TRANSIENT
+                                                                                }' | publish > /dev/null 2>&1
+                                                                        echo -n "$MOUNT"
+                                                                    else
+                                                                        INDEX="$( sequential )" || ${ failure coreutils jq writeShellApplication yq-go "cab66847" }
+                                                                        export INDEX
+                                                                        export PROVENANCE=new
+                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
+                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
+                                                                        flock -s 211
+                                                                        LINK="${ resources-directory }/links/$INDEX"
+                                                                        export LINK
+                                                                        mkdir --parents "$LINK"
+                                                                        MOUNT="${ resources-directory }/mounts/$INDEX"
+                                                                        mkdir --parents "$MOUNT"
+                                                                        export MOUNT
+                                                                        mkdir --parents "$MOUNT"
+                                                                        STANDARD_ERROR_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "b07f7374" }
+                                                                        export STANDARD_ERROR_FILE
+                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "29c19af1" }
+                                                                        export STANDARD_OUTPUT_FILE
+                                                                        if [[ "$HAS_STANDARD_INPUT" == "true" ]]
+                                                                        then
+                                                                            if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                            then
+                                                                                STATUS="$?"
+                                                                            else
+                                                                                STATUS="$?"
+                                                                            fi
+                                                                        else
+                                                                            if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                            then
+                                                                                STATUS="$?"
+                                                                            else
+                                                                                STATUS="$?"
+                                                                            fi
+                                                                        fi
+                                                                        export STATUS
+                                                                        TARGET_HASH_EXPECTED=${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) }
+                                                                        TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "db2517b1" }
+                                                                        STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "260fbb3c" }
+                                                                        export STANDARD_ERROR
+                                                                        STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "d1b1f5be" }
+                                                                        export STANDARD_OUTPUT
+                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
+                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
+                                                                        if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
+                                                                        then
+                                                                            # shellcheck disable=SC2016
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                                --arg HASH "$HASH" \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                --arg PROVENANCE "$PROVENANCE" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --arg STATUS "$STATUS" \
+                                                                                --argjson TARGETS "$TARGETS" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                '{
+                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                    "dependencies" : $DEPENDENCIES ,
+                                                                                    "hash" : $HASH ,
+                                                                                    "index" : $INDEX ,
+                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "provenance" : $PROVENANCE ,
+                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                    "standard-input" : $STANDARD_INPUT ,
+                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                    "status" : $STATUS ,
+                                                                                    "targets" : $TARGETS ,
+                                                                                    "transient" : $TRANSIENT
+                                                                                }' | publish > /dev/null 2>&1
+                                                                            mkdir --parents ${ resources-directory }/canonical
+                                                                            ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
+                                                                            echo -n "$MOUNT"
+                                                                        else
+                                                                            # shellcheck disable=SC2016
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
+                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
+                                                                                --arg HASH "$HASH" \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
+                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                --arg PROVENANCE "$PROVENANCE" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --arg STATUS "$STATUS" \
+                                                                                --argjson TARGETS "$TARGETS" \
+                                                                                --arg TRANSIENT "$TRANSIENT" \
+                                                                                '{
+                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                    "dependencies" : $DEPENDENCIES ,
+                                                                                    "hash" : $HASH ,
+                                                                                    "index" : $INDEX ,
+                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "provenance" : $PROVENANCE ,
+                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                    "standard-input" : $STANDARD_INPUT ,
+                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                    "status" : $STATUS ,
+                                                                                    "targets" : $TARGETS ,
+                                                                                    "transient" : $TRANSIENT
+                                                                                }' | publish
+                                                                            exit ${ builtins.toString error }
+                                                                        fi
+                                                                    fi
+                                                                '' ;
+                                                        } ;
+                                            sequential =
+                                                writeShellApplication
+                                                    {
+                                                        name = "sequential" ;
+                                                        runtimeInputs = [ coreutils flock ] ;
+                                                        text =
+                                                            ''
+                                                                mkdir --parents ${ resources-directory }/sequential
+                                                                exec 220> ${ resources-directory }/sequential/sequential.lock
+                                                                flock -x 220
+                                                                if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
+                                                                then
+                                                                    CURRENT="$( < ${ resources-directory }/sequential/sequential.counter )" || ${ failure coreutils jq writeShellApplication yq-go "c9a94abb" }
+                                                                else
+                                                                    CURRENT=0
+                                                                fi
+                                                                NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
+                                                                echo "$NEXT" > ${ resources-directory }/sequential/sequential.counter
+                                                                printf "%016d\n" "$CURRENT"
+                                                            '' ;
+                                                    } ;
+                                                transient_ =
+                                                    visitor.lib.implementation
+                                                        {
+                                                            bool = path : value : if value then "$( sequential ) || ${ failure coreutils jq writeShellApplication yq-go "808f8e2c" }" else "-1" ;
+                                                        }
+                                                        transient ;
+                                            in "${ setup }/bin/setup" ;
+                                    pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
 		                in
                             {
                                 factories =
@@ -258,343 +594,10 @@
                                                                     name = "check" ;
                                                                     src = ./. ;
                                                                 } ;
-                                                    description =
-                                                        let
-                                                            seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
-                                                            in
-                                                                visitor.lib.implementation
-                                                                    {
-                                                                        bool = seed ;
-                                                                        float = seed ;
-                                                                        int = seed ;
-                                                                        lambda = seed ;
-                                                                        list = seed ;
-                                                                        null = seed ;
-                                                                        path = seed ;
-                                                                        set = seed ;
-                                                                        string = seed ;
-                                                                    }
-                                                                    primary ;
-                                                    implementation =
-                                                        let
-                                                            init-application =
-                                                                if builtins.typeOf init == "null" then null
-                                                                else
-                                                                    buildFHSUserEnv
-                                                                        {
-                                                                            extraBwrapArgs =
-                                                                                [
-                                                                                    "--bind $LINK /links"
-                                                                                    "--bind $MOUNT /mount"
-                                                                                    "--tmpfs /scratch"
-                                                                                ] ;
-                                                                            name = "init-application" ;
-                                                                            runScript = init "${ resources-directory }/mounts/$INDEX" ;
-                                                                        } ;
-                                                            publish =
-                                                                writeShellApplication
-                                                                    {
-                                                                        name = "publish" ;
-                                                                        runtimeInputs = [ coreutils jq redis ] ;
-                                                                        text =
-                                                                            ''
-                                                                                JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failure coreutils jq writeShellApplication yq-go "7b8f1293" }
-                                                                                redis-cli PUBLISH "${ channel }" "$JSON" > /dev/null 2>&1 || true
-                                                                            '' ;
-                                                                    } ;
-                                                            setup =
-                                                                if builtins.typeOf init == "null" then
-                                                                    writeShellApplication
-                                                                        {
-                                                                            name = "setup" ;
-                                                                            runtimeInputs = [ coreutils flock jq ps publish sequential yq-go ] ;
-                                                                            text =
-                                                                                ''
-                                                                                    if [[ -t 0 ]]
-                                                                                    then
-                                                                                        HAS_STANDARD_INPUT=false
-                                                                                        STANDARD_INPUT=
-                                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "7f77cdad" }
-                                                                                    else
-                                                                                        HAS_STANDARD_INPUT=true
-                                                                                        cat <&0 > "$STANDARD_INPUT_FILE"
-                                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "fbb0e2f8" }
-                                                                                    fi
-                                                                                    TRANSIENT=${ transient_ }
-                                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failure coreutils jq writeShellApplication yq-go "833fbd3f" }
-                                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "bc3e1b88" }
-                                                                                    mkdir --parents "${ resources-directory }/locks"
-                                                                                    ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ failure coreutils jq writeShellApplication yq-go "fc776602" }
-                                                                                    export ARGUMENTS_YAML
-                                                                                    export HAS_STANDARD_INPUT
-                                                                                    export HASH
-                                                                                    export STANDARD_INPUT
-                                                                                    export ORIGINATOR_PID
-                                                                                    export TRANSIENT
-                                                                                    exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
-                                                                                    flock -s 210
-                                                                                    if [[ -L "${ resources-directory }/canonical/$HASH" ]]
-                                                                                    then
-                                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure coreutils jq writeShellApplication yq-go "bf282501" }
-                                                                                        export MOUNT
-                                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure coreutils jq writeShellApplication yq-go "26213048" }
-                                                                                        export INDEX
-                                                                                        export PROVENENCE=cached
-                                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
-                                                                                        flock -s 211
-                                                                                        jq \
-                                                                                            --null-input \
-                                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                            '{
-                                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
-                                                                                            }' | publish
-                                                                                        ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
-                                                                                        echo -n "$MOUNT"
-                                                                                    else
-                                                                                        INDEX="$( sequential )" || ${ failure coreutils jq writeShellApplication yq-go "d162db9f" }
-                                                                                        export INDEX
-                                                                                        export PROVENANCE=new
-                                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
-                                                                                        flock -s 211
-                                                                                        MOUNT="${ resources-directory }/mounts/$INDEX"
-                                                                                        mkdir --parents "$MOUNT"
-                                                                                        mkdir --parents ${ resources-directory }/canonical
-                                                                                        jq \
-                                                                                            --null-input \
-                                                                                            --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                            '{
-                                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
-                                                                                            }' | publish
-                                                                                        mkdir --parents ${ resources-directory }/canonical
-                                                                                        ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
-                                                                                        echo -n "$MOUNT"
-                                                                                    fi
-                                                                                '' ;
-                                                                        }
-                                                                else
-                                                                    writeShellApplication
-                                                                        {
-                                                                            name = "setup" ;
-                                                                            runtimeInputs = [ coreutils flock jq ps publish redis sequential yq-go ] ;
-                                                                            text =
-                                                                                ''
-                                                                                    if [[ -t 0 ]]
-                                                                                    then
-                                                                                        HAS_STANDARD_INPUT=false
-                                                                                        STANDARD_INPUT=
-                                                                                    else
-                                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "f66f966d" }
-                                                                                        export STANDARD_INPUT_FILE
-                                                                                        HAS_STANDARD_INPUT=true
-                                                                                        cat <&0 > "$STANDARD_INPUT_FILE"
-                                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "ffff1b30" }
-                                                                                    fi
-                                                                                    mkdir --parents ${ resources-directory }
-                                                                                    ARGUMENTS=( "$@" )
-                                                                                    ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . )"
-                                                                                    TRANSIENT=${ transient_ }
-                                                                                    ORIGINATOR_PID="$(ps -o ppid= -p "$PPID" | tr -d '[:space:]')" || ${ failure coreutils jq writeShellApplication yq-go "833fbd3f" }
-                                                                                    export ORIGINATOR_PID
-                                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "7849a979" }
-                                                                                    export HASH
-                                                                                    mkdir --parents "${ resources-directory }/locks"
-                                                                                    export HAS_STANDARD_INPUT
-                                                                                    export HASH
-                                                                                    export STANDARD_INPUT
-                                                                                    export ORIGINATOR_PID
-                                                                                    export TRANSIENT
-                                                                                    exec 210> "${ resources-directory }/locks/$HASH"
-                                                                                    flock -s 210
-                                                                                    if [[ -L "${ resources-directory }/canonical/$HASH" ]]
-                                                                                    then
-                                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure coreutils jq writeShellApplication yq-go "ae2d1658" }
-                                                                                        export MOUNT
-                                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure coreutils jq writeShellApplication yq-go"277afc07" }
-                                                                                        export INDEX
-                                                                                        export PROVENANCE=cached
-                                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
-                                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
-                                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                                            # shellcheck disable=SC2016
-                                                                                            jq \
-                                                                                                --null-input \
-                                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
-                                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
-                                                                                                --arg HASH "$HASH" \
-                                                                                                --arg INDEX "$INDEX" \
-                                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                                --arg PROVENANCE "$PROVENANCE" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                                --argjson TARGETS "$TARGETS" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                '{
-                                                                                                    "arguments" : $ARGUMENTS ,
-                                                                                                    "dependencies" : $DEPENDENCIES ,
-                                                                                                    "hash" : $HASH ,
-                                                                                                    "index" : $INDEX ,
-                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
-                                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                                    "provenance" : $PROVENANCE ,
-                                                                                                    "standard-input" : $STANDARD_INPUT ,
-                                                                                                    "targets" : $TARGETS ,
-                                                                                                    "transient" : $TRANSIENT
-                                                                                                }' | publish > /dev/null 2>&1
-                                                                                        echo -n "$MOUNT"
-                                                                                    else
-                                                                                        INDEX="$( sequential )" || ${ failure coreutils jq writeShellApplication yq-go "cab66847" }
-                                                                                        export INDEX
-                                                                                        export PROVENANCE=new
-                                                                                        mkdir --parents "${ resources-directory }/locks/$INDEX"
-                                                                                        exec 211> "${ resources-directory }/locks/$INDEX/setup.lock"
-                                                                                        flock -s 211
-                                                                                        LINK="${ resources-directory }/links/$INDEX"
-                                                                                        export LINK
-                                                                                        mkdir --parents "$LINK"
-                                                                                        MOUNT="${ resources-directory }/mounts/$INDEX"
-                                                                                        mkdir --parents "$MOUNT"
-                                                                                        export MOUNT
-                                                                                        mkdir --parents "$MOUNT"
-                                                                                        STANDARD_ERROR_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "b07f7374" }
-                                                                                        export STANDARD_ERROR_FILE
-                                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || ${ failure coreutils jq writeShellApplication yq-go "29c19af1" }
-                                                                                        export STANDARD_OUTPUT_FILE
-                                                                                        if [[ "$HAS_STANDARD_INPUT" == "true" ]]
-                                                                                        then
-                                                                                            if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" < "$STANDARD_INPUT_FILE" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
-                                                                                            then
-                                                                                                STATUS="$?"
-                                                                                            else
-                                                                                                STATUS="$?"
-                                                                                            fi
-                                                                                        else
-                                                                                            if ${ init-application }/bin/init-application "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
-                                                                                            then
-                                                                                                STATUS="$?"
-                                                                                            else
-                                                                                                STATUS="$?"
-                                                                                            fi
-                                                                                        fi
-                                                                                        export STATUS
-                                                                                        TARGET_HASH_EXPECTED=${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) }
-                                                                                        TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failure coreutils jq writeShellApplication yq-go "db2517b1" }
-                                                                                        STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "260fbb3c" }
-                                                                                        export STANDARD_ERROR
-                                                                                        STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failure coreutils jq writeShellApplication yq-go "d1b1f5be" }
-                                                                                        export STANDARD_OUTPUT
-                                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
-                                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "54d472fb" }
-                                                                                        if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
-                                                                                        then
-                                                                                            # shellcheck disable=SC2016
-                                                                                            jq \
-                                                                                                --null-input \
-                                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
-                                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
-                                                                                                --arg HASH "$HASH" \
-                                                                                                --arg INDEX "$INDEX" \
-                                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                                --arg PROVENANCE "$PROVENANCE" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
-                                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                                --arg STATUS "$STATUS" \
-                                                                                                --argjson TARGETS "$TARGETS" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                '{
-                                                                                                    "arguments" : $ARGUMENTS ,
-                                                                                                    "dependencies" : $DEPENDENCIES ,
-                                                                                                    "hash" : $HASH ,
-                                                                                                    "index" : $INDEX ,
-                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
-                                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                                    "provenance" : $PROVENANCE ,
-                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                    "standard-input" : $STANDARD_INPUT ,
-                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                    "status" : $STATUS ,
-                                                                                                    "targets" : $TARGETS ,
-                                                                                                    "transient" : $TRANSIENT
-                                                                                                }' | publish > /dev/null 2>&1
-                                                                                            mkdir --parents ${ resources-directory }/canonical
-                                                                                            ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
-                                                                                            echo -n "$MOUNT"
-                                                                                        else
-                                                                                            # shellcheck disable=SC2016
-                                                                                            jq \
-                                                                                                --null-input \
-                                                                                                --argjson ARGUMENTS "$ARGUMENTS_JSON" \
-                                                                                                --argjson DEPENDENCIES "$DEPENDENCIES" \
-                                                                                                --arg HASH "$HASH" \
-                                                                                                --arg INDEX "$INDEX" \
-                                                                                                --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                                --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                                --arg PROVENANCE "$PROVENANCE" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
-                                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                                --arg STATUS "$STATUS" \
-                                                                                                --argjson TARGETS "$TARGETS" \
-                                                                                                --arg TRANSIENT "$TRANSIENT" \
-                                                                                                '{
-                                                                                                    "arguments" : $ARGUMENTS ,
-                                                                                                    "dependencies" : $DEPENDENCIES ,
-                                                                                                    "hash" : $HASH ,
-                                                                                                    "index" : $INDEX ,
-                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
-                                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                                    "provenance" : $PROVENANCE ,
-                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                    "standard-input" : $STANDARD_INPUT ,
-                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                    "status" : $STATUS ,
-                                                                                                    "targets" : $TARGETS ,
-                                                                                                    "transient" : $TRANSIENT
-                                                                                                }' | publish
-                                                                                            exit ${ builtins.toString error }
-                                                                                        fi
-                                                                                    fi
-                                                                                '' ;
-                                                                        } ;
-                                                            sequential =
-                                                                writeShellApplication
-                                                                    {
-                                                                        name = "sequential" ;
-                                                                        runtimeInputs = [ coreutils flock ] ;
-                                                                        text =
-                                                                            ''
-                                                                                mkdir --parents ${ resources-directory }/sequential
-                                                                                exec 220> ${ resources-directory }/sequential/sequential.lock
-                                                                                flock -x 220
-                                                                                if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
-                                                                                then
-                                                                                    CURRENT="$( < ${ resources-directory }/sequential/sequential.counter )" || ${ failure coreutils jq writeShellApplication yq-go "c9a94abb" }
-                                                                                else
-                                                                                    CURRENT=0
-                                                                                fi
-                                                                                NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
-                                                                                echo "$NEXT" > ${ resources-directory }/sequential/sequential.counter
-                                                                                printf "%016d\n" "$CURRENT"
-                                                                            '' ;
-                                                                    } ;
-                                                                transient_ =
-                                                                    visitor.lib.implementation
-                                                                        {
-                                                                            bool = path : value : if value then "$( sequential ) || ${ failure coreutils jq writeShellApplication yq-go "808f8e2c" }" else "-1" ;
-                                                                        }
-                                                                        transient ;
-                                                            in "${ setup }/bin/setup" ;
-                                                    pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                                                     in
                                                         {
                                                             check = check ;
-                                                            implementation = implementation ;
+                                                            implementation = setup buildFHSUserEnv coreutils flock jq ps redis writeShellApplication yq-go ;
                                                         } ;
                                     } ;
                                 listeners =
