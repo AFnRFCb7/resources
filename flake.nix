@@ -324,7 +324,7 @@
                                                                 text =
                                                                     ''
                                                                         JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failures_ "7b8f1293" }
-                                                                        redis-cli PUBLISH "${ channel }" "$JSON" 2> /dev/null || true
+                                                                        redis-cli PUBLISH "${ channel }" "$JSON" > /dev/null 2>&1 || true
                                                                     '' ;
                                                             } ;
                                                     setup =
