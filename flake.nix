@@ -645,6 +645,7 @@
                                                         {
                                                             check =
                                                                 {
+                                                                    jq ,
                                                                     log-file ,
                                                                     message ,
                                                                     mkDerivation
