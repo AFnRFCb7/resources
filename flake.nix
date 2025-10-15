@@ -13,7 +13,7 @@
                                         runtimeInputs = [ coreutils jq yq-go ] ;
                                         text =
                                             ''
-                                                RUNTIME_ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq -R . | jq -s . )" || ${ failure coreutils jq writeShellApplication yq-go "" }
+                                                RUNTIME_ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq -R . | jq -s . )" || exit 65
                                                 export RUNTIME_ARGUMENTS_JSON
                                                 yq --null-input --prettyPrint '{ "compile-time-arguments" : ${ builtins.toJSON compile-time-arguments } }' >&2
                                                 ${ failure coreutils jq writeShellApplication yq-go "" }
