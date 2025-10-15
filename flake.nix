@@ -6,7 +6,7 @@
 		        lib =
 		            let
 		                failure =
-                            coreutils : jq : writeShellApplication : yg-go : compile-time-arguments :
+                            coreutils : jq : writeShellApplication : yq-go : compile-time-arguments :
                                 writeShellApplication
                                     {
                                         name = "failure" ;
