@@ -337,13 +337,13 @@
                                                                         ''
                                                                             if read -r -t 0
                                                                             then
-                                                                                HAS_STANDARD_INPUT=false
-                                                                                STANDARD_INPUT=
-                                                                                STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "7f77cdad" }
-                                                                            else
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 cat <&0 > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "fbb0e2f8" }
+                                                                            else
+                                                                                HAS_STANDARD_INPUT=false
+                                                                                STANDARD_INPUT=
+                                                                                STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "7f77cdad" }
                                                                             fi
                                                                             TRANSIENT=${ transient_ }
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failures_ "833fbd3f" }
@@ -407,14 +407,14 @@
                                                                         ''
                                                                             if read -r -t 0
                                                                             then
-                                                                                HAS_STANDARD_INPUT=false
-                                                                                STANDARD_INPUT=
-                                                                            else
                                                                                 STANDARD_INPUT_FILE="$( mktemp )" || ${ failures_ "f66f966d" }
                                                                                 export STANDARD_INPUT_FILE
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 cat <&0 > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
+                                                                            else
+                                                                                HAS_STANDARD_INPUT=false
+                                                                                STANDARD_INPUT=
                                                                             fi
                                                                             mkdir --parents ${ resources-directory }
                                                                             ARGUMENTS=( "$@" )
