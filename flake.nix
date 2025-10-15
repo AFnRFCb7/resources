@@ -95,9 +95,9 @@
                                                                                         done
                                                                                         subscribe &
                                                                                         cat >&2 <<EOF
-                                                                                        if RESOURCE="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " < /dev/null " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
+                                                                                        if RESOURCE="\$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
                                                                                         EOF
-                                                                                        if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " < /dev/null " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
+                                                                                        if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then " " else " < ${ builtins.toFile "standard-input" standard-input } " }2> /build/standard-error )"
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
