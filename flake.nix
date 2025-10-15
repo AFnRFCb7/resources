@@ -166,7 +166,7 @@
                                                                                                 OBSERVED_HAS_STANDARD_INPUT="$( jq --raw-output '."has-standard-input"' /build/payload )" || ${ failures_ "1de78471" }
                                                                                                 if [[ "$EXPECTED_HAS_STANDARD_INPUT" != "$OBSERVED_HAS_STANDARD_INPUT" ]]
                                                                                                 then
-                                                                                                    jq /build/payload "." >&2
+                                                                                                    cat /build/payload >&2
                                                                                                     echo "We expected the payload has-standard-input to be $EXPECTED_HAS_STANDARD_INPUT but it was $OBSERVED_HAS_STANDARD_INPUT" >&2
                                                                                                     ${ failures_ "89b51e3a" }
                                                                                                 fi
