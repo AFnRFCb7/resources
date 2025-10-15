@@ -413,6 +413,7 @@
                                                                                 HAS_STANDARD_INPUT=true
                                                                                 cat <&0 > "$STANDARD_INPUT_FILE"
                                                                                 STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failures_ "ffff1b30" }
+                                                                                STANDARD_INPUT=f99ab60f536e7ac6bcb21978631a4375a693be3080b20fd941bdf737bec31c419a2bcbc4cf5cd1b3100f8346c7dafac441869c14b66071210fdb12b3bf8c6eb1
                                                                             else
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=81e8b6c810e4c30737e4759609ea4a02cbb56215c3c7e40f7a1c15c19d0aceb119029929f29ba43b909535ff49e67ae3ea08f9d82cf6780ca7c60b0b63937374
