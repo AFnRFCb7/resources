@@ -335,7 +335,7 @@
                                                                     runtimeInputs = [ coreutils flock jq ps publish sequential yq-go ] ;
                                                                     text =
                                                                         ''
-                                                                            if [[ -t 0 ]]
+                                                                            if read -r -t 0
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
@@ -405,7 +405,7 @@
                                                                     runtimeInputs = [ coreutils flock jq ps publish redis sequential yq-go ] ;
                                                                     text =
                                                                         ''
-                                                                            if [[ -t 0 ]]
+                                                                            if read -r -t 0
                                                                             then
                                                                                 HAS_STANDARD_INPUT=false
                                                                                 STANDARD_INPUT=
