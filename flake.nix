@@ -103,7 +103,7 @@
                                                                                                     sleep 0
                                                                                                 done
                                                                                                 subscribe &
-                                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } 2> /build/standard-error )"
+                                                                                                if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ builtins.trace "standard-input='${ standard-input_ }'" standard-input_ } 2> /build/standard-error )"
                                                                                                 then
                                                                                                     STATUS="$?"
                                                                                                 else
