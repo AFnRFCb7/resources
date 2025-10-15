@@ -569,6 +569,7 @@
                                                                                         --argjson TARGETS "$TARGETS" \
                                                                                         --arg TRANSIENT "$TRANSIENT" \
                                                                                         '{
+                                                                                            "FLAG" : true ,
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "dependencies" : $DEPENDENCIES ,
                                                                                             "hash" : $HASH ,
