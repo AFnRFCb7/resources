@@ -85,8 +85,12 @@
                                                                                 text =
                                                                                     let
                                                                                         standard-input_ =
-                                                                                            if builtins.typeOf standard-input == "null" then ""
-                                                                                            else "< ${ builtins.toFile "standard-input" standard-input }" ;
+                                                                                            visitor.lib.implementation
+                                                                                                {
+                                                                                                    null = path : value : builtins.trace "FUCK YES" "" ;
+                                                                                                    string = path : value : builtins.trace "FUCK NO" "< ${ builtins.toFile "standard-input" value }" ;
+                                                                                                }
+                                                                                                standard-input ;
                                                                                         in
                                                                                             ''
                                                                                                 OUT="$1"
