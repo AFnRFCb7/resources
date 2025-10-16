@@ -596,68 +596,6 @@
                             {
                                 factories =
                                     {
-                                        dot-ssh =
-                                            resources :
-                                                {
-                                                    address-family ? null ,
-                                                    batch-mode ? null ,
-                                                    bind-address ? null ,
-                                                    canonical-domains ? null ,
-                                                    canonicalize-fallback-local ? null ,
-                                                    canonicalize-hostname ? null ,
-                                                    check-host-ip ? null ,
-                                                    challenge-response-authentication ? null ,
-                                                    ciphers ? null ,
-                                                    compression ? null ,
-                                                    connect-timeout ? null ,
-                                                    control-master ? null ,
-                                                    control-path ? null ,
-                                                    forward-agent ? null ,
-                                                    gateway-ports ? null ,
-                                                    gssapi-authentication ? null ,
-                                                    gssapi-delegate-credentials ? null ,
-                                                    gssapi-key-exchange ? null ,
-                                                    gssapi-renewal-forces-rekey ? null ,
-                                                    gssapi-trust-dns ? null ,
-                                                    host ? null ,
-                                                    hostkey-alias ? null ,
-                                                    host-name ? null ,
-                                                    identities-only ? null ,
-                                                    identity-agent ? null ,
-                                                    identity-file ? null ,
-                                                    ignore-unknown ? null ,
-                                                    ip-qos ? null ,
-                                                    kbd-interactive-authentication ? null ,
-                                                    kbd-interactive-devices ? null ,
-                                                    kex-algorithms ? null ,
-                                                    local-forward ? null ,
-                                                    log-level ? null ,
-                                                    match ? null ,
-                                                    no-host-authentication-for-localhost ? null ,
-                                                    password-authentication ? null ,
-                                                    permit-local-command ? null ,
-                                                    permit-remote-open ? null ,
-                                                    pkcs11-provider ? null ,
-                                                    port ? null ,
-                                                    preferred-authentications ? null ,
-                                                    protocol ? null ,
-                                                    proxy-command ? null ,
-                                                    proxy-jump ? null ,
-                                                    proxy-use-fdpass ? null ,
-                                                    pubkey-accepted-key-types ? null ,
-                                                    pubkey-authentication ? null ,
-                                                    rekey-limit ? null ,
-                                                    remote-forward ? null ,
-                                                    server-alive-count-max ? null ,
-                                                    server-alive-interval ? null ,
-                                                    sessiontype ? null ,
-                                                    strict-host-key-checking ? null ,
-                                                    user ? null ,
-                                                    user-known-hosts-file ? null
-                                                } @primary :
-                                                    {
-                                                        implementatioj
-                                                    }
                                         generic = generic ;
                                     } ;
                                 listeners =
