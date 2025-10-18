@@ -300,9 +300,6 @@
                                                                             echo -n "$MOUNT"
                                                                             echo "aa84788f-590a-4251-9c4f-ad68148a7f5b MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                         else
-                                                                            # COVERAGE cc71c31856d494c0fa6298238c3a88465a027005abb5a35f1adf0d1f5f70bd127dd0fc8c7f3143403fe2707aec2aa596424388676d733a8999ed14274bbb7257 when the targets do not match
-                                                                            # COVERAGE b6685e582f11196ead4fa3459fd16d9111f0fbba91c26c7e8d72357d1a363e9cb2a8f5b002ca50b0a6227082922c66bebbc0baf07bb8abec3bc72e4faed24410 when there is standard error
-                                                                            # COVERAGE 18bcee8bb15fcb7bc19928b5f59f311c3892ed31c6941b94bb7f2193020730889c79d0ab473c680630bcb96ed3c900ef7c67583682dbdbed6044f046c725e0a9 when there is a non-zero status
                                                                             # shellcheck disable=SC2016
                                                                             jq \
                                                                                 --null-input \
@@ -374,7 +371,6 @@
                                 {
                                     check =
                                         {
-                                            DEBUG ? false ,
                                             arguments ? [ ] ,
                                             expected-dependencies ,
                                             expected-index ,
@@ -436,7 +432,6 @@
                                                                                         standard-input ;
                                                                                 in
                                                                                     ''
-                                                                                        ${ if DEBUG then "exit 65" else "#" }
                                                                                         OUT="$1"
                                                                                         touch "$OUT"
                                                                                         mkdir --parents /build/redis
@@ -588,8 +583,7 @@
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
-                                                                in "exit 54" ;
-                                                                # in "${ test }/bin/test $out" ;
+                                                                in "${ test }/bin/test $out" ;
                                                     name = "check" ;
                                                     src = ./. ;
                                                 } ;
