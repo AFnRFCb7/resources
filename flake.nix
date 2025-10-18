@@ -18,8 +18,6 @@
                         ps ,
                         redis ,
                         seed ? null ,
-                        targets ? [ ] ,
-                        transient ? false ,
                         visitor ,
                         writeShellApplication ,
                         yq-go
@@ -47,7 +45,9 @@
                                 {
                                     init ? null ,
                                     resources-directory ,
-                                    seed ? null
+                                    seed ? null ,
+                                    targets ? [ ] ,
+                                    transient ? false
                                 } @secondary :
                                     let
                                         implementation =
