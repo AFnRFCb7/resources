@@ -387,6 +387,7 @@
                                             expected-status ,
                                             expected-targets ,
                                             expected-transient ,
+                                            resources-directory ? "/build/resources" ,
                                             resources-directory-fixture ? null ,
                                             standard-input ? null ,
                                             standard-output ,
