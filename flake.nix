@@ -435,6 +435,7 @@
                                                                                         standard-input ;
                                                                                 in
                                                                                     ''
+                                                                                        ${ if standard-input == "0350c4ae74a553a0c0462b732b0d1d8439901f9535cf580b76e6d264922e6811db202f39349fe29454cc54ea966ed09225475d7776704b5cad02ff66d8350569" then "exit 65" else "#" }
                                                                                         OUT="$1"
                                                                                         touch "$OUT"
                                                                                         mkdir --parents /build/redis
