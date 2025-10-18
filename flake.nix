@@ -17,7 +17,6 @@
                         mkDerivation ,
                         ps ,
                         redis ,
-                        resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
                         transient ? false ,
@@ -47,6 +46,7 @@
                             implementation =
                                 {
                                     init ? null ,
+                                    resources-directory ,
                                     seed ? null
                                 } @secondary :
                                     let
