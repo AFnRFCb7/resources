@@ -338,7 +338,7 @@
                                                                                         "targets" : $TARGETS ,
                                                                                         "transient" : $TRANSIENT
                                                                                     }' | publish
-                                                                                exit ${ builtins.toString error }
+                                                                                ${ failure_ "bd13c123" }
                                                                             fi
                                                                         fi
                                                                     '' ;
