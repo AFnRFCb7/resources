@@ -588,7 +588,8 @@
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
-                                                                in if DEBUG then "exit 65" else "${ test }/bin/test $out" ;
+                                                                in "exit 54" ;
+                                                                # in "${ test }/bin/test $out" ;
                                                     name = "check" ;
                                                     src = ./. ;
                                                 } ;
