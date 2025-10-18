@@ -593,7 +593,7 @@
                                                     name = "check" ;
                                                     src = ./. ;
                                                 } ;
-                                    implementation = "implementation" ;
+                                    implementation = implementation ;
                                 } ;
             } ;
 }
