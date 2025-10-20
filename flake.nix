@@ -32,7 +32,7 @@
                                 let
                                     seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
                                     in
-                                        visitor._implementation
+                                        _visitor.implementation
                                             {
                                                 bool = seed ;
                                                 float = seed ;
