@@ -27,7 +27,7 @@
                         yq-go
                     } @primary :
                         let
-                            visitor_ = visitor.lib { } ;
+                            visitor_ = visitor.lib { } { } ;
                             description =
                                 let
                                     seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
