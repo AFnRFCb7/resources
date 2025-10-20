@@ -27,7 +27,7 @@
                         yq-go
                     } @primary :
                         let
-                            visitor_ = visitor.lib { } { } ;
+                            _visitor = visitor.lib { } ;
                             description =
                                 let
                                     seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
@@ -360,7 +360,7 @@
                                                             '' ;
                                                     } ;
                                                 transient_ =
-                                                    visitor_.implementation
+                                                    _visitor.implementation
                                                         {
                                                             bool = path : value : if value then "$( sequential ) || ${ failure_.implementation "808f8e2c" }" else "-1" ;
                                                         }
@@ -425,7 +425,7 @@
                                                                         text =
                                                                             let
                                                                                 standard-input_ =
-                                                                                    visitor_.implementation
+                                                                                    _visitor.implementation
                                                                                         {
                                                                                             null = path : value : "" ;
                                                                                             string = path : value : "< ${ builtins.toFile "standard-input" value }" ;
