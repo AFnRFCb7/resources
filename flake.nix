@@ -27,11 +27,12 @@
                         yq-go
                     } @primary :
                         let
+                            visitor_ = visitor.lib { } ;
                             description =
                                 let
                                     seed = path : value : [ { path = path ; type = builtins.typeOf value ; value = if builtins.typeOf value == "lambda" then null else value ; } ] ;
                                     in
-                                        visitor.lib.implementation
+                                        visitor._implementation
                                             {
                                                 bool = seed ;
                                                 float = seed ;
@@ -359,7 +360,7 @@
                                                             '' ;
                                                     } ;
                                                 transient_ =
-                                                    visitor.lib.implementation
+                                                    visitor_.implementation
                                                         {
                                                             bool = path : value : if value then "$( sequential ) || ${ failure_.implementation "808f8e2c" }" else "-1" ;
                                                         }
@@ -424,7 +425,7 @@
                                                                         text =
                                                                             let
                                                                                 standard-input_ =
-                                                                                    visitor.lib.implementation
+                                                                                    visitor_.implementation
                                                                                         {
                                                                                             null = path : value : "" ;
                                                                                             string = path : value : "< ${ builtins.toFile "standard-input" value }" ;
