@@ -425,7 +425,7 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : "'RESOURCE NULL'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : "'RESOURCE STRING ${ builtins.typeOf implementation }'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
+                                                                                            string = path : value : "'RESOURCE STRING ${ builtins.typeOf implementation } ${ builtins.typeOf implementation ( { script } : script )'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -448,7 +448,7 @@
                                                                                         fi
                                                                                         if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                         then
-                                                                                            echo "NOTHING" | ${ _failure.implementation "043022f8" }/bin/failure "We expected the standard output to be ${ standard-output } but it was $RESOURCE"
+                                                                                            date | ${ _failure.implementation "043022f8" }/bin/failure "We expected the standard output to be ${ standard-output } but it was $RESOURCE"
                                                                                         fi
                                                                                         if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                                         then
