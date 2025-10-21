@@ -424,9 +424,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : "'RESOURCE NULL ${ builtins.typeOf implementation }'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
-                                                                                            # string = path : value : "'RESOURCE STRING ${ builtins.typeOf implementation } ${ implementation ( { implementation } : "YES" ) }'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
-                                                                                            string = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ) ;
+                                                                                            null = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/test/standard-error" ) ;
+                                                                                            string = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/test/standard-error" ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -458,8 +457,7 @@
                                                                                         fi
                                                                                         if [[ ! -f /build/standard-error ]]
                                                                                         then
-                                                                                            echo "We expected the standard error file to exist" >&2
-                                                                                            ${ _failure.implementation "da8b2593" }
+                                                                                            ${ _failure.implementation "We expected the standard error file to exist" }/bin/failure
                                                                                         fi
                                                                                         if [[ -s /build/standard-error ]]
                                                                                         then
