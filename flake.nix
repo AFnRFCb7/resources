@@ -425,7 +425,7 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : "'RESOURCE NULL'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : "'RESOURCE STRING ${ builtins.typeOf implementation } ${ builtins.typeOf implementation ( { script } : script )'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
+                                                                                            string = path : value : "'RESOURCE STRING ${ builtins.typeOf implementation } ${ builtins.typeOf implementation ( { script } : script ) }'" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
