@@ -422,11 +422,11 @@
                                                                         runtimeInputs = [ coreutils fixture jq redis subscribe ] ;
                                                                         text =
                                                                             let
-                                                                                standard-input_ =
+                                                                                resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : "" ;
-                                                                                            string = path : value : "< ${ builtins.toFile "standard-input" value }" ;
+                                                                                            null = path : value : { script } : "${ script } ${ builtins.concatStringsSep " " arguments }" ;
+                                                                                            string = path : value : "${ script } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -441,7 +441,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE=${ { script } : script { script = "" ; } }
+                                                                                        if RESOURCE=${ implementation resource } 2> /build/standard-error
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
