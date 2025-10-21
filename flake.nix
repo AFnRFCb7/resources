@@ -448,7 +448,7 @@
                                                                                         fi
                                                                                         if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                         then
-                                                                                            echo "" | ${ _failure.implementation "043022f8" }/bin/failure "We expected the standard output to be ${ standard-output } but it was $RESOURCE"
+                                                                                            echo "NOTHING" | ${ _failure.implementation "043022f8" }/bin/failure "We expected the standard output to be ${ standard-output } but it was $RESOURCE"
                                                                                         fi
                                                                                         if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                                         then
