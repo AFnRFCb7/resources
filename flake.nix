@@ -441,7 +441,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE=${ { script } : script "${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then "" else "< ${ builtins.toFile "standard-input" standard-input } " }" }
+                                                                                        if RESOURCE=${ { script } : script { script = "" ; } }
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
