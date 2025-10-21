@@ -363,7 +363,7 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in script : ''"$( ${ script { implementation = implementation ; } } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script { implementation = implementation ; self = "${ resources-directory }/mounts/$INDEX" ; } } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
@@ -424,8 +424,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
-                                                                                            string = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
+                                                                                            null = path : value : implementation ( { implementation , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
+                                                                                            string = path : value : implementation ( { implementation , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
