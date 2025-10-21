@@ -440,7 +440,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE=${ resource } 2> /build/standard-error
+                                                                                        if RESOURCE=RESOURCE 2> /build/standard-error
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
