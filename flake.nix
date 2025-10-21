@@ -426,7 +426,7 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : { script } : "${ script } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : "${ script } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input }" ;
+                                                                                            string = path : value : { script } : "${ script } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" standard-input }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
