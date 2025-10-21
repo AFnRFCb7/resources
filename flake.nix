@@ -425,7 +425,7 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" string }" ;
+                                                                                            string = path : value : { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
