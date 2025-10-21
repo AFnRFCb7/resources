@@ -424,8 +424,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : { script } : "${ script } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : { script } : "${ script } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" string }" ;
+                                                                                            null = path : value : { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
+                                                                                            string = path : value : { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" string }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -440,7 +440,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE=${ implementation resource } 2> /build/standard-error
+                                                                                        if RESOURCE=${ resource { implementation = implementation ; } } 2> /build/standard-error
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
