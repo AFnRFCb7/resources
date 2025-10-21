@@ -27,6 +27,7 @@
                         yq-go
                     } @primary :
                         let
+                            _failure = failure.lib { coreutils = coreutils ; jq = jq ; mkDerivation = mkDerivation ; writeShellApplication = writeShellApplication ; visitor = visitor ; yq-go = yq-go ; } ;
                             _visitor = visitor.lib { } ;
                             description =
                                 let
@@ -45,7 +46,6 @@
                                                 string = seed ;
                                             }
                                             primary ;
-                            failure_ = failure.lib { coreutils = coreutils ; jq = jq ; mkDerivation = mkDerivation ; writeShellApplication = writeShellApplication ; visitor = visitor ; yq-go = yq-go ; } ;
                             implementation =
                                 let
                                     implementation =
@@ -71,7 +71,7 @@
                                                         runtimeInputs = [ coreutils jq redis ] ;
                                                         text =
                                                             ''
-                                                                JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ failure_.implementation "7b8f1293" }
+                                                                JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ _failure.implementation "7b8f1293" }
                                                                 redis-cli PUBLISH "${ channel }" "$JSON" 2> /dev/null || true
                                                             '' ;
                                                     } ;
@@ -87,17 +87,17 @@
                                                                     then
                                                                         HAS_STANDARD_INPUT=false
                                                                         STANDARD_INPUT=
-                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure_.implementation "7f77cdad" }
+                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ _failure.implementation "7f77cdad" }
                                                                     else
                                                                         HAS_STANDARD_INPUT=true
                                                                         cat <&0 > "$STANDARD_INPUT_FILE"
-                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure_.implementation "fbb0e2f8" }
+                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ _failure.implementation "fbb0e2f8" }
                                                                     fi
                                                                     TRANSIENT=${ transient_ }
-                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ failure_.implementation "833fbd3f" }
-                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure_.implementation "bc3e1b88" }
+                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" )" || ${ _failure.implementation "833fbd3f" }
+                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ _failure.implementation "bc3e1b88" }
                                                                     mkdir --parents "${ resources-directory }/locks"
-                                                                    ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ failure_.implementation "fc776602" }
+                                                                    ARGUMENTS_YAML="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . | yq -P )" || ${ _failure.implementation "fc776602" }
                                                                     export ARGUMENTS_YAML
                                                                     export HAS_STANDARD_INPUT
                                                                     export HASH
@@ -108,9 +108,9 @@
                                                                     flock -s 210
                                                                     if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                     then
-                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure_.implementation "bf282501" }
+                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ _failure.implementation "bf282501" }
                                                                         export MOUNT
-                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure_.implementation "26213048" }
+                                                                        INDEX="$( basename "$MOUNT" )" || ${ _failure.implementation "26213048" }
                                                                         export INDEX
                                                                         export PROVENENCE=cached
                                                                         mkdir --parents "${ resources-directory }/locks/$INDEX"
@@ -125,7 +125,7 @@
                                                                         ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                         echo -n "$MOUNT"
                                                                     else
-                                                                        INDEX="$( sequential )" || ${ failure_.implementation "d162db9f" }
+                                                                        INDEX="$( sequential )" || ${ _failure.implementation "d162db9f" }
                                                                         export INDEX
                                                                         export PROVENANCE=new
                                                                         mkdir --parents "${ resources-directory }/locks/$INDEX"
@@ -158,19 +158,19 @@
                                                                         HAS_STANDARD_INPUT=false
                                                                         STANDARD_INPUT=
                                                                     else
-                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ failure_.implementation "f66f966d" }
+                                                                        STANDARD_INPUT_FILE="$( mktemp )" || ${ _failure.implementation "f66f966d" }
                                                                         export STANDARD_INPUT_FILE
                                                                         HAS_STANDARD_INPUT=true
                                                                         cat <&0 > "$STANDARD_INPUT_FILE"
-                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ failure_.implementation "ffff1b30" }
+                                                                        STANDARD_INPUT="$( cat "$STANDARD_INPUT_FILE" )" || ${ _failure.implementation "ffff1b30" }
                                                                     fi
                                                                     mkdir --parents ${ resources-directory }
                                                                     ARGUMENTS=( "$@" )
                                                                     ARGUMENTS_JSON="$( printf '%s\n' "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" | jq -R . | jq -s . )"
                                                                     TRANSIENT=${ transient_ }
-                                                                    ORIGINATOR_PID="$(ps -o ppid= -p "$PPID" | tr -d '[:space:]')" || ${ failure_.implementation "833fbd3f" }
+                                                                    ORIGINATOR_PID="$(ps -o ppid= -p "$PPID" | tr -d '[:space:]')" || ${ _failure.implementation "833fbd3f" }
                                                                     export ORIGINATOR_PID
-                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure_.implementation "7849a979" }
+                                                                    HASH="$( echo "${ pre-hash } ${ builtins.concatStringsSep "" [ "$TRANSIENT" "$" "{" "ARGUMENTS[*]" "}" ] } $STANDARD_INPUT $HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ _failure.implementation "7849a979" }
                                                                     export HASH
                                                                     mkdir --parents "${ resources-directory }/locks"
                                                                     export HAS_STANDARD_INPUT
@@ -182,13 +182,13 @@
                                                                     flock -s 210
                                                                     if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                     then
-                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ failure_.implementation "ae2d1658" }
+                                                                        MOUNT="$( readlink "${ resources-directory }/canonical/$HASH" )" || ${ _failure.implementation "ae2d1658" }
                                                                         export MOUNT
-                                                                        INDEX="$( basename "$MOUNT" )" || ${ failure_.implementation "277afc07" }
+                                                                        INDEX="$( basename "$MOUNT" )" || ${ _failure.implementation "277afc07" }
                                                                         export INDEX
                                                                         export PROVENANCE=cached
-                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure_.implementation "54d472fb" }
-                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure_.implementation "54d472fb" }
+                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }
+                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }
                                                                         mkdir --parents "${ resources-directory }/locks/$INDEX"
                                                                             # shellcheck disable=SC2016
                                                                             jq \
@@ -218,7 +218,7 @@
                                                                                 }' | publish > /dev/null 2>&1
                                                                         echo -n "$MOUNT"
                                                                     else
-                                                                        INDEX="$( sequential )" || ${ failure_.implementation "cab66847" }
+                                                                        INDEX="$( sequential )" || ${ _failure.implementation "cab66847" }
                                                                         export INDEX
                                                                         export PROVENANCE=new
                                                                         mkdir --parents "${ resources-directory }/locks/$INDEX"
@@ -231,9 +231,9 @@
                                                                         mkdir --parents "$MOUNT"
                                                                         export MOUNT
                                                                         mkdir --parents "$MOUNT"
-                                                                        STANDARD_ERROR_FILE="$( mktemp )" || ${ failure_.implementation "b07f7374" }
+                                                                        STANDARD_ERROR_FILE="$( mktemp )" || ${ _failure.implementation "b07f7374" }
                                                                         export STANDARD_ERROR_FILE
-                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || ${ failure_.implementation "29c19af1" }
+                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || ${ _failure.implementation "29c19af1" }
                                                                         export STANDARD_OUTPUT_FILE
                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                         then
@@ -253,16 +253,15 @@
                                                                         fi
                                                                         export STATUS
                                                                         TARGET_HASH_EXPECTED=${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) }
-                                                                        TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ failure_.implementation "db2517b1" }
-                                                                        STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ failure_.implementation "260fbb3c" }
+                                                                        TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ _failure.implementation "db2517b1" }
+                                                                        STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ _failure.implementation "260fbb3c" }
                                                                         export STANDARD_ERROR
-                                                                        STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ failure_.implementation "d1b1f5be" }
+                                                                        STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ _failure.implementation "d1b1f5be" }
                                                                         export STANDARD_OUTPUT
-                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure_.implementation "54d472fb" }
-                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ failure_.implementation "54d472fb" }
+                                                                        DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }
+                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }
                                                                         if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                         then
-                                                                            echo "ba5bfd7d-d507-4c8d-a18c-79d22d6e5dfd MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                             # shellcheck disable=SC2016
                                                                             jq \
                                                                                 --null-input \
@@ -295,11 +294,9 @@
                                                                                     "targets" : $TARGETS ,
                                                                                     "transient" : $TRANSIENT
                                                                                 }' | publish > /dev/null 2>&1
-                                                                            echo "aafcf4c2-2303-41ad-a3df-ee3daded2553 MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                             mkdir --parents ${ resources-directory }/canonical
                                                                             ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                             echo -n "$MOUNT"
-                                                                            echo "aa84788f-590a-4251-9c4f-ad68148a7f5b MOUNT=$MOUNT" >> ${ resources-directory }/debug
                                                                         else
                                                                             # shellcheck disable=SC2016
                                                                             jq \
@@ -333,7 +330,7 @@
                                                                                     "targets" : $TARGETS ,
                                                                                     "transient" : $TRANSIENT
                                                                                 }' | publish
-                                                                            ${ failure_.implementation "bd13c123" }
+                                                                            ${ _failure.implementation "bd13c123" }
                                                                         fi
                                                                     fi
                                                                 '' ;
@@ -350,7 +347,7 @@
                                                                 flock -x 220
                                                                 if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
                                                                 then
-                                                                    CURRENT="$( < ${ resources-directory }/sequential/sequential.counter )" || ${ failure_.implementation "c9a94abb" }
+                                                                    CURRENT="$( < ${ resources-directory }/sequential/sequential.counter )" || ${ _failure.implementation "c9a94abb" }
                                                                 else
                                                                     CURRENT=0
                                                                 fi
@@ -362,11 +359,11 @@
                                                 transient_ =
                                                     _visitor.implementation
                                                         {
-                                                            bool = path : value : if value then "$( sequential ) || ${ failure_.implementation "808f8e2c" }" else "-1" ;
+                                                            bool = path : value : if value then "$( sequential ) || ${ _failure.implementation "808f8e2c" }" else "-1" ;
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in "${ implementation }" ;
+                                    in script : ''$( ${ script implementation } ) " || ${ _failure.implementation "5b05da86" }'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
@@ -443,7 +440,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE="$( ${ implementation } ${ builtins.concatStringsSep " " arguments } ${ standard-input_ } 2> /build/standard-error )"
+                                                                                        if RESOURCE=${ script : script "${ builtins.concatStringsSep " " arguments }${ if builtins.typeOf standard-input == "null" then "" else "< ${ builtins.toFile "standard-input" standard-input } " }" }
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
@@ -452,135 +449,134 @@
                                                                                         if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                         then
                                                                                             echo "We expected the standard output to be ${ standard-output } but it was $RESOURCE" >&2
-                                                                                            cat ${ resources-directory }/debug >&2
-                                                                                            ${ failure_.implementation "c727ba4d" }
+                                                                                            ${ _failure.implementation "c727ba4d" }
                                                                                         fi
                                                                                         if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                                         then
                                                                                             echo "We expected the status to be ${ builtins.toString status } but it was $STATUS" >&2
-                                                                                            ${ failure_.implementation "57cd83f9" }
+                                                                                            ${ _failure.implementation "57cd83f9" }
                                                                                         fi
                                                                                         if [[ ! -f /build/standard-error ]]
                                                                                         then
                                                                                             echo "We expected the standard error file to exist" >&2
-                                                                                            ${ failure_.implementation "da8b2593" }
+                                                                                            ${ _failure.implementation "da8b2593" }
                                                                                         fi
                                                                                         if [[ -s /build/standard-error ]]
                                                                                         then
-                                                                                            STANDARD_ERROR="$( < /build/standard-error )" || ${ failure_.implementation "1c4d6ced" }
+                                                                                            STANDARD_ERROR="$( < /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }
                                                                                             echo "We expected the standard error file to be empty but it was $STANDARD_ERROR" >&2
-                                                                                            ${ failure_.implementation "a6d0f7ed" }
+                                                                                            ${ _failure.implementation "a6d0f7ed" }
                                                                                         fi
                                                                                         while [[ ! -f /build/payload ]]
                                                                                         do
                                                                                             redis-cli PUBLISH ${ channel } '{"test" : true}'
                                                                                         done
-                                                                                        EXPECTED_ARGUMENTS="$( jq --null-input '${ builtins.toJSON arguments }' )" || ${ failure_.implementation "c0a73187" }
-                                                                                        OBSERVED_ARGUMENTS="$( jq ".arguments" /build/payload )" || ${ failure_.implementation "44440f2d" }
+                                                                                        EXPECTED_ARGUMENTS="$( jq --null-input '${ builtins.toJSON arguments }' )" || ${ _failure.implementation "c0a73187" }
+                                                                                        OBSERVED_ARGUMENTS="$( jq ".arguments" /build/payload )" || ${ _failure.implementation "44440f2d" }
                                                                                         if [[ "$EXPECTED_ARGUMENTS" != "$OBSERVED_ARGUMENTS" ]]
                                                                                         then
                                                                                             echo "We expected the payload arguments to be $EXPECTED_ARGUMENTS but it was $OBSERVED_ARGUMENTS" >&2
-                                                                                            ${ failure_.implementation "d3fb3e9b" }
+                                                                                            ${ _failure.implementation "d3fb3e9b" }
                                                                                         fi
-                                                                                        EXPECTED_DEPENDENCIES="$( jq --null-input '${ builtins.toJSON expected-dependencies }' )" || ${ failure_.implementation "2c5c7ae4" }
-                                                                                        OBSERVED_DEPENDENCIES="$( jq ".dependencies" /build/payload )" || ${ failure_.implementation "8d52f2db" }
+                                                                                        EXPECTED_DEPENDENCIES="$( jq --null-input '${ builtins.toJSON expected-dependencies }' )" || ${ _failure.implementation "2c5c7ae4" }
+                                                                                        OBSERVED_DEPENDENCIES="$( jq ".dependencies" /build/payload )" || ${ _failure.implementation "8d52f2db" }
                                                                                         if [[ "$EXPECTED_DEPENDENCIES" != "$OBSERVED_DEPENDENCIES" ]]
                                                                                         then
                                                                                             echo "We expected the payload dependencies to be $EXPECTED_DEPENDENCIES but it was $OBSERVED_DEPENDENCIES" >&2
-                                                                                            ${ failure_.implementation "12073df9" }
+                                                                                            ${ _failure.implementation "12073df9" }
                                                                                         fi
-                                                                                        EXPECTED_DESCRIPTION="$( echo '${ builtins.toJSON description }' | jq '.' )" || ${ failure_.implementation "f7b03966" }
-                                                                                        OBSERVED_DESCRIPTION="$( jq ".description" /build/payload )" || ${ failure_.implementation "4f4a2232" }
+                                                                                        EXPECTED_DESCRIPTION="$( echo '${ builtins.toJSON description }' | jq '.' )" || ${ _failure.implementation "f7b03966" }
+                                                                                        OBSERVED_DESCRIPTION="$( jq ".description" /build/payload )" || ${ _failure.implementation "4f4a2232" }
                                                                                         if [[ "$EXPECTED_DESCRIPTION" != "$OBSERVED_DESCRIPTION" ]]
                                                                                         then
                                                                                             echo "We expected the payload description to be $EXPECTED_DESCRIPTION but it was $OBSERVED_DESCRIPTION" >&2
-                                                                                            ${ failure_.implementation "4656e7d5" }
+                                                                                            ${ _failure.implementation "4656e7d5" }
                                                                                         fi
                                                                                         EXPECTED_INDEX="${ expected-index }"
-                                                                                        OBSERVED_INDEX="$( jq --raw-output ".index" /build/payload )" || ${ failure_.implementation "abdf3e25" }
+                                                                                        OBSERVED_INDEX="$( jq --raw-output ".index" /build/payload )" || ${ _failure.implementation "abdf3e25" }
                                                                                         if [[ "$EXPECTED_INDEX" != "$OBSERVED_INDEX" ]]
                                                                                         then
                                                                                             echo "We expected the payload index to be $EXPECTED_INDEX but it was $OBSERVED_INDEX" >&2
-                                                                                            ${ failure_.implementation "7a3de836" }
+                                                                                            ${ _failure.implementation "7a3de836" }
                                                                                         fi
                                                                                         EXPECTED_HAS_STANDARD_INPUT="${ if builtins.typeOf standard-input == "null" then "false" else "true" }"
-                                                                                        OBSERVED_HAS_STANDARD_INPUT="$( jq --raw-output '."has-standard-input"' /build/payload )" || ${ failure_.implementation "1de78471" }
+                                                                                        OBSERVED_HAS_STANDARD_INPUT="$( jq --raw-output '."has-standard-input"' /build/payload )" || ${ _failure.implementation "1de78471" }
                                                                                         if [[ "$EXPECTED_HAS_STANDARD_INPUT" != "$OBSERVED_HAS_STANDARD_INPUT" ]]
                                                                                         then
                                                                                             echo "We expected the payload has-standard-input to be $EXPECTED_STANDARD_INPUT but it was $OBSERVED_STANDARD_INPUT" >&2
-                                                                                            ${ failure_.implementation "89b51e3a" }
+                                                                                            ${ _failure.implementation "89b51e3a" }
                                                                                         fi
                                                                                         EXPECTED_ORIGINATOR_PID="${ builtins.toString expected-originator-pid }"
-                                                                                        OBSERVED_ORIGINATOR_PID="$( jq --raw-output '."originator-pid"' /build/payload )" || ${ failure_.implementation "26e0cb2b" }
+                                                                                        OBSERVED_ORIGINATOR_PID="$( jq --raw-output '."originator-pid"' /build/payload )" || ${ _failure.implementation "26e0cb2b" }
                                                                                         if [[ "$EXPECTED_ORIGINATOR_PID" != "$OBSERVED_ORIGINATOR_PID" ]]
                                                                                         then
                                                                                             echo "We expected the payload originator-pid to be $EXPECTED_ORIGINATOR_PID but it was $OBSERVED_ORIGINATOR_PID" >&2
-                                                                                            ${ failure_.implementation "db64a1c9" }
+                                                                                            ${ _failure.implementation "db64a1c9" }
                                                                                         fi
                                                                                         EXPECTED_PROVENANCE="${ expected-provenance }"
-                                                                                        OBSERVED_PROVENANCE="$( jq --raw-output ".provenance" /build/payload )" || ${ failure_.implementation "26e0cb2b" }
+                                                                                        OBSERVED_PROVENANCE="$( jq --raw-output ".provenance" /build/payload )" || ${ _failure.implementation "26e0cb2b" }
                                                                                         if [[ "$EXPECTED_PROVENANCE" != "$OBSERVED_PROVENANCE" ]]
                                                                                         then
                                                                                             echo "We expected the payload provenance to be $EXPECTED_PROVENANCE but it was $OBSERVED_PROVENANCE" >&2
-                                                                                            ${ failure_.implementation "c07c110c" }
+                                                                                            ${ _failure.implementation "c07c110c" }
                                                                                         fi
-                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON expected-targets }' )" || ${ failure_.implementation "e9fa75bf" }
-                                                                                        OBSERVED_TARGETS="$( jq ".targets" /build/payload )" || ${ failure_.implementation "ad928300" }
+                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON expected-targets }' )" || ${ _failure.implementation "e9fa75bf" }
+                                                                                        OBSERVED_TARGETS="$( jq ".targets" /build/payload )" || ${ _failure.implementation "ad928300" }
                                                                                         if [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                                         then
                                                                                             echo "We expected the payload targets to be $EXPECTED_TARGETS but it was $OBSERVED_TARGETS" >&2
-                                                                                            ${ failure_.implementation "85ad88e4" }
+                                                                                            ${ _failure.implementation "85ad88e4" }
                                                                                         fi
                                                                                         EXPECTED_STANDARD_ERROR="${ expected-standard-error }"
-                                                                                        OBSERVED_STANDARD_ERROR="$( jq --raw-output '."standard-error"' /build/payload )" || ${ failure_.implementation "714592cd" }
+                                                                                        OBSERVED_STANDARD_ERROR="$( jq --raw-output '."standard-error"' /build/payload )" || ${ _failure.implementation "714592cd" }
                                                                                         if [[ "$EXPECTED_STANDARD_ERROR" != "$OBSERVED_STANDARD_ERROR" ]]
                                                                                         then
                                                                                             echo "We expected the payload standard-error to be $EXPECTED_STANDARD_ERROR but it was $OBSERVED_STANDARD_ERROR" >&2
-                                                                                            ${ failure_.implementation "dcea8e50" }
+                                                                                            ${ _failure.implementation "dcea8e50" }
                                                                                         fi
                                                                                         EXPECTED_STANDARD_INPUT="${ if builtins.typeOf standard-input == "null" then "" else standard-input }"
-                                                                                        OBSERVED_STANDARD_INPUT="$( jq --raw-output '."standard-input"' /build/payload )" || ${ failure_.implementation "714592cd" }
+                                                                                        OBSERVED_STANDARD_INPUT="$( jq --raw-output '."standard-input"' /build/payload )" || ${ _failure.implementation "714592cd" }
                                                                                         if [[ "$EXPECTED_STANDARD_INPUT" != "$OBSERVED_STANDARD_INPUT" ]]
                                                                                         then
                                                                                             echo "We expected the payload standard-input to be $EXPECTED_STANDARD_INPUT but it was $OBSERVED_STANDARD_INPUT" >&2
-                                                                                            ${ failure_.implementation "11e3a4aa" }
+                                                                                            ${ _failure.implementation "11e3a4aa" }
                                                                                         fi
                                                                                         EXPECTED_STANDARD_OUTPUT="${ expected-standard-output }"
-                                                                                        OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ failure_.implementation "714592cd" }
+                                                                                        OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ _failure.implementation "714592cd" }
                                                                                         if [[ "$EXPECTED_STANDARD_OUTPUT" != "$OBSERVED_STANDARD_OUTPUT" ]]
                                                                                         then
                                                                                             echo "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OBSERVED_STANDARD_OUTPUT" >&2
-                                                                                            ${ failure_.implementation "d1054818" }
+                                                                                            ${ _failure.implementation "d1054818" }
                                                                                         fi
                                                                                         EXPECTED_STATUS="${ builtins.toString expected-status }"
-                                                                                        OBSERVED_STATUS="$( jq --raw-output ".status" /build/payload )" || ${ failure_.implementation "714592cd" }
+                                                                                        OBSERVED_STATUS="$( jq --raw-output ".status" /build/payload )" || ${ _failure.implementation "714592cd" }
                                                                                         if [[ "$EXPECTED_STATUS" != "$OBSERVED_STATUS" ]]
                                                                                         then
                                                                                             echo "We expected the payload status to be $EXPECTED_STATUS but it was $OBSERVED_STATUS" >&2
-                                                                                            ${ failure_.implementation "d1054818" }
+                                                                                            ${ _failure.implementation "d1054818" }
                                                                                         fi
                                                                                         EXPECTED_TRANSIENT="${ builtins.toString expected-transient }"
-                                                                                        OBSERVED_TRANSIENT="$( jq --raw-output ".transient" /build/payload )" || ${ failure_.implementation "85ad88e4" }
+                                                                                        OBSERVED_TRANSIENT="$( jq --raw-output ".transient" /build/payload )" || ${ _failure.implementation "85ad88e4" }
                                                                                         if [[ "$EXPECTED_TRANSIENT" != "$OBSERVED_TRANSIENT" ]]
                                                                                         then
                                                                                             echo "We expected the payload transient to be $EXPECTED_TRANSIENT but it was $OBSERVED_TRANSIENT" >&2
-                                                                                            ${ failure_.implementation "e6815070" }
+                                                                                            ${ _failure.implementation "e6815070" }
                                                                                         fi
                                                                                         PRE_HASH="${ pre-hash }"
                                                                                         FORMATTED_ARGUMENTS="${ builtins.concatStringsSep " " arguments }"
-                                                                                        EXPECTED_HASH="$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ failure_.implementation "e5f7b54d" }
-                                                                                        OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ failure_.implementation "a3fb933c" }
+                                                                                        EXPECTED_HASH="$( echo "$PRE_HASH $EXPECTED_TRANSIENT$FORMATTED_ARGUMENTS $EXPECTED_STANDARD_INPUT $EXPECTED_HAS_STANDARD_INPUT" | sha512sum | cut --characters 1-128 )" || ${ _failure.implementation "e5f7b54d" }
+                                                                                        OBSERVED_HASH="$( jq --raw-output ".hash" /build/payload )" || ${ _failure.implementation "a3fb933c" }
                                                                                         if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                         then
                                                                                             echo "We expected the payload hash to be $EXPECTED_HASH but it was $OBSERVED_HASH" >&2
-                                                                                            ${ failure_.implementation "9c498620" }
+                                                                                            ${ _failure.implementation "9c498620" }
                                                                                         fi
-                                                                                        EXPECTED_KEYS="$( echo '${ builtins.toJSON [ "arguments" "dependencies" "description" "has-standard-input" "hash" "index" "originator-pid" "provenance" "standard-error" "standard-input" "standard-output" "status" "targets" "transient" ] }' | jq --raw-output "." )" || ${ failure_.implementation "ecaa9ff9" }
-                                                                                        OBSERVED_KEYS="$( jq --raw-output "[keys[]]" /build/payload )" || ${ failure_.implementation "04699ea8" }
+                                                                                        EXPECTED_KEYS="$( echo '${ builtins.toJSON [ "arguments" "dependencies" "description" "has-standard-input" "hash" "index" "originator-pid" "provenance" "standard-error" "standard-input" "standard-output" "status" "targets" "transient" ] }' | jq --raw-output "." )" || ${ _failure.implementation "ecaa9ff9" }
+                                                                                        OBSERVED_KEYS="$( jq --raw-output "[keys[]]" /build/payload )" || ${ _failure.implementation "04699ea8" }
                                                                                         if [[ "$EXPECTED_KEYS" != "$OBSERVED_KEYS" ]]
                                                                                         then
                                                                                             echo "We expected the payload keys to be $EXPECTED_KEYS but it was $OBSERVED_KEYS" >&2
-                                                                                            ${ failure_.implementation "d68a978e" }
+                                                                                            ${ _failure.implementation "d68a978e" }
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
