@@ -424,8 +424,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
-                                                                                            string = path : value : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
+                                                                                            null = path : value : "RESOURCE NULL" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments }" ;
+                                                                                            string = path : value : "RESOURCE STRING" ; # "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value }" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -440,7 +440,7 @@
                                                                                             sleep 0
                                                                                         done
                                                                                         subscribe &
-                                                                                        if RESOURCE=RESOURCE 2> /build/standard-error
+                                                                                        if RESOURCE=${ resource } 2> /build/standard-error
                                                                                         then
                                                                                             STATUS="$?"
                                                                                         else
