@@ -363,7 +363,7 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in script : ''$( ${ script { implementation = implementation ; } } ) " || ${ _failure.implementation "5b05da86" }'' ;
+                                    in script : ''"$( ${ script { implementation = implementation ; } } )" || ${ _failure.implementation "5b05da86" }'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
