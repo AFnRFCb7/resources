@@ -424,8 +424,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/test/standard-error" ) ;
-                                                                                            string = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/test/standard-error" ) ;
+                                                                                            null = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
+                                                                                            string = path : value : implementation ( { implementation } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
@@ -453,7 +453,7 @@
                                                                                         if [[ "${ builtins.toString status }" != "$STATUS" ]]
                                                                                         then
                                                                                             echo "We expected the status to be ${ builtins.toString status } but it was $STATUS" >&2
-                                                                                            ${ _failure.implementation "57cd83f9" }
+                                                                                            ${ _failure.implementation "57cd83f9" }/bin/failure
                                                                                         fi
                                                                                         if [[ ! -f /build/standard-error ]]
                                                                                         then
