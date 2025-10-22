@@ -447,14 +447,6 @@
                                                                                         else
                                                                                             STATUS="$?"
                                                                                         fi
-                                                                                        if [[ "${ builtins.toString status }" != "$STATUS" ]]
-                                                                                        then
-                                                                                            ${ _failure.implementation "57cd83f9" }/bin/failure "We expected the status to be ${ builtins.toString status } but it was $STATUS"
-                                                                                        fi
-                                                                                        if [[ ! -f /build/standard-error ]]
-                                                                                        then
-                                                                                            ${ _failure.implementation "fd6c2c17" }/bin/failure "We expected the standard error file to exist"
-                                                                                        fi
                                                                                         if [[ -s /build/standard-error ]]
                                                                                         then
                                                                                             STANDARD_ERROR="$( cat /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }/bin/failure
@@ -565,6 +557,14 @@
                                                                                         if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                         then
                                                                                             ${ _failure.implementation "043022f8" }/bin/failure "We expected the standard output to be ${ standard-output } but it was $RESOURCE"
+                                                                                        fi
+                                                                                        if [[ "${ builtins.toString status }" != "$STATUS" ]]
+                                                                                        then
+                                                                                            ${ _failure.implementation "57cd83f9" }/bin/failure "We expected the status to be ${ builtins.toString status } but it was $STATUS"
+                                                                                        fi
+                                                                                        if [[ ! -f /build/standard-error ]]
+                                                                                        then
+                                                                                            ${ _failure.implementation "fd6c2c17" }/bin/failure "We expected the standard error file to exist"
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
