@@ -447,11 +447,6 @@
                                                                                         else
                                                                                             STATUS="$?"
                                                                                         fi
-                                                                                        if [[ -s /build/standard-error ]]
-                                                                                        then
-                                                                                            STANDARD_ERROR="$( cat /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }/bin/failure
-                                                                                            ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be empty but it was $STANDARD_ERROR"
-                                                                                        fi
                                                                                         while [[ ! -f /build/payload ]]
                                                                                         do
                                                                                             redis-cli PUBLISH ${ channel } '{"test" : true}'
@@ -565,6 +560,11 @@
                                                                                         if [[ ! -f /build/standard-error ]]
                                                                                         then
                                                                                             ${ _failure.implementation "fd6c2c17" }/bin/failure "We expected the standard error file to exist"
+                                                                                        fi
+                                                                                        if [[ -s /build/standard-error ]]
+                                                                                        then
+                                                                                            STANDARD_ERROR="$( cat /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }/bin/failure
+                                                                                            ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be empty but it was $STANDARD_ERROR"
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
