@@ -364,7 +364,7 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in script : ''"$( ${ script { implementation = implementation ; resources = resources : self = "${ resources-directory }/mounts/$INDEX" ; } } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script { implementation = implementation ; resources = resources ; self = "${ resources-directory }/mounts/$INDEX" ; } } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
