@@ -428,8 +428,8 @@
                                                                                 resource =
                                                                                     _visitor.implementation
                                                                                         {
-                                                                                            null = path : value : implementation ( { implementation , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
-                                                                                            string = path : value : implementation ( { implementation , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
+                                                                                            null = path : value : implementation ( { implementation , resources , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
+                                                                                            string = path : value : implementation ( { implementation , resources , self } : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
