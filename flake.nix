@@ -259,7 +259,7 @@
                                                                         STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ _failure.implementation "d1b1f5be" }/bin/failure
                                                                         export STANDARD_OUTPUT
                                                                         DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }/bin/failure
-                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }/bin/failure
+                                                                        TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }/bin/failure
                                                                         if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGET_HASH_EXPECTED" == "$TARGET_HASH_OBSERVED" ]]
                                                                         then
                                                                             # shellcheck disable=SC2016
