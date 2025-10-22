@@ -381,6 +381,7 @@
                                             expected-transient ,
                                             resources-directory ? "/build/resources" ,
                                             resources-directory-fixture ? null ,
+                                            self ? "self" ,
                                             standard-input ? null ,
                                             standard-output ,
                                             status ? 0
@@ -558,6 +559,12 @@
                                                                                         if [[ "$EXPECTED_KEYS" != "$OBSERVED_KEYS" ]]
                                                                                         then
                                                                                             date | ${ _failure.implementation "d68a978e" }/bin/failure "We expected the payload keys to be $EXPECTED_KEYS but it was $OBSERVED_KEYS"
+                                                                                        fi
+                                                                                        EXPECTED_SELF=$RESOURCE
+                                                                                        OBSERVED_SELF="$( < "$RESOURCE/${ self } )" || ${ _failure.implementation "0f7fe006" }/bin/failure
+                                                                                        if [[ "$EXPECTED_SELF" != "$OBSERVED_SELF" ]]
+                                                                                        then
+                                                                                            date | ${ _failure.implementation "0140fc7d" }/bin/failure "We expected the self to be $EXPECTED_SELF but it was $OBSERVED_SELF
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
