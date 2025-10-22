@@ -560,9 +560,9 @@
                                                                                             ${ _failure.implementation "57cd83f9" }/bin/failure "We expected the status to be ${ builtins.toString status } but it was $STATUS"
                                                                                         fi
                                                                                         cp /build/standard-error "$OUT/standard-error"
-                                                                                        STANDARD_ERROR="$( < /build/standard-error )" || ${ _failure.implementation "1668fd63" }/bin/failure
-                                                                                        if [[ "$STANDARD_ERROR" != "${ standard-error }" ]]
+                                                                                        if ! diff --unified ${ builtins.toFile "standard-error" standard-error } /build/standard-error
                                                                                         then
+                                                                                            cp /build/standard-error "$OUT/standard-error"
                                                                                             ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be ${ builtins.toFile "standard-error" standard-error } but it was $OUT/standard-error"
                                                                                         fi
                                                                                     '' ;
