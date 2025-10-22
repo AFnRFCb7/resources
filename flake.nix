@@ -19,6 +19,7 @@
                         ps ,
                         redis ,
                         resources-directory ,
+                        resources ? null ,
                         seed ? null ,
                         targets ? [ ] ,
                         transient ? false ,
