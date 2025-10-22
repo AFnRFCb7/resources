@@ -564,7 +564,7 @@
                                                                                         OBSERVED_SELF="$( < "$RESOURCE/${ self } )" || ${ _failure.implementation "0f7fe006" }/bin/failure
                                                                                         if [[ "$EXPECTED_SELF" != "$OBSERVED_SELF" ]]
                                                                                         then
-                                                                                            date | ${ _failure.implementation "0140fc7d" }/bin/failure "We expected the self to be $EXPECTED_SELF but it was $OBSERVED_SELF
+                                                                                            date | ${ _failure.implementation "0140fc7d" }/bin/failure "We expected the self to be $EXPECTED_SELF but it was $OBSERVED_SELF"
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
