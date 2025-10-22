@@ -254,9 +254,9 @@
                                                                         export STATUS
                                                                         TARGET_HASH_EXPECTED=${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.sort builtins.lessThan targets ) ) }
                                                                         TARGET_HASH_OBSERVED="$( find "$MOUNT" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | tr --delete "\n" | sha512sum | cut --characters 1-128 )" || ${ _failure.implementation "db2517b1" }/bin/failure
-                                                                        STANDARD_ERROR="$( < "$STANDARD_ERROR_FILE" )" || ${ _failure.implementation "260fbb3c" }/bin/failure
+                                                                        STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || ${ _failure.implementation "260fbb3c" }/bin/failure
                                                                         export STANDARD_ERROR
-                                                                        STANDARD_OUTPUT="$( < "$STANDARD_OUTPUT_FILE" )" || ${ _failure.implementation "d1b1f5be" }/bin/failure
+                                                                        STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || ${ _failure.implementation "d1b1f5be" }/bin/failure
                                                                         export STANDARD_OUTPUT
                                                                         DEPENDENCIES="$( find "${ resources-directory }/links/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }/bin/failure
                                                                         TARGETS="$( find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | jq -R . | jq -s . )" || ${ _failure.implementation "54d472fb" }/bin/failure
@@ -347,7 +347,7 @@
                                                                 flock -x 220
                                                                 if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
                                                                 then
-                                                                    CURRENT="$( < ${ resources-directory }/sequential/sequential.counter )" || ${ _failure.implementation "c9a94abb" }/bin/failure
+                                                                    CURRENT="$( cat ${ resources-directory }/sequential/sequential.counter )" || ${ _failure.implementation "c9a94abb" }/bin/failure
                                                                 else
                                                                     CURRENT=0
                                                                 fi
@@ -461,7 +461,7 @@
                                                                                         fi
                                                                                         if [[ -s /build/standard-error ]]
                                                                                         then
-                                                                                            STANDARD_ERROR="$( < /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }/bin/failure
+                                                                                            STANDARD_ERROR="$( cat /build/standard-error )" || ${ _failure.implementation "1c4d6ced" }/bin/failure
                                                                                             date | ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be empty but it was $STANDARD_ERROR"
                                                                                         fi
                                                                                         while [[ ! -f /build/payload ]]
