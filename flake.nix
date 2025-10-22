@@ -563,7 +563,7 @@
                                                                                         STANDARD_ERROR="$( < /build/standard-error )" || ${ _failure.implementation "1668fd63" }/bin/failure
                                                                                         if [[ "$STANDARD_ERROR" != "${ standard-error }" ]]
                                                                                         then
-                                                                                            ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be ${ standard-error } but it was $OUT/standard-error"
+                                                                                            ${ _failure.implementation "a6d0f7ed" }/bin/failure "We expected the standard error file to be ${ builtins.toFile "standard-error" standard-error } but it was $OUT/standard-error"
                                                                                         fi
                                                                                     '' ;
                                                                     } ;
