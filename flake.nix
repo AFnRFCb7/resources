@@ -373,6 +373,7 @@
                                     check =
                                         {
                                             arguments ? [ ] ,
+                                            diffutils ,
                                             expected-dependencies ,
                                             expected-index ,
                                             expected-originator-pid ,
@@ -516,12 +517,11 @@
                                                                                         then
                                                                                             ${ _failure.implementation "11e3a4aa" }/bin/failure "We expected the payload standard-input to be $EXPECTED_STANDARD_INPUT but it was $OBSERVED_STANDARD_INPUT"
                                                                                         fi
-                                                                                        EXPECTED_STANDARD_OUTPUT="${ expected-standard-output }"
-                                                                                        OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ _failure.implementation "714592cd" }/bin/failure
-                                                                                        if [[ "$EXPECTED_STANDARD_OUTPUT" != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                        EXPECTED_STANDARD_OUTPUT="${ builtins.toFile "standard-output" expected-standard-output }"
+                                                                                        mkdir --parents "$OUT/payload"
+                                                                                        jq --raw-output '."standard-output"' /build/payload )" > "$OUT/payload/standard-output"
+                                                                                        if ! diff --unified "$EXPECTED_STANADARD_OUTPUT" "$OUT/payload/standard-output"
                                                                                         then
-                                                                                            mkdir --parents "$OUT/payload"
-                                                                                            jq --raw-output '."standard-output"' /build/payload > "$OUT/payload/standard-output"
                                                                                             ${ _failure.implementation "d1054818" }/bin/failure "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OUT/payload/standard-output"
                                                                                         fi
                                                                                         EXPECTED_STATUS="${ builtins.toString expected-status }"
