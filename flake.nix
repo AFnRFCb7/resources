@@ -384,7 +384,6 @@
                                             expected-transient ,
                                             resources-directory ? "/build/resources" ,
                                             resources-directory-fixture ? null ,
-                                            self ? "self" ,
                                             standard-input ? null ,
                                             standard-error ? "" ,
                                             standard-output ? "" ,
@@ -548,12 +547,6 @@
                                                                                         if [[ "$EXPECTED_KEYS" != "$OBSERVED_KEYS" ]]
                                                                                         then
                                                                                             ${ _failure.implementation "d68a978e" }/bin/failure "We expected the payload keys to be $EXPECTED_KEYS but it was $OBSERVED_KEYS"
-                                                                                        fi
-                                                                                        EXPECTED_SELF=${ mount }
-                                                                                        OBSERVED_SELF="$( cat "${ mount }/${ self }" )" || ${ _failure.implementation "0f7fe006" }/bin/failure
-                                                                                        if [[ "$EXPECTED_SELF" != "$OBSERVED_SELF" ]]
-                                                                                        then
-                                                                                            ${ _failure.implementation "0140fc7d" }/bin/failure "We expected the self to be $EXPECTED_SELF but it was $OBSERVED_SELF"
                                                                                         fi
                                                                                         if [[ "${ standard-output }" != "$RESOURCE" ]]
                                                                                         then
