@@ -365,8 +365,8 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    # in script : ''"$( ${ script } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
-                                    in script : ''true || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script null } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    # in script : ''true || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
@@ -431,7 +431,7 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
-                                                                                            string = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
+                                                                                            string = path : value : implementation ( setup : "${ setup } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
                                                                                             set = path : value : "fc242a830da7e1998322763f87910f3e1e093823aa0bfd26ce85abf6a08c0f9ed586c81c3915367bd59eaff00e3b9122906346f4b736fd015053271c595b4335" ;
                                                                                         }
                                                                                         standard-input ;
