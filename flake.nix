@@ -25,7 +25,7 @@
                         visitor ,
                         writeShellApplication ,
                         yq-go
-                    } @primary : { resources , self } :
+                    } @primary :
                         let
                             _failure = failure.lib { coreutils = coreutils ; jq = jq ; mkDerivation = mkDerivation ; writeShellApplication = writeShellApplication ; visitor = visitor ; yq-go = yq-go ; } ;
                             _visitor = visitor.lib { } ;
@@ -428,7 +428,8 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
-                                                                                            string = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
+                                                                                            string = path : value : implementation  ) ;
+                                                                                            set = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
