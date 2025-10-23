@@ -520,7 +520,7 @@
                                                                                         EXPECTED_STANDARD_OUTPUT="${ builtins.toFile "standard-output" expected-standard-output }"
                                                                                         mkdir --parents "$OUT/payload"
                                                                                         jq --raw-output '."standard-output"' /build/payload > "$OUT/payload/standard-output"
-                                                                                        if ! diff --unified "$EXPECTED_STANADARD_OUTPUT" "$OUT/payload/standard-output"
+                                                                                        if ! diff --unified "$EXPECTED_STANDARD_OUTPUT" "$OUT/payload/standard-output"
                                                                                         then
                                                                                             ${ _failure.implementation "d1054818" }/bin/failure "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OUT/payload/standard-output"
                                                                                         fi
