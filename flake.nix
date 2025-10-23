@@ -47,6 +47,7 @@
                                                 string = seed ;
                                             }
                                             primary ;
+                            implementation2 = implementation ;
                             implementation =
                                 let
                                     implementation =
@@ -429,8 +430,8 @@
                                                                                     _visitor.implementation
                                                                                         {
                                                                                             null = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
-                                                                                            set = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
-                                                                                            string = path : value : "fc242a830da7e1998322763f87910f3e1e093823aa0bfd26ce85abf6a08c0f9ed586c81c3915367bd59eaff00e3b9122906346f4b736fd015053271c595b4335" ;
+                                                                                            string = path : value : implementation2 ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
+                                                                                            set = path : value : "fc242a830da7e1998322763f87910f3e1e093823aa0bfd26ce85abf6a08c0f9ed586c81c3915367bd59eaff00e3b9122906346f4b736fd015053271c595b4335" ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
