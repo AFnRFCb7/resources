@@ -18,6 +18,7 @@
                         mkDerivation ,
                         ps ,
                         redis ,
+                        resources ,
                         resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
@@ -62,7 +63,7 @@
                                                                     "--tmpfs /scratch"
                                                                 ] ;
                                                             name = "init-application" ;
-                                                            runScript = init "${ resources-directory }/mounts/$INDEX" ;
+                                                            runScript = init { resources = resources ; self = "${ resources-directory }/mounts/$INDEX" ; } ;
                                                         } ;
                                             publish =
                                                 writeShellApplication
