@@ -18,7 +18,7 @@
                         mkDerivation ,
                         ps ,
                         redis ,
-                        resources ,
+                        resources ? null ,
                         resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
