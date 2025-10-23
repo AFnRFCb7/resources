@@ -365,7 +365,7 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in script : ''"$( ${ script "742110f9b2eed6f6ba086717a5d302ffc02b458036aead21eee0a67f836f5c7406209699df55ed44bda9a4c9a37f60c3e77444bffa47c892feb39a33fabc02e9" } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script setup } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                                     # in script : ''true || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
