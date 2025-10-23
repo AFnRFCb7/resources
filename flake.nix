@@ -520,7 +520,9 @@
                                                                                         OBSERVED_STANDARD_OUTPUT="$( jq --raw-output '."standard-output"' /build/payload )" || ${ _failure.implementation "714592cd" }/bin/failure
                                                                                         if [[ "$EXPECTED_STANDARD_OUTPUT" != "$OBSERVED_STANDARD_OUTPUT" ]]
                                                                                         then
-                                                                                            ${ _failure.implementation "d1054818" }/bin/failure "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OBSERVED_STANDARD_OUTPUT"
+                                                                                            mkdir --parents "$OUT/payload"
+                                                                                            jq --raw-output '."standard-output"' /build/payload > "$OUT/payload/standard-output"
+                                                                                            ${ _failure.implementation "d1054818" }/bin/failure "We expected the payload standard-output to be $EXPECTED_STANDARD_OUTPUT but it was $OUT/payload/standard-output"
                                                                                         fi
                                                                                         EXPECTED_STATUS="${ builtins.toString expected-status }"
                                                                                         OBSERVED_STATUS="$( jq --raw-output ".status" /build/payload )" || ${ _failure.implementation "714592cd" }/bin/failure
