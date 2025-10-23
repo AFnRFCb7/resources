@@ -19,14 +19,13 @@
                         ps ,
                         redis ,
                         resources-directory ,
-                        resources ? null ,
                         seed ? null ,
                         targets ? [ ] ,
                         transient ? false ,
                         visitor ,
                         writeShellApplication ,
                         yq-go
-                    } @primary :
+                    } @primary : { resources , self } :
                         let
                             _failure = failure.lib { coreutils = coreutils ; jq = jq ; mkDerivation = mkDerivation ; writeShellApplication = writeShellApplication ; visitor = visitor ; yq-go = yq-go ; } ;
                             _visitor = visitor.lib { } ;
