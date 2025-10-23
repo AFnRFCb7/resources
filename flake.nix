@@ -430,7 +430,7 @@
                                                                                         {
                                                                                             null = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } 2> /build/standard-error" ) ;
                                                                                             set = path : value : implementation ( implementation : "${ implementation } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" null null ) ;
-                                                                                            string = path : value : implementation ( setup : "${ setup } ${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
+                                                                                            string = path : value : implementation ( setup : "${ builtins.concatStringsSep " " arguments } < ${ builtins.toFile "standard-input" value } 2> /build/standard-error" ) ;
                                                                                         }
                                                                                         standard-input ;
                                                                                 in
