@@ -47,10 +47,9 @@
                                                 string = seed ;
                                             }
                                             primary ;
-                            implementation2 = implementation ;
                             implementation =
                                 let
-                                    implementation =
+                                    core =
                                         let
                                             init-application =
                                                 if builtins.typeOf init == "null" then null
@@ -365,8 +364,7 @@
                                                         }
                                                         transient ;
                                             in "${ setup }/bin/setup" ;
-                                    in script : ''"$( ${ script implementation } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
-                                    # in script : ''true || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script core } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
