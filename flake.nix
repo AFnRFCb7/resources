@@ -330,7 +330,8 @@
                                                                                     "targets" : $TARGETS ,
                                                                                     "transient" : $TRANSIENT
                                                                                 }' | publish
-                                                                            ${ _failure.implementation "bd13c123" }/bin/failure
+                                                                            exit 99
+                                                                            # ${ _failure.implementation "bd13c123" }/bin/failure
                                                                         fi
                                                                     fi
                                                                 '' ;
