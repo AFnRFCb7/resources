@@ -201,7 +201,6 @@
                                                                                 --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                                 --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --arg PROVENANCE "$PROVENANCE" \
-                                                                                --arg TRANSIENT "$TRANSIENT" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --argjson TARGETS "$TARGETS" \
                                                                                 --arg TRANSIENT "$TRANSIENT" \
@@ -330,8 +329,7 @@
                                                                                     "targets" : $TARGETS ,
                                                                                     "transient" : $TRANSIENT
                                                                                 }' | publish
-                                                                            exit 99
-                                                                            # ${ _failure.implementation "bd13c123" }/bin/failure
+                                                                            ${ _failure.implementation "bd13c123" }/bin/failure
                                                                         fi
                                                                     fi
                                                                 '' ;
