@@ -309,7 +309,6 @@
                                                                                 --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                                 --arg ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --arg PROVENANCE "$PROVENANCE" \
-                                                                                --arg TRANSIENT "$TRANSIENT" \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
