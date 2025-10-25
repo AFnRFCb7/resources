@@ -105,7 +105,7 @@
                                                                     export STANDARD_INPUT
                                                                     export ORIGINATOR_PID
                                                                     export TRANSIENT
-                                                                    exec 210> "${ resources-directory }/locks/$HASH/teardown.lock"
+                                                                    exec 210> "${ resources-directory }/locks/$HASH"
                                                                     flock -s 210
                                                                     if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                     then
