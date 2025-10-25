@@ -121,7 +121,7 @@
                                                                             --null-input \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             '{
-                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT
                                                                             }' | publish
                                                                         ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
                                                                         echo -n "$MOUNT"
@@ -139,7 +139,7 @@
                                                                             --null-input \
                                                                             --arg HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                             '{
-                                                                                "has-standard-input" : $HAS_STANDARD_INPUT }
+                                                                                "has-standard-input" : $HAS_STANDARD_INPUT
                                                                             }' | publish
                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                         ln --symbolic "$MOUNT" "${ resources-directory }/canonical/$HASH"
