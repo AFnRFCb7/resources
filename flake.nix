@@ -18,6 +18,7 @@
                         mkDerivation ,
                         ps ,
                         redis ,
+                        resources ? null ,
                         resources-directory ,
                         seed ? null ,
                         targets ? [ ] ,
@@ -49,7 +50,7 @@
                             implementation =
                                 let
                                     core =
-                                        resources : self :
+                                        { resources , self } :
                                             let
                                                 init-application =
                                                     if builtins.typeOf init == "null" then null
@@ -63,8 +64,19 @@
                                                                         "--tmpfs /scratch"
                                                                     ] ;
                                                                 name = "init-application" ;
-                                                                runScript = init ;
+                                                                runScript = init { resources = resources ; self = "${ resources-directory }/mounts/$INDEX" ; } ;
                                                             } ;
+                                                publish =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "publish" ;
+                                                            runtimeInputs = [ coreutils jq redis ] ;
+                                                            text =
+                                                                ''
+                                                                    JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ _failure.implementation "7b8f1293" }/bin/failure
+                                                                    redis-cli PUBLISH "${ channel }" "$JSON" > /dev/null 2>&1 || true
+                                                                '' ;
+                                                        } ;
                                                 setup =
                                                     if builtins.typeOf init == "null" then
                                                         writeShellApplication
@@ -325,46 +337,35 @@
                                                                         fi
                                                                     '' ;
                                                             } ;
+                                                sequential =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "sequential" ;
+                                                            runtimeInputs = [ coreutils flock ] ;
+                                                            text =
+                                                                ''
+                                                                    mkdir --parents ${ resources-directory }/sequential
+                                                                    exec 220> ${ resources-directory }/sequential/sequential.lock
+                                                                    flock -x 220
+                                                                    if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
+                                                                    then
+                                                                        CURRENT="$( cat ${ resources-directory }/sequential/sequential.counter )" || ${ _failure.implementation "c9a94abb" }/bin/failure
+                                                                    else
+                                                                        CURRENT=0
+                                                                    fi
+                                                                    NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
+                                                                    echo "$NEXT" > ${ resources-directory }/sequential/sequential.counter
+                                                                    printf "%016d\n" "$CURRENT"
+                                                                '' ;
+                                                        } ;
+                                                    transient_ =
+                                                        _visitor.implementation
+                                                            {
+                                                                bool = path : value : if value then "$( sequential ) || ${ _failure.implementation "808f8e2c" }/bin/failure" else "-1" ;
+                                                            }
+                                                            transient ;
                                                 in "${ setup }/bin/setup" ;
-                                    publish =
-                                        writeShellApplication
-                                            {
-                                                name = "publish" ;
-                                                runtimeInputs = [ coreutils jq redis ] ;
-                                                text =
-                                                    ''
-                                                        JSON="$( cat | jq --compact-output '. + { "description" : ${ builtins.toJSON description } }' )" || ${ _failure.implementation "7b8f1293" }/bin/failure
-                                                        redis-cli PUBLISH "${ channel }" "$JSON" > /dev/null 2>&1 || true
-                                                    '' ;
-                                            } ;
-                                    sequential =
-                                        writeShellApplication
-                                            {
-                                                name = "sequential" ;
-                                                runtimeInputs = [ coreutils flock ] ;
-                                                text =
-                                                    ''
-                                                        mkdir --parents ${ resources-directory }/sequential
-                                                        exec 220> ${ resources-directory }/sequential/sequential.lock
-                                                        flock -x 220
-                                                        if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
-                                                        then
-                                                            CURRENT="$( cat ${ resources-directory }/sequential/sequential.counter )" || ${ _failure.implementation "c9a94abb" }/bin/failure
-                                                        else
-                                                            CURRENT=0
-                                                        fi
-                                                        NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
-                                                        echo "$NEXT" > ${ resources-directory }/sequential/sequential.counter
-                                                        printf "%016d\n" "$CURRENT"
-                                                    '' ;
-                                            } ;
-                                    transient_ =
-                                        _visitor.implementation
-                                            {
-                                                bool = path : value : if value then "$( sequential ) || ${ _failure.implementation "808f8e2c" }/bin/failure" else "-1" ;
-                                            }
-                                            transient ;
-                                    in script : ''"$( ${ script core "${ resources-directory }/mounts/$INDEX" } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
+                                    in script : ''"$( ${ script core } )" || ${ _failure.implementation "5b05da86" }/bin/failure'' ;
                             pre-hash = builtins.hashString "sha512" ( builtins.toJSON description ) ;
                             in
                                 {
