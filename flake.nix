@@ -273,33 +273,48 @@
                                                                                                                                                                     echo 20301
                                                                                                                                                                     rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                                     echo 31757
-                                                                                                                                                                    JSON_SEQUENCE="$( sequential )" || failure 4228
-                                                                                                                                                                    JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
-                                                                                                                                                                    jq \
-                                                                                                                                                                        --compact-output \
-                                                                                                                                                                        --null-input \
-                                                                                                                                                                        --arg HASH "$HASH" \
-                                                                                                                                                                        --arg INDEX "$INDEX" \
-                                                                                                                                                                        --arg SCRIPT_FILE "$SCRIPT_FILE" \
-                                                                                                                                                                        --argjson SEED "$SEED" \
-                                                                                                                                                                        --arg STANDARD_ERROR_FILE "$STANDARD_ERROR_FILE" \
-                                                                                                                                                                        --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
-                                                                                                                                                                        --argjson STATUS "$STATUS" \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "hash" : $HASH ,
-                                                                                                                                                                            "index" : $INDEX ,
-                                                                                                                                                                            "script-file" : $SCRIPT_FILE ,
-                                                                                                                                                                            "seed" : $SEED ,
-                                                                                                                                                                            "standard-error-file": $STANDARD_ERROR_FILE ,
-                                                                                                                                                                            "standard-output-file" : $STANDARD_OUTPUT_FILE ,
-                                                                                                                                                                            "status" : $STATUS ,
-                                                                                                                                                                        }' > "$JSON_FILE"
                                                                                                                                                                     chmod 0400 "$JSON_FILE" "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        redis-cli PUBLISH ${ valid-release-channel } "$JSON_FILE"
+                                                                                                                                                                        jq \
+                                                                                                                                                                            --compact-output \
+                                                                                                                                                                            --null-input \
+                                                                                                                                                                            --arg HASH "$HASH" \
+                                                                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                                                                            --arg SCRIPT_FILE "$SCRIPT_FILE" \
+                                                                                                                                                                            --argjson SEED "$SEED" \
+                                                                                                                                                                            --arg STANDARD_ERROR_FILE "$STANDARD_ERROR_FILE" \
+                                                                                                                                                                            --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                                            --argjson STATUS "$STATUS" \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "hash" : $HASH ,
+                                                                                                                                                                                "index" : $INDEX ,
+                                                                                                                                                                                "script-file" : $SCRIPT_FILE ,
+                                                                                                                                                                                "seed" : $SEED ,
+                                                                                                                                                                                "standard-error-file": $STANDARD_ERROR_FILE ,
+                                                                                                                                                                                "standard-output-file" : $STANDARD_OUTPUT_FILE ,
+                                                                                                                                                                                "status" : $STATUS ,
+                                                                                                                                                                            }' | log ${ valid-release-channel }
                                                                                                                                                                     else
-                                                                                                                                                                        redis-cli PUBLISH ${ invalid-release-channel } "$JSON_FILE"
+jq \
+                                                                                                                                                                            --compact-output \
+                                                                                                                                                                            --null-input \
+                                                                                                                                                                            --arg HASH "$HASH" \
+                                                                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                                                                            --arg SCRIPT_FILE "$SCRIPT_FILE" \
+                                                                                                                                                                            --argjson SEED "$SEED" \
+                                                                                                                                                                            --arg STANDARD_ERROR_FILE "$STANDARD_ERROR_FILE" \
+                                                                                                                                                                            --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                                            --argjson STATUS "$STATUS" \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "hash" : $HASH ,
+                                                                                                                                                                                "index" : $INDEX ,
+                                                                                                                                                                                "script-file" : $SCRIPT_FILE ,
+                                                                                                                                                                                "seed" : $SEED ,
+                                                                                                                                                                                "standard-error-file": $STANDARD_ERROR_FILE ,
+                                                                                                                                                                                "standard-output-file" : $STANDARD_OUTPUT_FILE ,
+                                                                                                                                                                                "status" : $STATUS ,
+                                                                                                                                                                            }' | log ${ invalid-release-channel }
                                                                                                                                                                     fi
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
