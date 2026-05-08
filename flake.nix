@@ -697,7 +697,9 @@
                                                                                                             a = arguments.init pkgs ;
                                                                                                             in
                                                                                                                 ''
+                                                                                                                    echo 6986572542557694 > /tmp/DEBUG
                                                                                                                     mkdir --parents ${ resources-directory }/logs
+                                                                                                                    echo 3654834852556233 >> /tmp/DEBUG
                                                                                                                     INDEX="$( sequential )" || failure 5607
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
