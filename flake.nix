@@ -745,6 +745,7 @@
                                                                                                                             echo 6392986933177972 >> /tmp/DEBUG
                                                                                                                             failure 16697
                                                                                                                         fi
+                                                                                                                        # shellcheck disable=SC2129
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
