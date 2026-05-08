@@ -273,7 +273,7 @@
                                                                                                                                                                     echo 20301
                                                                                                                                                                     rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                                     echo 31757
-                                                                                                                                                                    chmod 0400 "$JSON_FILE" "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
+                                                                                                                                                                    chmod 0400 "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
                                                                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                                                                                                                     then
                                                                                                                                                                         jq \
@@ -296,7 +296,7 @@
                                                                                                                                                                                 "status" : $STATUS ,
                                                                                                                                                                             }' | log ${ valid-release-channel }
                                                                                                                                                                     else
-jq \
+                                                                                                                                                                        jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
                                                                                                                                                                             --arg HASH "$HASH" \
