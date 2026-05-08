@@ -308,7 +308,7 @@
                                                                                                                                                                                 "seed" : $SEED ,
                                                                                                                                                                                 "standard-error-file": $STANDARD_ERROR_FILE ,
                                                                                                                                                                                 "standard-output-file" : $STANDARD_OUTPUT_FILE ,
-                                                                                                                                                                                "status" : $STATUS ,
+                                                                                                                                                                                "status" : $STATUS
                                                                                                                                                                             }' | log ${ invalid-release-channel }
                                                                                                                                                                     fi
                                                                                                                                                                 fi
