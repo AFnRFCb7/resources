@@ -701,6 +701,7 @@
                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                     echo 3654834852556233 >> /tmp/DEBUG
                                                                                                                     INDEX="$( sequential )" || failure 5607
+                                                                                                                    echo 2919585643294958 >> /tmp/DEBUG
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                     flock -x 204
@@ -721,7 +722,9 @@
                                                                                                                     STANDARD_ERROR_FILE="${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
                                                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 21462
                                                                                                                     STANDARD_OUTPUT_FILE="${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE"
+                                                                                                                    echo 9625214521458483 >> /tmp/DEBUG
                                                                                                                     init "$@" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                                                    echo 2727691298113249 >> /tmp/DEBUG
                                                                                                                     TARGETS_OBSERVED="$( find "${resources-directory}/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq --raw-input . | jq --compact-output --slurp . )" || failure 28445
                                                                                                                     while [[ ! -e "$SIGNAL/signal" ]]
                                                                                                                     do
