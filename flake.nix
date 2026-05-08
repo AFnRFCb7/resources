@@ -206,7 +206,7 @@
                                                                                                                         pkgs.writeShellApplication
                                                                                                                             {
                                                                                                                                 name = "destroy" ;
-                                                                                                                                runtimeInputs = [ applications.release failure pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.zstd sequential trace ] ;
+                                                                                                                                runtimeInputs = [ applications.release failure log pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.zstd sequential trace ] ;
                                                                                                                                 text =
                                                                                                                                     visitor
                                                                                                                                         {
@@ -279,21 +279,16 @@
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
-                                                                                                                                                                            --arg HASH "$HASH" \
                                                                                                                                                                             --arg INDEX "$INDEX" \
-                                                                                                                                                                            --arg SCRIPT_FILE "$SCRIPT_FILE" \
+                                                                                                                                                                            --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                                                             --argjson SEED "$SEED" \
-                                                                                                                                                                            --arg STANDARD_ERROR_FILE "$STANDARD_ERROR_FILE" \
-                                                                                                                                                                            --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                                            --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
-                                                                                                                                                                                "hash" : $HASH ,
                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                "script-file" : $SCRIPT_FILE ,
+                                                                                                                                                                                "script" : $SCRIPT_FILE ,
                                                                                                                                                                                 "seed" : $SEED ,
-                                                                                                                                                                                "standard-error-file": $STANDARD_ERROR_FILE ,
-                                                                                                                                                                                "standard-output-file" : $STANDARD_OUTPUT_FILE ,
-                                                                                                                                                                                "status" : $STATUS ,
+                                                                                                                                                                                "standard-output" : $STANDARD_OUTPUT
                                                                                                                                                                             }' | log ${ valid-release-channel }
                                                                                                                                                                     else
                                                                                                                                                                         jq \
