@@ -735,7 +735,7 @@
                                                                                                                     echo 1839454585667768 >> /tmp/DEBUG
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
-                                                                                                                        echo 1839454585667768 >> /tmp/DEBUG
+                                                                                                                        echo 5219365285757541 >> /tmp/DEBUG
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
@@ -745,6 +745,7 @@
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
                                                                                                                         echo "# 1593884543916188" >> "$RELEASE_FILE"
                                                                                                                         chmod 0500 "$RELEASE_FILE"
+                                                                                                                        echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         jq \
                                                                                                                             --compact-output \
                                                                                                                             --null-input \
@@ -777,6 +778,7 @@
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
+                                                                                                                        echo 2179917276469149 >> /tmp/DEBUG
                                                                                                                     else
                                                                                                                         echo 8519152656595598 >> /tmp/DEBUG
                                                                                                                         jq \
@@ -811,6 +813,7 @@
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
                                                                                                                     fi
+                                                                                                                    echo 1625986342496743 >> /tmp/DEBUG
                                                                                                                 '' ;
                                                                                                 null =
                                                                                                     path : value :
