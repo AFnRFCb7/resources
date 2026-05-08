@@ -732,8 +732,10 @@
                                                                                                                     done
                                                                                                                     STATUS="$( cat "$SIGNAL/signal" )" || failure 11902
                                                                                                                     chmod 0400 "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE"
+                                                                                                                    echo 1839454585667768 >> /tmp/DEBUG
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
+                                                                                                                        echo 1839454585667768 >> /tmp/DEBUG
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
@@ -776,6 +778,7 @@
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                     else
+                                                                                                                        echo 8519152656595598 >> /tmp/DEBUG
                                                                                                                         jq \
                                                                                                                             --compact-output \
                                                                                                                             --null-input \
