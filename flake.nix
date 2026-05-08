@@ -746,7 +746,7 @@
                                                                                                                             failure 16697
                                                                                                                         fi
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
-                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
+                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
                                                                                                                         echo 4915227719246627 >> /tmp/DEBUG
                                                                                                                         echo "# 1593884543916188" >> "$RELEASE_FILE"
                                                                                                                         echo 1114471876255727 >> /tmp/DEBUG
