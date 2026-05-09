@@ -286,7 +286,7 @@
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                "script" : $SCRIPT_FILE ,
+                                                                                                                                                                                "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                                                                                                                             }' | log ${ valid-release-channel }
