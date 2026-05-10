@@ -292,6 +292,7 @@
                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                                                                                                                             }' | log ${ valid-release-channel }
                                                                                                                                                                     else
+                                                                                                                                                                        ${ resolutions false }
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
