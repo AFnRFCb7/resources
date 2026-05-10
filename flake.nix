@@ -216,6 +216,7 @@
                                                                                                                                                         a = arguments.release pkgs ;
                                                                                                                                                         in
                                                                                                                                                             ''
+                                                                                                                                                                rm "${ resources-directory }/release/$INDEX"
                                                                                                                                                                 echo 7971555133787853
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
