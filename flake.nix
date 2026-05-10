@@ -303,7 +303,7 @@
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                "script-file" : $SCRIPT ,
+                                                                                                                                                                                "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
                                                                                                                                                                                 "standard-error": $STANDARD_ERROR ,
                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT ,
