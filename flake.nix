@@ -297,18 +297,17 @@
                                                                                                                                                                             --null-input \
                                                                                                                                                                             --arg HASH "$HASH" \
                                                                                                                                                                             --arg INDEX "$INDEX" \
-                                                                                                                                                                            --arg SCRIPT_FILE "$SCRIPT_FILE" \
+                                                                                                                                                                            --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                                                             --argjson SEED "$SEED" \
-                                                                                                                                                                            --arg STANDARD_ERROR_FILE "$STANDARD_ERROR_FILE" \
-                                                                                                                                                                            --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                                            --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                                                            --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
-                                                                                                                                                                                "hash" : $HASH ,
                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                "script-file" : $SCRIPT_FILE ,
+                                                                                                                                                                                "script-file" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
-                                                                                                                                                                                "standard-error-file": $STANDARD_ERROR_FILE ,
-                                                                                                                                                                                "standard-output-file" : $STANDARD_OUTPUT_FILE ,
+                                                                                                                                                                                "standard-error": $STANDARD_ERROR ,
+                                                                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                                 "status" : $STATUS
                                                                                                                                                                             }' | log ${ invalid-release-channel }
                                                                                                                                                                     fi
