@@ -271,6 +271,8 @@
                                                                                                                                                                                                         in ''${ application }/bin/resolve "$INDEX"'' ;
                                                                                                                                                                                                 in
                                                                                                                                                                                                     ''
+                                                                                                                                                                                                        HASH="$1"
+                                                                                                                                                                                                        INDEX="$2"
                                                                                                                                                                                                         mkdir --parents ${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }
                                                                                                                                                                                                         sed -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve }
                                                                                                                                                                                                         chmod 0500 "${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
@@ -804,6 +806,8 @@
                                                                                                                                                             in "${ application }/bin/resolve" ;
                                                                                                                                                     in
                                                                                                                                                         ''
+                                                                                                                                                            HASH="$1"
+                                                                                                                                                            INDEX="$2"
                                                                                                                                                             OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
                                                                                                                                                             ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
                                                                                                                                                             mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }"
@@ -812,7 +816,7 @@
                                                                                                                                                             chmod 0500 "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }/resolve.sh"
                                                                                                                                                         '' ;
                                                                                                                                         } ;
-                                                                                                                                in [ ''${ application }/bin/resolve "$INDEX"'' ] ;
+                                                                                                                                in [ ''${ application }/bin/resolve "$HASH" "$INDEX"'' ] ;
                                                                                                                     in
                                                                                                                         visitor
                                                                                                                             {
