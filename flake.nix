@@ -778,6 +778,47 @@
                                                                                                     path : value :
                                                                                                         let
                                                                                                             a = arguments.init pkgs ;
+                                                                                                            resolutions =
+                                                                                                                let
+                                                                                                                    resolve =
+                                                                                                                        path : value :
+                                                                                                                            let
+                                                                                                                                application =
+                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                        {
+                                                                                                                                            name = "resolve" ;
+                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                            text =
+                                                                                                                                                let
+                                                                                                                                                    resolve =
+                                                                                                                                                        let
+                                                                                                                                                            application =
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "resolve" ;
+                                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                                        text =
+                                                                                                                                                                            ''
+                                                                                                                                                                            '' ;
+                                                                                                                                                                    } ;
+                                                                                                                                                            in "${ application }/bin/resolve" ;
+                                                                                                                                                    in
+                                                                                                                                                        ''
+                                                                                                                                                            mkdir --parents "${ resource-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "" ( builtins.toString path ) }"
+                                                                                                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w${ resource-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "" ( builtins.toString path ) }/resolve.sh" ${ resolve }
+                                                                                                                                                            chmod 0500 "${ resource-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "" ( builtins.toString path ) }/resolve.sh
+                                                                                                                                                        '' ;
+                                                                                                                                        } ;
+                                                                                                                                in ''${ application }/bin/resolve "$INDEX"'' ;
+                                                                                                                    in
+                                                                                                                        visitor
+                                                                                                                            {
+                                                                                                                                lambda = lambda ;
+                                                                                                                                null = null ;
+                                                                                                                                list = path : list : builtins.concatLists list ;
+                                                                                                                                set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
+                                                                                                                            }
+                                                                                                                            { null = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     echo 6986572542557694 > /tmp/DEBUG
@@ -900,7 +941,7 @@
                                                                                                                                 "targets" : { "expected" : $TARGETS_EXPECTED , "observed" : $TARGETS_OBSERVED } ,
                                                                                                                                 "transient" : $TRANSIENT
                                                                                                                             }' | log ${ invalid-init-channel }
-                                                                                                                        ${ builtins.concatStringsSep "\n" ( resolutions true ) }
+                                                                                                                        ${ builtins.concatStringsSep "\n" resolutions }
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
                                                                                                                     fi
