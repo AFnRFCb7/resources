@@ -812,7 +812,7 @@
                                                                                                                                                             chmod 0500 "${ resources-directory }/invalid-init/$INDEX/${ builtins.toJSON path }"
                                                                                                                                                         '' ;
                                                                                                                                         } ;
-                                                                                                                                in ''${ application }/bin/resolve "$INDEX"'' ;
+                                                                                                                                in [ ''${ application }/bin/resolve "$INDEX"'' ]Q ;
                                                                                                                     in
                                                                                                                         visitor
                                                                                                                             {
