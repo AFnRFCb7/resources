@@ -816,8 +816,8 @@
                                                                                                                     in
                                                                                                                         visitor
                                                                                                                             {
-                                                                                                                                lambda = lambda ;
-                                                                                                                                null = null ;
+                                                                                                                                lambda = resolve ;
+                                                                                                                                null = resolve ;
                                                                                                                                 list = path : list : builtins.concatLists list ;
                                                                                                                                 set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                                                             }
