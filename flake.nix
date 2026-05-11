@@ -215,16 +215,70 @@
                                                                                                                                                     let
                                                                                                                                                         a = arguments.release pkgs ;
                                                                                                                                                         resolutions =
-                                                                                                                                                            visitor
-                                                                                                                                                                {
-                                                                                                                                                                    lambda =
-                                                                                                                                                                        path : value :
+                                                                                                                                                            let
+                                                                                                                                                                lambda =
+                                                                                                                                                                    let
+                                                                                                                                                                        application =
+                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                {
+                                                                                                                                                                                    name = "resolve" ;
+                                                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                                                    text =
+                                                                                                                                                                                        ''
+                                                                                                                                                                                        '' ;
+                                                                                                                                                                                } ;
+                                                                                                                                                                        in "${ application }/bin/resolve" ;
+                                                                                                                                                                null =
+                                                                                                                                                                    let
+                                                                                                                                                                        application =
+                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                {
+                                                                                                                                                                                    name = "resolve" ;
+                                                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                                                    text =
+                                                                                                                                                                                        ''
+                                                                                                                                                                                        '' ;
+                                                                                                                                                                                } ;
+                                                                                                                                                                        in "${ application }/bin/resolve" ;
+                                                                                                                                                                resolutions =
+                                                                                                                                                                    visitor
+                                                                                                                                                                        {
+                                                                                                                                                                            lambda =
+                                                                                                                                                                                path : value :
+                                                                                                                                                                                    let
+                                                                                                                                                                                        arguments = arguments.resolution pkgs ;
+                                                                                                                                                                                        in
+                                                                                                                                                                                            [
+                                                                                                                                                                                                ''
+                                                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }
+                                                                                                                                                                                                ''
+                                                                                                                                                                                                ''
+                                                                                                                                                                                                    sed -e "" -e "w${ resources-directory }/invalid-release/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }/resolve.sh" ${ null }
+                                                                                                                                                                                                ''
+                                                                                                                                                                                                ''
+                                                                                                                                                                                                    chmod 0500 "${ resources-directory }/invalid-release/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }/resolve.sh"
+                                                                                                                                                                                                ''
+                                                                                                                                                                                            ] ;
+                                                                                                                                                                            list = path : list : builtins.concatLists list ;
+                                                                                                                                                                            set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
+                                                                                                                                                                        }
+                                                                                                                                                                        release-resolutions ;
+                                                                                                                                                                in
+                                                                                                                                                                    builtins.concatLists
+                                                                                                                                                                        [
                                                                                                                                                                             [
-                                                                                                                                                                            ] ;
-                                                                                                                                                                    list = path : list : builtins.concatLists list ;
-                                                                                                                                                                    set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
-                                                                                                                                                                }
-                                                                                                                                                                release-resolutions ;
+                                                                                                                                                                                ''
+                                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release/$INDEX"
+                                                                                                                                                                                ''
+                                                                                                                                                                                ''
+                                                                                                                                                                                    sed -e "" -e "w${ resources-directory }/invalid-release/$INDEX/resolve.sh" ${ null }
+                                                                                                                                                                                ''
+                                                                                                                                                                                ''
+                                                                                                                                                                                    chmod 0500 "${ resources-directory }/invalid-release/$INDEX/resolve.sh"
+                                                                                                                                                                                ''
+                                                                                                                                                                            ]
+                                                                                                                                                                            resolutions
+                                                                                                                                                                        ] ;
                                                                                                                                                         in
                                                                                                                                                             ''
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
