@@ -821,7 +821,7 @@
                                                                                                                                 list = path : list : builtins.concatLists list ;
                                                                                                                                 set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                                                             }
-                                                                                                                            { "null" = null ; resolutions = init-resolutions ; } ;
+                                                                                                                            { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     echo 6986572542557694 > /tmp/DEBUG
