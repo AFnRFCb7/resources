@@ -214,6 +214,17 @@
                                                                                                                                                 path : value :
                                                                                                                                                     let
                                                                                                                                                         a = arguments.release pkgs ;
+                                                                                                                                                        resolutions =
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    lambda =
+                                                                                                                                                                        path : value :
+                                                                                                                                                                            [
+                                                                                                                                                                            ] ;
+                                                                                                                                                                    list = path : list : builtins.concatLists list ;
+                                                                                                                                                                    set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
+                                                                                                                                                                }
+                                                                                                                                                                release-resolutions ;
                                                                                                                                                         in
                                                                                                                                                             ''
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
@@ -292,7 +303,7 @@
                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                                                                                                                             }' | log ${ valid-release-channel }
                                                                                                                                                                     else
-                                                                                                                                                                        #######
+                                                                                                                                                                        ${ builtins.concatStringsSep "/n" resolutions ) }
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
