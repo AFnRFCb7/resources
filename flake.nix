@@ -284,12 +284,10 @@
                                                                                                                                                                             list = path : list : builtins.concatLists list ;
                                                                                                                                                                             set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                                                                                                         }
-                                                                                                                                                                        release-resolutions ;
+                                                                                                                                                                        { resolve = release-resolutions ; } ;
                                                                                                                                                                 in
                                                                                                                                                                     builtins.concatLists
                                                                                                                                                                         [
-                                                                                                                                                                            [ ( null [ ] null ) ]
-                                                                                                                                                                            resolutions
                                                                                                                                                                         ] ;
                                                                                                                                                         in
                                                                                                                                                             ''
