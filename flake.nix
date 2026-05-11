@@ -292,7 +292,7 @@
                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                                                                                                                             }' | log ${ valid-release-channel }
                                                                                                                                                                     else
-                                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( resolutions false ) }
+                                                                                                                                                                        #######
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
