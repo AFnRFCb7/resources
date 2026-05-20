@@ -807,7 +807,6 @@
                                                                                                                                                                                 echo 18516
                                                                                                                                                                                 echo "$HASH"
                                                                                                                                                                                 echo "$INDEX"
-                                                                                                                                                                                echo "$SCRIPT_FILE"
                                                                                                                                                                             '' ;
                                                                                                                                                                     } ;
                                                                                                                                                             in "${ application }/bin/resolve" ;
