@@ -781,7 +781,7 @@
                                                                                                 lambda =
                                                                                                     path : value :
                                                                                                         let
-                                                                                                            a = arguments.resolve pkgs ;
+                                                                                                            a = arguments.init pkgs ;
                                                                                                             resolutions =
                                                                                                                 let
                                                                                                                     resolve =
@@ -1236,7 +1236,7 @@
                                                                                                                         a =
                                                                                                                             if builtins.typeOf path == "list" && builtins.length path == 1 && builtins.typeOf ( builtins.elemAt path 0 ) == "string" && builtins.elemAt path 0 == "init" then arguments.init pkgs
                                                                                                                             else if builtins.typeOf path == "list" && builtins.length path == 1 && builtins.typeOf ( builtins.elemAt path 0 ) == "string" && builtins.elemAt path 0 == "release" then arguments.release pkgs
-                                                                                                                            else arguments.resolve pkgs path ( builtins.elemAt path 1 == "init-resolutions" );
+                                                                                                                            else arguments.resolve pkgs path ( builtins.elemAt path 1 == "init-resolutions" ) ;
                                                                                                                         in builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.concatLists [ path [ ( builtins.toString ( value a ) ) ] ] ) ) ;
                                                                                                             } ;
                                                                                                 list = path : list : builtins.hashString "sha512" ( builtins.toJSON [ path list ] ) ;
