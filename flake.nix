@@ -1194,7 +1194,7 @@
                                                                                                             pkgs.writeShellApplication
                                                                                                                 {
                                                                                                                     name = "application" ;
-                                                                                                                    text = script a ;
+                                                                                                                    text = script { } ;
                                                                                                                 } ;
                                                                                                             in "${ application }/bin/application" ;
                                                                                                 in
