@@ -1189,11 +1189,12 @@
                                                                                             let
                                                                                                 application =
                                                                                                     let
+                                                                                                        a = arguments.resolution pkgs ;
                                                                                                         application =
                                                                                                             pkgs.writeShellApplication
                                                                                                                 {
                                                                                                                     name = "application" ;
-                                                                                                                    text = script ( builtins.trace ( builtins.typeOf arguments ) arguments ) ;
+                                                                                                                    text = script a ;
                                                                                                                 } ;
                                                                                                             in "${ application }/bin/application" ;
                                                                                                 in
