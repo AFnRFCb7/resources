@@ -783,57 +783,89 @@
                                                                                                         let
                                                                                                             a = arguments.init pkgs ;
                                                                                                             resolutions =
-                                                                                                                let
-                                                                                                                    resolve =
-                                                                                                                        path : value :
-                                                                                                                            let
-                                                                                                                                application =
-                                                                                                                                    pkgs.writeShellApplication
-                                                                                                                                        {
-                                                                                                                                            name = "resolve" ;
-                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                            text =
-                                                                                                                                                let
-                                                                                                                                                    a = arguments.resolve pkgs [ ] false ;
-                                                                                                                                                    resolve =
-                                                                                                                                                        let
-                                                                                                                                                            application =
-                                                                                                                                                                pkgs.writeShellApplication
-                                                                                                                                                                    {
-                                                                                                                                                                        name = "resolve" ;
-                                                                                                                                                                        runtimeInputs = [ failure sequential pkgs.coreutils ] ;
-                                                                                                                                                                        text =
-                                                                                                                                                                            ''
-                                                                                                                                                                                echo 18516
-                                                                                                                                                                                echo "$HASH"
-                                                                                                                                                                                echo "$INDEX"
-                                                                                                                                                                                echo "$SCRIPT_FILE"
-                                                                                                                                                                            '' ;
-                                                                                                                                                                    } ;
-                                                                                                                                                            in "${ application }/bin/resolve" ;
-                                                                                                                                                    in
-                                                                                                                                                        ''
-                                                                                                                                                            HASH="$1"
-                                                                                                                                                            INDEX="$2"
-                                                                                                                                                            SCRIPT_FILE='${ builtins.typeOf a }'
-                                                                                                                                                            OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
-                                                                                                                                                            ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
-                                                                                                                                                            mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
-                                                                                                                                                            mkdir --parents ${ resources-directory }/logs
-                                                                                                                                                            sed -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "s#\$SCRIPT_FILE#$SCRIPT_FILE#" -e "w${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve } > "${ resources-directory }/logs/$OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$ERROR_SEQUENCE"
-                                                                                                                                                            chmod 0500 "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
-                                                                                                                                                        '' ;
-                                                                                                                                        } ;
-                                                                                                                                in [ ''${ application }/bin/resolve "$HASH" "$INDEX"'' ] ;
-                                                                                                                    in
-                                                                                                                        visitor
-                                                                                                                            {
-                                                                                                                                lambda = resolve ;
-                                                                                                                                null = resolve ;
-                                                                                                                                list = path : list : builtins.concatLists list ;
-                                                                                                                                set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
-                                                                                                                            }
-                                                                                                                            { default = null ; resolutions = init-resolutions ; } ;
+                                                                                                                visitor
+                                                                                                                    {
+                                                                                                                        lambda =
+                                                                                                                            path : value :
+                                                                                                                                let
+                                                                                                                                    application =
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "resolve" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                text =
+                                                                                                                                                    let
+                                                                                                                                                        a = arguments.resolve pkgs [ ] false ;
+                                                                                                                                                        resolve =
+                                                                                                                                                            let
+                                                                                                                                                                application =
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "resolve" ;
+                                                                                                                                                                            runtimeInputs = [ failure sequential pkgs.coreutils ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    echo 18516
+                                                                                                                                                                                    echo "$HASH"
+                                                                                                                                                                                    echo "$INDEX"
+                                                                                                                                                                                    echo "$SCRIPT_FILE"
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        } ;
+                                                                                                                                                                in "${ application }/bin/resolve" ;
+                                                                                                                                                        in
+                                                                                                                                                            ''
+                                                                                                                                                                HASH="$1"
+                                                                                                                                                                INDEX="$2"
+                                                                                                                                                                SCRIPT_FILE='${ script-file value a }'
+                                                                                                                                                                OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
+                                                                                                                                                                ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
+                                                                                                                                                                mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
+                                                                                                                                                                mkdir --parents ${ resources-directory }/logs
+                                                                                                                                                                sed -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "s#\$SCRIPT_FILE#$SCRIPT_FILE#" -e "w${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve } > "${ resources-directory }/logs/$OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$ERROR_SEQUENCE"
+                                                                                                                                                                chmod 0500 "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
+                                                                                                                                                            '' ;
+                                                                                                                                            } ;
+                                                                                                                                    in [ ''${ application }/bin/resolve "$HASH" "$INDEX"'' ] ;
+                                                                                                                        null =
+                                                                                                                            path : value :
+                                                                                                                                let
+                                                                                                                                    application =
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "resolve" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                text =
+                                                                                                                                                    let
+                                                                                                                                                        resolve =
+                                                                                                                                                            let
+                                                                                                                                                                application =
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "resolve" ;
+                                                                                                                                                                            runtimeInputs = [ failure sequential pkgs.coreutils ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    echo 17333
+                                                                                                                                                                                    echo "$HASH"
+                                                                                                                                                                                    echo "$INDEX"
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        } ;
+                                                                                                                                                                in "${ application }/bin/resolve" ;
+                                                                                                                                                        in
+                                                                                                                                                            ''
+                                                                                                                                                                HASH="$1"
+                                                                                                                                                                INDEX="$2"
+                                                                                                                                                                mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
+                                                                                                                                                                mkdir --parents ${ resources-directory }/logs
+                                                                                                                                                                sed -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve } > "${ resources-directory }/logs/$OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$ERROR_SEQUENCE"
+                                                                                                                                                                chmod 0500 "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
+                                                                                                                                                            '' ;
+                                                                                                                                            } ;
+                                                                                                                                    in [ ''${ application }/bin/resolve "$HASH" "$INDEX"'' ] ;
+                                                                                                                        list = path : list : builtins.concatLists list ;
+                                                                                                                        set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
+                                                                                                                    }
+                                                                                                                    { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     echo 6986572542557694 > /tmp/DEBUG
