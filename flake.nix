@@ -801,6 +801,7 @@
                                                                                                                                                                         runtimeInputs = [ ] ;
                                                                                                                                                                         text =
                                                                                                                                                                             ''
+                                                                                                                                                                                echo 12034
                                                                                                                                                                             '' ;
                                                                                                                                                                     } ;
                                                                                                                                                             in "${ application }/bin/resolve" ;
