@@ -1193,7 +1193,7 @@
                                                                                                             pkgs.writeShellApplication
                                                                                                                 {
                                                                                                                     name = "application" ;
-                                                                                                                    text = script arguments ;
+                                                                                                                    text = script ( builtins.trace ( builtins.typeOf arguments ) arguments ) ;
                                                                                                                 } ;
                                                                                                             in "${ application }/bin/application" ;
                                                                                                 in
