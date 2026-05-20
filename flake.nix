@@ -815,7 +815,7 @@
                                                                                                                                                         ''
                                                                                                                                                             HASH="$1"
                                                                                                                                                             INDEX="$2"
-                                                                                                                                                            SCRIPT_FILE='${ builtins.toJSON { value = builtins.typeOf value ; args = builtins.attrValues a ; } }'
+                                                                                                                                                            SCRIPT_FILE='${ builtins.typeOf value }'
                                                                                                                                                             OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
                                                                                                                                                             ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
                                                                                                                                                             mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
