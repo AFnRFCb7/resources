@@ -1189,12 +1189,11 @@
                                                                                             let
                                                                                                 application =
                                                                                                     let
-                                                                                                        a = arguments.resolve pkgs [ ] false ;
                                                                                                         application =
                                                                                                             pkgs.writeShellApplication
                                                                                                                 {
                                                                                                                     name = "application" ;
-                                                                                                                    text = script { } ;
+                                                                                                                    text = script arguments ;
                                                                                                                 } ;
                                                                                                             in "${ application }/bin/application" ;
                                                                                                 in
