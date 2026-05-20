@@ -1189,7 +1189,7 @@
                                                                                             let
                                                                                                 application =
                                                                                                     let
-                                                                                                        a = arguments.resolve pkgs ;
+                                                                                                        a = arguments.resolve pkgs [ ] false ;
                                                                                                         application =
                                                                                                             pkgs.writeShellApplication
                                                                                                                 {
