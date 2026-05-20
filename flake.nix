@@ -803,10 +803,6 @@
                                                                                                                                                                         runtimeInputs = [ failure sequential ] ;
                                                                                                                                                                         text =
                                                                                                                                                                             ''
-                                                                                                                                                                                STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9691798625321771
-                                                                                                                                                                                STANDARD_ERROR_FILE="${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
-                                                                                                                                                                                STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 2986933649455245
-                                                                                                                                                                                STANDARD_OUTPUT_FILE="${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE"
 
                                                                                                                                                                             '' ;
                                                                                                                                                                     } ;
