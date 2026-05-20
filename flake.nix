@@ -794,6 +794,7 @@
                                                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                             text =
                                                                                                                                                 let
+                                                                                                                                                    a = arguments.resolve pkgs [ ] false ;
                                                                                                                                                     resolve =
                                                                                                                                                         let
                                                                                                                                                             application =
@@ -804,6 +805,9 @@
                                                                                                                                                                         text =
                                                                                                                                                                             ''
                                                                                                                                                                                 echo 18516
+                                                                                                                                                                                echo "$HASH"
+                                                                                                                                                                                echo $INDEX"
+                                                                                                                                                                                echo "$SCRIPT_FILE"
                                                                                                                                                                             '' ;
                                                                                                                                                                     } ;
                                                                                                                                                             in "${ application }/bin/resolve" ;
@@ -811,7 +815,7 @@
                                                                                                                                                         ''
                                                                                                                                                             HASH="$1"
                                                                                                                                                             INDEX="$2"
-                                                                                                                                                            SCRIPT_FILE="sdafads"
+                                                                                                                                                            SCRIPT_FILE=${ script-file ( value a ) }
                                                                                                                                                             OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
                                                                                                                                                             ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
                                                                                                                                                             mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
