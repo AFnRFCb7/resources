@@ -811,7 +811,7 @@
                                                                                                                                                         ''
                                                                                                                                                             HASH="$1"
                                                                                                                                                             INDEX="$2"
-                                                                                                                                                            SCRIPT_FILE=${ value a }
+                                                                                                                                                            SCRIPT_FILE="sdafads"
                                                                                                                                                             OUTPUT_SEQUENCE="$( sequential )" || failure 5243846297643168
                                                                                                                                                             ERROR_SEQUENCE="$( sequential )" || failure 4614838668989285
                                                                                                                                                             mkdir --parents "${ resources-directory }/invalid-init/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }"
