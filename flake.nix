@@ -366,6 +366,7 @@
                                                                                                                                                                             --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
+                                                                                                                                                                                "WTF" : 1 ,
                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                 "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
@@ -382,6 +383,7 @@
                                                                                                                                                                             --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
+                                                                                                                                                                                "WTF" : 2 ,
                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                 "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
@@ -602,6 +604,7 @@
                                                                                                                                     --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     '{
+                                                                                                                                        "WTF" : 3 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -630,6 +633,7 @@
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                     '{
+                                                                                                                                        "WTF" : 4 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -723,6 +727,7 @@
                                                                                                                             --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                             '{
+                                                                                                                                "WTF" : 5 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-script" : $_HAS_SCRIPT ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
@@ -944,6 +949,7 @@
                                                                                                                             --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                             --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                             '{
+                                                                                                                                "WTF" : 7 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                 "index" : $INDEX ,
@@ -978,6 +984,7 @@
                                                                                                                             --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                             --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                             '{
+                                                                                                                                "WTF" : 7 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                 "index" : $INDEX ,
