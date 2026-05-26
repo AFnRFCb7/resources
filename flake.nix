@@ -947,7 +947,6 @@
                                                                                                                                 --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
@@ -973,7 +972,6 @@
                                                                                                                                 --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
