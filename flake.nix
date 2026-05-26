@@ -967,6 +967,7 @@
                                                                                                                                 --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                 --argjson SEED "$SEED" \
                                                                                                                                 --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
