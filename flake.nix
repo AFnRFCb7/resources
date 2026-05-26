@@ -1009,7 +1009,6 @@
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
-                                                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
