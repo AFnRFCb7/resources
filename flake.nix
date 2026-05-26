@@ -1006,7 +1006,7 @@
                                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
-                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "has-standard-input" : $HAS_STANDARD_INPUT ,
@@ -1033,7 +1033,7 @@
                                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
-                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
@@ -1677,8 +1677,8 @@
                                                                             touch "$STANDARD_INPUT_FILE"
                                                                             chmod 0400 "$STANDARD_INPUT_FILE"
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || failure 22859
-#                                                                            if [[ -t 0 ]]
-#                                                                            then
+#                                                                           if [[ -t 0 ]]
+#                                                                           then
 #                                                                                HAS_STANDARD_INPUT=false
 #                                                                                touch "$STANDARD_INPUT_FILE"
 #                                                                                chmod 0400 "$STANDARD_INPUT_FILE"
