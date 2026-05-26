@@ -906,9 +906,9 @@
                                                                                                                     TARGETS_OBSERVED="$( find "${resources-directory}/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq --raw-input . | jq --compact-output --slurp . )" || failure 28445
                                                                                                                     if [[ "$TRANSIENT" == -1 ]]
                                                                                                                     then
-                                                                                                                        TRANSIENT_JSON=true
-                                                                                                                    else
                                                                                                                         TRANSIENT_JSON=false
+                                                                                                                    else
+                                                                                                                        TRANSIENT_JSON=true
                                                                                                                     fi
                                                                                                                     while [[ ! -e "$SIGNAL/signal" ]]
                                                                                                                     do
