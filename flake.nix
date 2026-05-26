@@ -944,8 +944,9 @@
                                                                                                                                 --argjson SEED "$SEED" \
                                                                                                                                 --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "-1 != $TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
@@ -965,16 +966,14 @@
                                                                                                                                 --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                 --argjson SEED "$SEED" \
                                                                                                                                 --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
-                                                                                                                                --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "-1 != $TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
-                                                                                                                                    "standard-input" : $STANDARD_INPUT ,
                                                                                                                                     "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                     "targets" : $TARGETS_EXPECTED ,
                                                                                                                                     "transient" : $TRANSIENT
