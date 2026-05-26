@@ -991,35 +991,61 @@
                                                                                                                         echo 2179917276469149 >> /tmp/DEBUG
                                                                                                                     else
                                                                                                                         echo 8519152656595598 >> /tmp/DEBUG
-                                                                                                                        jq \
-                                                                                                                            --compact-output \
-                                                                                                                            --null-input \
-                                                                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                                                            --argjson HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
-                                                                                                                            --arg INDEX "$INDEX" \
-                                                                                                                            --rawfile SCRIPT "$SCRIPT_FILE" \
-                                                                                                                            --argjson SEED "$SEED" \
-                                                                                                                            --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
-                                                                                                                            --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
-                                                                                                                            --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
-                                                                                                                            --argjson STATUS "$STATUS" \
-                                                                                                                            --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                            --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
-                                                                                                                            --argjson TRANSIENT "$TRANSIENT" \
-                                                                                                                            '{
-                                                                                                                                "WTF" : 7 ,
-                                                                                                                                "arguments" : $ARGUMENTS ,
-                                                                                                                                "has-standard-input" : $HAS_STANDARD_INPUT ,
-                                                                                                                                "index" : $INDEX ,
-                                                                                                                                "script" : $SCRIPT ,
-                                                                                                                                "seed" : $SEED ,
-                                                                                                                                "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                "standard-input" : $STANDARD_INPUT ,
-                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                "status" : $STATUS ,
-                                                                                                                                "targets" : { "expected" : $TARGETS_EXPECTED , "observed" : $TARGETS_OBSERVED } ,
-                                                                                                                                "transient" : $TRANSIENT
-                                                                                                                            }' | log ${ invalid-init-channel }
+                                                                                                                        if [[ "$HAS_STANDARD_INPUT" == true ]]
+                                                                                                                        then
+                                                                                                                            jq \
+                                                                                                                                --compact-output \
+                                                                                                                                --null-input \
+                                                                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                --rawfile SCRIPT "$SCRIPT_FILE" \
+                                                                                                                                --argjson SEED "$SEED" \
+                                                                                                                                --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
+                                                                                                                                --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
+                                                                                                                                --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                '{
+                                                                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
+                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                    "script" : $SCRIPT ,
+                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                    "standard-input" : $STANDARD_INPUT ,
+                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                    "status" : $STATUS ,
+                                                                                                                                    "targets" : { "expected" : $TARGETS_EXPECTED , "observed" : $TARGETS_OBSERVED } ,
+                                                                                                                                    "transient" : $TRANSIENT
+                                                                                                                                }' | log ${ invalid-init-channel }
+                                                                                                                        else
+                                                                                                                            jq \
+                                                                                                                                --compact-output \
+                                                                                                                                --null-input \
+                                                                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                --rawfile SCRIPT "$SCRIPT_FILE" \
+                                                                                                                                --argjson SEED "$SEED" \
+                                                                                                                                --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
+                                                                                                                                --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT" \
+                                                                                                                                '{
+                                                                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                    "script" : $SCRIPT ,
+                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                    "status" : $STATUS ,
+                                                                                                                                    "targets" : { "expected" : $TARGETS_EXPECTED , "observed" : $TARGETS_OBSERVED } ,
+                                                                                                                                    "transient" : $TRANSIENT
+                                                                                                                                }' | log ${ invalid-init-channel }
+                                                                                                                        fi
                                                                                                                         ${ builtins.concatStringsSep "\n" resolutions }
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
