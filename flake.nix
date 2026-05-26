@@ -938,7 +938,6 @@
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
                                                                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                                                                --argjson HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                 --arg RELEASE_FILE "$RELEASE_FILE" \
                                                                                                                                 --rawfile SCRIPT "$SCRIPT_FILE" \
@@ -950,7 +949,6 @@
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
-                                                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
@@ -964,7 +962,6 @@
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
                                                                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                                                                --argjson HAS_STANDARD_INPUT "$HAS_STANDARD_INPUT" \
                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                 --arg RELEASE_FILE "$RELEASE_FILE" \
                                                                                                                                 --rawfile SCRIPT "$SCRIPT_FILE" \
@@ -975,7 +972,6 @@
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
-                                                                                                                                    "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
