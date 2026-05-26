@@ -904,6 +904,12 @@
                                                                                                                     init "$@" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                                                     echo 2727691298113249 >> /tmp/DEBUG
                                                                                                                     TARGETS_OBSERVED="$( find "${resources-directory}/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq --raw-input . | jq --compact-output --slurp . )" || failure 28445
+                                                                                                                    if [[ "$TRANSIENT" == -1 ]]
+                                                                                                                    then
+                                                                                                                        TRANSIENT_JSON=true
+                                                                                                                    else
+                                                                                                                        TRANSIENT_JSON=false
+                                                                                                                    fi
                                                                                                                     while [[ ! -e "$SIGNAL/signal" ]]
                                                                                                                     do
                                                                                                                         sleep 0
@@ -946,7 +952,7 @@
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --rawfile STANDARD_INPUT "$STANDARD_INPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TRANSIENT "-1 != $TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
@@ -968,7 +974,7 @@
                                                                                                                                 --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
                                                                                                                                 --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
-                                                                                                                                --argjson TRANSIENT "-1 != $TRANSIENT" \
+                                                                                                                                --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
