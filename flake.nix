@@ -808,13 +808,7 @@
                                                                                                                                                                         {
                                                                                                                                                                             name = "resolve" ;
                                                                                                                                                                             runtimeInputs = [ failure sequential pkgs.coreutils ] ;
-                                                                                                                                                                            text =
-                                                                                                                                                                                ''
-                                                                                                                                                                                    echo 18516
-                                                                                                                                                                                    echo "$HASH"
-                                                                                                                                                                                    echo "$INDEX"
-                                                                                                                                                                                    echo "$SCRIPT_FILE"
-                                                                                                                                                                                '' ;
+                                                                                                                                                                            text = "$SCRIPT_FILE" ;
                                                                                                                                                                         } ;
                                                                                                                                                                 in "${ application }/bin/resolve" ;
                                                                                                                                                         in
