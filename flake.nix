@@ -336,12 +336,15 @@
                                                                                                                                                                 flock -x 203
                                                                                                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                                                                 flock -x 204
+                                                                                                                                                                trace 25907
                                                                                                                                                                 if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    trace 1172
                                                                                                                                                                     flock -u 203
                                                                                                                                                                     flock -u 204
                                                                                                                                                                     nohup "$0" &
                                                                                                                                                                 else
+                                                                                                                                                                    trace 12080
                                                                                                                                                                     rm --force "${ resources-directory }/canonical/$HASH"
                                                                                                                                                                     flock -u 203 echo 10200
                                                                                                                                                                     mkdir --parents ${ resources-directory }/logs
@@ -358,14 +361,19 @@
                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                     fi
                                                                                                                                                                     chmod 0400 "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
+                                                                                                                                                                    trace 101
                                                                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                                                                                                                     then
+                                                                                                                                                                        trace 3014
                                                                                                                                                                         ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
+                                                                                                                                                                        trace 1559
                                                                                                                                                                         mkdir --parents "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX"
+                                                                                                                                                                        trace 12374
                                                                                                                                                                         touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                                         tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                        echo 20301
+                                                                                                                                                                        trace 14947
                                                                                                                                                                         rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                                                                        trace 6738
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
