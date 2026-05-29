@@ -280,7 +280,6 @@
                                                                                                                     # shellcheck disable=SC2153
                                                                                                                     INDEX="$_INDEX"
                                                                                                                     rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                    trace 17040
                                                                                                                     if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                     then
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
