@@ -296,11 +296,11 @@
                                                                                                                                                                         ] ;
                                                                                                                                                         in
                                                                                                                                                             ''
-                                                                                                                                                                trace 12950
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
+                                                                                                                                                                trace 17040
                                                                                                                                                                 if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
@@ -310,21 +310,15 @@
                                                                                                                                                                         trace 27859 "$PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
-                                                                                                                                                                trace 16388
+                                                                                                                                                                trace 14764
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
-                                                                                                                                                                trace 25043
                                                                                                                                                                 find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                                                 do
-                                                                                                                                                                    trace 511 "$LINK"
                                                                                                                                                                     FILE="$( readlink --canonicalize "$LINK" )" || failure 15150
-                                                                                                                                                                    trace 31049
                                                                                                                                                                     if [[ "${ resources-directory }/mounts/$INDEX" == "$FILE" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        trace 22399
                                                                                                                                                                         echo 7010 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                        trace 632
                                                                                                                                                                         inotifywait --event delete_self "$LINK"
-                                                                                                                                                                        trace 24735
                                                                                                                                                                     fi
                                                                                                                                                                 done
                                                                                                                                                                 exec 203> "${ resources-directory }/locks/$HASH"
@@ -333,7 +327,6 @@
                                                                                                                                                                 flock -x 204
                                                                                                                                                                 if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    trace 1172
                                                                                                                                                                     flock -u 203
                                                                                                                                                                     flock -u 204
                                                                                                                                                                     nohup "$0" &
@@ -354,10 +347,8 @@
                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                     fi
                                                                                                                                                                     chmod 0400 "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
-                                                                                                                                                                    trace 101
                                                                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        trace 3014
                                                                                                                                                                         ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                                                         mkdir --parents "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX"
                                                                                                                                                                         touch "${ resources-directory }/release/$INDEX"
@@ -1709,10 +1700,8 @@
                                                                             mkdir --parents "${ resources-directory }/locks"
                                                                             exec 203> "${ resources-directory }/locks/$HASH"
                                                                             flock -x 203
-                                                                            trace 4196961124742927 PRE_HASH "$PRE_HASH" HASH "$HASH"
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
-                                                                                trace 8133813695985282
                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || failure 6882155195748272
                                                                                 INDEX="$( basename "$LINK" )" || failure 5382672217914679
                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
@@ -1720,7 +1709,6 @@
                                                                                 mkdir --parents ${ resources-directory }/marks
                                                                                 touch "${ resources-directory }/marks/$INDEX"
                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                trace 2813431713896884
                                                                                 pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
                                                                                 echo "${ resources-directory }/mounts/$INDEX"
                                                                             else
