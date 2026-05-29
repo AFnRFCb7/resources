@@ -298,16 +298,20 @@
                                                                                                                                                             ''
                                                                                                                                                                 trace 12950
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                echo 7971555133787853
+                                                                                                                                                                trace 11449
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
+                                                                                                                                                                trace 7535
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                                                echo 5006
+                                                                                                                                                                trace 24130
                                                                                                                                                                 if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    trace 8357
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
+                                                                                                                                                                        trace 1179 "$PID"
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
+                                                                                                                                                                        trace 27859 "$PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
