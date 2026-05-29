@@ -186,9 +186,7 @@
                                                                             writeShellApplication
                                                                                 {
                                                                                     name = "destroy" ;
-                                                                                    runtimeInputs =
-                                                                                        [
-                                                                                        ] ;
+                                                                                    runtimeInputs = [ applications.release failure log pkgs.coreutils pkgs.findutils pkgs.flock pkgs.inotify-tools pkgs.zstd sequential trace ] ;
                                                                                     text =
                                                                                         visitor
                                                                                             {
