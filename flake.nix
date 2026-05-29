@@ -188,6 +188,262 @@
                                                                                     name = "destroy" ;
                                                                                     runtimeInputs =
                                                                                         [
+                                                                                        ] ;
+                                                                                    text =
+                                                                                        visitor
+                                                                                            {
+                                                                                                lambda =
+                                                                                                    path : value :
+                                                                                                        let
+                                                                                                            a = arguments.release pkgs ;
+                                                                                                            release-resolutions =
+                                                                                                                let
+                                                                                                                    lambda =
+                                                                                                                        path : value :
+                                                                                                                            let
+                                                                                                                                application =
+                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                        {
+                                                                                                                                            name = "resolve" ;
+                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                            text =
+                                                                                                                                                let
+                                                                                                                                                    resolve =
+                                                                                                                                                        let
+                                                                                                                                                            application =
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "resolve" ;
+                                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                                        text =
+                                                                                                                                                                            ''
+                                                                                                                                                                                echo 18510
+                                                                                                                                                                            '' ;
+                                                                                                                                                                    } ;
+                                                                                                                                                            in "${ application }/bin/resolve" ;
+                                                                                                                                                    in
+                                                                                                                                                        ''
+                                                                                                                                                            INDEX="$1"
+                                                                                                                                                            mkdir --parents ${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }
+                                                                                                                                                            sed -e "s###" -e "w${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }/resolve.sh" ${ resolve }
+                                                                                                                                                            chmod 0500 "${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toJSON path ) }/resolve.sh"
+                                                                                                                                                        '' ;
+                                                                                                                                        } ;
+                                                                                                                                in ''${ application }/bin/resolve "$INDEX"'' ;
+                                                                                                                    null =
+                                                                                                                        path : value :
+                                                                                                                            let
+                                                                                                                                application =
+                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                        {
+                                                                                                                                            name = "resolve" ;
+                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                            text =
+                                                                                                                                                let
+                                                                                                                                                    resolve =
+                                                                                                                                                        let
+                                                                                                                                                            application =
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "resolve" ;
+                                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                                        text =
+                                                                                                                                                                            ''
+                                                                                                                                                                                echo 23416
+                                                                                                                                                                            '' ;
+                                                                                                                                                                    } ;
+                                                                                                                                                            in ''${ application }/bin/resolve "$INDEX"'' ;
+                                                                                                                                                    in
+                                                                                                                                                        ''
+                                                                                                                                                            HASH="$1"
+                                                                                                                                                            INDEX="$2"
+                                                                                                                                                            mkdir --parents ${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }
+                                                                                                                                                            sed -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve }
+                                                                                                                                                            chmod 0500 "${ resources-directory }/invalid-resolve/$INDEX/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
+                                                                                                                                                        '' ;
+                                                                                                                                        } ;
+                                                                                                                                in "${ application }/bin/resolve" ;
+                                                                                                                    release-resolutions =
+                                                                                                                        visitor
+                                                                                                                            {
+                                                                                                                                lambda = lambda ;
+                                                                                                                                null = null ;
+                                                                                                                                list = path : list : builtins.concatLists list ;
+                                                                                                                                set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
+                                                                                                                            }
+                                                                                                                            { resolve = release-resolutions ; } ;
+                                                                                                                    in
+                                                                                                                        builtins.concatLists
+                                                                                                                            [
+                                                                                                                            ] ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    rm "${ resources-directory }/release/$INDEX"
+                                                                                                                    # shellcheck disable=SC2153
+                                                                                                                    INDEX="$_INDEX"
+                                                                                                                    rm --force "${ resources-directory }/marks/$INDEX"
+                                                                                                                    trace 17040
+                                                                                                                    if [[ -d "${ resources-directory }/pids/$INDEX" ]]
+                                                                                                                    then
+                                                                                                                        find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
+                                                                                                                        do
+                                                                                                                            trace "1179 PID $PID"
+                                                                                                                            tail --follow /dev/null --pid "$PID"
+                                                                                                                            trace "27859 PID $PID"
+                                                                                                                        done
+                                                                                                                    fi
+                                                                                                                    trace 14764
+                                                                                                                    mkdir --parents "${ gc-root-directory }"
+                                                                                                                    find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
+                                                                                                                    do
+                                                                                                                        FILE="$( readlink --canonicalize "$LINK" )" || failure 15150
+                                                                                                                        if [[ "${ resources-directory }/mounts/$INDEX" == "$FILE" ]]
+                                                                                                                        then
+                                                                                                                            echo 7010 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                            inotifywait --event delete_self "$LINK"
+                                                                                                                        fi
+                                                                                                                    done
+                                                                                                                    exec 203> "${ resources-directory }/locks/$HASH"
+                                                                                                                    flock -x 203
+                                                                                                                    exec 204> "${ resources-directory }/locks/$INDEX"
+                                                                                                                    flock -x 204
+                                                                                                                    if [[ -e "${ resources-directory }/marks/$INDEX" ]]
+                                                                                                                    then
+                                                                                                                        flock -u 203
+                                                                                                                        flock -u 204
+                                                                                                                        nohup "$0" &
+                                                                                                                    else
+                                                                                                                        rm --force "${ resources-directory }/canonical/$HASH"
+                                                                                                                        flock -u 203 echo 10200
+                                                                                                                        mkdir --parents ${ resources-directory }/logs
+                                                                                                                        SCRIPT_FILE="$( ${ script-file release a } )" || failure 17419
+                                                                                                                        SEED='${ builtins.toJSON seed }'
+                                                                                                                        STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 16457
+                                                                                                                        STANDARD_ERROR_FILE="${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
+                                                                                                                        STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 27852
+                                                                                                                        STANDARD_OUTPUT_FILE="${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE"
+                                                                                                                        if release > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                                                        then
+                                                                                                                            STATUS="$?"
+                                                                                                                        else
+                                                                                                                            STATUS="$?"
+                                                                                                                        fi
+                                                                                                                        chmod 0400 "$STANDARD_ERROR_FILE" "$STANDARD_OUTPUT_FILE"
+                                                                                                                        if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]]
+                                                                                                                        then
+                                                                                                                            ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
+                                                                                                                            mkdir --parents "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX"
+                                                                                                                            touch "${ resources-directory }/release/$INDEX"
+                                                                                                                            tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                            rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                            trace 6738
+                                                                                                                            jq \
+                                                                                                                                --compact-output \
+                                                                                                                                --null-input \
+                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                --rawfile SCRIPT "$SCRIPT_FILE" \
+                                                                                                                                --argjson SEED "$SEED" \
+                                                                                                                                --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                '{
+                                                                                                                                    "WTF" : 1 ,
+                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                    "script" : $SCRIPT ,
+                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                    "standard-output" : $STANDARD_OUTPUT
+                                                                                                                                }' | log ${ valid-release-channel }
+                                                                                                                        else
+                                                                                                                            jq \
+                                                                                                                                --compact-output \
+                                                                                                                                --null-input \
+                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                --rawfile SCRIPT "$SCRIPT_FILE" \
+                                                                                                                                --argjson SEED "$SEED" \
+                                                                                                                                --rawfile STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                '{
+                                                                                                                                    "WTF" : 2 ,
+                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                    "script" : $SCRIPT ,
+                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                    "standard-error": $STANDARD_ERROR ,
+                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                    "status" : $STATUS
+                                                                                                                                }' | log ${ invalid-release-channel }
+                                                                                                                        fi
+                                                                                                                    fi
+                                                                                                                '' ;
+                                                                                                null =
+                                                                                                    path : value :
+                                                                                                        ''
+                                                                                                            echo 1111927120 "INDEX=$INDEX"
+                                                                                                            rm --force "${ resources-directory }/marks/$INDEX"
+                                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
+                                                                                                            do
+                                                                                                                tail --follow /dev/null --pid "$PID"
+                                                                                                            done
+                                                                                                            mkdir --parents "${ gc-root-directory }"
+                                                                                                            echo 30425 find "${ gc-root-directory }" -mindepth 1 -type l
+                                                                                                            find "${ gc-root-directory }" -mindepth 1 -type l
+                                                                                                            find "${ gc-root-directory }" -mindepth 1 -type l | while read -r LINK
+                                                                                                            do
+                                                                                                                FILE="$( readlink --canonicalize "$LINK" )" || failure 15150
+                                                                                                                echo 1656 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                if [[ "${ resources-directory }/mounts/$INDEX" == "$FILE" ]]
+                                                                                                                then
+                                                                                                                    echo 9337 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                    inotifywait --event delete_self "$LINK"
+                                                                                                                    echo 5614 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                fi
+                                                                                                            done
+                                                                                                            echo 4351
+                                                                                                            exec 203> "${ resources-directory }/locks/$HASH"
+                                                                                                            flock -x 203
+                                                                                                            exec 204> "${ resources-directory }/locks/$INDEX"
+                                                                                                            flock -x 204
+                                                                                                            if [[ -e "${ resources-directory }/marks/$INDEX" ]]
+                                                                                                            then
+                                                                                                                flock -u 203
+                                                                                                                flock -u 204
+                                                                                                                nohup "$0" &
+                                                                                                            else
+                                                                                                                echo 13649
+                                                                                                                rm "${ resources-directory }/canonical/$HASH"
+                                                                                                                echo  9251
+                                                                                                                flock -u 203
+                                                                                                                SEED='${ builtins.toJSON seed }'
+                                                                                                                ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
+                                                                                                                mkdir --parents "${ gc-root-directory }/$INDEX"
+                                                                                                                tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                echo 763
+                                                                                                                rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                JSON_SEQUENCE="$( sequential )" || failure 32030
+                                                                                                                JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
+                                                                                                                jq \
+                                                                                                                    --compact-output \
+                                                                                                                    --null-input \
+                                                                                                                    --arg HASH "$HASH" \
+                                                                                                                    --arg INDEX "$INDEX" \
+                                                                                                                    --argjson SEED "$SEED" \
+                                                                                                                    '{
+                                                                                                                        "hash" : $HASH ,
+                                                                                                                        "index" : $INDEX ,
+                                                                                                                        "seed" : $SEED
+                                                                                                                    }' > "$JSON_FILE"
+                                                                                                                redis-cli PUBLISH ${ valid-release-channel } "$JSON_FILE"
+                                                                                                            fi
+                                                                                                        '' ;
+                                                                                            }
+                                                                                            release ;
+                                                                                } ;
+                                                                        destroy2 =
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "destroy" ;
+                                                                                    runtimeInputs =
+                                                                                        [
                                                                                             trace
                                                                                             (
                                                                                                 buildFHSUserEnv
