@@ -305,9 +305,9 @@
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
-                                                                                                                                                                        trace 1179 "$PID"
+                                                                                                                                                                        trace "1179 PID $PID"
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                                                                        trace 27859 "$PID"
+                                                                                                                                                                        trace "27859 PID $PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
                                                                                                                                                                 trace 14764
