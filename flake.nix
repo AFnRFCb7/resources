@@ -314,19 +314,24 @@
                                                                                                                                                                         trace 27859 "$PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
+                                                                                                                                                                trace 16388
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
-                                                                                                                                                                echo 24208
+                                                                                                                                                                trace 25043
                                                                                                                                                                 find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                                                 do
+                                                                                                                                                                    trace 511 "$LINK"
                                                                                                                                                                     FILE="$( readlink --canonicalize "$LINK" )" || failure 15150
-                                                                                                                                                                    echo 2060 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                    trace 31049
                                                                                                                                                                     if [[ "${ resources-directory }/mounts/$INDEX" == "$FILE" ]]
                                                                                                                                                                     then
+                                                                                                                                                                        trace 22399
                                                                                                                                                                         echo 7010 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                        trace 632
                                                                                                                                                                         inotifywait --event delete_self "$LINK"
-                                                                                                                                                                        echo 8287 "LINK=$LINK" "FILE=$FILE" "TARGET=${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                        trace 24735
                                                                                                                                                                     fi
                                                                                                                                                                 done
+                                                                                                                                                                trace 29184
                                                                                                                                                                 exec 203> "${ resources-directory }/locks/$HASH"
                                                                                                                                                                 flock -x 203
                                                                                                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
@@ -361,7 +366,6 @@
                                                                                                                                                                         tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                                         echo 20301
                                                                                                                                                                         rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                        echo 31757
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
