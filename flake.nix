@@ -296,6 +296,7 @@
                                                                                                                                                                         ] ;
                                                                                                                                                         in
                                                                                                                                                             ''
+                                                                                                                                                                trace 12950
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
                                                                                                                                                                 echo 7971555133787853
                                                                                                                                                                 # shellcheck disable=SC2153
