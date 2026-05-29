@@ -1307,12 +1307,16 @@
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || failure 14587
                                                                                                             mkdir --parents ${ resources-directory }/release
+                                                                                                            trace 28886
                                                                                                             RELEASE_FILE="${ resources-directory }/release/$INDEX"
+                                                                                                            trace 32610 "$RELEASE_FILE"
                                                                                                             if [[ -e "$RELEASE_FILE" ]]
                                                                                                             then
                                                                                                                 failure 15975
                                                                                                             fi
+                                                                                                            trace 17843
                                                                                                             sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
+                                                                                                            trace 28617
                                                                                                             echo "# 3421794956336178" >> "$RELEASE_FILE"
                                                                                                             chmod 0500 "$RELEASE_FILE"
                                                                                                             SEED='${ builtins.toJSON seed }'
