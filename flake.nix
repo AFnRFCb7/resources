@@ -298,15 +298,11 @@
                                                                                                                                                             ''
                                                                                                                                                                 trace 12950
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                trace 11449
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
-                                                                                                                                                                trace 7535
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                                                trace 24130
                                                                                                                                                                 if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    trace 8357
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
                                                                                                                                                                         trace 1179 "$PID"
@@ -331,12 +327,10 @@
                                                                                                                                                                         trace 24735
                                                                                                                                                                     fi
                                                                                                                                                                 done
-                                                                                                                                                                trace 29184
                                                                                                                                                                 exec 203> "${ resources-directory }/locks/$HASH"
                                                                                                                                                                 flock -x 203
                                                                                                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                                                                 flock -x 204
-                                                                                                                                                                trace 25907
                                                                                                                                                                 if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                                                 then
                                                                                                                                                                     trace 1172
@@ -344,7 +338,6 @@
                                                                                                                                                                     flock -u 204
                                                                                                                                                                     nohup "$0" &
                                                                                                                                                                 else
-                                                                                                                                                                    trace 12080
                                                                                                                                                                     rm --force "${ resources-directory }/canonical/$HASH"
                                                                                                                                                                     flock -u 203 echo 10200
                                                                                                                                                                     mkdir --parents ${ resources-directory }/logs
