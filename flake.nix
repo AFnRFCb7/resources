@@ -291,12 +291,10 @@
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace "1179 PID $PID"
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
                                                                                                                                                 trace "27859 PID $PID"
                                                                                                                                             done
                                                                                                                                         fi
-                                                                                                                                        trace 14764
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                         find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                         do
@@ -307,18 +305,18 @@
                                                                                                                                                 inotifywait --event delete_self "$LINK"
                                                                                                                                             fi
                                                                                                                                         done
-                                                                                                                                        exec 203> "${ resources-directory }/locks/$HASH"
-                                                                                                                                        flock -x 203
-                                                                                                                                        exec 204> "${ resources-directory }/locks/$INDEX"
-                                                                                                                                        flock -x 204
+                                                                                                                                        exec 189> "${ resources-directory }/locks/$HASH"
+                                                                                                                                        flock -x 189
+                                                                                                                                        exec 147> "${ resources-directory }/locks/$INDEX"
+                                                                                                                                        flock -x 147
                                                                                                                                         if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                         then
-                                                                                                                                            flock -u 203
-                                                                                                                                            flock -u 204
+                                                                                                                                            flock -u 189
+                                                                                                                                            flock -u 147
                                                                                                                                             nohup "$0" &
                                                                                                                                         else
                                                                                                                                             rm --force "${ resources-directory }/canonical/$HASH"
-                                                                                                                                            flock -u 203 echo 10200
+                                                                                                                                            flock -u 189 echo 10200
                                                                                                                                             mkdir --parents ${ resources-directory }/logs
                                                                                                                                             SCRIPT_FILE="$( ${ script-file release a } )" || failure 17419
                                                                                                                                             SEED='${ builtins.toJSON seed }'
