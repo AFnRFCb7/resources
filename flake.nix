@@ -888,7 +888,9 @@
                                                                                                                                     }' | log ${ valid-init-channel }
                                                                                                                                 RELEASE_FILE="${ resources-directory }/release/$_INDEX"
                                                                                                                                 # shellcheck disable=SC2016,SC2086
+                                                                                                                                trace 29404
                                                                                                                                 sed -e s#'$'_HASH#$HASH# -e s#'$'_INDEX#$INDEX# -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
+                                                                                                                                trace 118644
                                                                                                                                 chmod 0500 "$RELEASE_FILE"
                                                                                                                                 rm --recursive --force "${ directory }"
                                                                                                                             else
