@@ -445,6 +445,7 @@
                                                                                         ] ;
                                                                                     text =
                                                                                         ''
+                                                                                            trace 15225
                                                                                             # shellcheck disable=SC2269
                                                                                             export _HASH="$_HASH"
                                                                                             # shellcheck disable=SC2269
