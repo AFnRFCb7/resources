@@ -352,7 +352,7 @@
                                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                                     '{
-                                                                                                                                                        "WTF" : 1 ,
+                                                                                                                                                        "WTF" : 10060 ,
                                                                                                                                                         "index" : $INDEX ,
                                                                                                                                                         "script" : $SCRIPT ,
                                                                                                                                                         "seed" : $SEED ,
@@ -643,7 +643,7 @@
                                                                                                                                                                             --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
-                                                                                                                                                                                "WTF" : 1 ,
+                                                                                                                                                                                "WTF" : 29778 ,
                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                 "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
