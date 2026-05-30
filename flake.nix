@@ -306,8 +306,11 @@
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         mkdir --parents ${ resources-directory }/locks
+                                                                                                                                        trace 21361
                                                                                                                                         exec 189> "${ resources-directory }/locks/$HASH"
+                                                                                                                                        trace 27837
                                                                                                                                         flock -x 189
+                                                                                                                                        trace 25306
                                                                                                                                         exec 147> "${ resources-directory }/locks/$INDEX"
                                                                                                                                         flock -x 147
                                                                                                                                         if [[ -e "${ resources-directory }/marks/$INDEX" ]]
@@ -1567,7 +1570,7 @@
                                                                                                             in "${ application }/bin/application" ;
                                                                                                 in
                                                                                                     ''
-                                                                                                        SEQUENCE="$( sequential )" || failure 18903
+                                                                                                        SEQUENCE="$( sequential )" || failure 32455
                                                                                                         FILE="${ resources-directory }/logs/$SEQUENCE"
                                                                                                         ln --symbolic ${ application } "$FILE"
                                                                                                         echo "$FILE"
