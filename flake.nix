@@ -287,6 +287,7 @@
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
+                                                                                                                                        trace 20330
                                                                                                                                         if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
@@ -296,6 +297,7 @@
                                                                                                                                                 trace "27859 PID $PID"
                                                                                                                                             done
                                                                                                                                         fi
+                                                                                                                                        trace 30284
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                         find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                         do
