@@ -291,6 +291,7 @@
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
+                                                                                                                                                trace "7559 PID $PID"
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
                                                                                                                                                 trace "27859 PID $PID"
                                                                                                                                             done
@@ -306,7 +307,6 @@
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         mkdir --parents ${ resources-directory }/locks
-                                                                                                                                        trace 21361 "$0" 10533 "$( cat "$0" )" 16861
                                                                                                                                         exec 151> "${ resources-directory }/locks/$HASH"
                                                                                                                                         trace 27837
                                                                                                                                         flock -x 151
