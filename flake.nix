@@ -979,11 +979,13 @@
                                                                                                                         _HASH="$HASH"
                                                                                                                         # shellcheck disable=SC2153
                                                                                                                         _INDEX="$INDEX"
+                                                                                                                        trace 9875
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
                                                                                                                             failure 9339682764537318
                                                                                                                         fi
+                                                                                                                        trace 6643
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
                                                                                                                         echo "# 6848967577446656" >> "$RELEASE_FILE"
                                                                                                                         chmod 0500 "$RELEASE_FILE"
