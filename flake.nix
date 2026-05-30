@@ -422,7 +422,7 @@
                                                                                                                                     tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                     echo 763
                                                                                                                                     rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                    JSON_SEQUENCE="$( sequential )" || failure 32030
+                                                                                                                                    JSON_SEQUENCE="$( sequential )" || failure 19966
                                                                                                                                     JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
                                                                                                                                     jq \
                                                                                                                                         --compact-output \
@@ -597,18 +597,18 @@
                                                                                                                                                                         inotifywait --event delete_self "$LINK"
                                                                                                                                                                     fi
                                                                                                                                                                 done
-                                                                                                                                                                exec 203> "${ resources-directory }/locks/$HASH"
-                                                                                                                                                                flock -x 203
+                                                                                                                                                                exec 138> "${ resources-directory }/locks/$HASH"
+                                                                                                                                                                flock -x 138
                                                                                                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                                                                 flock -x 204
                                                                                                                                                                 if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    flock -u 203
+                                                                                                                                                                    flock -u 138
                                                                                                                                                                     flock -u 204
                                                                                                                                                                     nohup "$0" &
                                                                                                                                                                 else
                                                                                                                                                                     rm --force "${ resources-directory }/canonical/$HASH"
-                                                                                                                                                                    flock -u 203 echo 10200
+                                                                                                                                                                    flock -u 138 echo 10200
                                                                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                                                                     SCRIPT_FILE="$( ${ script-file release a } )" || failure 17419
                                                                                                                                                                     SEED='${ builtins.toJSON seed }'
@@ -693,20 +693,20 @@
                                                                                                                                                             fi
                                                                                                                                                         done
                                                                                                                                                         echo 4351
-                                                                                                                                                        exec 203> "${ resources-directory }/locks/$HASH"
-                                                                                                                                                        flock -x 203
+                                                                                                                                                        exec 153> "${ resources-directory }/locks/$HASH"
+                                                                                                                                                        flock -x 153
                                                                                                                                                         exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                                                         flock -x 204
                                                                                                                                                         if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                                         then
-                                                                                                                                                            flock -u 203
+                                                                                                                                                            flock -u 153
                                                                                                                                                             flock -u 204
                                                                                                                                                             nohup "$0" &
                                                                                                                                                         else
                                                                                                                                                             echo 13649
                                                                                                                                                             rm "${ resources-directory }/canonical/$HASH"
                                                                                                                                                             echo  9251
-                                                                                                                                                            flock -u 203
+                                                                                                                                                            flock -u 153
                                                                                                                                                             SEED='${ builtins.toJSON seed }'
                                                                                                                                                             ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                                             mkdir --parents "${ gc-root-directory }/$INDEX"
