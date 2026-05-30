@@ -305,6 +305,7 @@
                                                                                                                                                 inotifywait --event delete_self "$LINK"
                                                                                                                                             fi
                                                                                                                                         done
+                                                                                                                                        mkdir --parents ${ resources-directory }/locks"
                                                                                                                                         exec 189> "${ resources-directory }/locks/$HASH"
                                                                                                                                         flock -x 189
                                                                                                                                         exec 147> "${ resources-directory }/locks/$INDEX"
@@ -401,20 +402,20 @@
                                                                                                                                     fi
                                                                                                                                 done
                                                                                                                                 echo 4351
-                                                                                                                                exec 203> "${ resources-directory }/locks/$HASH"
-                                                                                                                                flock -x 203
+                                                                                                                                exec 148> "${ resources-directory }/locks/$HASH"
+                                                                                                                                flock -x 148
                                                                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                                 flock -x 204
                                                                                                                                 if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                 then
-                                                                                                                                    flock -u 203
+                                                                                                                                    flock -u 148
                                                                                                                                     flock -u 204
                                                                                                                                     nohup "$0" &
                                                                                                                                 else
                                                                                                                                     echo 13649
                                                                                                                                     rm "${ resources-directory }/canonical/$HASH"
                                                                                                                                     echo  9251
-                                                                                                                                    flock -u 203
+                                                                                                                                    flock -u 148
                                                                                                                                     SEED='${ builtins.toJSON seed }'
                                                                                                                                     ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                     mkdir --parents "${ gc-root-directory }/$INDEX"
@@ -1642,8 +1643,8 @@
                                                                                 ''
                                                                                     mkdir --parents ${ resources-directory }/sequential
                                                                                     mkdir --parents ${ resources-directory }/locks
-                                                                                    exec 203> ${ resources-directory }/locks/sequential
-                                                                                    flock -x 203
+                                                                                    exec 182> ${ resources-directory }/locks/sequential
+                                                                                    flock -x 182
                                                                                     if [[ -s ${ resources-directory }/sequential/sequential.counter ]]
                                                                                     then
                                                                                         CURRENT="$( cat ${ resources-directory }/sequential/sequential.counter )" || failure 5766
@@ -1981,8 +1982,8 @@
                                                                             export TRANSIENT
                                                                             HASH="$( echo "$ARGUMENTS" "$HAS_STANDARD_INPUT" "$PRE_HASH" "$SCRIPTS_HASH" "$STANDARD_INPUT_HASH" "$TRANSIENT" | sha512sum | cut --characters 1-128 )" || failure 21086
                                                                             mkdir --parents "${ resources-directory }/locks"
-                                                                            exec 203> "${ resources-directory }/locks/$HASH"
-                                                                            flock -x 203
+                                                                            exec 142> "${ resources-directory }/locks/$HASH"
+                                                                            flock -x 142
                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                             then
                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || failure 6882155195748272
