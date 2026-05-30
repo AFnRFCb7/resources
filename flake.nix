@@ -188,6 +188,7 @@
                                                                                     name = "destroy" ;
                                                                                     runtimeInputs =
                                                                                         [
+                                                                                            trace
                                                                                             (
                                                                                                 writeShellApplication
                                                                                                     {
