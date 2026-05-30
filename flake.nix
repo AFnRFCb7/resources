@@ -306,21 +306,21 @@
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         mkdir --parents ${ resources-directory }/locks
-                                                                                                                                        trace 21361
-                                                                                                                                        exec 189> "${ resources-directory }/locks/$HASH"
+                                                                                                                                        trace 21361 "$0"
+                                                                                                                                        exec 151> "${ resources-directory }/locks/$HASH"
                                                                                                                                         trace 27837
-                                                                                                                                        flock -x 189
+                                                                                                                                        flock -x 151
                                                                                                                                         trace 25306
                                                                                                                                         exec 147> "${ resources-directory }/locks/$INDEX"
                                                                                                                                         flock -x 147
                                                                                                                                         if [[ -e "${ resources-directory }/marks/$INDEX" ]]
                                                                                                                                         then
-                                                                                                                                            flock -u 189
+                                                                                                                                            flock -u 151
                                                                                                                                             flock -u 147
                                                                                                                                             nohup "$0" &
                                                                                                                                         else
                                                                                                                                             rm --force "${ resources-directory }/canonical/$HASH"
-                                                                                                                                            flock -u 189 echo 10200
+                                                                                                                                            flock -u 151
                                                                                                                                             mkdir --parents ${ resources-directory }/logs
                                                                                                                                             SCRIPT_FILE="$( ${ script-file release a } )" || failure 17419
                                                                                                                                             SEED='${ builtins.toJSON seed }'
