@@ -305,7 +305,7 @@
                                                                                                                                                 inotifywait --event delete_self "$LINK"
                                                                                                                                             fi
                                                                                                                                         done
-                                                                                                                                        mkdir --parents ${ resources-directory }/locks"
+                                                                                                                                        mkdir --parents ${ resources-directory }/locks
                                                                                                                                         exec 189> "${ resources-directory }/locks/$HASH"
                                                                                                                                         flock -x 189
                                                                                                                                         exec 147> "${ resources-directory }/locks/$INDEX"
