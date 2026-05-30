@@ -306,7 +306,7 @@
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         mkdir --parents ${ resources-directory }/locks
-                                                                                                                                        trace 21361 "$( cat "$0" )"
+                                                                                                                                        trace 21361 "$0" 10533 "$( cat "$0" )" 16861
                                                                                                                                         exec 151> "${ resources-directory }/locks/$HASH"
                                                                                                                                         trace 27837
                                                                                                                                         flock -x 151
