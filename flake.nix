@@ -1168,9 +1168,9 @@
                                                                                                                     STANDARD_ERROR_FILE="${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
                                                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 21462
                                                                                                                     STANDARD_OUTPUT_FILE="${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE"
-                                                                                                                    echo 9625214521458483 >> /tmp/DEBUG
+                                                                                                                    trace 17630 3141 "For setup we init many vars"
                                                                                                                     init "$@" > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
-                                                                                                                    echo 2727691298113249 >> /tmp/DEBUG
+                                                                                                                    trace 17630 11176 "For setup we just ran init"
                                                                                                                     TARGETS_OBSERVED="$( find "${resources-directory}/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq --raw-input . | jq --compact-output --slurp . )" || failure 28445
                                                                                                                     if [[ "$TRANSIENT" == -1 ]]
                                                                                                                     then
@@ -1186,7 +1186,9 @@
                                                                                                                     chmod 0400 "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE"
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
+                                                                                                                        trace 17630 19045 "For setup we are about to pid"
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
+                                                                                                                        trace 17630 12769 "For setup we just pid"
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
@@ -1224,6 +1226,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
+                                                                                                                            trace 17630 17890 "For setup we are about to message"
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
@@ -1245,11 +1248,13 @@
                                                                                                                                     "targets" : $TARGETS_EXPECTED ,
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
+                                                                                                                            trace 17630 20591 "For setup we just messaged"
                                                                                                                         fi
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
+                                                                                                                        trace 17630 6480 "For setup we are about to output"
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
-                                                                                                                        echo 2179917276469149 >> /tmp/DEBUG
+                                                                                                                        trace 17630 3848 "For setup juar output"
                                                                                                                     else
                                                                                                                         echo 8519152656595598 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == true ]]
