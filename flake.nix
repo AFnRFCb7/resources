@@ -287,6 +287,9 @@
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
+                                                                                                                                        trace 27123 15433 "As a kludge we are forcing a 1 minute sleep"
+                                                                                                                                        sleep 1m
+                                                                                                                                        trace 27123 20628 "We finished our kludge 1 minute sleep "
                                                                                                                                         trace 27123 20330 "${ resources-directory }/pids/$INDEX" "We are in the destroy and waiting for these pids INDEX=$INDEX"
                                                                                                                                         if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                         then
