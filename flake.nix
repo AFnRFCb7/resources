@@ -1259,7 +1259,6 @@
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
                                                                                                                                     "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                     "targets" : $TARGETS_EXPECTED ,
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
