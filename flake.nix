@@ -425,8 +425,9 @@
                                                                                                                                     ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                     mkdir --parents "${ gc-root-directory }/$INDEX"
                                                                                                                                     tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                    echo 763
+                                                                                                                                    trace 27123 4984 "We are about to remove PIDS"
                                                                                                                                     rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
+                                                                                                                                    trace 27123 4307 "We removed PIDS"
                                                                                                                                     JSON_SEQUENCE="$( sequential )" || failure 19966
                                                                                                                                     JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
                                                                                                                                     jq \
@@ -450,7 +451,7 @@
                                                                                         ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            trace 15225
+                                                                                            trace 27123 15225 We are starting destroy sequence
                                                                                             # shellcheck disable=SC2269
                                                                                             export _HASH="$_HASH"
                                                                                             # shellcheck disable=SC2269
@@ -581,17 +582,17 @@
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                                                trace 17040
+                                                                                                                                                                trace 27123 17040 "We are begging to wait for PIDs"
                                                                                                                                                                 if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
-                                                                                                                                                                        trace "8565 PID $PID"
+                                                                                                                                                                        trace 27123 8565 "We are waiting for PID $PID"
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                                                                        trace "26485 PID $PID"
+                                                                                                                                                                        trace 27123 26485 "We waited for PID $PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
-                                                                                                                                                                trace 14764
+                                                                                                                                                                trace 27123 14764 "We are done waiting for PIDs"
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
                                                                                                                                                                 find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                                                 do
@@ -1999,9 +2000,9 @@
                                                                                 mkdir --parents ${ resources-directory }/marks
                                                                                 touch "${ resources-directory }/marks/$INDEX"
                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                trace 9537 "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
+                                                                                trace 27123 9537 "BEFORE The ultimate pid is $ULTIMATE_PID depth is  ${ builtins.toString depth } index is $INDEX"
                                                                                 pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
-                                                                                trace 26433 "$ULTIMATE_PID"${ builtins.toString depth } "$INDEX"
+                                                                                trace 27123 28327 "AFTER The ultimate pid is $ULTIMATE_PID depth is  ${ builtins.toString depth } index is $INDEX"
                                                                                 echo "${ resources-directory }/mounts/$INDEX"
                                                                             else
                                                                                 export HAS_STANDARD_INPUT
