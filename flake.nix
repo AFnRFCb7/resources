@@ -1158,11 +1158,10 @@
                                                                                                                     { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    echo 6986572542557694 > /tmp/DEBUG
+                                                                                                                    trace 27123 3765 "Starting Create"
                                                                                                                     mkdir --parents ${ resources-directory }/logs
-                                                                                                                    echo 3654834852556233 >> /tmp/DEBUG
                                                                                                                     INDEX="$( sequential )" || failure 5607
-                                                                                                                    echo 2919585643294958 >> /tmp/DEBUG
+                                                                                                                    trace 27133 11358 "Starting Create INDEX=$INDEX"
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                     flock -x 204
@@ -1202,25 +1201,20 @@
                                                                                                                     echo 1839454585667768 >> /tmp/DEBUG
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
-                                                                                                                        echo 5219365285757541 >> /tmp/DEBUG
+                                                                                                                        trace 27123 15483 "ABOUT TO PID INDEX=$INDEX"
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
-                                                                                                                        echo 7118546882223467 >> /tmp/DEBUG
+                                                                                                                        trace 27123 11158 "FINISHED PID INDEX=$INDEX"
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
-                                                                                                                        echo 1495191433138176 >> /tmp/DEBUG
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
-                                                                                                                            echo 6392986933177972 >> /tmp/DEBUG
                                                                                                                             failure 16697
                                                                                                                         fi
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
                                                                                                                         # shellcheck disable=SC2129
+                                                                                                                        trace 27123 18898 "About to create destroy file"
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
-                                                                                                                        echo 4915227719246627 >> /tmp/DEBUG
-                                                                                                                        echo "# 1593884543916188" >> "$RELEASE_FILE"
-                                                                                                                        echo 1114471876255727 >> /tmp/DEBUG
                                                                                                                         chmod 0500 "$RELEASE_FILE"
-                                                                                                                        echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                                                         then
                                                                                                                             jq \
@@ -1246,6 +1240,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
+                                                                                                                            trace 27123 21287 "About to message"
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
@@ -1271,7 +1266,6 @@
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
-                                                                                                                        echo 2179917276469149 >> /tmp/DEBUG
                                                                                                                     else
                                                                                                                         echo 8519152656595598 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == true ]]
