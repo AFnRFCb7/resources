@@ -287,17 +287,17 @@
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                        trace 27123 20330 "${ resources-directory }/pids/$INDEX" "We are in the destroy and waiting for these pids"
+                                                                                                                                        trace 27123 20330 "${ resources-directory }/pids/$INDEX" "We are in the destroy and waiting for these pids INDEX=$INDEX"
                                                                                                                                         if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace 27123 7559 "We are in destroy and waiting for PID $PID"
+                                                                                                                                                trace 27123 7559 "We are in destroy and waiting for PID $PID INDEX=$INDEX"
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
-                                                                                                                                                trace 27123 27859 "we are in destroy and waited for PID $PID"
+                                                                                                                                                trace 27123 27859 "we are in destroy and waited for PID $PID INDEX=$INDEX"
                                                                                                                                             done
                                                                                                                                         fi
-                                                                                                                                        trace 30284
+                                                                                                                                        trace 27123 30284 "We are done waiting for PID INDEX=$INDEX"
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                         find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                         do
@@ -310,9 +310,7 @@
                                                                                                                                         done
                                                                                                                                         mkdir --parents ${ resources-directory }/locks
                                                                                                                                         exec 151> "${ resources-directory }/locks/$HASH"
-                                                                                                                                        trace 27837
                                                                                                                                         flock -x 151
-                                                                                                                                        trace 25306
                                                                                                                                         exec 147> "${ resources-directory }/locks/$INDEX"
                                                                                                                                         flock -x 147
                                                                                                                                         if [[ -e "${ resources-directory }/marks/$INDEX" ]]
@@ -344,7 +342,7 @@
                                                                                                                                                 touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                 tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                 rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                trace 6738
+                                                                                                                                                trace 27123 22166 "We are about to publish a message"
                                                                                                                                                 jq \
                                                                                                                                                     --compact-output \
                                                                                                                                                     --null-input \
