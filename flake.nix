@@ -1240,7 +1240,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
-                                                                                                                            trace 27123 21287 "About to message"
+                                                                                                                            trace 27123 21287 "About to message INDEX=$INDEX"
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
@@ -1262,6 +1262,7 @@
                                                                                                                                     "targets" : $TARGETS_EXPECTED ,
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
+                                                                                                                            trace 27123 20310 "I just message INDEX=$INDEX"
                                                                                                                         fi
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
