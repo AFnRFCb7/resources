@@ -1479,6 +1479,7 @@
                                                                                     STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9116318311428797
                                                                                     trace 17630 8550 "About to message"
                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" || true
+                                                                                    trace 17630 8538 "FINISHED MESSAGING" "$( cat "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" )" "$( cat "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" )"
                                                                                 '' ;
                                                                         }
                                                                 )
