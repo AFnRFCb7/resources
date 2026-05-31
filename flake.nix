@@ -1225,6 +1225,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
+                                                                                                                            trace 17630 2629 "setup : about to message"
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
