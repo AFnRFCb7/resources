@@ -1998,9 +1998,9 @@
                                                                                 mkdir --parents ${ resources-directory }/marks
                                                                                 touch "${ resources-directory }/marks/$INDEX"
                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                trace 9537 "$ULTIMATE_PID"
+                                                                                trace 9537 "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
                                                                                 pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
-                                                                                trace 26433 "$ULTIMATE_PID"
+                                                                                trace 26433 "$ULTIMATE_PID"${ builtins.toString depth } "$INDEX"
                                                                                 echo "${ resources-directory }/mounts/$INDEX"
                                                                             else
                                                                                 export HAS_STANDARD_INPUT
