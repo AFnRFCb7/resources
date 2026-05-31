@@ -1199,6 +1199,7 @@
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
                                                                                                                         chmod 0500 "$RELEASE_FILE"
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
+                                                                                                                        trace 17630 12991 "setup : almost"
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                                                         then
                                                                                                                             jq \
