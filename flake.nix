@@ -1145,11 +1145,9 @@
                                                                                                                     { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    echo 6986572542557694 > /tmp/DEBUG
                                                                                                                     mkdir --parents ${ resources-directory }/logs
-                                                                                                                    echo 3654834852556233 >> /tmp/DEBUG
                                                                                                                     INDEX="$( sequential )" || failure 5607
-                                                                                                                    echo 2919585643294958 >> /tmp/DEBUG
+                                                                                                                    trace 17630 6591 "We just started creating INDEX=$INDEX"
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                     flock -x 204
@@ -1186,14 +1184,10 @@
                                                                                                                     done
                                                                                                                     STATUS="$( cat "$SIGNAL/signal" )" || failure 11902
                                                                                                                     chmod 0400 "$STANDARD_OUTPUT_FILE" "$STANDARD_ERROR_FILE"
-                                                                                                                    echo 1839454585667768 >> /tmp/DEBUG
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
-                                                                                                                        echo 5219365285757541 >> /tmp/DEBUG
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
-                                                                                                                        echo 7118546882223467 >> /tmp/DEBUG
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
-                                                                                                                        echo 1495191433138176 >> /tmp/DEBUG
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
                                                                                                                             echo 6392986933177972 >> /tmp/DEBUG
@@ -1203,9 +1197,6 @@
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
-                                                                                                                        echo 4915227719246627 >> /tmp/DEBUG
-                                                                                                                        echo "# 1593884543916188" >> "$RELEASE_FILE"
-                                                                                                                        echo 1114471876255727 >> /tmp/DEBUG
                                                                                                                         chmod 0500 "$RELEASE_FILE"
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
