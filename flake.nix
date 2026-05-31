@@ -1995,6 +1995,7 @@
                                                                                 INDEX="$( basename "$LINK" )" || failure 5382672217914679
                                                                                 exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                 flock -s 204
+                                                                                flock -s 204
                                                                                 mkdir --parents ${ resources-directory }/marks
                                                                                 touch "${ resources-directory }/marks/$INDEX"
                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
