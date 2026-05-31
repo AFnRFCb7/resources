@@ -287,14 +287,14 @@
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                        trace 20330 "${ resources-directory }/pids/$INDEX" 3099 "$( find "${ resources-directory }/pids" -mindepth 1 -maxdepth 1 )" 28352
+                                                                                                                                        trace 27123 20330 "${ resources-directory }/pids/$INDEX" "We are in the destroy and waiting for these pids"
                                                                                                                                         if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace "7559 PID $PID"
+                                                                                                                                                trace 27123 7559 "We are in destroy and waiting for PID $PID"
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
-                                                                                                                                                trace "27859 PID $PID"
+                                                                                                                                                trace 27123 27859 "we are in destroy and waited for PID $PID"
                                                                                                                                             done
                                                                                                                                         fi
                                                                                                                                         trace 30284
@@ -451,7 +451,7 @@
                                                                                         ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            trace 27123 15225 We are starting destroy sequence
+                                                                                            trace 27123 15225 "We are starting destroy sequence"
                                                                                             # shellcheck disable=SC2269
                                                                                             export _HASH="$_HASH"
                                                                                             # shellcheck disable=SC2269
