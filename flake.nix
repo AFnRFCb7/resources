@@ -1475,6 +1475,7 @@
                                                                                 ''
                                                                                     trace 17630 14864
                                                                                     CHANNEL="$1"
+                                                                                    trace 17630 22564
                                                                                     JSON="$( jq --compact-output "." )" || failure 7456186835451742
                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 7956485765567239
                                                                                     STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9116318311428797
