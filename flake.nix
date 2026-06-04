@@ -1473,6 +1473,7 @@
                                                                             runtimeInputs = [ failure pkgs.jq pkgs.redis sequential trace ] ;
                                                                             text =
                                                                                 ''
+                                                                                    trace 17630 14864
                                                                                     CHANNEL="$1"
                                                                                     JSON="$( jq --compact-output "." )" || failure 7456186835451742
                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 7956485765567239
