@@ -1477,6 +1477,7 @@
                                                                                     CHANNEL="$1"
                                                                                     trace 17630 22564
                                                                                     JSON="$( jq --compact-output "." )" || failure 7456186835451742
+                                                                                    trace 17630 747
                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 7956485765567239
                                                                                     STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9116318311428797
                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" || true
