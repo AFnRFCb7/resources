@@ -1484,7 +1484,7 @@
                                                                                     trace 17630 18481
                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
                                                                                     cat "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" >> /tmp/output
-                                                                                    cat "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" >> /tmp/output
+                                                                                    cat "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" >> /tmp/error
                                                                                 '' ;
                                                                         }
                                                                 )
