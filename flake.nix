@@ -1470,7 +1470,7 @@
                                                                     pkgs.writeShellApplication
                                                                         {
                                                                             name = "log" ;
-                                                                            runtimeInputs = [ failure pkgs.jq pkgs.redis sequential ] ;
+                                                                            runtimeInputs = [ failure pkgs.jq pkgs.redis sequential trace ] ;
                                                                             text =
                                                                                 ''
                                                                                     CHANNEL="$1"
@@ -1478,7 +1478,7 @@
                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 7956485765567239
                                                                                     STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9116318311428797
                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" || true
-                                                                                    # trace 17630 3749
+                                                                                    trace 17630 3749
                                                                                 '' ;
                                                                         }
                                                                 )
