@@ -1486,7 +1486,7 @@
                                                                                     echo "$JSON" >> /tmp/json
                                                                                     cat "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" >> /tmp/output
                                                                                     cat "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" >> /tmp/error
-                                                                                    echo 17630 30199 >> ${ resources-directory }/logs/trace.log.json
+                                                                                    echo 17630 30199 >> ${ resources-directory }/logs/trace.log.yaml
                                                                                 '' ;
                                                                         }
                                                                 )
