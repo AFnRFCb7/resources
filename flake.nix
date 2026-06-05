@@ -1486,7 +1486,6 @@
                                                                                     echo "$JSON" >> /tmp/json
                                                                                     cat "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" >> /tmp/output
                                                                                     cat "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE" >> /tmp/error
-                                                                                    trace 17630 1862
                                                                                 '' ;
                                                                         }
                                                                 )
