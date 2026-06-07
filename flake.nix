@@ -1189,6 +1189,7 @@
                                                                                                                     then
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
+                                                                                                                        trace 17630 17647 RELEASE_FILE "$RELEASE_FILE"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
                                                                                                                             echo 6392986933177972 >> /tmp/DEBUG
@@ -1197,7 +1198,9 @@
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
                                                                                                                         # shellcheck disable=SC2129
-                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
+                                                                                                                        trace 17630 6635 "BEFORE SED"
+                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1\
+                                                                                                                        trace 17630 2229 "AFTER SED"
                                                                                                                         chmod 0500 "$RELEASE_FILE"
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         trace 17630 12991 "setup : almost"
