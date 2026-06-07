@@ -1145,6 +1145,7 @@
                                                                                                                     { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
+                                                                                                                    trace 17630 10551
                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                     INDEX="$( sequential )" || failure 5607
                                                                                                                     trace 17630 6591 "We just started creating INDEX=$INDEX"
