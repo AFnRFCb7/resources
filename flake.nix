@@ -1080,7 +1080,7 @@
                                                                                                                                                                                     HASH="$HASH"
                                                                                                                                                                                     # shellcheck disable=SC2269
                                                                                                                                                                                     INDEX="$INDEX"
-                                                                                                                                                                                    RESOLVE_FILE="$( "$SCRIPT_FILE" "$@" )" || failure 28157
+                                                                                                                                                                                    RESOLVE_FILE="$( "$SCRIPT_FILE" )" || failure 28157
                                                                                                                                                                                     if "$RESOLVE_FILE" "$@"
                                                                                                                                                                                     then
                                                                                                                                                                                         STATUS="$?"
@@ -1565,7 +1565,7 @@
                                                                             )
                                                                         ] ;
                                                             } ;
-                                                    in ''${ application }/bin/script "$@"'' ;
+                                                    in ''${ application }/bin/script'' ;
                                         scripts-hash =
                                             buildFHSUserEnv
                                                 {
