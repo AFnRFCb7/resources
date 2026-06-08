@@ -283,9 +283,6 @@
                                                                                                                                                 ] ;
                                                                                                                                 in
                                                                                                                                     ''
-                                                                                                                                        trace 17630 "about to rm release" 5299 1ca42941-cd81-4942-a3ee-908691307bd6
-                                                                                                                                        rm "${ resources-directory }/release/$INDEX"
-                                                                                                                                        trace 17630 "just rm release" 3167
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
@@ -293,7 +290,7 @@
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace 17630 "waiting for PID $PID" 22672
+                                                                                                                                                trace 17630 "waiting for PID $PID" 22672 b4a49b56-4c03-43e5-a08b-aa61c903310e
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
                                                                                                                                                 trace 17630 "waited for PID=$PID" 14162
                                                                                                                                             done
@@ -317,6 +314,9 @@
                                                                                                                                         then
                                                                                                                                             flock -u 151
                                                                                                                                             flock -u 147
+                                                                                                                                            trace 17630 "about to rm release" 5299 1ca42941-cd81-4942-a3ee-908691307bd6
+                                                                                                                                            rm "${ resources-directory }/release/$INDEX"
+                                                                                                                                            trace 17630 "just rm release" 3167
                                                                                                                                             nohup "$0" &
                                                                                                                                         else
                                                                                                                                             rm --force "${ resources-directory }/canonical/$HASH"
