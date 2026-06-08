@@ -1098,9 +1098,11 @@
                                                                                                                                                                                             --null-input \
                                                                                                                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                                                                                                                             --arg INDEX "$INDEX" \
+                                                                                                                                                                                            --rawfile "$SCRIPT_FILE \
                                                                                                                                                                                             '{
                                                                                                                                                                                                 "arguments" $ARGUMENTS ,
-                                                                                                                                                                                                "index" : $INDEX
+                                                                                                                                                                                                "index" : $INDEX ,
+                                                                                                                                                                                                "script" : $SCRIPT
                                                                                                                                                                                             }' | log invalid-init
                                                                                                                                                                                     fi
                                                                                                                                                                                     exit "$STATUS"
