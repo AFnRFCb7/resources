@@ -290,9 +290,7 @@
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace 17630 "waiting for PID $PID" 22672 b4a49b56-4c03-43e5-a08b-aa61c903310e
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
-                                                                                                                                                trace 17630 "waited for PID=$PID" 14162
                                                                                                                                             done
                                                                                                                                         fi
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
@@ -314,9 +312,7 @@
                                                                                                                                         then
                                                                                                                                             flock -u 151
                                                                                                                                             flock -u 147
-                                                                                                                                            trace 17630 "about to rm release" 5299 1ca42941-cd81-4942-a3ee-908691307bd6
                                                                                                                                             rm "${ resources-directory }/release/$INDEX"
-                                                                                                                                            trace 17630 "just rm release" 3167
                                                                                                                                             nohup "$0" &
                                                                                                                                         else
                                                                                                                                             rm --force "${ resources-directory }/canonical/$HASH"
@@ -339,11 +335,9 @@
                                                                                                                                             then
                                                                                                                                                 ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                                 mkdir --parents "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX"
-                                                                                                                                                trace 17630 "about to touch WTF1" 17142
                                                                                                                                                 touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                 tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                 rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                trace 17630 "just wtf 1" 27349
                                                                                                                                                 jq \
                                                                                                                                                     --compact-output \
                                                                                                                                                     --null-input \
@@ -389,9 +383,7 @@
                                                                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                                                 find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                 do
-                                                                                                                                    trace 17630 "waiting for PID=$PID" 29341
                                                                                                                                     tail --follow /dev/null --pid "$PID"
-                                                                                                                                    trace 17630 "waited for PID=$PID" 19484
                                                                                                                                 done
                                                                                                                                 mkdir --parents "${ gc-root-directory }"
                                                                                                                                 echo 30425 find "${ gc-root-directory }" -mindepth 1 -type l
@@ -425,11 +417,9 @@
                                                                                                                                     SEED='${ builtins.toJSON seed }'
                                                                                                                                     ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                     mkdir --parents "${ gc-root-directory }/$INDEX"
-                                                                                                                                    trace 17630 "about to tar and remove" 6100
                                                                                                                                     tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                     echo 763
                                                                                                                                     rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                    trace 17630 "just tar and remove" 23837
                                                                                                                                     JSON_SEQUENCE="$( sequential )" || failure 19966
                                                                                                                                     JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
                                                                                                                                     jq \
@@ -579,9 +569,7 @@
                                                                                                                                                                         ] ;
                                                                                                                                                         in
                                                                                                                                                             ''
-                                                                                                                                                                trace 17630 "remove" 289
                                                                                                                                                                 rm "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                trace 17630 "just remove" 6760
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
@@ -589,9 +577,7 @@
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
-                                                                                                                                                                        trace 17630 "waiting for PID=$PID" 27139
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                                                                        trace 17630 "waited for PID=$PID" 24539
                                                                                                                                                                     done
                                                                                                                                                                 fi
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
@@ -634,11 +620,9 @@
                                                                                                                                                                     then
                                                                                                                                                                         ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                                                         mkdir --parents "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX"
-                                                                                                                                                                        trace 17630 "about to toucjh tar and remove" 16421
                                                                                                                                                                         touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                                         tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                                         rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                                        trace 17630 "just toucjh tar and remove" 25485
                                                                                                                                                                         jq \
                                                                                                                                                                             --compact-output \
                                                                                                                                                                             --null-input \
@@ -684,9 +668,7 @@
                                                                                                                                                         mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                         do
-                                                                                                                                                            trace 17630 "waiting for PID=$PID" 17360
                                                                                                                                                             tail --follow /dev/null --pid "$PID"
-                                                                                                                                                            trace 17630 "waited for PID=$PID" 22606
                                                                                                                                                         done
                                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                                         echo 30425 find "${ gc-root-directory }" -mindepth 1 -type l
@@ -720,11 +702,9 @@
                                                                                                                                                             SEED='${ builtins.toJSON seed }'
                                                                                                                                                             ARCHIVE="$( mktemp --dry-run --suffix ".tar.xz" )" || failure 7546
                                                                                                                                                             mkdir --parents "${ gc-root-directory }/$INDEX"
-                                                                                                                                                            trace 17630 "tar and remove" 14488
                                                                                                                                                             tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                             echo 763
                                                                                                                                                             rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                            trace 17630 "just tar and remove" 6917
                                                                                                                                                             JSON_SEQUENCE="$( sequential )" || failure 32030
                                                                                                                                                             JSON_FILE="${ resources-directory }/logs/$JSON_SEQUENCE"
                                                                                                                                                             jq \
@@ -815,14 +795,12 @@
                                                                                                             ''
                                                                                                                 RESOLUTION_PATH='${ builtins.toJSON path }'
                                                                                                             ''
-                                                                                                            ''trace 17630 "to sed" 13677''
                                                                                                             ''
                                                                                                                 sed -e "s#\HAS_SCRIPT#false#" -e "s#\$HASH#$HASH#" -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX" -e "s#\$INDEX#$INDEX#" -e "s#\$RELEASE_FILE#${ resources-directory }/release/$INDEX#" -e "s#\$RESOLUTION_PATH#$RESOLUTION_PATH#" -e "s#\$SCRIPT_FILE##" -e "w${ directory }/resolve/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh" ${ resolve.null } > /dev/null 2>&1
                                                                                                             ''
                                                                                                             ''
                                                                                                                 chmod 0500 "${ directory }/resolve/${ builtins.concatStringsSep "/" ( builtins.map builtins.toString path ) }/resolve.sh"
                                                                                                             ''
-                                                                                                            ''trace 17630 "just sed" 12413''
                                                                                                         ] ;
                                                                                                 set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                             }
@@ -991,7 +969,6 @@
                                                                                                                         _HASH="$HASH"
                                                                                                                         # shellcheck disable=SC2153
                                                                                                                         _INDEX="$INDEX"
-                                                                                                                        trace 17630 "wtf" 21354
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
@@ -1000,7 +977,6 @@
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy > /dev/null 2>&1
                                                                                                                         echo "# 6848967577446656" >> "$RELEASE_FILE"
                                                                                                                         chmod 0500 "$RELEASE_FILE"
-                                                                                                                        trace 17630 "just wtf" 19812
                                                                                                                         jq \
                                                                                                                             --null-input \
                                                                                                                             --compact-output \
@@ -1056,14 +1032,12 @@
                                                                                                     ''
                                                                                                         mkdir --parents "${ directory }"
                                                                                                     ''
-                                                                                                    ''trace 17630 "sed" 29113''
                                                                                                     ''
                                                                                                         sed -e "s#\$HAS_SCRIPT#false#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "s#\$RELEASE_FILE#${ resources-directory }/release/$INDEX#" -e "s#\$SCRIPT_FILE##" -e "w${ directory }/resolve.sh" ${ resolve.null } > /dev/null 2>&1
                                                                                                     ''
                                                                                                     ''
                                                                                                         chmod 0500 "${ directory }/resolve.sh"
                                                                                                     ''
-                                                                                                    ''trace 17630 "just sed" 10679''
                                                                                                 ]
                                                                                                 resolutions
                                                                                             ] ;
@@ -1202,7 +1176,6 @@
                                                                                                                     if [[ "$STATUS" == 0 ]] && [[ ! -s "$STANDARD_ERROR_FILE" ]] && [[ "$TARGETS_EXPECTED" == "$TARGETS_OBSERVED" ]]
                                                                                                                     then
                                                                                                                         pid "$ULTIMATE_PID" ${ builtins.toString depth } "$INDEX"
-                                                                                                                        trace 17630 "sed" 26920
                                                                                                                         RELEASE_FILE="${ resources-directory }/release/$INDEX"
                                                                                                                         if [[ -e "$RELEASE_FILE" ]]
                                                                                                                         then
@@ -1214,7 +1187,6 @@
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
                                                                                                                         chmod 0500 "$RELEASE_FILE"
-                                                                                                                        trace 17630 "just sed" 867
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                                                         then
