@@ -287,17 +287,13 @@
                                                                                                                                         # shellcheck disable=SC2153
                                                                                                                                         INDEX="$_INDEX"
                                                                                                                                         rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                        trace 17630 10020 "We are waiting for PIDs INDEX=$INDEX"
                                                                                                                                         if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
-                                                                                                                                                trace 17630 30823 "We are waiting for PID=$PID INDEX=$INDEX"
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
-                                                                                                                                                trace 17630 30335 "We have waited for PID=$PID INDEX=$INDEX"
                                                                                                                                             done
                                                                                                                                         fi
-                                                                                                                                        trace 17630 28175 "We are done waiting for PIDs INDEX=$INDEX"
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                         find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                         do
@@ -342,7 +338,6 @@
                                                                                                                                                 touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                 tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                 rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                trace 17630 19852 "We are about to message INDEX=$INDEX"
                                                                                                                                                 jq \
                                                                                                                                                     --compact-output \
                                                                                                                                                     --null-input \
@@ -448,7 +443,6 @@
                                                                                         ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            trace 17630 25316 "We just started destroy"
                                                                                             # shellcheck disable=SC2269
                                                                                             export _HASH="$_HASH"
                                                                                             # shellcheck disable=SC2269
@@ -579,17 +573,13 @@
                                                                                                                                                                 # shellcheck disable=SC2153
                                                                                                                                                                 INDEX="$_INDEX"
                                                                                                                                                                 rm --force "${ resources-directory }/marks/$INDEX"
-                                                                                                                                                                trace 17630 12910 "We are waiting for PIDS INDEX=$INDEX"
                                                                                                                                                                 if [[ -d "${ resources-directory }/pids/$INDEX" ]]
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
-                                                                                                                                                                        trace 17630 1366 "We are waiting for PIDS INDEX=$INDEX PID=$PID"
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                                                                        trace 17630 17291 "We waited for for PIDS INDEX=$INDEX PID=$PID"
                                                                                                                                                                     done
                                                                                                                                                                 fi
-                                                                                                                                                                trace 17630 16974 "We are waiting for PIDS INDEX=$INDEX"
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
                                                                                                                                                                 find ${ gc-root-directory } -mindepth 1 -type l | while read -r LINK
                                                                                                                                                                 do
@@ -1147,7 +1137,6 @@
                                                                                                                 ''
                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                     INDEX="$( sequential )" || failure 5607
-                                                                                                                    trace 17630 6591 "We just started creating INDEX=$INDEX"
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                     flock -x 204
@@ -1199,7 +1188,6 @@
                                                                                                                         sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
                                                                                                                         chmod 0500 "$RELEASE_FILE"
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
-                                                                                                                        trace 17630 12991 "setup : almost"
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
                                                                                                                         then
                                                                                                                             jq \
@@ -1225,7 +1213,6 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
-                                                                                                                            trace 17630 2629 "setup : about to message"
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
@@ -1473,15 +1460,10 @@
                                                                             runtimeInputs = [ failure pkgs.jq pkgs.redis sequential trace ] ;
                                                                             text =
                                                                                 ''
-                                                                                    trace 17630 14864
                                                                                     CHANNEL="$1"
-                                                                                    trace 17630 22564
                                                                                     JSON="$( jq --compact-output "." )" || failure 7456186835451742
-                                                                                    trace 17630 747
                                                                                     STANDARD_OUTPUT_SEQUENCE="$( sequential )" || failure 7956485765567239
-                                                                                    trace 17630 7746
                                                                                     STANDARD_ERROR_SEQUENCE="$( sequential )" || failure 9116318311428797
-                                                                                    trace 17630 18481
                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > "${ resources-directory }/logs/$STANDARD_OUTPUT_SEQUENCE" 2> "${ resources-directory }/logs/$STANDARD_ERROR_SEQUENCE"
                                                                                 '' ;
                                                                         }
