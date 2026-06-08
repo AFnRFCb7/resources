@@ -1084,7 +1084,7 @@
                                                                                                                                                                                     if "$RESOLVE_FILE" "$@"
                                                                                                                                                                                     then
                                                                                                                                                                                         STATUS="$?"
-                                                                                                                                                                                        rm "${ resources-directory }/invalid-init/$INDEX"
+                                                                                                                                                                                        rm --recursive --force "${ resources-directory }/invalid-init/$INDEX"
                                                                                                                                                                                     else
                                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                                     fi
