@@ -1076,7 +1076,9 @@
                                                                                                                                                                             runtimeInputs = [ failure sequential pkgs.coreutils ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
+                                                                                                                                                                                    # shellcheck disable=SC2269
                                                                                                                                                                                     HASH="$HASH"
+                                                                                                                                                                                    # shellcheck disable=SC2269
                                                                                                                                                                                     INDEX="$INDEX"
                                                                                                                                                                                     "$SCRIPT_FILE" "$@"
                                                                                                                                                                                 '' ;
