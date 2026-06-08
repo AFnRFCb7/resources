@@ -283,7 +283,7 @@
                                                                                                                                                 ] ;
                                                                                                                                 in
                                                                                                                                     ''
-                                                                                                                                        trace 17630 "about to rm release" 5299 1760
+                                                                                                                                        trace 17630 "about to rm release" 5299 1ca42941-cd81-4942-a3ee-908691307bd6
                                                                                                                                         rm "${ resources-directory }/release/$INDEX"
                                                                                                                                         trace 17630 "just rm release" 3167
                                                                                                                                         # shellcheck disable=SC2153
