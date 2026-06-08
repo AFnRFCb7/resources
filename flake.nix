@@ -1080,7 +1080,15 @@
                                                                                                                                                                                     HASH="$HASH"
                                                                                                                                                                                     # shellcheck disable=SC2269
                                                                                                                                                                                     INDEX="$INDEX"
-                                                                                                                                                                                    "$SCRIPT_FILE" "$@"
+                                                                                                                                                                                    RESOLVE_FILE="$( "$SCRIPT_FILE" "$@" )" || failure 28157
+                                                                                                                                                                                    if "$RESOLVE_FILE" "$@"
+                                                                                                                                                                                    then
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                        rm "${ resources-directory }/invalid-init/$INDEX"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                    exit "$STATUS"
                                                                                                                                                                                 '' ;
                                                                                                                                                                         } ;
                                                                                                                                                                 in "${ application }/bin/resolve" ;
