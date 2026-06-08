@@ -1073,7 +1073,7 @@
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
                                                                                                                                                                             name = "resolve" ;
-                                                                                                                                                                            runtimeInputs = [ failure sequential pkgs.coreutils ] ;
+                                                                                                                                                                            runtimeInputs = [ failure log sequential pkgs.coreutils ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
                                                                                                                                                                                     # shellcheck disable=SC2269
@@ -1090,7 +1090,7 @@
                                                                                                                                                                                             --arg INDEX "$INDEX" \
                                                                                                                                                                                             '{
                                                                                                                                                                                                 "index" : $INDEX
-                                                                                                                                                                                            '} | log valid-init
+                                                                                                                                                                                            }' | log valid-init
                                                                                                                                                                                     else
                                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                                         jq \
