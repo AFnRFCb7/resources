@@ -1076,6 +1076,7 @@
                                                                                                                                                                             runtimeInputs = [ failure log sequential pkgs.coreutils ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
+                                                                                                                                                                                    ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )"
                                                                                                                                                                                     # shellcheck disable=SC2269
                                                                                                                                                                                     HASH="$HASH"
                                                                                                                                                                                     # shellcheck disable=SC2269
@@ -1095,8 +1096,10 @@
                                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                                         jq \
                                                                                                                                                                                             --null-input \
+                                                                                                                                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                                                                                                                             --arg INDEX "$INDEX" \
                                                                                                                                                                                             '{
+                                                                                                                                                                                                "arguments" $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX
                                                                                                                                                                                             }' | log invalid-init
                                                                                                                                                                                     fi
