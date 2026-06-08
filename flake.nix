@@ -283,7 +283,7 @@
                                                                                                                                                 ] ;
                                                                                                                                 in
                                                                                                                                     ''
-                                                                                                                                        trace 17630 "about to rm release" 5299
+                                                                                                                                        trace 17630 "about to rm release" 5299 1760
                                                                                                                                         rm "${ resources-directory }/release/$INDEX"
                                                                                                                                         trace 17630 "just rm release" 3167
                                                                                                                                         # shellcheck disable=SC2153
@@ -293,7 +293,9 @@
                                                                                                                                         then
                                                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                             do
+                                                                                                                                                trace 17630 "waiting for PID $PID" 22672
                                                                                                                                                 tail --follow /dev/null --pid "$PID"
+                                                                                                                                                trace 17630 "waited for PID=$PID" 14162
                                                                                                                                             done
                                                                                                                                         fi
                                                                                                                                         mkdir --parents "${ gc-root-directory }"
@@ -387,7 +389,9 @@
                                                                                                                                 mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                                                 find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                 do
+                                                                                                                                    trace 17630 "waiting for PID=$PID" 29341
                                                                                                                                     tail --follow /dev/null --pid "$PID"
+                                                                                                                                    trace 17630 "waited for PID=$PID" 19484
                                                                                                                                 done
                                                                                                                                 mkdir --parents "${ gc-root-directory }"
                                                                                                                                 echo 30425 find "${ gc-root-directory }" -mindepth 1 -type l
@@ -585,7 +589,9 @@
                                                                                                                                                                 then
                                                                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                                     do
+                                                                                                                                                                        trace 17630 "waiting for PID=$PID" 27139
                                                                                                                                                                         tail --follow /dev/null --pid "$PID"
+                                                                                                                                                                        trace 17630 "waited for PID=$PID" 24539
                                                                                                                                                                     done
                                                                                                                                                                 fi
                                                                                                                                                                 mkdir --parents "${ gc-root-directory }"
@@ -678,7 +684,9 @@
                                                                                                                                                         mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f -exec basename {} \; | while read -r PID
                                                                                                                                                         do
+                                                                                                                                                            trace 17630 "waiting for PID=$PID" 17360
                                                                                                                                                             tail --follow /dev/null --pid "$PID"
+                                                                                                                                                            trace 17630 "waited for PID=$PID" 22606
                                                                                                                                                         done
                                                                                                                                                         mkdir --parents "${ gc-root-directory }"
                                                                                                                                                         echo 30425 find "${ gc-root-directory }" -mindepth 1 -type l
