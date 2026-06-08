@@ -1074,7 +1074,12 @@
                                                                                                                                                                         {
                                                                                                                                                                             name = "resolve" ;
                                                                                                                                                                             runtimeInputs = [ failure sequential pkgs.coreutils ] ;
-                                                                                                                                                                            text = "$SCRIPT_FILE" ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    HASH="$HASH"
+                                                                                                                                                                                    INDEX="$INDEX"
+                                                                                                                                                                                    "$SCRIPT_FILE" "$@"
+                                                                                                                                                                                '' ;
                                                                                                                                                                         } ;
                                                                                                                                                                 in "${ application }/bin/resolve" ;
                                                                                                                                                         in
