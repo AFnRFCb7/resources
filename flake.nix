@@ -1565,7 +1565,7 @@
                                                                             )
                                                                         ] ;
                                                             } ;
-                                                    in "${ application }/bin/script" ;
+                                                    in ''${ application }/bin/script "$@"'' ;
                                         scripts-hash =
                                             buildFHSUserEnv
                                                 {
