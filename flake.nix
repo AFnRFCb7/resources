@@ -1085,8 +1085,20 @@
                                                                                                                                                                                     then
                                                                                                                                                                                         STATUS="$?"
                                                                                                                                                                                         rm --recursive --force "${ resources-directory }/invalid-init/$INDEX"
+                                                                                                                                                                                        jq \
+                                                                                                                                                                                            --null-input \
+                                                                                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                                                                                            '{
+                                                                                                                                                                                                "index" : $INDEX
+                                                                                                                                                                                            '} | log valid-init
                                                                                                                                                                                     else
                                                                                                                                                                                         STATUS="$?"
+                                                                                                                                                                                        jq \
+                                                                                                                                                                                            --null-input \
+                                                                                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                                                                                            '{
+                                                                                                                                                                                                "index" : $INDEX
+                                                                                                                                                                                            }' | log invalid-init
                                                                                                                                                                                     fi
                                                                                                                                                                                     exit "$STATUS"
                                                                                                                                                                                 '' ;
