@@ -1331,7 +1331,7 @@
                                                                                                                         OLD_INDEX="$INDEX"
                                                                                                                         INDEX=WRONG
                                                                                                                         ${ builtins.concatStringsSep "\n" resolutions }
-                                                                                                                        $INDEX="$OLD_INDEX"
+                                                                                                                        INDEX="$OLD_INDEX"
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
                                                                                                                     fi
