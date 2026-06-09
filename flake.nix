@@ -993,7 +993,7 @@
                                                                                                                             --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                             '{
-                                                                                                                                "WTF" : 14410 ,
+                                                                                                                                "wtf" : 14410 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-script" : $_HAS_SCRIPT ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
@@ -1265,6 +1265,7 @@
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "wtf" : 29534 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
