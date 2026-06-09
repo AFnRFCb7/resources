@@ -650,7 +650,7 @@
                                                                                                                                                                             --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
-                                                                                                                                                                                "WTF" : 2 ,
+                                                                                                                                                                                "control" : 5906 ,
                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                 "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
@@ -715,6 +715,7 @@
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --argjson SEED "$SEED" \
                                                                                                                                                                 '{
+                                                                                                                                                                    "control" : 18318 ,
                                                                                                                                                                     "hash" : $HASH ,
                                                                                                                                                                     "index" : $INDEX ,
                                                                                                                                                                     "seed" : $SEED
