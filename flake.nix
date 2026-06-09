@@ -1296,6 +1296,7 @@
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "wtf" : 11170 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
