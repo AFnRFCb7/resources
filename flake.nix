@@ -1169,7 +1169,8 @@
                                                                                                             in
                                                                                                                 ''
                                                                                                                     mkdir --parents ${ resources-directory }/logs
-                                                                                                                    INDEX="$( sequential )" || failure 5607
+                                                                                                                    # INDEX="$( sequential )" || failure 5607
+                                                                                                                    trace 17630 "export WHY SEQUENTIAL INDEX=$INDEX" 22795
                                                                                                                     export INDEX
                                                                                                                     exec 204> "${ resources-directory }/locks/$INDEX"
                                                                                                                     flock -x 204
@@ -1247,6 +1248,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ valid-init-channel }
                                                                                                                         else
+                                                                                                                            trace 17630 "export RESOLVE INDEX=$INDEX" 21781
                                                                                                                             jq \
                                                                                                                                 --compact-output \
                                                                                                                                 --null-input \
@@ -1330,6 +1332,7 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ invalid-init-channel }
                                                                                                                         fi
+                                                                                                                        trace 17630 "INDEX=$INDEX" 4127
                                                                                                                         ${ builtins.concatStringsSep "\n" resolutions }
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
