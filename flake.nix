@@ -1372,6 +1372,7 @@
                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                 '{
+                                                                                                                    "wtf" : 24257 ,
                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                     "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                     "index" : $INDEX ,
