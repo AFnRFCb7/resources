@@ -347,7 +347,7 @@
                                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                                     '{
-                                                                                                                                                        "WTF" : 1 ,
+                                                                                                                                                        "control" : 21755
                                                                                                                                                         "index" : $INDEX ,
                                                                                                                                                         "script" : $SCRIPT ,
                                                                                                                                                         "seed" : $SEED ,
@@ -364,7 +364,7 @@
                                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                                     '{
-                                                                                                                                                        "WTF" : 2 ,
+                                                                                                                                                        "control" : 7448 ,
                                                                                                                                                         "index" : $INDEX ,
                                                                                                                                                         "script" : $SCRIPT ,
                                                                                                                                                         "seed" : $SEED ,
@@ -429,6 +429,7 @@
                                                                                                                                         --arg INDEX "$INDEX" \
                                                                                                                                         --argjson SEED "$SEED" \
                                                                                                                                         '{
+                                                                                                                                            "control" : 29964 ,
                                                                                                                                             "hash" : $HASH ,
                                                                                                                                             "index" : $INDEX ,
                                                                                                                                             "seed" : $SEED
