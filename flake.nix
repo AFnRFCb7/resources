@@ -870,7 +870,7 @@
                                                                                                                                     --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     '{
-                                                                                                                                        "WTF" : 3 ,
+                                                                                                                                        "WTF" : 21231 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -899,7 +899,7 @@
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                     '{
-                                                                                                                                        "WTF" : 4 ,
+                                                                                                                                        "WTF" : 12819 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -993,7 +993,7 @@
                                                                                                                             --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                             '{
-                                                                                                                                "WTF" : 5 ,
+                                                                                                                                "WTF" : 27447 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-script" : $_HAS_SCRIPT ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
@@ -1260,6 +1260,7 @@
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "wtf" : 1367 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
@@ -1292,6 +1293,7 @@
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "wtf" : 20955 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
@@ -1318,6 +1320,7 @@
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "wtf" : 8989 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
@@ -1368,6 +1371,7 @@
                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                 '{
+                                                                                                                    "wtf" : 21425 ,
                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                     "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                     "index" : $INDEX ,
@@ -1418,7 +1422,10 @@
                                                                                         jq \
                                                                                             --null-input \
                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                            '{ "arguments" : $ARGUMENTS }' >&2
+                                                                                            '{
+                                                                                                "wtf" : 6703 ,
+                                                                                                "arguments" : $ARGUMENTS
+                                                                                            }' >&2
                                                                                     else
                                                                                         STANDARD_INPUT="$( cat )" || exit 65
                                                                                         # shellcheck disable=SC2016
@@ -1426,7 +1433,11 @@
                                                                                             --null-input \
                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                            '{ "arguments" : $ARGUMENTS , "standard-input" : $STANDARD_INPUT }' >&2
+                                                                                            '{
+                                                                                                "wtf" : 28531 ,
+                                                                                                "arguments" : $ARGUMENTS ,
+                                                                                                "standard-input" : $STANDARD_INPUT
+                                                                                            }' >&2
                                                                                     fi
                                                                                     exit 66
                                                                                 '' ;
