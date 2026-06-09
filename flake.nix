@@ -872,7 +872,7 @@
                                                                                                                                     --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     '{
-                                                                                                                                        "WTF" : 32362 ,
+                                                                                                                                        "control" : 32362 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -901,7 +901,7 @@
                                                                                                                                     --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                     '{
-                                                                                                                                        "WTF" : 7813 ,
+                                                                                                                                        "control" : 7813 ,
                                                                                                                                         "arguments" : $ARGUMENTS ,
                                                                                                                                         "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                                         "index" : $INDEX ,
@@ -995,7 +995,7 @@
                                                                                                                             --arg STANDARD_OUTPUT_FILE "$STANDARD_OUTPUT_FILE" \
                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                             '{
-                                                                                                                                "wtf" : 14410 ,
+                                                                                                                                "control" : 14410 ,
                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                 "has-script" : $_HAS_SCRIPT ,
                                                                                                                                 "has-standard-input" : $HAS_STANDARD_INPUT ,
@@ -1094,6 +1094,7 @@
                                                                                                                                                                                             --null-input \
                                                                                                                                                                                             --arg INDEX "$INDEX" \
                                                                                                                                                                                             '{
+                                                                                                                                                                                                "control" : 4661 ,
                                                                                                                                                                                                 "index" : $INDEX
                                                                                                                                                                                             }' | log valid-init
                                                                                                                                                                                     else
