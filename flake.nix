@@ -1330,7 +1330,6 @@
                                                                                                                                     "transient" : $TRANSIENT
                                                                                                                                 }' | log ${ invalid-init-channel }
                                                                                                                         fi
-                                                                                                                        INDEX="WRONG"
                                                                                                                         ${ builtins.concatStringsSep "\n" resolutions }
                                                                                                                         echo "${ resources-directory }/mounts/$INDEX"
                                                                                                                         failure 3247386799252451 "INDEX=$INDEX" "STATUS=$STATUS" "STANDARD_ERROR_FILE=$STANDARD_ERROR_FILE" "TARGETS_EXPECTED=$TARGETS_EXPECTED" "TARGETS_OBSERVED=$TARGETS_OBSERVED"
