@@ -1103,7 +1103,7 @@
                                                                                                                                                                                                 "wtf" : 4570 ,
                                                                                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                                "script" : $SCRIPT
+                                                                                                                                                                                                "script" : $RESOLVE_FILE
                                                                                                                                                                                             }' | log invalid-init
                                                                                                                                                                                     fi
                                                                                                                                                                                     exit "$STATUS"
