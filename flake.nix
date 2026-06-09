@@ -1098,12 +1098,12 @@
                                                                                                                                                                                             --null-input \
                                                                                                                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                                                                                                                             --arg INDEX "$INDEX" \
-                                                                                                                                                                                            --rawfile SCRIPT "$SCRIPT_FILE" \
+                                                                                                                                                                                            --rawfile SCRIPT "$RESOLVE_FILE" \
                                                                                                                                                                                             '{
                                                                                                                                                                                                 "wtf" : 4570 ,
                                                                                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX ,
-                                                                                                                                                                                                "script" : $RESOLVE_FILE
+                                                                                                                                                                                                "script" : $SCRIPT
                                                                                                                                                                                             }' | log invalid-init
                                                                                                                                                                                     fi
                                                                                                                                                                                     exit "$STATUS"
