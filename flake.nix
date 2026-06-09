@@ -1423,6 +1423,7 @@
                                                                                             --null-input \
                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                             '{
+                                                                                                "wtf" : 23012 ,
                                                                                                 "arguments" : $ARGUMENTS
                                                                                             }' >&2
                                                                                     else
