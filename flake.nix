@@ -1101,7 +1101,7 @@
                                                                                                                                                                                             --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                                                                             '{
                                                                                                                                                                                                 "wtf" : 4570 ,
-                                                                                                                                                                                                "arguments" $ARGUMENTS ,
+                                                                                                                                                                                                "arguments" : $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                                 "script" : $SCRIPT
                                                                                                                                                                                             }' | log invalid-init
