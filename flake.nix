@@ -1217,7 +1217,7 @@
                                                                                                                         # shellcheck disable=SC2129
                                                                                                                         echo 1742328312635292 >> /tmp/DEBUG
                                                                                                                         # shellcheck disable=SC2129
-                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX A#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX B#" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
+                                                                                                                        sed -e "s#\$_HASH#$HASH#" -e "s#\$_INDEX#$INDEX#" -e "s#\$HASH#$HASH#" -e "s#\$INDEX#$INDEX" -e "w$RELEASE_FILE" ${ destroy }/bin/destroy >> /tmp/DEBUG 2>&1
                                                                                                                         chmod 0500 "$RELEASE_FILE"
                                                                                                                         echo 4298255823544273 >> /tmp/DEBUG
                                                                                                                         if [[ "$HAS_STANDARD_INPUT" == "true" ]]
