@@ -1107,7 +1107,7 @@
                                                                                                                                                                                             --rawfile SCRIPT "$RESOLVE_FILE" \
                                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                                             '{
-                                                                                                                                                                                                "wtf" : 4570 ,
+                                                                                                                                                                                                "control" : 4570 ,
                                                                                                                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                                 "script" : $SCRIPT ,
@@ -1245,7 +1245,7 @@
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
-                                                                                                                                    "wtf" : 2721 ,
+                                                                                                                                    "control" : 2721 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
@@ -1268,6 +1268,7 @@
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
+                                                                                                                                    "control" : 17755 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
