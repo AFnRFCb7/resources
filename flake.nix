@@ -633,7 +633,7 @@
                                                                                                                                                                             --rawfile STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
                                                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                                                             '{
-                                                                                                                                                                                "WTF" : 1 ,
+                                                                                                                                                                                "control" : 1575 ,
                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                 "script" : $SCRIPT ,
                                                                                                                                                                                 "seed" : $SEED ,
