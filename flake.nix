@@ -1301,7 +1301,7 @@
                                                                                                                                 --argjson TARGETS_OBSERVED "$TARGETS_OBSERVED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
-                                                                                                                                    "wtf" : 11170 ,
+                                                                                                                                    "control" : 11170 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
@@ -1329,6 +1329,7 @@
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
                                                                                                                                     "arguments" : $ARGUMENTS ,
+                                                                                                                                    "control" : 2934 ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
