@@ -1100,6 +1100,7 @@
                                                                                                                                                                                             --arg INDEX "$INDEX" \
                                                                                                                                                                                             --rawfile SCRIPT "$SCRIPT_FILE" \
                                                                                                                                                                                             '{
+                                                                                                                                                                                                "wtf" : 4570 ,
                                                                                                                                                                                                 "arguments" $ARGUMENTS ,
                                                                                                                                                                                                 "index" : $INDEX ,
                                                                                                                                                                                                 "script" : $SCRIPT
