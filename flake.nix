@@ -1379,7 +1379,7 @@
                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                 --argjson TRANSIENT "$TRANSIENT" \
                                                                                                                 '{
-                                                                                                                    "wtf" : 24257 ,
+                                                                                                                    "control" : 24257 ,
                                                                                                                     "arguments" : $ARGUMENTS ,
                                                                                                                     "has-standard-input" : $HAS_STANDARD_INPUT ,
                                                                                                                     "index" : $INDEX ,
@@ -1431,7 +1431,7 @@
                                                                                             --null-input \
                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                             '{
-                                                                                                "wtf" : 23012 ,
+                                                                                                "control" : 23012 ,
                                                                                                 "arguments" : $ARGUMENTS
                                                                                             }' >&2
                                                                                     else
@@ -1442,7 +1442,7 @@
                                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                             --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                             '{
-                                                                                                "wtf" : 11109 ,
+                                                                                                "control" : 11109 ,
                                                                                                 "arguments" : $ARGUMENTS ,
                                                                                                 "standard-input" : $STANDARD_INPUT
                                                                                             }' >&2
