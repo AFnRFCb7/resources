@@ -1270,8 +1270,8 @@
                                                                                                                                 --argjson TARGETS_EXPECTED "$TARGETS_EXPECTED" \
                                                                                                                                 --argjson TRANSIENT "$TRANSIENT_JSON" \
                                                                                                                                 '{
-                                                                                                                                    "control" : 17755 ,
                                                                                                                                     "arguments" : $ARGUMENTS ,
+                                                                                                                                    "control" : 17755 ,
                                                                                                                                     "index" : $INDEX ,
                                                                                                                                     "script" : $SCRIPT ,
                                                                                                                                     "seed" : $SEED ,
