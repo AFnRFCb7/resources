@@ -1082,8 +1082,6 @@
                                                                                                                                                                                     # shellcheck disable=SC2269
                                                                                                                                                                                     DEBUG="$DEBUG"
                                                                                                                                                                                     # shellcheck disable=SC2269
-                                                                                                                                                                                    HASH="$HASH"
-                                                                                                                                                                                    # shellcheck disable=SC2269
                                                                                                                                                                                     INDEX="$INDEX"
                                                                                                                                                                                     RESOLVE_FILE="$( "$SCRIPT_FILE" )" || failure 28157
                                                                                                                                                                                     if "$RESOLVE_FILE" "$@"
