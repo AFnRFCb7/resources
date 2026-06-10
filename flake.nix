@@ -1065,7 +1065,7 @@
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "resolve" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils trace ] ;
                                                                                                                                                 text =
                                                                                                                                                     let
                                                                                                                                                         a = arguments.resolve pkgs [ ] false ;
