@@ -338,7 +338,7 @@
                                                                                                                                                 touch "${ resources-directory }/release/$INDEX"
                                                                                                                                                 tar --create --xz --file "$ARCHIVE" "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
                                                                                                                                                 rm --recursive --force "${ gc-root-directory }/$INDEX" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/pids/$INDEX" "${ resources-directory }/release/$INDEX"
-                                                                                                                                                ${ pkgs.findutils }/bin/find ${ resources-directory }/logs -mindepth 1 -type f | while read -r FILE ; do trace 17630 "$FILE" "$( cat "$FILE" )" 23777 >&2 ; done
+                                                                                                                                                ${ pkgs.findutils }/bin/find ${ resources-directory }/logs -mindepth 1 -type f | while read -r FILE ; do trace 17630 "$FILE" "$( cat "$FILE" )" 23777 ; done
                                                                                                                                                 jq \
                                                                                                                                                     --compact-output \
                                                                                                                                                     --null-input \
@@ -1179,6 +1179,7 @@
                                                                                                                     { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
+                                                                                                                    ${ pkgs.findutils }/bin/find ${ resources-directory }/logs -type f | while read FILE ; do trace 17630 "why???" "$FILE" "$( cat "$FILE" )" 946 ; done
                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                     INDEX="$( sequential )" || failure 5607
                                                                                                                     export INDEX
