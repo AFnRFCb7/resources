@@ -1179,7 +1179,7 @@
                                                                                                                     { default = null ; resolutions = init-resolutions ; } ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    ${ pkgs.findutils }/bin/find ${ resources-directory }/logs -type f | while read FILE ; do trace 17630 "why???" "$FILE" "$( cat "$FILE" )" 946 ; done
+                                                                                                                    ${ pkgs.findutils }/bin/find ${ resources-directory }/logs -type f | while read -r FILE ; do trace 17630 "why???" "$FILE" "$( cat "$FILE" )" 946 ; done
                                                                                                                     mkdir --parents ${ resources-directory }/logs
                                                                                                                     INDEX="$( sequential )" || failure 5607
                                                                                                                     export INDEX
