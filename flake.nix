@@ -98,7 +98,9 @@
                                                                         STANDARD_INPUT="$( cat )" || exit 131
                                                                         export STANDARD_INPUT
                                                                     fi
+                                                                    echo 3668947951715686
                                                                     resource
+                                                                    echo 8347656538733521
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/resource" ;
