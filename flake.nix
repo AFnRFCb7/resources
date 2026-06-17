@@ -112,8 +112,8 @@
                                                                                                                             FILE="$2"
                                                                                                                             DIRECTORY="$( dirname "$2" )" || failure 6519445882384145
                                                                                                                             SEQUENCE="$( sequential )" || failure 8869875554956429
-                                                                                                                            mkdir --parents ${ gc-root-dir }/$INDEX/$DIRECTORY/$SEQUENCE"
-                                                                                                                            ln --symbolic --force ${ gc-root-dir }/$INDEX/$DIRECTORY/$SEQUENCE"
+                                                                                                                            mkdir --parents ${ gc-root-directory }/$INDEX/$DIRECTORY/$SEQUENCE"
+                                                                                                                            ln --symbolic --force ${ gc-root-directory }/$INDEX/$DIRECTORY/$SEQUENCE"
                                                                                                                         '' ;
                                                                                                                 } ;
                                                                                                         init_ =
