@@ -40,17 +40,17 @@
                                                                                                     {
                                                                                                         name = "resource" ;
                                                                                                         runtimeInputs =
-                                                                                                            [
-                                                                                                                (
-                                                                                                                    let
-                                                                                                                        init_ =
-                                                                                                                            visitor
-                                                                                                                                {
-                                                                                                                                    lambda = path : value : value null ;
-                                                                                                                                    null = path : value : null ;
-                                                                                                                                }
-                                                                                                                                init ;
-                                                                                                                        in
+                                                                                                            let
+                                                                                                                init_ =
+                                                                                                                    visitor
+                                                                                                                        {
+                                                                                                                            lambda = path : value : value null ;
+                                                                                                                            null = path : value : null ;
+                                                                                                                        }
+                                                                                                                        init ;
+                                                                                                                in
+                                                                                                                    [
+                                                                                                                        (
                                                                                                                             pkgs.writeShellApplication
                                                                                                                                 {
                                                                                                                                     name = "hash" ;
@@ -62,14 +62,15 @@
                                                                                                                                                     echo "$HAS_STANDARD_INPUT" "$STANDARD_INPUT"
                                                                                                                                                 '' ;
                                                                                                                                 }
-                                                                                                                )
-                                                                                                            ] ;
+                                                                                                                        )
+                                                                                                                    ] ;
                                                                                                         text =
                                                                                                             ''
                                                                                                                 cleanup( ) {
                                                                                                                     echo "$?" > /signal
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
+                                                                                                                cat "$( which hash )"
                                                                                                                 HASH="$( hash )" || exit 163
                                                                                                                 echo "$HASH"
                                                                                                             '' ;
