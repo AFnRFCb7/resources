@@ -45,18 +45,32 @@
                                                                                                         runtimeInputs =
                                                                                                             [
                                                                                                                 (
-                                                                                                                    pkgs.writeShellApplication
-                                                                                                                        {
-                                                                                                                            name = "hash" ;
-                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                            text =
-                                                                                                                                let
-                                                                                                                                    pre-hash = null ;
-                                                                                                                                    in
-                                                                                                                                        ''
-                                                                                                                                            echo ${ pre-hash } "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" | sha512sum | cut --characters 1-128
-                                                                                                                                        '' ;
-                                                                                                                        }
+                                                                                                                    let
+                                                                                                                        init_ =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    lambda = path : value : value null ;
+                                                                                                                                    null = path : value : null ;
+                                                                                                                                }
+                                                                                                                                init ;
+                                                                                                                        in
+                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                {
+                                                                                                                                    name = "hash" ;
+                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                    text =
+                                                                                                                                        let
+                                                                                                                                            pre-hash =
+                                                                                                                                                visitor
+                                                                                                                                                    {
+
+                                                                                                                                                    }
+                                                                                                                                                    init_ ;
+                                                                                                                                            in
+                                                                                                                                                ''
+                                                                                                                                                    echo ${ pre-hash } "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" | sha512sum | cut --characters 1-128
+                                                                                                                                                '' ;
+                                                                                                                                }
                                                                                                                 )
                                                                                                             ] ;
                                                                                                         text =
