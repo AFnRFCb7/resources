@@ -5,7 +5,7 @@
 		{ self } :
 		    {
 		        lib =
-		            { buildFHSUserEnv , visitor , writeShellApplication } :
+		            { buildFHSUserEnv , resources-directory , visitor , writeShellApplication } :
                         let
                             implementation =
                                 {
@@ -81,22 +81,22 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    SIGNAL_FILE="$( mktemp )" || exit 163
+                                                                    mkdir --parents "${ resources-directory }/temporary"
+                                                                    JSON_FILE=$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
+                                                                    ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
+                                                                    SIGNAL_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
                                                                     export SIGNAL_FILE
                                                                     cleanup( ) {
                                                                         SIGNAL_VALUE="$( cat "$SIGNAL_FILE" )" || exit 164
-                                                                        rm "$SIGNAL_FILE"
+                                                                        rm "$JSON_FILE" "$SIGNAL_FILE"
                                                                         exit "$SIGNAL_VALUE"
                                                                     }
                                                                     trap cleanup EXIT
                                                                     if [[ -t 0 ]]
                                                                     then
-                                                                        export HAS_STANDARD_INPUT=false
-                                                                        export STANDARD_INPUT=
+                                                                        jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$JSON_FILE"
                                                                     else
-                                                                        export HAS_STANDARD_INPUT=true
-                                                                        STANDARD_INPUT="$( cat )" || exit 131
-                                                                        export STANDARD_INPUT
+                                                                        jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$JSON_FILE"
                                                                     fi
                                                                     resource
                                                                 '' ;
