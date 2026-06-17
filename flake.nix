@@ -13,7 +13,7 @@
                             implementation =
                                 {
                                     resources-directory ,
-                                    visitor ? visitor.lib.implementation
+                                    visitor ? visitor.lib { }.implementation
                                 } :
                                     {
                                         user =
@@ -38,6 +38,7 @@
                                                                                                 [
                                                                                                     "--bindfs" "${ resources-directory }/canonical" "${ resources-directory }/canonical"
                                                                                                     "--bindfs" "${ resources-directory }/locks" "${ resources-directory }/locks"
+                                                                                                    "--bindfs" "${ resources-directory }/logs" "${resources-directory }/logs"
                                                                                                     "--bindfs" "${ resources-directory }/pids" "${ resources-directory }/pids"
                                                                                                     "--bindfs" "${ resources-directory }/sequential" "${ resources-directory }/sequential"
                                                                                                     "--bindfs" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
@@ -130,6 +131,25 @@
                                                                                                                             echo "$CURRENT"
                                                                                                                         '' ;
                                                                                                                 } ;
+                                                                                                        trace =
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "trace" ;
+                                                                                                                    runtimeInputs = [ failure pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            exec 180> ${ resources-directory }/locks/trace
+                                                                                                                            flock -x 180
+                                                                                                                            ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || failure 5742523868313349
+                                                                                                                            if [[ -t 0 ]]
+                                                                                                                            then
+                                                                                                                                jq --null-input --argjson ARGUMENTS "$ARGUMENTS" \'$ARGUMENTS\' | yq eval --prettyPrint "[.]" >> ${ resources-directory }/logs/trace.log.yaml
+                                                                                                                            else
+                                                                                                                                STANDARD_INPUT="$( cat )" || failure 3382282922851825
+                                                                                                                                jq --null-input --argjson ARGUMENTS "$ARGUMENTS" --arg STANDARD_INPUT "$STANDARD_INPUT" \'{ "arguments" : $ARGUMENTS , "standard-input" : $STANDARD_INPUT }\' | yq eval --prettyPrint "[.]" >> ${ resources-directory }/logs/trace.log.yaml
+                                                                                                                            fi
+                                                                                                                        '' ;
+                                                                                                                } ;
                                                                                                         in
                                                                                                             [
                                                                                                                 (
@@ -172,6 +192,7 @@
                                                                                 exec 160> ${ resources-directory }/locks/setup
                                                                                 flock 160
                                                                                 mkdir --parents ${ resources-directory }/canonical
+                                                                                mkdir --parents ${ resources-directory }/logs
                                                                                 mkdir --parents ${ resources-directory }/pids
                                                                                 if [[ ! -f ${ resources-directory }/sequential ]]
                                                                                 then
