@@ -1,10 +1,12 @@
 {
-    inputs = { visitor.url = "github:AFnRFCb7/visitor" ; } ;
+    inputs = { nixpkgs.url = "github:Nixos/nixpkgs/nixos-24.11" ; visitor.url = "github:AFnRFCb7/visitor" ; } ;
     outputs =
-        { self , visitor } :
+        { nixpkgs , self , visitor } :
             {
                 lib =
                     {
+                        nixpkgs ? nixpkgs ,
+                        system ,
                         visitor ? visitor.lib.implementation
                     } :
                         let
@@ -194,6 +196,7 @@
                                                                             '' ;
                                                                     } ;
                                                             in "${ application }/bin/setup" ;
+                                                        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                                                     in
                                                         {
                                                             failure ? 5265823577854516 ,
