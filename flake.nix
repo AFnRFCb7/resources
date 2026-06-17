@@ -53,7 +53,7 @@
                                                                                                                         (
                                                                                                                             pkgs.writeShellApplication
                                                                                                                                 {
-                                                                                                                                    name = "hash" ;
+                                                                                                                                    name = "resource-hash" ;
                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                     text =
                                                                                                                                         let
@@ -71,7 +71,7 @@
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
                                                                                                                 echo 3987874743495599
-                                                                                                                HASH="$( hash )" || exit 163
+                                                                                                                RESOURCE_HASH="$( resource-hash )" || exit 163
                                                                                                                 echo 2199382394621491
                                                                                                                 echo "HASH=$HASH"
                                                                                                                 echo 5482842821287184
