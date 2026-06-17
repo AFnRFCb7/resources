@@ -82,6 +82,7 @@
                                                             text =
                                                                 ''
                                                                     SIGNAL_FILE="$( mktemp )" || exit 163
+                                                                    export SIGNAL_FILE
                                                                     cleanup( ) {
                                                                         SIGNAL_VALUE="$( cat "$SIGNAL_FILE" )" || exit 164
                                                                         rm "$SIGNAL_FILE"
