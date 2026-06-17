@@ -25,7 +25,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
-                                                                                        "--bindfs" "$SIGNAL_FILE" "/signal"
+                                                                                        "--fsbind" "$SIGNAL_FILE" "/signal"
                                                                                     ] ;
                                                                                 name = "resource" ;
                                                                                 runScript =
