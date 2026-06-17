@@ -59,7 +59,7 @@
                                                                                                                                         let
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo -en "$HAS_STANDARD_INPUT" "$STANDARD_INPUT"
+                                                                                                                                                    echo -en 4496715738691135
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                         )
