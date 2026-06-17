@@ -70,8 +70,6 @@
                                                                                                                     echo "$?" > /signal
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
-                                                                                                                HASH="$( hash )"
-                                                                                                                echo "$HASH"
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
