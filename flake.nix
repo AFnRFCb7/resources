@@ -169,6 +169,15 @@
                                                                                                                             fi
                                                                                                                         '' ;
                                                                                                                 } ;
+                                                                                                        wrap =
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "wrap" ;
+                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                        '' ;
+                                                                                                                }
                                                                                                         in
                                                                                                             [
                                                                                                                 (
