@@ -60,15 +60,9 @@
                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                     text =
                                                                                                                                         let
-                                                                                                                                            pre-hash =
-                                                                                                                                                visitor
-                                                                                                                                                    {
-
-                                                                                                                                                    }
-                                                                                                                                                    init_ ;
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo ${ pre-hash } "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" | sha512sum | cut --characters 1-128
+                                                                                                                                                    echo "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" | sha512sum | cut --characters 1-128
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                 )
