@@ -12,7 +12,7 @@
                         let
                             implementation =
                                 {
-                                    gc-root ,
+                                    gc-root-directory ,
                                     resources-directory ,
                                     visitor ? visitor.lib { }.implementation
                                 } :
