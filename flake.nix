@@ -25,14 +25,11 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
+                                                                                        "--bindfs" "$SIGNAL_FILE" "/signal"
                                                                                     ] ;
                                                                                 name = "resource" ;
                                                                                 runScript =
                                                                                     ''
-                                                                                        cleanup ( ) {
-                                                                                            echo "$?" > /signal
-                                                                                        }
-                                                                                        trap cleanup EXIT
                                                                                         resource
                                                                                     '' ;
                                                                                 targetPkgs =
@@ -69,6 +66,10 @@
                                                                                                             ] ;
                                                                                                         text =
                                                                                                             ''
+                                                                                                                cleanup( ) {
+                                                                                                                    echo "$?" > /signal
+                                                                                                                }
+                                                                                                                trap cleanup EXIT
                                                                                                                 HASH="$( hash )"
                                                                                                                 echo "$HASH"
                                                                                                             '' ;
@@ -80,6 +81,13 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    SIGNAL_FILE="$( mktemp )" || exit 163
+                                                                    cleanup( ) {
+                                                                        SIGNAL_VALUE="$( cat "$SIGNAL_FILE" )" || exit 164
+                                                                        rm "$SIGNAL_FILE"
+                                                                        exit "$SIGNAL_VALUE"
+                                                                    }
+                                                                    trap cleanup EXIT
                                                                     if [[ -t 0 ]]
                                                                     then
                                                                         export HAS_STANDARD_INPUT=false
