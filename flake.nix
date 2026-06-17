@@ -71,7 +71,7 @@
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
                                                                                                                 HASH="$( hash )" || exit 163
-
+                                                                                                                echo "$HASH"
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
