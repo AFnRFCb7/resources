@@ -6,9 +6,18 @@
 		    {
 		        lib =
                     {
+                        pkgs
                     } :
                         let
-                            implementation = null ;
+                            implementation =
+                                pkgs.writeShellApplication
+                                    {
+                                        name = "resource" ;
+                                        runtimeInputs = [ ] ;
+                                        text =
+                                            ''
+                                            '' ;
+                                    } ;
                             in
                                 {
                                     check = null ;
