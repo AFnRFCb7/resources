@@ -59,7 +59,7 @@
                                                                                                                                         let
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo -en "4496715738691135 HAS_STANDARD_INPUT=$HAS_STANDARD_INPUT STANDARD_INPUT=$STANDARD_INPUT" | sha512sum
+                                                                                                                                                    echo -en "4496715738691135 HAS_STANDARD_INPUT=$HAS_STANDARD_INPUT STANDARD_INPUT=$STANDARD_INPUT" | sha512sum | cut --characters 1-128
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                         )
