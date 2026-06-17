@@ -70,11 +70,8 @@
                                                                                                                     echo "$?" > /signal
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
-                                                                                                                echo 3987874743495599
                                                                                                                 RESOURCE_HASH="$( resource-hash )" || exit 163
-                                                                                                                echo 2199382394621491
                                                                                                                 echo "RESOURCE_HASH=$RESOURCE_HASH"
-                                                                                                                echo 5482842821287184
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
@@ -101,9 +98,7 @@
                                                                         STANDARD_INPUT="$( cat )" || exit 131
                                                                         export STANDARD_INPUT
                                                                     fi
-                                                                    echo 3668947951715686
                                                                     resource
-                                                                    echo 8347656538733521
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/resource" ;
