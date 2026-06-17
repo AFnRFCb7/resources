@@ -59,7 +59,7 @@
                                                                                                                                         let
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo "$HAS_STANDARD_INPUT" "$STANDARD_INPUT" | sha512sum | cut --characters 1-128
+                                                                                                                                                    echo "$HAS_STANDARD_INPUT" "$STANDARD_INPUT"
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                 )
@@ -70,6 +70,8 @@
                                                                                                                     echo "$?" > /signal
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
+                                                                                                                HASH="$( hash )" || exit 163
+
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
