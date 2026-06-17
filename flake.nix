@@ -12,6 +12,7 @@
                         let
                             implementation =
                                 {
+                                    gc-root ,
                                     resources-directory ,
                                     visitor ? visitor.lib { }.implementation
                                 } :
@@ -36,6 +37,7 @@
                                                                                         {
                                                                                             extraBwrapArgs =
                                                                                                 [
+                                                                                                    "--bindfs" "${ gc-root-directory }" "${ gc-root-directory }"
                                                                                                     "--bindfs" "${ resources-directory }/canonical" "${ resources-directory }/canonical"
                                                                                                     "--bindfs" "${ resources-directory }/locks" "${ resources-directory }/locks"
                                                                                                     "--bindfs" "${ resources-directory }/logs" "${resources-directory }/logs"
@@ -97,6 +99,21 @@
                                                                                                                                 jq --null-input --argjson ARGUMENTS "$ARGUMENTS" --arg STANDARD_INPUT "$STANDARD_INPUT" \'{ "arguments" : $ARGUMENTS , "standard-input" : $STANDARD_INPUT }\' | yq eval --prettyPrint
                                                                                                                                 exit 172
                                                                                                                             fi
+                                                                                                                        '' ;
+                                                                                                                } ;
+                                                                                                        gc-root =
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "gc-root" ;
+                                                                                                                    runtimeInputs = [ failure pkgs.coreutils sequential ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            INDEX="$1"
+                                                                                                                            FILE="$2"
+                                                                                                                            DIRECTORY="$( dirname "$2" )" || failure 6519445882384145
+                                                                                                                            SEQUENCE="$( sequential )" || failure 8869875554956429
+                                                                                                                            mkdir --parents ${ gc-root-dir }/$INDEX/$DIRECTORY/$SEQUENCE"
+                                                                                                                            ln --symbolic --force ${ gc-root-dir }/$INDEX/$DIRECTORY/$SEQUENCE"
                                                                                                                         '' ;
                                                                                                                 } ;
                                                                                                         init_ =
@@ -191,6 +208,7 @@
                                                                                 mkdir --parents ${ resources-directory }/locks
                                                                                 exec 160> ${ resources-directory }/locks/setup
                                                                                 flock 160
+                                                                                mkdir --parents ${ gc-root-directory }
                                                                                 mkdir --parents ${ resources-directory }/canonical
                                                                                 mkdir --parents ${ resources-directory }/logs
                                                                                 mkdir --parents ${ resources-directory }/pids
