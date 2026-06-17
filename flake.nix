@@ -110,9 +110,8 @@
                                                                                                                     runtimeInputs = [ failure pkgs.coreutils sequential ] ;
                                                                                                                     text =
                                                                                                                         ''
-                                                                                                                            INDEX="$1"
-                                                                                                                            FILE="$2"
-                                                                                                                            DIRECTORY="$( dirname "$2" )" || failure 6519445882384145
+                                                                                                                            "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?INDEX must be exported:  9849637684268429" "}" ] }"
+                                                                                                                            DIRECTORY="$( dirname "$@" )" || failure 6519445882384145
                                                                                                                             SEQUENCE="$( sequential )" || failure 8869875554956429
                                                                                                                             mkdir --parents ${ gc-root-directory }/$INDEX/$DIRECTORY/$SEQUENCE"
                                                                                                                             ln --symbolic --force ${ gc-root-directory }/$INDEX/$DIRECTORY/$SEQUENCE"
