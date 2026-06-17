@@ -73,7 +73,7 @@
                                                                                                                 echo 3987874743495599
                                                                                                                 RESOURCE_HASH="$( resource-hash )" || exit 163
                                                                                                                 echo 2199382394621491
-                                                                                                                echo "HASH=$HASH"
+                                                                                                                echo "RESOURCE_HASH=$RESOURCE_HASH"
                                                                                                                 echo 5482842821287184
                                                                                                             '' ;
                                                                                                     }
