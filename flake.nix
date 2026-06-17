@@ -10,14 +10,17 @@
                     } :
                         let
                             implementation =
-                                pkgs.writeShellApplication
-                                    {
-                                        name = "resource" ;
-                                        runtimeInputs = [ ] ;
-                                        text =
-                                            ''
-                                            '' ;
-                                    } ;
+                                let
+                                    application =
+                                        pkgs.writeShellApplication
+                                            {
+                                                name = "resource" ;
+                                                runtimeInputs = [ ] ;
+                                                text =
+                                                    ''
+                                                    '' ;
+                                            } ;
+                                    in "${ application }/bin/resource" ;
                             in
                                 {
                                     check = null ;
