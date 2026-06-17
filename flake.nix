@@ -15,6 +15,7 @@
                                     gc-root-directory ,
                                     resources ,
                                     resources-directory ,
+                                    seed ,
                                     visitor ? visitor.lib { }.implementation
                                 } :
                                     {
