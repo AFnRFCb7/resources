@@ -13,6 +13,7 @@
                             implementation =
                                 {
                                     gc-root-directory ,
+                                    resources ,
                                     resources-directory ,
                                     visitor ? visitor.lib { }.implementation
                                 } :
