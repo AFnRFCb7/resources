@@ -5,7 +5,7 @@
 		{ self } :
 		    {
 		        lib =
-		            { pkgs  } :
+		            { pkgs , visitor } :
                         let
                             implementation =
                                 {
