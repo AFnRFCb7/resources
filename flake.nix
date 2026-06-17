@@ -24,6 +24,10 @@
                                 } :
                                     {
                                         user = null ;
+                                        hooks =
+                                            {
+
+                                            } ;
                                     } ;
                             in
                                 {
