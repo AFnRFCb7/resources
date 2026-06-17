@@ -5,7 +5,7 @@
 		{ self } :
 		    {
 		        lib =
-		            { visitor , writeShellApplication } :
+		            { buildFHSUserEnv , visitor , writeShellApplication } :
                         let
                             implementation =
                                 {
