@@ -59,7 +59,7 @@
                                                                                                                                         let
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo "$HAS_STANDARD_INPUT" "$STANDARD_INPUT"
+                                                                                                                                                    echo -en "$HAS_STANDARD_INPUT" "$STANDARD_INPUT"
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                         )
@@ -70,7 +70,6 @@
                                                                                                                     echo "$?" > /signal
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
-                                                                                                                cat "$( which hash )"
                                                                                                                 HASH="$( hash )" || exit 163
                                                                                                                 echo "$HASH"
                                                                                                             '' ;
