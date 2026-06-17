@@ -203,13 +203,6 @@
                                                                                                                                         '' ;
                                                                                                                         }
                                                                                                                 )
-                                                                                                                (
-                                                                                                                    pkgs.writeShellScriptApplication
-                                                                                                                        {
-                                                                                                                            name = "entrypoint" ;
-                                                                                                                            text = entrypoint { failure = failure ; sequential = sequential ; } ;
-                                                                                                                        }
-                                                                                                                )
                                                                                                             ] ;
                                                                                     }
                                                                                 )
