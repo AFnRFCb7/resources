@@ -96,7 +96,7 @@
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 178> ${ resources-directory }/locks/resource
                                                                         flock -x 178
-                                                                        mkdir --parents "${ resources-directory }/temporary
+                                                                        mkdir --parents "${ resources-directory }/temporary"
                                                                         INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
                                                                         export INPUT_FILE
                                                                         ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
