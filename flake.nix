@@ -97,7 +97,7 @@
                                                                                                                                 INDEX_FORMATTED="$( basename "$LINK" )" || exit 158
                                                                                                                             else
                                                                                                                                 INDEX_UNFORMATTED="$( sequential )" || exit 168
-                                                                                                                                printf -v INDEX_FORMATTED "%016d" "$INDEX_FORMATTED"
+                                                                                                                                printf -v INDEX_FORMATTED "%016d" "$INDEX_UNFORMATTED"
                                                                                                                             fi
                                                                                                                             INDEX="${ resources-directory }/mounts/$INDEX_FORMATTED"
                                                                                                                             echo "$RESOURCE_HASH"
