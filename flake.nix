@@ -64,7 +64,7 @@
                                                                                                                                 jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
                                                                                                                             else
                                                                                                                                 SEQUENCE="$( sequential )" || exit 165
-                                                                                                                                printf -v INDEX "%016s" "$SEQUENCE"
+                                                                                                                                printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                                                 LINK="${ resources-directory }/mounts/$INDEX"
                                                                                                                                 mkdir --parents "$LINK"
                                                                                                                                 ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
