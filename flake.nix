@@ -25,7 +25,8 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
-                                                                                        "--bind" "$SIGNAL_FILE" "/signal"
+                                                                                        "--bind" "$INPUT_FILE" "/input"
+                                                                                        "--bind" "$OUTPUT_FILE" "/output"
                                                                                     ] ;
                                                                                 name = "resource" ;
                                                                                 runScript =
@@ -59,7 +60,7 @@
                                                                                                                                         let
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo -en "4496715738691135 HAS_STANDARD_INPUT=$HAS_STANDARD_INPUT STANDARD_INPUT=$STANDARD_INPUT" | sha512sum | cut --characters 1-128
+                                                                                                                                                    hash512sum /input
                                                                                                                                                 '' ;
                                                                                                                                 }
                                                                                                                         )
@@ -67,7 +68,7 @@
                                                                                                         text =
                                                                                                             ''
                                                                                                                 cleanup( ) {
-                                                                                                                    echo "$?" > /signal
+                                                                                                                    echo "$?" > /output
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
                                                                                                                 RESOURCE_HASH="$( resource-hash )" || exit 163
@@ -78,18 +79,21 @@
                                                                                         ] ;
                                                                             }
                                                                     )
+                                                                    pkgs.coreutils
+                                                                    pkgs.jq
                                                                 ] ;
                                                             text =
                                                                 ''
                                                                     mkdir --parents "${ resources-directory }/temporary"
-                                                                    JSON_FILE=$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
+                                                                    INPUT_FILE=$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
+                                                                    export INPUT_FILE
                                                                     ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
-                                                                    SIGNAL_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
+                                                                    OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
                                                                     export SIGNAL_FILE
                                                                     cleanup( ) {
-                                                                        SIGNAL_VALUE="$( cat "$SIGNAL_FILE" )" || exit 164
-                                                                        rm "$JSON_FILE" "$SIGNAL_FILE"
-                                                                        exit "$SIGNAL_VALUE"
+                                                                        OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
+                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                        exit "$OUTPUT_VALUE"
                                                                     }
                                                                     trap cleanup EXIT
                                                                     if [[ -t 0 ]]
