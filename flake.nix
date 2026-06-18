@@ -105,13 +105,10 @@
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 141
                                                                                     jq --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { "standard" : "." } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
                                                                                 fi
-                                                                                echo 3761666247598712
                                                                                 resource
-                                                                                echo 8193592676166459
                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
                                                                                 echo "$OUTPUT"
                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
-                                                                                echo 9254446777424771 "OUTPUT=$OUTPUT" "STATUS=$STATUS"
                                                                                 exit "$STATUS"
                                                                             '' ;
                                                                     } ;
