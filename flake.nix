@@ -115,7 +115,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "sequential" ;
-                                                                runtimeInput =
+                                                                runtimeInputs =
                                                                     [
                                                                         (
                                                                             buildFHSUserEnv
