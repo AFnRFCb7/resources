@@ -87,18 +87,19 @@
                                                                                                                     text =
                                                                                                                         ''
                                                                                                                             cleanup( ) {
-                                                                                                                                echo "$?" > /output
+                                                                                                                                jq --null-input --arg OUTPUT "$INDEX" --argjson STATUS "$?" '{ "output" : $OUTPUT , "status" : $STATUS" }' > /output
                                                                                                                             }
                                                                                                                             trap cleanup EXIT
                                                                                                                             RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$RESOURCE_HASH" ]]
                                                                                                                             then
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$RESOURCE_HASH" )" || exit 148
-                                                                                                                                INDEX="$( basename "$LINK" )" || exit 158
+                                                                                                                                INDEX_FORMATTED="$( basename "$LINK" )" || exit 158
                                                                                                                             else
-                                                                                                                                SEQUENCE="$( sequential )" || exit 168
-                                                                                                                                printf -v INDEX "%016d" "$SEQUENCE"
+                                                                                                                                INDEX_UNFORMATTED="$( sequential )" || exit 168
+                                                                                                                                printf -v INDEX_FORMATTED "%016d" "$INDEX_FORMATTED"
                                                                                                                             fi
+                                                                                                                            INDEX="${ resources-directory }/mounts/$INDEX_FORMATTED"
                                                                                                                             echo "$RESOURCE_HASH"
                                                                                                                         '' ;
                                                                                                                 }
