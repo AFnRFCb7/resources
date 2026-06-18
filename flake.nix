@@ -99,14 +99,15 @@
                                                                         mkdir --parents "${ resources-directory }/temporary"
                                                                         INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
                                                                         export INPUT_FILE
-                                                                        ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
                                                                         OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
+                                                                        export OUTPUT_FILE
                                                                         cleanup( ) {
                                                                             OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             exit "$OUTPUT_VALUE"
                                                                         }
                                                                         trap cleanup EXIT
+                                                                        ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
                                                                         if [[ -t 0 ]]
                                                                         then
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || failure 117
