@@ -109,9 +109,12 @@
                                                                         trap cleanup EXIT
                                                                         if [[ -t 0 ]]
                                                                         then
-                                                                            jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$INPUT_FILE"
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || failure 117
+                                                                            jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ULTIMATE_PID "$ULTIMATE_PID" '{ "stable" : { "arguments" : $ARGUMENTS } , "ultimate-pid" : $ULTIMATE_PID ,  }' > "$INPUT_FILE"
                                                                         else
-                                                                            jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$INPUT_FILE"
+                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || failure 171
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || failure 167
+                                                                            jq --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ULTIMATE_PID "$ULTIMATE_PID" '{ "stable" : { "arguments" : $ARGUMENTS , "standard-input" : "." } , "ultimate-pid" : $ULTIMATE_PID }' > "$INPUT_FILE"
                                                                         fi
                                                                         resource
                                                                     '' ;
