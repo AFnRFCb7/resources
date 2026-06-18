@@ -58,9 +58,9 @@
                                                                                                                 ''
                                                                                                                     exec 190> ${ resources-directory }/locks/sequential
                                                                                                                     flock -x 190
-                                                                                                                    CURRENT="$( cat ${ resources-directory }/sequence )" || exit 193
+                                                                                                                    CURRENT="$( cat ${ resources-directory }/sequential )" || exit 193
                                                                                                                     NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
-                                                                                                                    echo "$NEXT" >> ${ resources-directory }/sequence
+                                                                                                                    echo "$NEXT" >> ${ resources-directory }/sequential
                                                                                                                     echo "$CURRENT"
                                                                                                                 '' ;
                                                                                                         } ;
