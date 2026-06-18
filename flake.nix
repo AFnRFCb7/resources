@@ -69,7 +69,7 @@
                                                                                                                                             let
                                                                                                                                                 in
                                                                                                                                                     ''
-                                                                                                                                                        hash512sum /input
+                                                                                                                                                        hash512sum /input | cut --characters 1-128
                                                                                                                                                     '' ;
                                                                                                                                     }
                                                                                                                             )
@@ -93,7 +93,10 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents "${ resources-directory }/temporary"
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 178> ${ resources-directory }/locks/resource
+                                                                        flock -x 178
+                                                                        mkdir --parents "${ resources-directory }/temporary
                                                                         INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
                                                                         export INPUT_FILE
                                                                         ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
@@ -106,9 +109,9 @@
                                                                         trap cleanup EXIT
                                                                         if [[ -t 0 ]]
                                                                         then
-                                                                            jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$JSON_FILE"
+                                                                            jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$INPUT_FILE"
                                                                         else
-                                                                            jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$JSON_FILE"
+                                                                            jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$INPUT_FILE"
                                                                         fi
                                                                         resource
                                                                     '' ;
