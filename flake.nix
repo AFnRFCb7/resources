@@ -66,7 +66,7 @@
                                                                                                                                 printf -v INDEX "%016s" "$SEQUENCE"
                                                                                                                                 LINK="${ resources-directory }/mounts/$INDEX"
                                                                                                                                 mkdir --parents "$LINK"
-                                                                                                                                ln --symbolic "$LINK" ${ resources-directory }/canonical/$HASH"
+                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pid/$INDEX/$ORIGINATOR_PID"
                                                                                                                                 jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
                                                                                                                             fi
