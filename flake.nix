@@ -55,23 +55,22 @@
                                                                                                                     text =
                                                                                                                         ''
                                                                                                                             jq --null-input '{ "output" : "WTF" , "status" : 9 }' > /output
-#                                                                                                                            HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
-#                                                                                                                            if [[ -L "${ resources-directory }/canonical/$HASH" ]]
-#                                                                                                                            then
-#                                                                                                                                LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 108
-#                                                                                                                                ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 126
-#                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
-#                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
-#                                                                                                                            else
-#                                                                                                                                jq --null-input '{ "output" : "WTF" , "status" : 0 }' > /output
-##                                                                                                                                SEQUENCE="$( sequential )" || exit 165
-##                                                                                                                                printf -v INDEX "%016s" "$SEQUENCE"
-##                                                                                                                                LINK="${ resources-directory }/mounts/$INDEX"
-##                                                                                                                                mkdir --parents "$LINK"
-##                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
-##                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pid/$INDEX/$ORIGINATOR_PID"
-##                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
-#                                                                                                                            fi
+                                                                                                                            HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
+                                                                                                                            if [[ -L "${ resources-directory }/canonical/$HASH" ]]
+                                                                                                                            then
+                                                                                                                                LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 108
+                                                                                                                                ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 126
+                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
+                                                                                                                            else
+                                                                                                                                SEQUENCE="$( sequential )" || exit 165
+                                                                                                                                printf -v INDEX "%016s" "$SEQUENCE"
+                                                                                                                                LINK="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                mkdir --parents "$LINK"
+                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
+                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pid/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
+                                                                                                                            fi
                                                                                                                         '' ;
                                                                                                                 }
                                                                                                         )
