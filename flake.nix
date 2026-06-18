@@ -69,7 +69,7 @@
                                                                                                                                             let
                                                                                                                                                 in
                                                                                                                                                     ''
-                                                                                                                                                        hash512sum /input | cut --characters 1-128
+                                                                                                                                                        jq ".stable" | sha512sum | cut --characters 1-128
                                                                                                                                                     '' ;
                                                                                                                                     }
                                                                                                                             )
