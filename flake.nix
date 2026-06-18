@@ -9,110 +9,112 @@
 		                buildFHSUserEnv ,
 		                coreutils ,
 		                jq ,
-		                resources-directory ,
 		                visitor ,
 		                writeShellApplication
                     } :
                         let
                             implementation =
                                 {
-                                    user =
-                                        {
-                                            init
-                                        } :
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "resource" ;
-                                                            runtimeInputs =
-                                                                [
-                                                                    (
-                                                                        buildFHSUserEnv
-                                                                            {
-                                                                                extraBwrapArgs =
-                                                                                    [
-                                                                                        "--bind" "$INPUT_FILE" "/input"
-                                                                                        "--bind" "$OUTPUT_FILE" "/output"
-                                                                                    ] ;
-                                                                                name = "resource" ;
-                                                                                runScript =
-                                                                                    ''
-                                                                                        resource
-                                                                                    '' ;
-                                                                                targetPkgs =
-                                                                                    pkgs :
+                                    resources-directory
+                                } :
+                                    {
+                                        user =
+                                            {
+                                                init
+                                            } :
+                                                let
+                                                    application =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "resource" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
                                                                                         [
-                                                                                            (
-                                                                                                pkgs.writeShellApplication
-                                                                                                    {
-                                                                                                        name = "resource" ;
-                                                                                                        runtimeInputs =
-                                                                                                            let
-                                                                                                                init_ =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda = path : value : value null ;
-                                                                                                                            null = path : value : null ;
-                                                                                                                        }
-                                                                                                                        init ;
-                                                                                                                in
-                                                                                                                    [
-                                                                                                                        (
-                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                {
-                                                                                                                                    name = "resource-hash" ;
-                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                    text =
-                                                                                                                                        let
-                                                                                                                                            in
-                                                                                                                                                ''
-                                                                                                                                                    hash512sum /input
-                                                                                                                                                '' ;
-                                                                                                                                }
-                                                                                                                        )
-                                                                                                                    ] ;
-                                                                                                        text =
-                                                                                                            ''
-                                                                                                                cleanup( ) {
-                                                                                                                    echo "$?" > /output
-                                                                                                                }
-                                                                                                                trap cleanup EXIT
-                                                                                                                RESOURCE_HASH="$( resource-hash )" || exit 163
-                                                                                                                echo "$RESOURCE_HASH"
-                                                                                                            '' ;
-                                                                                                    }
-                                                                                            )
+                                                                                            "--bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" "$OUTPUT_FILE" "/output"
                                                                                         ] ;
-                                                                            }
-                                                                    )
-                                                                    coreutils
-                                                                    jq
-                                                                ] ;
-                                                            text =
-                                                                ''
-                                                                    mkdir --parents "${ resources-directory }/temporary"
-                                                                    INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
-                                                                    export INPUT_FILE
-                                                                    ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
-                                                                    OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
-                                                                    cleanup( ) {
-                                                                        OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        exit "$OUTPUT_VALUE"
-                                                                    }
-                                                                    trap cleanup EXIT
-                                                                    if [[ -t 0 ]]
-                                                                    then
-                                                                        jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$JSON_FILE"
-                                                                    else
-                                                                        jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$JSON_FILE"
-                                                                    fi
-                                                                    resource
-                                                                '' ;
-                                                        } ;
-                                                in "${ application }/bin/resource" ;
-                                } ;
+                                                                                    name = "resource" ;
+                                                                                    runScript =
+                                                                                        ''
+                                                                                            resource
+                                                                                        '' ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "resource" ;
+                                                                                                            runtimeInputs =
+                                                                                                                let
+                                                                                                                    init_ =
+                                                                                                                        visitor
+                                                                                                                            {
+                                                                                                                                lambda = path : value : value null ;
+                                                                                                                                null = path : value : null ;
+                                                                                                                            }
+                                                                                                                            init ;
+                                                                                                                    in
+                                                                                                                        [
+                                                                                                                            (
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "resource-hash" ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                        text =
+                                                                                                                                            let
+                                                                                                                                                in
+                                                                                                                                                    ''
+                                                                                                                                                        hash512sum /input
+                                                                                                                                                    '' ;
+                                                                                                                                    }
+                                                                                                                            )
+                                                                                                                        ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    cleanup( ) {
+                                                                                                                        echo "$?" > /output
+                                                                                                                    }
+                                                                                                                    trap cleanup EXIT
+                                                                                                                    RESOURCE_HASH="$( resource-hash )" || exit 163
+                                                                                                                    echo "$RESOURCE_HASH"
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                        coreutils
+                                                                        jq
+                                                                    ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents "${ resources-directory }/temporary"
+                                                                        INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
+                                                                        export INPUT_FILE
+                                                                        ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
+                                                                        OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
+                                                                        cleanup( ) {
+                                                                            OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
+                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                            exit "$OUTPUT_VALUE"
+                                                                        }
+                                                                        trap cleanup EXIT
+                                                                        if [[ -t 0 ]]
+                                                                        then
+                                                                            jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS }' > "$JSON_FILE"
+                                                                        else
+                                                                            jq --argjson ARGUMENTS "$ARGUMENTS_JSON" '{ "arguments" : $ARGUMENTS , "standard-input" : . }' > "$JSON_FILE"
+                                                                        fi
+                                                                        resource
+                                                                    '' ;
+                                                            } ;
+                                                    in "${ application }/bin/resource" ;
+                                    } ;
                             in
                                 {
                                     check = null ;
