@@ -92,11 +92,10 @@
                                                             text =
                                                                 ''
                                                                     mkdir --parents "${ resources-directory }/temporary"
-                                                                    INPUT_FILE=$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
+                                                                    INPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 161
                                                                     export INPUT_FILE
                                                                     ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
                                                                     OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
-                                                                    export SIGNAL_FILE
                                                                     cleanup( ) {
                                                                         OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
