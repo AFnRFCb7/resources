@@ -110,7 +110,7 @@
                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
                                                                                 echo "$OUTPUT"
                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
-                                                                                echo 9254446777424771
+                                                                                echo 9254446777424771 "OUTPUT=$OUTPUT" "STATUS=$STATUS"
                                                                                 exit "$STATUS"
                                                                             '' ;
                                                                     } ;
