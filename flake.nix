@@ -88,20 +88,18 @@
                                                                                                                     text =
                                                                                                                         ''
                                                                                                                             cleanup( ) {
-                                                                                                                                jq --null-input --arg OUTPUT "$INDEX" --argjson STATUS "$?" '{ "output" : $OUTPUT , "status" : $STATUS" }' > /output
+                                                                                                                                jq --null-input --arg INDEX "$INDEX" --argjson STATUS "$?" '{ "index" : $INDEX , "status" : $STATUS" }' > /output
                                                                                                                             }
                                                                                                                             trap cleanup EXIT
                                                                                                                             RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$RESOURCE_HASH" ]]
                                                                                                                             then
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$RESOURCE_HASH" )" || exit 148
-                                                                                                                                INDEX_FORMATTED="$( basename "$LINK" )" || exit 158
+                                                                                                                                INDEX="$( basename "$LINK" )" || exit 158
                                                                                                                             else
                                                                                                                                 INDEX_UNFORMATTED="$( sequential )" || exit 168
-                                                                                                                                printf -v INDEX_FORMATTED "%016d" "$INDEX_UNFORMATTED"
+                                                                                                                                printf -v INDEX "%016d" "$INDEX_UNFORMATTED"
                                                                                                                             fi
-                                                                                                                            INDEX="${ resources-directory }/mounts/$INDEX_FORMATTED"
-                                                                                                                            echo "$RESOURCE_HASH"
                                                                                                                         '' ;
                                                                                                                 }
                                                                                                         )
@@ -122,9 +120,11 @@
                                                                         OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
                                                                         export OUTPUT_FILE
                                                                         cleanup( ) {
-                                                                            OUTPUT_VALUE="$( cat "$OUTPUT_FILE" )" || exit 164
+                                                                            INDEX="$( jq ".index" "$OUTPUT_FILE" )" || exit 142
+                                                                            STATUS="$( jq ".status" "$OUTPUT_FILE" )" || exit 102
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                            exit "$OUTPUT_VALUE"
+                                                                            echo "${ resources-directory }/mounts/$INDEX"
+                                                                            exit "$STATUS"
                                                                         }
                                                                         trap cleanup EXIT
                                                                         ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
