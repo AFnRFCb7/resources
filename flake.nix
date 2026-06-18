@@ -88,7 +88,7 @@
                                                                                                                     text =
                                                                                                                         ''
                                                                                                                             cleanup( ) {
-                                                                                                                                jq --null-input --arg INDEX "$INDEX" --argjson STATUS "$?" '{ "index" : $INDEX , "status" : $STATUS" }' > /output
+                                                                                                                                jq --null-input --arg INDEX "$INDEX" --argjson STATUS "$?" '{ "index" : $INDEX , "status" : $STATUS }' > /output
                                                                                                                             }
                                                                                                                             trap cleanup EXIT
                                                                                                                             RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
