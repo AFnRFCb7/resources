@@ -107,9 +107,9 @@
                                                                                 echo 3761666247598712
                                                                                 resource
                                                                                 echo 8193592676166459
-                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT" )" || exit 114
+                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
                                                                                 echo "$OUTPUT"
-                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 142
+                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
                                                                                 echo 9254446777424771
                                                                                 exit "$STATUS"
                                                                             '' ;
