@@ -42,8 +42,8 @@
                                                                                                     "--bind" "${ resources-directory }/pids" "${ resources-directory }/pids"
                                                                                                     "--bind" "$OUTPUT_FILE" "/output"
                                                                                                 ] ;
-                                                                                            name = "echo 9481814457121256" ;
-                                                                                            runtimeScript = "resource" ;
+                                                                                            name = "resource" ;
+                                                                                            runtimeScript = "echo 9481814457121256" ;
                                                                                             targetPkgs =
                                                                                                 pkgs :
                                                                                                     [
