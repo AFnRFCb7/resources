@@ -56,10 +56,10 @@
                                                                                                                         ''
                                                                                                                             jq --null-input '{ "output" : "WTF" , "status" : 9 }' > /output
                                                                                                                             HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
+                                                                                                                            ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 126
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 108
-                                                                                                                                ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 126
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                                 jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
                                                                                                                             else
