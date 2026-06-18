@@ -34,8 +34,12 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
+                                                                                            "--bind" "${ resources-directory }/canonical" "/canonical"
                                                                                             "--bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" "${ resources-directory }/locks" "/locks"
+                                                                                            "--bind" "${ resources-directory }/mounts" "/mounts"
                                                                                             "--bind" "$OUTPUT_FILE" "/output"
+                                                                                            "--bind" "${ resources-directory }/sequential" "/sequential"
                                                                                         ] ;
                                                                                     name = "resource" ;
                                                                                     runScript =
@@ -44,37 +48,62 @@
                                                                                         '' ;
                                                                                     targetPkgs =
                                                                                         pkgs :
-                                                                                            [
-                                                                                                (
+                                                                                            let
+                                                                                                sequential =
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
-                                                                                                            name = "resource" ;
-                                                                                                            runtimeInputs =
-                                                                                                                let
-                                                                                                                    init_ =
-                                                                                                                        visitor
-                                                                                                                            {
-                                                                                                                                lambda = path : value : value null ;
-                                                                                                                                null = path : value : null ;
-                                                                                                                            }
-                                                                                                                            init ;
-                                                                                                                    in
-                                                                                                                        [
-                                                                                                                            pkgs.coreutils
-                                                                                                                            pkgs.jq
-                                                                                                                        ] ;
+                                                                                                            name = "sequential" ;
+                                                                                                            runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    cleanup( ) {
-                                                                                                                        echo "$?" > /output
-                                                                                                                    }
-                                                                                                                    trap cleanup EXIT
-                                                                                                                    RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
-                                                                                                                    echo "$RESOURCE_HASH"
+                                                                                                                    exec 190> ${ resources-directory }/locks/sequential
+                                                                                                                    flock -x 190
+                                                                                                                    CURRENT="$( cat ${ resources-directory }/sequence )" || exit 193
+                                                                                                                    NEXT=$(( ( CURRENT + 1 ) % 10000000000000000 ))
+                                                                                                                    echo "$NEXT" >> ${ resources-directory }/sequence
+                                                                                                                    echo "$CURRENT"
                                                                                                                 '' ;
                                                                                                         }
-                                                                                                )
-                                                                                            ] ;
+                                                                                                in
+                                                                                                    [
+                                                                                                        (
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "resource" ;
+                                                                                                                    runtimeInputs =
+                                                                                                                        let
+                                                                                                                            init_ =
+                                                                                                                                visitor
+                                                                                                                                    {
+                                                                                                                                        lambda = path : value : value null ;
+                                                                                                                                        null = path : value : null ;
+                                                                                                                                    }
+                                                                                                                                    init ;
+                                                                                                                            in
+                                                                                                                                [
+                                                                                                                                    pkgs.coreutils
+                                                                                                                                    pkgs.jq
+                                                                                                                                ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            cleanup( ) {
+                                                                                                                                echo "$?" > /output
+                                                                                                                            }
+                                                                                                                            trap cleanup EXIT
+                                                                                                                            RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
+                                                                                                                            if [[ -L "${ resources-directory }/canonical/$RESOURCE_HASH" ]]
+                                                                                                                            then
+                                                                                                                                LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$RESOURCE_HASH" )" || exit 148
+                                                                                                                                INDEX="$( basename "$LINK" )" || exit 158
+                                                                                                                            else
+                                                                                                                                SEQUENCE="$( sequential )" || exit 168
+                                                                                                                                printf -v INDEX "%016d" "$SEQUENCE"
+                                                                                                                            fi
+                                                                                                                            echo "$RESOURCE_HASH"
+                                                                                                                        '' ;
+                                                                                                                }
+                                                                                                        )
+                                                                                                    ] ;
                                                                                 }
                                                                         )
                                                                         coreutils
@@ -97,6 +126,12 @@
                                                                         }
                                                                         trap cleanup EXIT
                                                                         ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 179
+                                                                        mkdir --parents ${ resources-directory }/canonical
+                                                                        mkdir --parents ${ resources-directory }/mounts
+                                                                        if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                        then
+                                                                            echo 0 > ${ resources-directory }/sequential
+                                                                        fi
                                                                         if [[ -t 0 ]]
                                                                         then
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || failure 117
