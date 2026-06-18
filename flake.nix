@@ -54,7 +54,7 @@
                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq sequential ] ;
                                                                                                                     text =
                                                                                                                         ''
-                                                                                                                            jq --null-input '{ "output" : "WTF" , "status" : 9 }'
+                                                                                                                            jq --null-input '{ "output" : "WTF" , "status" : 9 }' > /output
 #                                                                                                                            HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
 #                                                                                                                            if [[ -L "${ resources-directory }/canonical/$HASH" ]]
 #                                                                                                                            then
