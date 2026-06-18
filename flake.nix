@@ -5,7 +5,14 @@
 		{ self } :
 		    {
 		        lib =
-		            { buildFHSUserEnv , resources-directory , visitor , writeShellApplication } :
+		            {
+		                buildFHSUserEnv ,
+		                coreutils ,
+		                jq ,
+		                resources-directory ,
+		                visitor ,
+		                writeShellApplication
+                    } :
                         let
                             implementation =
                                 {
@@ -79,8 +86,8 @@
                                                                                         ] ;
                                                                             }
                                                                     )
-                                                                    pkgs.coreutils
-                                                                    pkgs.jq
+                                                                    coreutils
+                                                                    jq
                                                                 ] ;
                                                             text =
                                                                 ''
