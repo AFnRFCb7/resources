@@ -8,6 +8,7 @@
 		            {
 		                buildFHSUserEnv ,
 		                coreutils ,
+		                flock ,
 		                jq ,
 		                visitor ,
 		                writeShellApplication
