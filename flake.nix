@@ -43,7 +43,7 @@
                                                                                                     "--bind" "$OUTPUT_FILE" "/output"
                                                                                                 ] ;
                                                                                             name = "resource" ;
-                                                                                            runtimeScript = "echo 9481814457121256" ;
+                                                                                            runScript = "resource" ;
                                                                                             targetPkgs =
                                                                                                 pkgs :
                                                                                                     [
