@@ -110,7 +110,7 @@
                                                                                 exit "$STATUS"
                                                                             '' ;
                                                                     } ;
-                                                            in "${ application }/bin/entrypoint" ;
+                                                            in "${ application }/bin/resource" ;
                                                     sequential =
                                                         writeShellApplication
                                                             {
@@ -171,7 +171,7 @@
                                                                         echo "$SEQUENCE"
                                                                     '' ;
                                                             } ;
-                                                    in "${ entrypoint }" ;
+                                                    in resource ;
                                     } ;
                             in
                                 {
