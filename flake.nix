@@ -62,13 +62,14 @@
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                                 jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
                                                                                                                             else
-                                                                                                                                SEQUENCE="$( sequential )" || exit 165
-                                                                                                                                printf -v INDEX "%016s" "$SEQUENCE"
-                                                                                                                                LINK="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                mkdir --parents "$LINK"
-                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
-                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
+                                                                                                                                jq --null-input '{ "output" : "WTF" , "status" : 0 }' > /output
+#                                                                                                                                SEQUENCE="$( sequential )" || exit 165
+#                                                                                                                                printf -v INDEX "%016s" "$SEQUENCE"
+#                                                                                                                                LINK="${ resources-directory }/mounts/$INDEX"
+#                                                                                                                                mkdir --parents "$LINK"
+#                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
+#                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pid/$INDEX/$ORIGINATOR_PID"
+#                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
                                                                                                                             fi
                                                                                                                         '' ;
                                                                                                                 }
