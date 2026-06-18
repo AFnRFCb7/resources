@@ -83,6 +83,7 @@
                                                                                                                                 [
                                                                                                                                     pkgs.coreutils
                                                                                                                                     pkgs.jq
+                                                                                                                                    sequential
                                                                                                                                 ] ;
                                                                                                                     text =
                                                                                                                         ''
