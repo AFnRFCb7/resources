@@ -63,7 +63,7 @@
                                                                                                                     echo "$NEXT" >> ${ resources-directory }/sequence
                                                                                                                     echo "$CURRENT"
                                                                                                                 '' ;
-                                                                                                        }
+                                                                                                        } ;
                                                                                                 in
                                                                                                     [
                                                                                                         (
