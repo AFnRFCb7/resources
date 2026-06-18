@@ -60,19 +60,8 @@
                                                                                                                             init ;
                                                                                                                     in
                                                                                                                         [
-                                                                                                                            (
-                                                                                                                                pkgs.writeShellApplication
-                                                                                                                                    {
-                                                                                                                                        name = "resource-hash" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                        text =
-                                                                                                                                            let
-                                                                                                                                                in
-                                                                                                                                                    ''
-                                                                                                                                                        jq ".stable" /input | sha512sum | cut --characters 1-128
-                                                                                                                                                    '' ;
-                                                                                                                                    }
-                                                                                                                            )
+                                                                                                                            pkgs.coreutils
+                                                                                                                            pkgs.jq
                                                                                                                         ] ;
                                                                                                             text =
                                                                                                                 ''
@@ -80,7 +69,7 @@
                                                                                                                         echo "$?" > /output
                                                                                                                     }
                                                                                                                     trap cleanup EXIT
-                                                                                                                    RESOURCE_HASH="$( resource-hash )" || exit 163
+                                                                                                                    RESOURCE_HASH="$( jq ".stable" /input | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                     echo "$RESOURCE_HASH"
                                                                                                                 '' ;
                                                                                                         }
