@@ -120,8 +120,8 @@
                                                                         OUTPUT_FILE="$( mktemp "${ resources-directory }/temporary/XXXXXXXX" )" || exit 163
                                                                         export OUTPUT_FILE
                                                                         cleanup( ) {
-                                                                            INDEX="$( jq ".index" "$OUTPUT_FILE" )" || exit 142
-                                                                            STATUS="$( jq ".status" "$OUTPUT_FILE" )" || exit 102
+                                                                            INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 142
+                                                                            STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 102
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             echo "${ resources-directory }/mounts/$INDEX"
                                                                             exit "$STATUS"
