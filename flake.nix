@@ -332,7 +332,7 @@
                                                                                                 in
                                                                                                     builtins.concatLists
                                                                                                         [
-                                                                                                            [ { text = "is-blocked 1 3221114758629519" ; } ]
+                                                                                                            [ ]
                                                                                                             ( builtins.genList generator ( builtins.length actions ) )
                                                                                                         ] ;
                                                                                         in
