@@ -238,6 +238,7 @@
                                                                                             builtins.concatLists
                                                                                                 [
                                                                                                     [ { text = "is-blocked 1 2745375537866399" ; } ]
+                                                                                                    [ { text = "file-integrity-check 5823533542924489" ; } ]
                                                                                                     actions
                                                                                                     [ { text = "is-blocked 1 5572814436683922" ; } ]
                                                                                                 ] ;
@@ -268,6 +269,25 @@
                                                                                                                                         (
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
+                                                                                                                                                    name = "file-integrity-check" ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            EXPECTED_HASH="$1"
+                                                                                                                                                            NAMES="$( find ${ resources-directory } -exec sha512 {} \; | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                                                            CONTENT="$( find ${ resources-directory } -types f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
+                                                                                                                                                            OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
+                                                                                                                                                            if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo "OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                exit 174
+                                                                                                                                                            fi
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                        (
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
                                                                                                                                                     name = "is-blocked" ;
                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                     text =
@@ -278,6 +298,22 @@
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID" >&2
                                                                                                                                                                 exit 160
+                                                                                                                                                            fi
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                        (
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "verify-executable" ;
+                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            EXECUTABLE="$1"
+                                                                                                                                                            if [[ ! -x "$EXECUTABLE" ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo "$EXECUTABLE" >&2
+                                                                                                                                                                exit 137
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
