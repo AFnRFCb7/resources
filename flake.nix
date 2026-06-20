@@ -189,7 +189,9 @@
                                                 user =
                                                     let
                                                         eval =
-                                                            pkgs.lib.nixosSystem
+                                                            import <nixpkgs> {
+                                                                system = pkgs.system
+                                                            }.lib.nixosSystem
                                                                 {
                                                                     system = "x86_64-linux" ;
                                                                     modules = private ;
