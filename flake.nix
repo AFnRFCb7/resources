@@ -197,7 +197,7 @@
                                                                                             pkgs.writeShellApplication
                                                                                                 {
                                                                                                     name = "is-subscribed" ;
-                                                                                                    runtimeInput = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                     text =
                                                                                                         ''
                                                                                                             EXPECTED_TYPE="subscribe"
