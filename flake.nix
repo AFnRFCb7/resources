@@ -177,7 +177,178 @@
                                     } ;
                             in
                                 {
-                                    check = null ;
+                                    check =
+                                        user : actions : private :
+                                            pkgs.nixosTest
+                                                {
+                                                    name = "check" ;
+                                                    nodes.machine = { ... } : { imports = [ private ] ; } ;
+                                                    testScript =
+                                                        let
+                                                            test =
+                                                                let
+                                                                    application =
+                                                                        pkgs.writeShellApplication
+                                                                            {
+                                                                                name = "test" ;
+                                                                                runtimeInputs =
+                                                                                    [
+                                                                                        (
+                                                                                            pkgs.writeShellApplication
+                                                                                                {
+                                                                                                    name = "is-subscribed" ;
+                                                                                                    runtimeInput = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                    text =
+                                                                                                        ''
+                                                                                                            EXPECTED_TYPE="subscribe"
+                                                                                                            EXPECTED_CHANNEL="$1"
+                                                                                                            EXPECTED_PAYLOAD="$2"
+                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 124
+                                                                                                            read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
+                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 160
+                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                            then
+                                                                                                                echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
+                                                                                                                exit 136
+                                                                                                            fi
+                                                                                                            if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                            then
+                                                                                                                echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
+                                                                                                                exit 123
+                                                                                                            fi
+                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                            then
+                                                                                                                echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
+                                                                                                                exit 162
+                                                                                                            fi
+                                                                                                        '' ;
+                                                                                                }
+                                                                                        )
+                                                                                        pkgs.coreutils
+                                                                                        pkgs.redis
+                                                                                    ] ;
+                                                                                text =
+                                                                                    let
+                                                                                        commands =
+                                                                                            let
+                                                                                                generator =
+                                                                                                    index :
+                                                                                                        let
+                                                                                                            action =
+                                                                                                                let
+                                                                                                                    base = builtins.elemAt actions index ;
+                                                                                                                    defaults =
+                                                                                                                        {
+                                                                                                                            expected-standard-output = "" ;
+                                                                                                                            expected-status = 0 ;
+                                                                                                                            process = "main" ;
+                                                                                                                            timeout = 60 ;
+                                                                                                                        } ;
+                                                                                                                    in defaults // base ;
+                                                                                                            command =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "command" ;
+                                                                                                                                runtimeInputs =
+                                                                                                                                    [
+                                                                                                                                        (
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "is-blocked" ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            TIMEOUT="$1"
+                                                                                                                                                            UUID="$2"
+                                                                                                                                                            if redis-cli -t "$TIMEOUT" -f 3
+                                                                                                                                                            then
+                                                                                                                                                                echo "$UUID" >&2
+                                                                                                                                                                exit 160
+                                                                                                                                                            fi
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                        (
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "is-subscribed" ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                    ] ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                        seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
+                                                                                                                                        do
+                                                                                                                                            while [[ -f "$COMMANDS/$INDEX" ]]
+                                                                                                                                            do
+                                                                                                                                                sleep 1
+                                                                                                                                            done
+                                                                                                                                        done
+                                                                                                                                        STANDARD_ERROR_FILE="$( mktemp )" || exit 154
+                                                                                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
+                                                                                                                                        date
+                                                                                                                                        echo PROCESS
+                                                                                                                                        cat ${ builtins.toFile "process" ( builtins.toString action.process ) }
+                                                                                                                                        echo TIMEOUT
+                                                                                                                                        cat ${ builtins.toFile "timeout" ( builtins.toString action.timeout ) }
+                                                                                                                                        echo TEXT
+                                                                                                                                        cat ${ builtins.toFile "text" ( builtins.toString action.text ) }
+                                                                                                                                        if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                        then
+                                                                                                                                            OBSERVED_STATUS="$?"
+                                                                                                                                        else
+                                                                                                                                            OBSERVED_STATUS="$?"
+                                                                                                                                        fi
+                                                                                                                                        rm "$COMMANDS/${ builtins.toString index }"
+                                                                                                                                        date
+                                                                                                                                        OBSERVED_STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || exit 134
+                                                                                                                                        OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
+                                                                                                                                        if [[ -n "$OBSERVED_STANDARD_ERROR" ]]
+                                                                                                                                        then
+                                                                                                                                            echo "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" >&2
+                                                                                                                                            exit 102
+                                                                                                                                        fi
+                                                                                                                                        OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
+                                                                                                                                        if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                                                                        then
+                                                                                                                                            echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" >&2
+                                                                                                                                            exit 178
+                                                                                                                                        fi
+                                                                                                                                        if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
+                                                                                                                                        then
+                                                                                                                                            echo "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
+                                                                                                                                            exit 132
+                                                                                                                                        fi
+                                                                                                                                    '' ;
+                                                                                                                            } ;
+                                                                                                                    in "${ application }/bin/command" ;
+                                                                                                            in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
+                                                                                                in builtins.genList generator ( builtins.length actions ) ;
+                                                                                        in
+                                                                                            ''
+                                                                                                COMMANDS="$( mktemp --directory )" || exit 119
+                                                                                                exec 189< <( redis-cli SUBSCRIBE valid-init valid-release invalid-init invalid-release )
+                                                                                                is-subscribed 1 valid-init <&189
+                                                                                                is-subscribed 2 valid-release <&189
+                                                                                                is-subscribed 3 invalid-init <&189
+                                                                                                is-subscribed 4 invalid-release <&189
+                                                                                                ${ builtins.concatStringsSep "\n" commands }
+                                                                                            '' ;
+                                                                            } ;
+                                                                        in "${ application }/bin/test" ;
+                                                            in
+                                                                ''
+                                                                    machine.wait_for_unit("multi-user.target")
+                                                                    machine.wait_for_unit("network-online.target")
+                                                                    machine.succeed("runuser --login ${ user } -- ${ test }")
+                                                                '' ;
+                                                } ;
                                     implementation = implementation ;
                                 } ;
             } ;
