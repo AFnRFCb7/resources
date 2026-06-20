@@ -185,6 +185,12 @@
                                             pkgs ,
                                             private
                                         } :
+                                            let
+                                                user =
+                                                    let
+                                                        eval = pkgs.lib.evalModules { modules = private ; } ;
+                                                        in eval.config.personal.name ;
+                                                in
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
