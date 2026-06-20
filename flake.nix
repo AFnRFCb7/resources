@@ -332,7 +332,7 @@
                                                                                                 in
                                                                                                     builtins.concatLists
                                                                                                         [
-                                                                                                            [ ]
+                                                                                                            [ { text = "is-blocked 1 2913869679541745" ; } ]
                                                                                                             ( builtins.genList generator ( builtins.length actions ) )
                                                                                                         ] ;
                                                                                         in
@@ -344,7 +344,6 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
-
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
