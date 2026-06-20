@@ -181,6 +181,7 @@
                                         {
                                             user ,
                                             actions ,
+                                            resources-directory ,
                                             pkgs ,
                                             private
                                         } :
