@@ -334,10 +334,10 @@
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
                                                                                                 exec 189< <( redis-cli SUBSCRIBE valid-init valid-release invalid-init invalid-release )
-                                                                                                is-subscribed 1 valid-init <&189
-                                                                                                is-subscribed 2 valid-release <&189
-                                                                                                is-subscribed 3 invalid-init <&189
-                                                                                                is-subscribed 4 invalid-release <&189
+                                                                                                is-subscribed valid-init 1 <&189
+                                                                                                is-subscribed valid-release 2 <&189
+                                                                                                is-subscribed invalid-init 3 <&189
+                                                                                                is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 export COMMANDS
                                                                                             '' ;
