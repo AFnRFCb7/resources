@@ -178,8 +178,8 @@
                             in
                                 {
                                     check =
-                                        user : actions : private :
-                                            pkgs.nixosTest
+                                        user : actions : nixosTest : private :
+                                            nixosTest
                                                 {
                                                     name = "check" ;
                                                     nodes.machine = { ... } : { imports = [ private ] ; } ;
