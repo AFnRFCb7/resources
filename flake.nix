@@ -182,7 +182,7 @@
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
-                                                    nodes.machine = { ... } : { imports = private ; } ;
+                                                    nodes.machine = { ... } : { imports = [ private ] ; } ;
                                                     testScript =
                                                         let
                                                             test =
