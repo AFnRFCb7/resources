@@ -339,6 +339,7 @@
                                                                                                 is-subscribed 3 invalid-init <&189
                                                                                                 is-subscribed 4 invalid-release <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
+                                                                                                export COMMANDS
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
