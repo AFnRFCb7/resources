@@ -188,7 +188,12 @@
                                             let
                                                 user =
                                                     let
-                                                        eval = pkgs.lib.evalModules { modules = private ; } ;
+                                                        eval =
+                                                            pkgs.lib.nixosSystem
+                                                                {
+                                                                    system = "x86_64-linux" ;
+                                                                    modules = private ;
+                                                                } ;
                                                         in eval.config.personal.name ;
                                                 in
                                             pkgs.nixosTest
