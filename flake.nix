@@ -178,7 +178,12 @@
                             in
                                 {
                                     check =
-                                        user : actions : pkgs : private :
+                                        {
+                                            user ,
+                                            actions ,
+                                            pkgs ,
+                                            private
+                                        } :
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
