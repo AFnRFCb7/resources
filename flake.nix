@@ -329,7 +329,13 @@
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
-                                                                                                in builtins.genList generator ( builtins.length actions ) ;
+                                                                                                in
+                                                                                                    builtins.concatLists
+                                                                                                        [
+                                                                                                            { text = "is-blocked 1 3221114758629519" ; }
+                                                                                                            ( builtins.genList generator ( builtins.length actions ) )
+                                                                                                            { text = "is-blocked 1 4654789232389176" ; }
+                                                                                                        ] ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
@@ -339,7 +345,7 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
-                                                                                                export COMMANDS
+
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
