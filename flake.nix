@@ -229,6 +229,12 @@
                                                                                     ] ;
                                                                                 text =
                                                                                     let
+                                                                                        _actions =
+                                                                                            builtins.concatLists
+                                                                                                [
+                                                                                                    [ { text = "is-blocked 1 2745375537866399" ; } ]
+                                                                                                    actions
+                                                                                                ] ;
                                                                                         commands =
                                                                                             let
                                                                                                 generator =
@@ -236,7 +242,7 @@
                                                                                                         let
                                                                                                             action =
                                                                                                                 let
-                                                                                                                    base = builtins.elemAt actions index ;
+                                                                                                                    base = builtins.elemAt _actions index ;
                                                                                                                     defaults =
                                                                                                                         {
                                                                                                                             expected-standard-output = "" ;
@@ -329,12 +335,7 @@
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
-                                                                                                in
-                                                                                                    builtins.concatLists
-                                                                                                        [
-                                                                                                            [ { text = "is-blocked 1 2913869679541745" ; } ]
-                                                                                                            ( builtins.genList generator ( builtins.length actions ) )
-                                                                                                        ] ;
+                                                                                                in builtins.genList generator ( builtins.length _actions ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
