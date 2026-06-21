@@ -379,6 +379,12 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
+                                                                                        processes =
+                                                                                            let
+                                                                                                generator =
+                                                                                                    index :
+                                                                                                        builtins.groupBy ( action : action.process or "" ) _actions ;
+                                                                                                in builtins.genList generator ( builtins.length processes ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
