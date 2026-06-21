@@ -379,15 +379,7 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
-                                                                                        processes =
-                                                                                            let
-                                                                                                generator =
-                                                                                                    index :
-                                                                                                        builtins.groupBy ( action : action.process or "" ) _actions ;
-                                                                                                mapper =
-                                                                                                    name : element :
-                                                                                                        "# ${ name }" ;
-                                                                                                in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.genList generator ( builtins.length processes ) ) ) ;
+                                                                                        processes = builtins.attrValues ( builtins.mapAttrs ( name : value : "# ${ name }" ) ( builtins.groupBy ( action : action.process ) _actions ) ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
