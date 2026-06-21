@@ -288,8 +288,15 @@
                                                                                                                                                             UUID="$1"
                                                                                                                                                             EXPECTED_HASH="$2"
                                                                                                                                                             ROOT="$( mktemp --directory )" || exit 128
-                                                                                                                                                            ln --symbolic ${ resources-directory } ${ gc-roots-directory } "$ROOT"
-                                                                                                                                                            NAMES="$( find "$ROOT" -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                                                            if [[ -d ${ resources-directory } ]]
+                                                                                                                                                            then
+                                                                                                                                                                ln --symbolic ${ resources-directory } "$ROOT"
+                                                                                                                                                            fi
+                                                                                                                                                            if [[ -d ${ gc-roots-directory } ]]
+                                                                                                                                                            then
+                                                                                                                                                                ln --symbolic ${ gc-roots-directory } "$ROOT"
+                                                                                                                                                            fi
+                                                                                                                                                            NAMES="$( find "$ROOT" -type f-exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
                                                                                                                                                             CONTENT="$( find "$ROOT" -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
