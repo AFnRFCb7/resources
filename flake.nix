@@ -253,10 +253,10 @@
                                                                                                 list =
                                                                                                     builtins.concatLists
                                                                                                         [
-                                                                                                            [ { process = "main" ; text = "is-blocked 1 2745375537866399" ; } ]
+                                                                                                            [ { text = "is-blocked 1 2745375537866399" ; } ]
                                                                                                             # [ { text = "file-integrity-check 7486299242617446" ; } ]
                                                                                                             actions
-                                                                                                            [ { process = "main" ; text = "is-blocked 1 5572814436683922" ; } ]
+                                                                                                            [ { text = "is-blocked 1 5572814436683922" ; } ]
                                                                                                         ] ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
                                                                                         commands =
@@ -391,7 +391,7 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            # mapper = { process , text , index , xindex } : "$COMMANDS/${ builtins.toString xindex }" ;
+                                                                                                            mapper = { expected-standard-output , expected-status , expected , index , process , text , timeout } : "$COMMANDS/${ builtins.toString xindex }" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
