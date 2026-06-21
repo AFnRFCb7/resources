@@ -253,10 +253,14 @@
                                                                                                 list =
                                                                                                     builtins.concatLists
                                                                                                         [
-                                                                                                            [ { text = "is-blocked 1 2745375537866399" ; } ]
-                                                                                                            [ { text = "file-integrity-check 7486299242617446" ; } ]
+                                                                                                            [
+                                                                                                                { text = "is-blocked 1 2745375537866399" ; }
+                                                                                                                { text = "file-integrity-check 7486299242617446" ; }
+                                                                                                            ]
                                                                                                             actions
-                                                                                                            [ { text = "is-blocked 1 5572814436683922" ; } ]
+                                                                                                            [
+                                                                                                                { text = "is-blocked 1 5572814436683922" ; }
+                                                                                                            ]
                                                                                                         ] ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
                                                                                         commands =
@@ -281,7 +285,7 @@
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             EXPECTED_HASH="$1"
-                                                                                                                                                            NAMES="$( find ${ resources-directory } -exec sha512 {} \; | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                                                            NAMES="$( find ${ resources-directory } -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
                                                                                                                                                             CONTENT="$( find ${ resources-directory } -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
