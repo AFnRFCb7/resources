@@ -389,7 +389,7 @@
                                                                                                                 true ${ name }
                                                                                                             )
                                                                                                         '' ;
-                                                                                                in builtins.attrValues mapper ( builtins.groupBy grouper _actions ) ;
+                                                                                                in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
