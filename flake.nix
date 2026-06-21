@@ -382,8 +382,14 @@
                                                                                         processes =
                                                                                             let
                                                                                                 grouper = action : builtins.trace ( builtins.toJSON action ) ;
-                                                                                                mapper = name : value : "# ${ name }" ;
-                                                                                                in builtins.attrValues mapper ( builtins.groupBy grouper  _actions ) ;
+                                                                                                mapper =
+                                                                                                    name : value :
+                                                                                                        ''
+                                                                                                            (
+                                                                                                                true ${ name }
+                                                                                                            )
+                                                                                                        '';
+                                                                                                in builtins.attrValues mapper ( builtins.groupBy grouper _actions ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
