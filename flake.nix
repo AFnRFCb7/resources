@@ -350,10 +350,13 @@
                                                                                                                                         date
                                                                                                                                         echo PROCESS
                                                                                                                                         cat ${ builtins.toFile "process" ( builtins.toString action.process ) }
+                                                                                                                                        echo
                                                                                                                                         echo TIMEOUT
                                                                                                                                         cat ${ builtins.toFile "timeout" ( builtins.toString action.timeout ) }
+                                                                                                                                        echo
                                                                                                                                         echo TEXT
                                                                                                                                         cat ${ builtins.toFile "text" ( builtins.toString action.text ) }
+                                                                                                                                        echo
                                                                                                                                         if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
                                                                                                                                         then
                                                                                                                                             OBSERVED_STATUS="$?"
