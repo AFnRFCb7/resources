@@ -385,16 +385,9 @@
                                                                                                     index :
                                                                                                         builtins.groupBy ( action : action.process or "" ) _actions ;
                                                                                                 mapper =
-                                                                                                    element :
-                                                                                                        let
-                                                                                                            mapper = { index , ... } : "$COMMANDS/${ builtins.toString index }" ;
-                                                                                                            in
-                                                                                                            ''
-                                                                                                                (
-                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map mapper element ) }
-                                                                                                                ) &
-                                                                                                            '' ;
-                                                                                                in builtins.map mapper ( builtins.attrValues ( builtins.genList generator ( builtins.length processes ) ) ) ;
+                                                                                                    name : element :
+                                                                                                        "# ${ name }" ;
+                                                                                                in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.genList generator ( builtins.length processes ) ) ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
