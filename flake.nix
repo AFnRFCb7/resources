@@ -389,7 +389,7 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            mapper = { process , text , index } : "$COMMANDS/${ builtin.toString index }" ;
+                                                                                                            mapper = { process , text , index , jindex } : "$COMMANDS/${ builtin.toString jindex }" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
