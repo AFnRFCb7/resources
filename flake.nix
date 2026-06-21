@@ -179,25 +179,12 @@
                                 {
                                     check =
                                         {
-                                            user ,
                                             actions ,
-                                            resources-directory ,
                                             pkgs ,
-                                            private
+                                            private ,
+                                            resources-directory ,
+                                            user
                                         } :
-                                            let
-                                                user =
-                                                    let
-                                                        eval =
-                                                            import <nixpkgs> {
-                                                                system = pkgs.system
-                                                            }.lib.nixosSystem
-                                                                {
-                                                                    system = "x86_64-linux" ;
-                                                                    modules = private ;
-                                                                } ;
-                                                        in eval.config.personal.name ;
-                                                in
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
