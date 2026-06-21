@@ -237,7 +237,19 @@
                                                                                     let
                                                                                         _actions =
                                                                                             let
-                                                                                                generator = index : ( builtins.elemAt actions index ) // { xindex = index ; } ;
+                                                                                                generator =
+                                                                                                    index :
+                                                                                                        let
+                                                                                                            defaults =
+                                                                                                                {
+                                                                                                                    expected-standard-output = "" ;
+                                                                                                                    expected-status = 0 ;
+                                                                                                                    index = index ;
+                                                                                                                    process = "main" ;
+                                                                                                                    timeout = 60 ;
+                                                                                                                } ;
+                                                                                                            main =  builtins.elemAt actions index ;
+                                                                                                            in defaults // main ;
                                                                                                 list =
                                                                                                     builtins.concatLists
                                                                                                         [
@@ -252,17 +264,7 @@
                                                                                                 generator =
                                                                                                     index :
                                                                                                         let
-                                                                                                            action =
-                                                                                                                let
-                                                                                                                    base = builtins.elemAt _actions index ;
-                                                                                                                    defaults =
-                                                                                                                        {
-                                                                                                                            expected-standard-output = "" ;
-                                                                                                                            expected-status = 0 ;
-                                                                                                                            process = "main" ;
-                                                                                                                            timeout = 60 ;
-                                                                                                                        } ;
-                                                                                                                    in defaults // base ;
+                                                                                                            action = builtins.elemAt _actions index ;
                                                                                                             command =
                                                                                                                 let
                                                                                                                     application =
@@ -389,7 +391,7 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            mapper = { process , text , index , jindex } : "$COMMANDS/${ builtins.toString jindex }" ;
+                                                                                                            mapper = { process , text , index , xindex } : "$COMMANDS/${ builtins.toString xindex }" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
