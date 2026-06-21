@@ -388,6 +388,7 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
+                                                                                                echo "$0" >&2
                                                                                                 exit 146
                                                                                             '' ;
                                                                             } ;
