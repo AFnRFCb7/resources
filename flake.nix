@@ -301,7 +301,6 @@
                                                                                                                                                         ''
                                                                                                                                                             TIMEOUT="$1"
                                                                                                                                                             UUID="$2"
-                                                                                                                                                            echo 6847511711525312 >&2
                                                                                                                                                             if read -t "$TIMEOUT" -r VALUE <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID $VALUE" >&2
