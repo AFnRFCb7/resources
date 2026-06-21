@@ -236,13 +236,17 @@
                                                                                 text =
                                                                                     let
                                                                                         _actions =
-                                                                                            builtins.concatLists
-                                                                                                [
-                                                                                                    [ { process = "main" ; text = "is-blocked 1 2745375537866399" ; } ]
-                                                                                                    # [ { text = "file-integrity-check 7486299242617446" ; } ]
-                                                                                                    actions
-                                                                                                    [ { process = "main" ; text = "is-blocked 1 5572814436683922" ; } ]
-                                                                                                ] ;
+                                                                                            let
+                                                                                                generator = index : ( builtins.elemAt actions index ) // { xindex = index ; } ;
+                                                                                                list =
+                                                                                                    builtins.concatLists
+                                                                                                        [
+                                                                                                            [ { process = "main" ; text = "is-blocked 1 2745375537866399" ; } ]
+                                                                                                            # [ { text = "file-integrity-check 7486299242617446" ; } ]
+                                                                                                            actions
+                                                                                                            [ { process = "main" ; text = "is-blocked 1 5572814436683922" ; } ]
+                                                                                                        ] ;
+                                                                                                in builtins.genList generator list ;
                                                                                         commands =
                                                                                             let
                                                                                                 generator =
@@ -384,12 +388,15 @@
                                                                                                 grouper = action : action.process ;
                                                                                                 mapper =
                                                                                                     name : value :
-                                                                                                        ''
-                                                                                                            (
-                                                                                                                true ${ name }
-                                                                                                                # ${ builtins.concatStringsSep "\t" ( builtins.map builtins.toJSON value ) }
-                                                                                                            )
-                                                                                                        '' ;
+                                                                                                        let
+                                                                                                            mapper = { process , text , index } : "$COMMANDS/${ builtin.toString index }" ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    (
+                                                                                                                        true ${ name }
+                                                                                                                        # ${ builtins.concatStringsSep "\t" ( builtins.map builtins.toJSON value ) }
+                                                                                                                    )
+                                                                                                                '' ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
                                                                                             ''
