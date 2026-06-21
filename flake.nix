@@ -379,7 +379,7 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
-                                                                                        processes = builtins.attrValues ( builtins.mapAttrs ( name : value : "# ${ name }" ) ( builtins.groupBy ( action : action.process ) _actions ) ) ;
+                                                                                        processes = builtins.attrValues ( builtins.mapAttrs ( name : value : "# ${ name }" ) ( builtins.groupBy ( action : builtins.trace ( builtins.toJSON action ) action.process ) _actions ) ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
