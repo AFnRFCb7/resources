@@ -287,7 +287,7 @@
                                                                                                                                                         ''
                                                                                                                                                             EXPECTED_HASH="$1"
                                                                                                                                                             ROOT="$( mktemp --directory )" || exit 128
-                                                                                                                                                            ln --symbolic ${ resource-directory } ${ gc-root-directory } "$ROOT"
+                                                                                                                                                            ln --symbolic ${ resources-directory } ${ gc-roots-directory } "$ROOT"
                                                                                                                                                             NAMES="$( find "$ROOT" -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
                                                                                                                                                             CONTENT="$( find "$ROOT" -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
