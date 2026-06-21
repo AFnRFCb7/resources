@@ -429,8 +429,6 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
-                                                                                                echo "$0"
-                                                                                                exit 1
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
