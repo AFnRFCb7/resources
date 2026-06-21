@@ -381,7 +381,7 @@
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                                                         processes =
                                                                                             let
-                                                                                                grouper = action : builtins.trace ( builtins.toJSON action ) ;
+                                                                                                grouper = action : action.process ;
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         ''
