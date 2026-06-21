@@ -282,7 +282,7 @@
                                                                                                                                                         ''
                                                                                                                                                             EXPECTED_HASH="$1"
                                                                                                                                                             NAMES="$( find ${ resources-directory } -exec sha512 {} \; | sha512sum | cut --characters 1-128 )" || exit 191
-                                                                                                                                                            CONTENT="$( find ${ resources-directory } -types f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
+                                                                                                                                                            CONTENT="$( find ${ resources-directory } -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
@@ -296,12 +296,12 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "is-blocked" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             TIMEOUT="$1"
                                                                                                                                                             UUID="$2"
-                                                                                                                                                            if redis-cli -t "$TIMEOUT" -f 3
+                                                                                                                                                            if read -t "$TIMEOUT" <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID" >&2
                                                                                                                                                                 exit 160
