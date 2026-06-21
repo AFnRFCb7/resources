@@ -261,6 +261,7 @@
                                                                                                             actions
                                                                                                             [
                                                                                                                 { text = "is-blocked 1 5572814436683922" ; }
+                                                                                                                { text = "file-integrity-check 4142578624435625 0d485987c8cc47d745186848c45ac70c80d1d730e68fd8e8bc1b0367b7d7117bc4217260ad9eed1efbdc38c1301ff6f409c75eef751f2b06f6bcc274c072bd0e" ; }
                                                                                                             ]
                                                                                                         ] ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
@@ -294,7 +295,7 @@
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
-                                                                                                                                                                echo "OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                echo "UUID=$UUID" "OBSERVED_HASH=$OBSERVED_HASH" >&2
                                                                                                                                                                 exit 174
                                                                                                                                                             fi
                                                                                                                                                         '' ;
