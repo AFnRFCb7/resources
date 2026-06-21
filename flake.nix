@@ -406,6 +406,7 @@
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
+                                                                                                export COMMANDS
                                                                                                 exec 189< <( redis-cli SUBSCRIBE valid-init valid-release invalid-init invalid-release )
                                                                                                 is-subscribed valid-init 1 <&189
                                                                                                 is-subscribed valid-release 2 <&189
