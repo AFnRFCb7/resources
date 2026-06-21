@@ -391,7 +391,7 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            mapper = { expected-standard-output , expected-status , expected , index , process , text , timeout } : "$COMMANDS/${ builtins.toString xindex }" ;
+                                                                                                            mapper = { expected-standard-output , expected-status , expected , index , process , text , timeout } : "$COMMANDS/${ builtins.toString index }" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
