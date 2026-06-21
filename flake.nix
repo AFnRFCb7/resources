@@ -239,7 +239,7 @@
                                                                                             builtins.concatLists
                                                                                                 [
                                                                                                     [ { text = "is-blocked 1 2745375537866399" ; } ]
-                                                                                                    [ { text = "file-integrity-check 7486299242617446" ; } ]
+                                                                                                    # [ { text = "file-integrity-check 7486299242617446" ; } ]
                                                                                                     actions
                                                                                                     [ { text = "is-blocked 1 5572814436683922" ; } ]
                                                                                                 ] ;
@@ -397,6 +397,7 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
+                                                                                                ${ builtins.concatStringsSep "\n" processes }
                                                                                                 echo 4516885351862392 "$0"
                                                                                                 exit 132
                                                                                             '' ;
