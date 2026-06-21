@@ -387,6 +387,7 @@
                                                                                                         ''
                                                                                                             (
                                                                                                                 true ${ name }
+                                                                                                                ${ builtins.concatStringsSep "\n#\t" ( builtins.map builtins.toJSON value ) }
                                                                                                             )
                                                                                                         '' ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
