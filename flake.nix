@@ -384,7 +384,17 @@
                                                                                                 generator =
                                                                                                     index :
                                                                                                         builtins.groupBy ( action : action.process or "" ) _actions ;
-                                                                                                in builtins.genList generator ( builtins.length processes ) ;
+                                                                                                mapper =
+                                                                                                    element :
+                                                                                                        let
+                                                                                                            mapper = { index , ... } : "$COMMANDS/${ builtins.toString index }" ;
+                                                                                                            in
+                                                                                                            ''
+                                                                                                                (
+                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map mapper element ) }
+                                                                                                                ) &
+                                                                                                            '' ;
+                                                                                                in builtins.map mapper ( builtins.attrValues ( builtins.genList generator ( builtins.length processes ) ) ) ;
                                                                                         in
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 119
@@ -394,6 +404,9 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
+                                                                                                ${ builtins.concatStringSep "\n" processes }
+                                                                                                echo 4516885351862392 "$0"
+                                                                                                exit 132
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
