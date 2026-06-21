@@ -209,7 +209,6 @@
                                                                                                             EXPECTED_TYPE="subscribe"
                                                                                                             EXPECTED_CHANNEL="$1"
                                                                                                             EXPECTED_PAYLOAD="$2"
-                                                                                                            echo 8697993439956775 >&2
                                                                                                             read -t 1 -r OBSERVED_TYPE <&189 || exit 124
                                                                                                             read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
                                                                                                             read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 160
