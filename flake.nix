@@ -254,7 +254,7 @@
                                                                                                     builtins.concatLists
                                                                                                         [
                                                                                                             [ { text = "is-blocked 1 2745375537866399" ; } ]
-                                                                                                            # [ { text = "file-integrity-check 7486299242617446" ; } ]
+                                                                                                            [ { text = "file-integrity-check 7486299242617446" ; } ]
                                                                                                             actions
                                                                                                             [ { text = "is-blocked 1 5572814436683922" ; } ]
                                                                                                         ] ;
