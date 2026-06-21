@@ -388,7 +388,7 @@
                                                                                                             (
                                                                                                                 true ${ name }
                                                                                                             )
-                                                                                                        '';
+                                                                                                        '' ;
                                                                                                 in builtins.attrValues mapper ( builtins.groupBy grouper _actions ) ;
                                                                                         in
                                                                                             ''
