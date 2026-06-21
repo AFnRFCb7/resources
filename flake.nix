@@ -249,7 +249,7 @@
                                                                                                                     timeout = 60 ;
                                                                                                                 } ;
                                                                                                             main =  builtins.elemAt actions index ;
-                                                                                                            in defaults // main ;
+                                                                                                            in defaults \\ main ;
                                                                                                 list =
                                                                                                     builtins.concatLists
                                                                                                         [
