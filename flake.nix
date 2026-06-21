@@ -296,7 +296,7 @@
                                                                                                                                                             then
                                                                                                                                                                 ln --symbolic ${ gc-roots-directory } "$ROOT"
                                                                                                                                                             fi
-                                                                                                                                                            NAMES="$( find "$ROOT" -type f-exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                                                            NAMES="$( find "$ROOT" -type f -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
                                                                                                                                                             CONTENT="$( find "$ROOT" -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
