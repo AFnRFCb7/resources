@@ -180,6 +180,7 @@
                                     check =
                                         {
                                             actions ,
+                                            gc-roots-directory ,
                                             pkgs ,
                                             private ,
                                             resources-directory ,
@@ -285,8 +286,8 @@
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             EXPECTED_HASH="$1"
-                                                                                                                                                            NAMES="$( find ${ resources-directory } -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
-                                                                                                                                                            CONTENT="$( find ${ resources-directory } -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
+                                                                                                                                                            NAMES="$( find ${ resources-directory } ${ gc-root-directory } -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                                                            CONTENT="$( find ${ resources-directory } ${ gc-root-directory } -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
                                                                                                                                                             OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
