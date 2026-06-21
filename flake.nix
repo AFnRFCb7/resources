@@ -333,10 +333,11 @@
                                                                                                                                                     runtimeInputs = [ ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
-                                                                                                                                                            EXECUTABLE="$1"
+                                                                                                                                                            UUID="$1"
+                                                                                                                                                            EXECUTABLE="$2"
                                                                                                                                                             if [[ ! -x "$EXECUTABLE" ]]
                                                                                                                                                             then
-                                                                                                                                                                echo "$EXECUTABLE" >&2
+                                                                                                                                                                echo "UUID=$UUID" "EXECUTABLE=$EXECUTABLE" >&2
                                                                                                                                                                 exit 137
                                                                                                                                                             fi
                                                                                                                                                         '' ;
