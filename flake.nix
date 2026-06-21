@@ -248,7 +248,7 @@
                                                                                                                     process = "main" ;
                                                                                                                     timeout = 60 ;
                                                                                                                 } ;
-                                                                                                            main =  builtins.elemAt actions index ;
+                                                                                                            main =  builtins.elemAt list index ;
                                                                                                             in defaults // main ;
                                                                                                 list =
                                                                                                     builtins.concatLists
