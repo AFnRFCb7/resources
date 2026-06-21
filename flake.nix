@@ -404,7 +404,7 @@
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
-                                                                                                ${ builtins.concatStringSep "\n" processes }
+                                                                                                ${ builtins.concatStringsSep "\n" processes }
                                                                                                 echo 4516885351862392 "$0"
                                                                                                 exit 132
                                                                                             '' ;
