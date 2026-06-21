@@ -258,7 +258,7 @@
                                                                                                             actions
                                                                                                             [ { process = "main" ; text = "is-blocked 1 5572814436683922" ; } ]
                                                                                                         ] ;
-                                                                                                in builtins.genList generator list ;
+                                                                                                in builtins.genList generator ( builtins.length list ) ;
                                                                                         commands =
                                                                                             let
                                                                                                 generator =
