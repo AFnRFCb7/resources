@@ -382,7 +382,7 @@
                                                                                         processes =
                                                                                             let
                                                                                                 grouper = action : builtins.trace ( builtins.toJSON action ) ;
-                                                                                                mapper = builtins.mapAttrs ( name : value : "# ${ name }" ) ;
+                                                                                                mapper = name : value : "# ${ name }" ;
                                                                                                 in builtins.attrValues mapper ( builtins.groupBy grouper  _actions ) ;
                                                                                         in
                                                                                             ''
