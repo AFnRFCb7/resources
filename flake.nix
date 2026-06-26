@@ -309,7 +309,7 @@
                                                                                                                                                                 echo "UUID=$UUID" >&2
                                                                                                                                                                 echo "YAML_FILE" >&2
                                                                                                                                                                 yq eval --prettyPrint "." "$YAML_FILE" >&2
-                                                                                                                                                                echo "$OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                echo "OBSERVED_HASH=$OBSERVED_HASH" >&2
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
