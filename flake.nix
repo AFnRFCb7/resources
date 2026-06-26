@@ -438,7 +438,7 @@
                                                                                                                     (
                                                                                                                         true ${ name }
                                                                                                                         ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
-                                                                                                                    )
+                                                                                                                    ) &
                                                                                                                 '' ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
