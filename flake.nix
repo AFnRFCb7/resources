@@ -298,13 +298,17 @@
                                                                                                                                                             then
                                                                                                                                                                 ln --symbolic ${ gc-roots-directory } "$ROOT"
                                                                                                                                                             fi
-                                                                                                                                                            NAMES="$( find "$ROOT" -type f -exec sha512sum {} \; | sha512sum | cut --characters 1-128 )" || exit 191
-                                                                                                                                                            CONTENT="$( find "$ROOT" -type f -exec cat {} \; | sha512sum | cut --characters 1-128 )" || exit 163
-                                                                                                                                                            OBSERVED_HASH="$( echo "$NAMES" "$CONTENT" | sha512sum | cut --characters 1-128 )" || exit 171
+                                                                                                                                                            find "$ROOT" -type f | sort | while IFS= read -r FILE
+                                                                                                                                                            do
+                                                                                                                                                                jq --null-input --arg NAME "$FILE" --rawfile CONTENTS "$FILE" '{ "name": $NAME, "contents": $CONTENTS }' | yq eval --prettyPrint '[.]'
+                                                                                                                                                            done >> "$YAML_FILE"
+                                                                                                                                                            OBSERVED_HASH="$( sha512sum "$YAML_FILE" | cut --characters 1-128 )" || exit 176
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
-                                                                                                                                                                echo "UUID=$UUID" "OBSERVED_HASH=$OBSERVED_HASH" >&2
-                                                                                                                                                                exit 174
+                                                                                                                                                                echo "YAML_FILE" >&2
+                                                                                                                                                                yq eval --prettyPrint "." "$YAML_FILE" >&2
+                                                                                                                                                                echo "$OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
