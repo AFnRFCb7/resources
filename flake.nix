@@ -85,8 +85,10 @@
                                                                         text =
                                                                             ''
                                                                                 mkdir --parents ${ resources-directory }/locks
+                                                                                echo 4171876229941829 >&2
                                                                                 exec 155> ${ resources-directory }/locks/temporary
                                                                                 flock -s 155
+                                                                                echo 2896314581654443 >&2
                                                                                 mkdir --parents ${ resources-directory }/temporary
                                                                                 INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 150
                                                                                 export INPUT_FILE
@@ -404,7 +406,7 @@
                                                                                                                                             cat ${ builtins.toString action.text } >&2
                                                                                                                                             echo 6953992692648714 >&2
                                                                                                                                             echo "RESOURCES=$RESOURCES" >&2
-                                                                                                                                            echo 3876262385333986
+                                                                                                                                            echo 3876262385333986 >&2
                                                                                                                                             cat "$RESOURCES/[\"checks\",\"true\",\"true\"]/resource" >&2
                                                                                                                                             echo 7926178834245513 >&2
                                                                                                                                             echo >&2
