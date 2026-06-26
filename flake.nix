@@ -399,6 +399,9 @@
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
                                                                                                                                             echo 4116326241261488 >&2
+                                                                                                                                            cat "$0" >&2
+                                                                                                                                            echo >&2
+                                                                                                                                            echo >&2
                                                                                                                                             echo TEXT >&2
                                                                                                                                             echo ${ builtins.toString action.text } >&2
                                                                                                                                             echo >&2
