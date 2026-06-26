@@ -399,7 +399,8 @@
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
                                                                                                                                             echo TEXT >&2
-                                                                                                                                            cat ${ builtins.toFile "text" ( builtins.toString action.text ) } >&2
+                                                                                                                                            # cat ${ builtins.toFile "text" ( builtins.toString action.text ) } >&2
+                                                                                                                                            echo "${ builtins.toString action.text }" >&2
                                                                                                                                             echo >&2
                                                                                                                                             echo >&2
                                                                                                                                             echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
