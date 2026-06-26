@@ -283,7 +283,7 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "check-file-integrity" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             UUID="$1"
@@ -299,7 +299,7 @@
                                                                                                                                                             fi
                                                                                                                                                             YAML_FILE="$( mktemp )" || exit 139
                                                                                                                                                             cd "$ROOT"
-                                                                                                                                                            find . -type f | sort | while IFS= read -r FILE
+                                                                                                                                                            find . \( -path './resources/pids' -o -path './resources/temporary' \) -prune -o -type f -print | sort | while IFS= read -r FILE
                                                                                                                                                             do
                                                                                                                                                                 jq --null-input --arg NAME "$FILE" --rawfile CONTENTS "$FILE" '{ "name": $NAME, "contents": $CONTENTS }' | yq eval --prettyPrint '[.]'
                                                                                                                                                             done >> "$YAML_FILE"
