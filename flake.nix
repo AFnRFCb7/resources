@@ -396,6 +396,11 @@
                                                                                                                                             echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" >&2
                                                                                                                                             exit 178
                                                                                                                                         fi
+                                                                                                                                        if [[ "$OBSERVED_STATUS" == 124 ]]
+                                                                                                                                        then
+                                                                                                                                            echo
+                                                                                                                                            exit 183
+                                                                                                                                        fi
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
                                                                                                                                             echo 4116326241261488 >&2
