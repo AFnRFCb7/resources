@@ -85,10 +85,8 @@
                                                                         text =
                                                                             ''
                                                                                 mkdir --parents ${ resources-directory }/locks
-                                                                                echo 4171876229941829 >&2
                                                                                 exec 155> ${ resources-directory }/locks/temporary
                                                                                 flock -s 155
-                                                                                echo 2896314581654443 >&2
                                                                                 mkdir --parents ${ resources-directory }/temporary
                                                                                 INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 150
                                                                                 export INPUT_FILE
@@ -96,29 +94,20 @@
                                                                                 mkdir --parents ${ resources-directory }/mounts
                                                                                 mkdir --parents ${ resources-directory }/pids
                                                                                 OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 108
-                                                                                echo 1987177723556695 >&2
                                                                                 export OUTPUT_FILE
-                                                                                echo 1325764949817554 >&2
                                                                                 ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 119
-                                                                                echo 5244852418772298 >&2
                                                                                 if [[ -t 0 ]]
                                                                                 then
-                                                                                    echo 5117615611655917 >&2
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 126
                                                                                     jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
                                                                                 else
-                                                                                    echo 8851275122564796 >&2
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 133
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 141
                                                                                     jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { "standard" : "." } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
                                                                                 fi
-                                                                                echo 3288421685282724 >&2
                                                                                 resource
-                                                                                echo 4695596644598851 >&2
                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
-                                                                                echo 6797277965571554 >&2
                                                                                 echo "$OUTPUT"
-                                                                                echo 3868136768587717 >&2
                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
                                                                                 exit "$STATUS"
                                                                             '' ;
