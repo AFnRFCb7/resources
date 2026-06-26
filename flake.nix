@@ -292,11 +292,11 @@
                                                                                                                                                             ROOT="$( mktemp --directory )" || exit 128
                                                                                                                                                             if [[ -d ${ resources-directory } ]]
                                                                                                                                                             then
-                                                                                                                                                                ln --symbolic ${ resources-directory } "$ROOT"
+                                                                                                                                                                cp --recursive ${ resources-directory } "$ROOT/resources"
                                                                                                                                                             fi
                                                                                                                                                             if [[ -d ${ gc-roots-directory } ]]
                                                                                                                                                             then
-                                                                                                                                                                ln --symbolic ${ gc-roots-directory } "$ROOT"
+                                                                                                                                                                cp --recursive ${ gc-roots-directory } "$ROOT/roots"
                                                                                                                                                             fi
                                                                                                                                                             YAML_FILE="$( mktemp )" || exit 139
                                                                                                                                                             find "$ROOT" -type f | sort | while IFS= read -r FILE
