@@ -19,6 +19,35 @@
                                     resources-directory
                                 } :
                                     {
+                                        hooks =
+                                            {
+                                                clean =
+                                                    let
+                                                        application =
+                                                            pkgs.writeShellApplication
+                                                                {
+                                                                    name = "clean" ;
+                                                                    runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.flock pkgs.gnutar pkgs.xz ] ;
+                                                                    text =
+                                                                        ''
+                                                                            if [[ -d ${ resources-directory }/locks ]]
+                                                                            then
+                                                                                exec 163> ${ resources-directory }/locks/temporary
+                                                                                flock -x 163
+                                                                                if [[ -d ${ resources-directory }/release ]]
+                                                                                then
+                                                                                    find ${ resources-directory }/release -type f -exec sh {} \;
+                                                                                fi
+                                                                                if [[ ! -f ${ resources-directory }/invalid-init ]] && [[ ! -f ${ resources-directory }/invalid-release ]]
+                                                                                then
+                                                                                    ARCHIVE="$( mktemp --suffix .tar.gz )"
+                                                                                    tar --create --xz --file "$ARCHIVE" ${ resources-directory } ${ gc-roots-directory }
+                                                                                fi
+                                                                            fi
+                                                                        '' ;
+                                                                } ;
+                                                            in "${ application }/bin/clean" ;
+                                            } ;
                                         user =
                                             {
                                                 init
