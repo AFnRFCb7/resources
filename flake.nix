@@ -210,7 +210,7 @@
                                                                                                             EXPECTED_TYPE="subscribe"
                                                                                                             EXPECTED_CHANNEL="$1"
                                                                                                             EXPECTED_PAYLOAD="$2"
-                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 124
+                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 142
                                                                                                             read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
                                                                                                             read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 160
                                                                                                             if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
