@@ -96,6 +96,7 @@
                                                                                 mkdir --parents ${ resources-directory }/mounts
                                                                                 mkdir --parents ${ resources-directory }/pids
                                                                                 OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 108
+                                                                                echo 1987177723556695 >&2
                                                                                 export OUTPUT_FILE
                                                                                 ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 119
                                                                                 if [[ -t 0 ]]
@@ -107,9 +108,13 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 141
                                                                                     jq --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { "standard" : "." } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
                                                                                 fi
+                                                                                echo 3288421685282724 >&2
                                                                                 resource
+                                                                                echo 4695596644598851 >&2
                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
+                                                                                echo 6797277965571554 >&2
                                                                                 echo "$OUTPUT"
+                                                                                echo 3868136768587717 >&2
                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
                                                                                 exit "$STATUS"
                                                                             '' ;
