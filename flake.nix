@@ -398,23 +398,13 @@
                                                                                                                                         fi
                                                                                                                                         if [[ "$OBSERVED_STATUS" == 124 ]]
                                                                                                                                         then
-                                                                                                                                            echo
+                                                                                                                                            echo time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } >&2
+                                                                                                                                            echo >&2
                                                                                                                                             exit 183
                                                                                                                                         fi
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
-                                                                                                                                            echo 4116326241261488 >&2
-                                                                                                                                            echo "$0" >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            echo TEXT >&2
-                                                                                                                                            echo ${ builtins.toString action.text } >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            cat ${ builtins.toString action.text } >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            echo >&2
-                                                                                                                                            echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
+                                                                                                                                            echo "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
                                                                                                                                             exit 132
                                                                                                                                         fi
                                                                                                                                     '' ;
