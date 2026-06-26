@@ -402,6 +402,8 @@
                                                                                                                                             echo time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } >&2
                                                                                                                                             echo >&2
                                                                                                                                             cat ${ builtins.toString action.text } >&2
+                                                                                                                                            echo 6953992692648714 >&2
+                                                                                                                                            echo "RESOURCES=$RESOURCES"
                                                                                                                                             echo 7926178834245513 >&2
                                                                                                                                             echo >&2
                                                                                                                                             exit 183
