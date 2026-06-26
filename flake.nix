@@ -6,6 +6,7 @@
 		    {
 		        lib =
 		            {
+		                bash ,
 		                buildFHSUserEnv ,
 		                coreutils ,
 		                flock ,
