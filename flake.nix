@@ -298,6 +298,7 @@
                                                                                                                                                             then
                                                                                                                                                                 ln --symbolic ${ gc-roots-directory } "$ROOT"
                                                                                                                                                             fi
+                                                                                                                                                            YAML_FILE="$( mktemp )" || exit 139
                                                                                                                                                             find "$ROOT" -type f | sort | while IFS= read -r FILE
                                                                                                                                                             do
                                                                                                                                                                 jq --null-input --arg NAME "$FILE" --rawfile CONTENTS "$FILE" '{ "name": $NAME, "contents": $CONTENTS }' | yq eval --prettyPrint '[.]'
