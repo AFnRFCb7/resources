@@ -27,7 +27,7 @@
                                                             writeShellApplication
                                                                 {
                                                                     name = "clean" ;
-                                                                    runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.flock pkgs.gnutar pkgs.xz ] ;
+                                                                    runtimeInputs = [ bash coreutils findutils flock gnutar xz ] ;
                                                                     text =
                                                                         ''
                                                                             if [[ -d ${ resources-directory }/locks ]]
