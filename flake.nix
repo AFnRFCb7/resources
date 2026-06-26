@@ -398,7 +398,7 @@
                                                                                                                                         fi
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
-                                                                                                                                            echo "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
+                                                                                                                                            echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
                                                                                                                                             exit 132
                                                                                                                                         fi
                                                                                                                                     '' ;
