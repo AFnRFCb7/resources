@@ -24,7 +24,7 @@
                                                 clean =
                                                     let
                                                         application =
-                                                            pkgs.writeShellApplication
+                                                            writeShellApplication
                                                                 {
                                                                     name = "clean" ;
                                                                     runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.findutils pkgs.flock pkgs.gnutar pkgs.xz ] ;
