@@ -305,6 +305,7 @@
                                                                                                                                                             OBSERVED_HASH="$( sha512sum "$YAML_FILE" | cut --characters 1-128 )" || exit 176
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
+                                                                                                                                                                echo "UUID=$UUID" >&2
                                                                                                                                                                 echo "YAML_FILE" >&2
                                                                                                                                                                 yq eval --prettyPrint "." "$YAML_FILE" >&2
                                                                                                                                                                 echo "$OBSERVED_HASH=$OBSERVED_HASH" >&2
