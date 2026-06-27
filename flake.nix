@@ -115,10 +115,7 @@
                                                                                                 path : value :
                                                                                                     let
                                                                                                         init = value null ;
-                                                                                                        in
-                                                                                                            {
-                                                                                                                text = "9824178762142696" ;
-                                                                                                            } ;
+                                                                                                        in "9824178762142696" ;
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
