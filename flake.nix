@@ -20,6 +20,7 @@
                         let
                             implementation =
                                 {
+                                    gc-roots-directory ,
                                     resources-directory
                                 } :
                                     {
