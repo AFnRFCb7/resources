@@ -113,28 +113,7 @@
                                                                                         {
                                                                                             lambda =
                                                                                                 path : value :
-                                                                                                    let
-                                                                                                        init = value null ;
-                                                                                                        resource-path = path ;
-                                                                                                        in
-                                                                                                            {
-                                                                                                                action =
-                                                                                                                    {
-                                                                                                                        text =
-                                                                                                                            visitor
-                                                                                                                                {
-                                                                                                                                    lambda =
-                                                                                                                                        path : value :
-                                                                                                                                            let
-                                                                                                                                                action = value null ;
-                                                                                                                                                in
-                                                                                                                                                    {
-                                                                                                                                                        text = action { resource-path = resource-path ; } ;
-                                                                                                                                                    } ;
-                                                                                                                                }
-                                                                                                                                init.action ;
-                                                                                                                    } ;
-                                                                                                            } ;
+                                                                                                    "1966284239194885" ;
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
