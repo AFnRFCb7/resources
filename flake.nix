@@ -9,6 +9,7 @@
 		                bash ,
 		                buildFHSUserEnv ,
 		                coreutils ,
+		                findutils ,
 		                flock ,
 		                jq ,
 		                visitor ,
