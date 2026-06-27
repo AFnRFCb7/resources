@@ -100,9 +100,6 @@
                                                                                                                             else
                                                                                                                                 SEQUENCE="$( sequential )" || exit 165
                                                                                                                                 printf -v INDEX "%016d" "$SEQUENCE"
-                                                                                                                                mkdir --parents "${ resources-directory }/scripts/$INDEX/init/recovery"
-                                                                                                                                cp "$0" "${ resources-directory }/scripts/$INDEX/init/action"
-                                                                                                                                mkdir --parents "${ resources-directory }/scripts/$INDEX/release/recovery"
                                                                                                                                 LINK="${ resources-directory }/mounts/$INDEX"
                                                                                                                                 mkdir --parents "$LINK"
                                                                                                                                 ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
