@@ -1,4 +1,4 @@
-# 3341595311581137
+# 6415135197115259
 {
 	inputs = { } ;
 	outputs =
@@ -24,191 +24,163 @@
                                     resources-directory
                                 } :
                                     {
-                                        hooks =
-                                            {
-                                                clean =
-                                                    let
-                                                        application =
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "clean" ;
-                                                                    runtimeInputs = [ bash coreutils findutils flock gnutar xz ] ;
-                                                                    text =
-                                                                        ''
-                                                                            if [[ -d ${ resources-directory }/locks ]]
-                                                                            then
-                                                                                exec 163> ${ resources-directory }/locks/temporary
-                                                                                flock -x 163
-                                                                                if [[ -d ${ resources-directory }/release ]]
-                                                                                then
-                                                                                    find ${ resources-directory }/release -type f -exec sh {} \;
-                                                                                fi
-                                                                                if [[ ! -f ${ resources-directory }/invalid-init ]] && [[ ! -f ${ resources-directory }/invalid-release ]]
-                                                                                then
-                                                                                    ARCHIVE="$( mktemp --suffix .tar.gz )"
-                                                                                    tar --create --xz --file "$ARCHIVE" ${ resources-directory } ${ gc-roots-directory }
-                                                                                fi
-                                                                            fi
-                                                                        '' ;
-                                                                } ;
-                                                            in "${ application }/bin/clean" ;
-                                            } ;
-                                        user =
-                                            {
-                                                init
-                                            } :
-                                                let
-                                                    resource =
-                                                        let
-                                                            application =
-                                                                writeShellApplication
-                                                                    {
-                                                                        name = "resource" ;
-                                                                        runtimeInputs =
-                                                                            [
-                                                                                (
-                                                                                    buildFHSUserEnv
-                                                                                        {
-                                                                                            extraBwrapArgs =
-                                                                                                [
-                                                                                                    "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                    "--bind" "${ resources-directory }/canonical" "${ resources-directory }/canonical"
-                                                                                                    "--bind" "${ resources-directory }/pids" "${ resources-directory }/pids"
-                                                                                                    "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                ] ;
-                                                                                            name = "resource" ;
-                                                                                            runScript = "resource" ;
-                                                                                            targetPkgs =
-                                                                                                pkgs :
-                                                                                                    [
-                                                                                                        (
-                                                                                                            pkgs.writeShellApplication
-                                                                                                                {
-                                                                                                                    name = "resource" ;
-                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq sequential ] ;
-                                                                                                                    text =
-                                                                                                                        ''
-                                                                                                                            jq --null-input '{ "output" : "WTF" , "status" : 9 }' > /output
-                                                                                                                            HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
-                                                                                                                            ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 126
-                                                                                                                            if [[ -L "${ resources-directory }/canonical/$HASH" ]]
-                                                                                                                            then
-                                                                                                                                LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 108
-                                                                                                                                INDEX="$( basename "$LINK" )" || exit 144
-                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
-                                                                                                                            else
-                                                                                                                                SEQUENCE="$( sequential )" || exit 165
-                                                                                                                                printf -v INDEX "%016d" "$SEQUENCE"
-                                                                                                                                LINK="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                mkdir --parents "$LINK"
-                                                                                                                                ln --symbolic "$LINK" "${ resources-directory }/canonical/$HASH"
-                                                                                                                                mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                jq --null-input --arg OUTPUT "$LINK" '{ "output" : $OUTPUT , "status" : 0 }' > /output
-                                                                                                                            fi
-                                                                                                                        '' ;
-                                                                                                                }
-                                                                                                        )
-                                                                                                    ] ;
-                                                                                        }
-                                                                                )
-                                                                                coreutils
-                                                                                flock
-                                                                                jq
-                                                                            ] ;
-                                                                        text =
-                                                                            ''
-                                                                                mkdir --parents ${ resources-directory }/locks
-                                                                                exec 155> ${ resources-directory }/locks/temporary
-                                                                                flock -s 155
-                                                                                mkdir --parents ${ resources-directory }/temporary
-                                                                                INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 150
-                                                                                export INPUT_FILE
-                                                                                mkdir --parents ${ resources-directory }/canonical
-                                                                                mkdir --parents ${ resources-directory }/mounts
-                                                                                mkdir --parents ${ resources-directory }/pids
-                                                                                OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 108
-                                                                                export OUTPUT_FILE
-                                                                                ARGUMENTS_JSON="$( printf '%s\n' "$@" | jq --raw-input . | jq --slurp . )" || exit 119
-                                                                                if [[ -t 0 ]]
-                                                                                then
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 126
-                                                                                    jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
-                                                                                else
-                                                                                    PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 133
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 141
-                                                                                    jq --null-input --argjson ARGUMENTS "$ARGUMENTS_JSON" --argjson ORIGINATOR_PID "$ULTIMATE_PID" '{ "arguments" : $ARGUMENTS , "inputs" : { "standard" : "." } , "originator-pid" : $ORIGINATOR_PID }' > "$INPUT_FILE"
-                                                                                fi
-                                                                                resource
-                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 114
-                                                                                echo "$OUTPUT"
-                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 142
-                                                                                exit "$STATUS"
-                                                                            '' ;
-                                                                    } ;
-                                                            in "${ application }/bin/resource" ;
-                                                    sequential =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "sequential" ;
-                                                                runtimeInputs =
-                                                                    [
-                                                                        (
-                                                                            buildFHSUserEnv
-                                                                                {
-                                                                                    extraBwrapArgs =
+                                        clean =
+                                            let
+                                                application =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "clean" ;
+                                                            runtimeInputs =
+                                                                [
+                                                                    (
+                                                                        buildFHSUserEnv
+                                                                            {
+                                                                                extraBwrapArgs =
+                                                                                    [
+                                                                                    ] ;
+                                                                                name = "clean" ;
+                                                                                runScript = "clean" ;
+                                                                                targetPkgs =
+                                                                                    pkgs :
                                                                                         [
-                                                                                            "--bind" "${ resources-directory }/sequential" "${ resources-directory }/sequential"
-                                                                                            "--bind" "$OUTPUT_FILE" "/output"
+                                                                                            (
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "clean" ;
+                                                                                                        runtimeInputs = [ ] ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                            '' ;
+                                                                                                    }
+                                                                                            )
                                                                                         ] ;
-                                                                                    name = "sequential" ;
-                                                                                    runScript =
-                                                                                        ''
-                                                                                            sequential
-                                                                                        '' ;
-                                                                                    targetPkgs =
-                                                                                        pkgs :
-                                                                                            [
-                                                                                                (
-                                                                                                    pkgs.writeShellApplication
+                                                                            }
+                                                                    )
+                                                                ] ;
+                                                            text =
+                                                                ''
+                                                                    clean
+                                                                '' ;
+                                                        } ;
+                                                in "${ application }/bin/clean" ;
+                                        resource =
+                                            let
+                                                application =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "resource" ;
+                                                            runtimeInputs =
+                                                                [
+                                                                    coreutils
+                                                                    jq
+                                                                    (
+                                                                        buildFHSUserEnv
+                                                                            {
+                                                                                extraBwrapArgs =
+                                                                                    [
+                                                                                        "--bind" "${ gc-roots-directory }" "${ gc-roots-directory }"
+                                                                                        "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                        "--bind" "$OUTPUT_FILE" "/output"
+                                                                                        "--bind" "${ resource-directory }" "${ resources-directory }"
+                                                                                    ] ;
+                                                                                name = "resource" ;
+                                                                                runScript = "resource" ;
+                                                                                targetPkgs =
+                                                                                    pkgs :
+                                                                                        [
+                                                                                            (
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "resource" ;
+                                                                                                        runtimeInputs = [ ] ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                            '' ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                            }
+                                                                    )
+                                                                ] ;
+                                                            text =
+                                                                let
+                                                                    script =
+                                                                        {
+                                                                            init =
+                                                                                visitor
+                                                                                    {
+                                                                                        lambda =
+                                                                                            path : value :
+                                                                                                let
+                                                                                                    init = value null ;
+                                                                                                    resource-path = path ;
+                                                                                                    in
                                                                                                         {
-                                                                                                            name = "sequential" ;
-                                                                                                            runtimeInputs = [ ] ;
-                                                                                                            text =
-                                                                                                                ''
-                                                                                                                    CURRENT="$( cat ${ resources-directory }/sequential )" || exit 121
-                                                                                                                    NEXT=$(( CURRENT + 1 ))
-                                                                                                                    echo "$NEXT" > ${ resources-directory }/sequential
-                                                                                                                    echo "$CURRENT" > /output
-                                                                                                                '' ;
-                                                                                                        }
-                                                                                                )
-                                                                                            ] ;
-                                                                                }
-                                                                        )
-                                                                        coreutils
-                                                                        flock
-                                                                    ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 159> ${ resources-directory }/locks/temporary
-                                                                        flock -s 159
-                                                                        OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX )" || exit 179
-                                                                        export OUTPUT_FILE
-                                                                        exec 167> ${ resources-directory }/locks/sequential
-                                                                        flock -x 167
-                                                                        if [[ ! -f ${ resources-directory }/sequential ]]
-                                                                        then
-                                                                            echo 0 > ${ resources-directory }/sequential
-                                                                        fi
-                                                                        sequential "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        SEQUENCE="$( cat "$OUTPUT_FILE" )" || exit 176
-                                                                        echo "$SEQUENCE"
-                                                                    '' ;
-                                                            } ;
-                                                    in resource ;
+                                                                                                            action =
+                                                                                                                {
+                                                                                                                    text =
+                                                                                                                        visit
+                                                                                                                            {
+                                                                                                                                lambda =
+                                                                                                                                    path : value :
+                                                                                                                                        let
+                                                                                                                                            action = value null ;
+                                                                                                                                            in
+                                                                                                                                                {
+                                                                                                                                                    text = action { resource-path = resource-path ; } ;
+                                                                                                                                                } ;
+                                                                                                                            }
+                                                                                                                            init.action ;
+                                                                                                                } ;
+                                                                                                        } ;
+                                                                                    }
+                                                                                    init ;
+                                                                            release = null ;
+                                                                        } ;
+                                                                    in
+                                                                        ''
+                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                            exec 191> ${ resources-directory }/locks/temporary
+                                                                            flock -s 191
+                                                                            ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
+                                                                            INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 187
+                                                                            export INPUT_FILE
+                                                                            OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 164
+                                                                            export OUTPUT_FILE
+                                                                            if [[ -t 0 ]]
+                                                                            then
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                    --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                    --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                    '{
+                                                                                        "arguments" : $ARGUMENTS ,
+                                                                                        "inputs" : { } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "scripts" : $SCRIPTS
+                                                                                    }' > "$INPUT_FILE"
+                                                                            else
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                    --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                    --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                    '{
+                                                                                        "arguments" : $ARGUMENTS ,
+                                                                                        "inputs" : { "standard" : . } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "scripts" : $SCRIPTS
+                                                                                    }' > "$INPUT_FILE"
+                                                                            fi
+                                                                            resource
+                                                                        '' ;
+                                                        } ;
+                                                in "${ application }/bin/resource" ;
                                     } ;
                             in
                                 {
