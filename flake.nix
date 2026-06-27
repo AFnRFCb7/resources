@@ -14,7 +14,7 @@
 		                gnutar ,
 		                jq ,
 		                visitor ,
-		                xy ,
+		                xz ,
 		                writeShellApplication
                     } :
                         let
