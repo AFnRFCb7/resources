@@ -114,7 +114,7 @@
                                                                                             lambda =
                                                                                                 path : value :
                                                                                                     {
-                                                                                                        text = value { resource-path = path ; } ;
+                                                                                                        text = value null ;
                                                                                                     } ;
                                                                                         }
                                                                                         init ;
