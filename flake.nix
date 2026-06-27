@@ -6,15 +6,11 @@
 		    {
 		        lib =
 		            {
-		                bash ,
 		                buildFHSUserEnv ,
 		                coreutils ,
-		                findutils ,
 		                flock ,
-		                gnutar ,
 		                jq ,
 		                visitor ,
-		                xz ,
 		                writeShellApplication
                     } :
                         let
@@ -64,123 +60,126 @@
                                                         } ;
                                                 in "${ application }/bin/clean" ;
                                         resource =
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "resource" ;
-                                                            runtimeInputs =
-                                                                [
-                                                                    coreutils
-                                                                    jq
-                                                                    (
-                                                                        buildFHSUserEnv
-                                                                            {
-                                                                                extraBwrapArgs =
-                                                                                    [
-                                                                                        "--bind" "${ gc-roots-directory }" "${ gc-roots-directory }"
-                                                                                        "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                        "--bind" "$OUTPUT_FILE" "/output"
-                                                                                        "--bind" "${ resources-directory }" "${ resources-directory }"
-                                                                                    ] ;
-                                                                                name = "resource" ;
-                                                                                runScript = "resource" ;
-                                                                                targetPkgs =
-                                                                                    pkgs :
+                                            {
+                                                init
+                                            } :
+                                                let
+                                                    application =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "resource" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        coreutils
+                                                                        jq
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
                                                                                         [
-                                                                                            (
-                                                                                                pkgs.writeShellApplication
-                                                                                                    {
-                                                                                                        name = "resource" ;
-                                                                                                        runtimeInputs = [ ] ;
-                                                                                                        text =
-                                                                                                            ''
-                                                                                                            '' ;
-                                                                                                    }
-                                                                                            )
+                                                                                            "--bind" "${ gc-roots-directory }" "${ gc-roots-directory }"
+                                                                                            "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" "$OUTPUT_FILE" "/output"
+                                                                                            "--bind" "${ resources-directory }" "${ resources-directory }"
                                                                                         ] ;
-                                                                            }
-                                                                    )
-                                                                ] ;
-                                                            text =
-                                                                let
-                                                                    script =
-                                                                        {
-                                                                            init =
-                                                                                visitor
-                                                                                    {
-                                                                                        lambda =
-                                                                                            path : value :
-                                                                                                let
-                                                                                                    init = value null ;
-                                                                                                    resource-path = path ;
-                                                                                                    in
+                                                                                    name = "resource" ;
+                                                                                    runScript = "resource" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
                                                                                                         {
-                                                                                                            action =
-                                                                                                                {
-                                                                                                                    text =
-                                                                                                                        visitor
-                                                                                                                            {
-                                                                                                                                lambda =
-                                                                                                                                    path : value :
-                                                                                                                                        let
-                                                                                                                                            action = value null ;
-                                                                                                                                            in
-                                                                                                                                                {
-                                                                                                                                                    text = action { resource-path = resource-path ; } ;
-                                                                                                                                                } ;
-                                                                                                                            }
-                                                                                                                            init.action ;
-                                                                                                                } ;
-                                                                                                        } ;
-                                                                                    }
-                                                                                    init ;
-                                                                            release = null ;
-                                                                        } ;
-                                                                    in
-                                                                        ''
-                                                                            mkdir --parents ${ gc-roots-directory }
-                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                            exec 191> ${ resources-directory }/locks/temporary
-                                                                            flock -s 191
-                                                                            ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
-                                                                            INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 187
-                                                                            export INPUT_FILE
-                                                                            OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 164
-                                                                            export OUTPUT_FILE
-                                                                            if [[ -t 0 ]]
-                                                                            then
-                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
-                                                                                jq \
-                                                                                    --null-input \
-                                                                                    --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                    --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                    --argjson SCRIPTS '${ builtins.toJSON scripts }' \
-                                                                                    '{
-                                                                                        "arguments" : $ARGUMENTS ,
-                                                                                        "inputs" : { } ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "scripts" : $SCRIPTS
-                                                                                    }' > "$INPUT_FILE"
-                                                                            else
-                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
-                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
-                                                                                jq \
-                                                                                    --null-input \
-                                                                                    --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                    --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                    --argjson SCRIPTS '${ builtins.toJSON scripts }' \
-                                                                                    '{
-                                                                                        "arguments" : $ARGUMENTS ,
-                                                                                        "inputs" : { "standard" : . } ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "scripts" : $SCRIPTS
-                                                                                    }' > "$INPUT_FILE"
-                                                                            fi
-                                                                            resource
-                                                                        '' ;
-                                                        } ;
-                                                in "${ application }/bin/resource" ;
+                                                                                                            name = "resource" ;
+                                                                                                            runtimeInputs = [ ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                text =
+                                                                    let
+                                                                        script =
+                                                                            {
+                                                                                init =
+                                                                                    visitor
+                                                                                        {
+                                                                                            lambda =
+                                                                                                path : value :
+                                                                                                    let
+                                                                                                        init = value null ;
+                                                                                                        resource-path = path ;
+                                                                                                        in
+                                                                                                            {
+                                                                                                                action =
+                                                                                                                    {
+                                                                                                                        text =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    lambda =
+                                                                                                                                        path : value :
+                                                                                                                                            let
+                                                                                                                                                action = value null ;
+                                                                                                                                                in
+                                                                                                                                                    {
+                                                                                                                                                        text = action { resource-path = resource-path ; } ;
+                                                                                                                                                    } ;
+                                                                                                                                }
+                                                                                                                                init.action ;
+                                                                                                                    } ;
+                                                                                                            } ;
+                                                                                        }
+                                                                                        init ;
+                                                                                release = null ;
+                                                                            } ;
+                                                                        in
+                                                                            ''
+                                                                                mkdir --parents ${ gc-roots-directory }
+                                                                                mkdir --parents ${ resources-directory }/locks
+                                                                                exec 191> ${ resources-directory }/locks/temporary
+                                                                                flock -s 191
+                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
+                                                                                INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 187
+                                                                                export INPUT_FILE
+                                                                                OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 164
+                                                                                export OUTPUT_FILE
+                                                                                if [[ -t 0 ]]
+                                                                                then
+                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                        --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                        '{
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" : { } ,
+                                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                                            "scripts" : $SCRIPTS
+                                                                                        }' > "$INPUT_FILE"
+                                                                                else
+                                                                                    PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
+                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                        --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                        '{
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" : { "standard" : . } ,
+                                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                                            "scripts" : $SCRIPTS
+                                                                                        }' > "$INPUT_FILE"
+                                                                                fi
+                                                                                resource
+                                                                            '' ;
+                                                            } ;
+                                                    in "${ application }/bin/resource" ;
                                     } ;
                             in
                                 {
