@@ -81,7 +81,7 @@
                                                                                         "--bind" "${ gc-roots-directory }" "${ gc-roots-directory }"
                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                         "--bind" "$OUTPUT_FILE" "/output"
-                                                                                        "--bind" "${ resource-directory }" "${ resources-directory }"
+                                                                                        "--bind" "${ resources-directory }" "${ resources-directory }"
                                                                                     ] ;
                                                                                 name = "resource" ;
                                                                                 runScript = "resource" ;
