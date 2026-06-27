@@ -11,8 +11,10 @@
 		                coreutils ,
 		                findutils ,
 		                flock ,
+		                gnutar ,
 		                jq ,
 		                visitor ,
+		                xy ,
 		                writeShellApplication
                     } :
                         let
