@@ -103,7 +103,7 @@
                                                                     ] ;
                                                                 text =
                                                                     let
-                                                                        script =
+                                                                        scripts =
                                                                             {
                                                                                 init =
                                                                                     visitor
