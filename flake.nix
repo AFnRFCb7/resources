@@ -88,6 +88,8 @@
                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq sequential ] ;
                                                                                                                     text =
                                                                                                                         ''
+                                                                                                                            mkdir --parents ${ resources-directory }/scripts/init/recovery
+                                                                                                                            mkdir --parents ${ resources-directory }/scripts/release/recovery
                                                                                                                             jq --null-input '{ "output" : "WTF" , "status" : 9 }' > /output
                                                                                                                             HASH="$( jq "{ arguments , inputs }" /input | sha512sum | cut --characters 1-126 )" || exit 142
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 126
