@@ -113,13 +113,7 @@
                                                                                         {
                                                                                             lambda =
                                                                                                 path : value :
-                                                                                                    let
-                                                                                                        init = value null ;
-                                                                                                        resource-path = path ;
-                                                                                                        in
-                                                                                                            {
-                                                                                                                text = init.text { resource-path = resource-path ; } ;
-                                                                                                            } ;
+                                                                                                    "2132727553792168" ;
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
