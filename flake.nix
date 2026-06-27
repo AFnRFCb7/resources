@@ -369,7 +369,7 @@
                                                                                                                                         (
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    name = "verify-executable" ;
+                                                                                                                                                    name = "check-verify-executable" ;
                                                                                                                                                     runtimeInputs = [ ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
