@@ -157,12 +157,10 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { } ,
-                                                                                            "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "originator-pid" : $ORIGINATOR_PID
                                                                                         }' > "$INPUT_FILE"
                                                                                 else
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
@@ -171,12 +169,10 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { "standard" : . } ,
-                                                                                            "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "originator-pid" : $ORIGINATOR_PID
                                                                                         }' > "$INPUT_FILE"
                                                                                 fi
                                                                                 resource
