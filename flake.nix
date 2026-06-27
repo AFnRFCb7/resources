@@ -61,7 +61,10 @@
                                                 in "${ application }/bin/clean" ;
                                         resource =
                                             {
-                                                init
+                                                init ,
+                                                release ,
+                                                seed ,
+                                                temporary
                                             } :
                                                 let
                                                     application =
