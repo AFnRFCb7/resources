@@ -150,7 +150,7 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts } \
+                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { "standard" : . } ,
