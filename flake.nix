@@ -115,12 +115,17 @@
                                                                                                 path : value :
                                                                                                     let
                                                                                                         init = value null ;
+                                                                                                        resource-path = path ;
                                                                                                         in
                                                                                                             {
                                                                                                                 text =
                                                                                                                     visitor
                                                                                                                         {
-                                                                                                                            lambda = path : value : "5677881699955987" ;
+                                                                                                                            lambda =
+                                                                                                                                path : value :
+                                                                                                                                    let
+                                                                                                                                        text = value { resource-path = resource-path ; } ;
+                                                                                                                                        in text ;
                                                                                                                         }
                                                                                                                         init.text ;
                                                                                                             } ;
