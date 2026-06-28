@@ -111,7 +111,14 @@
                                                                                 init =
                                                                                     visitor
                                                                                         {
-                                                                                            lambda = path : value : "1558459297731799" ;
+                                                                                            lambda =
+                                                                                                path : value :
+                                                                                                    let
+                                                                                                        init = value null ;
+                                                                                                        in
+                                                                                                            {
+                                                                                                                text = "1558459297731799" ;
+                                                                                                            } ;
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
