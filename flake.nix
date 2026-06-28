@@ -96,33 +96,51 @@
                                                                                                             name = "resource" ;
                                                                                                             runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq ] ;
                                                                                                             text =
-                                                                                                                ''
-                                                                                                                    HASH="$( jq --null-input ".payload" /input | sha512sum | cut --characters 1-128 )" || exit 191
-                                                                                                                    if [[ -L ${ resources-directory }/canonical ]]
-                                                                                                                    then
-                                                                                                                        LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
-                                                                                                                        INDEX="$( basename "$LINK" )" || exit 176
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
-                                                                                                                        ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
-                                                                                                                        echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
-                                                                                                                    else
-                                                                                                                        mkdir --parents "${ resources-directory }/locks"
-                                                                                                                        exec 109> "${ resources-directory }/locks/sequential"
-                                                                                                                        flock -x 109
-                                                                                                                        CURRENT="$( cat ${ resources-directory }/sequence )" || exit 117
-                                                                                                                        NEXT=$(( CURRENT + 1 ))
-                                                                                                                        echo "$NEXT" >> ${ resources-directory }/sequence
-                                                                                                                        INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
-                                                                                                                        mkdir --parents "${ resources-directory }/scripts/$INDEX/init"
-                                                                                                                        jq ".payload.scripts.init.action.text" /input >&2
-                                                                                                                        INIT_ACTION="$( jq --raw-output ".payload.scripts.init.action.text" /input )" || exit 124
-                                                                                                                        ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/text"
-                                                                                                                        mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                        mkdir --parents ${ resources-directory }/canonical
-                                                                                                                        ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
-                                                                                                                    fi
-                                                                                                                '' ;
+                                                                                                                let
+                                                                                                                    user-environments =
+                                                                                                                        {
+                                                                                                                            init =
+                                                                                                                                {
+                                                                                                                                    action =
+                                                                                                                                        pkgs.buildFHSUserEnv
+                                                                                                                                            {
+                                                                                                                                                name = "init" ;
+                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                text = "${ resources-directory }/scripts/$INDEX/init/action/text" ;
+                                                                                                                                            } ;
+                                                                                                                                } ;
+                                                                                                                        } ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            HASH="$( jq --null-input ".payload" /input | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                            if [[ -L ${ resources-directory }/canonical ]]
+                                                                                                                            then
+                                                                                                                                LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
+                                                                                                                                INDEX="$( basename "$LINK" )" || exit 176
+                                                                                                                                export INDEX
+                                                                                                                                jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
+                                                                                                                                ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
+                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                            else
+                                                                                                                                mkdir --parents "${ resources-directory }/locks"
+                                                                                                                                exec 109> "${ resources-directory }/locks/sequential"
+                                                                                                                                flock -x 109
+                                                                                                                                CURRENT="$( cat ${ resources-directory }/sequence )" || exit 117
+                                                                                                                                NEXT=$(( CURRENT + 1 ))
+                                                                                                                                echo "$NEXT" >> ${ resources-directory }/sequence
+                                                                                                                                INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
+                                                                                                                                export INDEX
+                                                                                                                                mkdir --parents "${ resources-directory }/scripts/$INDEX/init/action"
+                                                                                                                                INIT_ACTION="$( jq --raw-output ".payload.scripts.init.action.text" /input )" || exit 124
+                                                                                                                                ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/action/text"
+                                                                                                                                ln --symbolic ${ user-environments.init.action } "${ resources-directory }/scripts/$INDEX/init/action/text"
+
+                                                                                                                                mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                                mkdir --parents ${ resources-directory }/canonical
+                                                                                                                                ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
+                                                                                                                                jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
+                                                                                                                            fi
+                                                                                                                        '' ;
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
