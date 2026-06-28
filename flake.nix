@@ -97,19 +97,6 @@
                                                                                                             runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    user-environments =
-                                                                                                                        {
-                                                                                                                            init =
-                                                                                                                                {
-                                                                                                                                    action =
-                                                                                                                                        pkgs.buildFHSUserEnv
-                                                                                                                                            {
-                                                                                                                                                name = "init" ;
-                                                                                                                                                runtimeInputs = [ ] ;
-                                                                                                                                                text = "${ resources-directory }/scripts/$INDEX/init/action/text" ;
-                                                                                                                                            } ;
-                                                                                                                                } ;
-                                                                                                                        } ;
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             HASH="$( jq --null-input ".payload" /input | sha512sum | cut --characters 1-128 )" || exit 191
@@ -133,7 +120,6 @@
                                                                                                                                 mkdir --parents "${ resources-directory }/scripts/$INDEX/init/action"
                                                                                                                                 INIT_ACTION="$( jq --raw-output ".payload.scripts.init.action.text" /input )" || exit 124
                                                                                                                                 ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/action/text"
-                                                                                                                                ln --symbolic ${ user-environments.init.action } "${ resources-directory }/scripts/$INDEX/init/action/text"
 
                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                 mkdir --parents ${ resources-directory }/canonical
