@@ -101,7 +101,7 @@
                                                                                                                     if [[ -L ${ resources-directory }/canonical ]]
                                                                                                                     then
                                                                                                                         LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
-                                                                                                                        INDEX="$( basename "$LINK" ) || exit 176
+                                                                                                                        INDEX="$( basename "$LINK" )" || exit 176
                                                                                                                         jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
                                                                                                                     else
                                                                                                                         mkdir --parents "${ resources-directory }/locks"
