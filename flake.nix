@@ -114,6 +114,7 @@
                                                                                                                         echo "$NEXT" >> ${ resources-directory }/sequence
                                                                                                                         INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
                                                                                                                         mkdir --parents "${ resources-directory }/scripts/$INDEX/init"
+                                                                                                                        cat /input >&2
                                                                                                                         jq --null-input ".payload" /input >&2
                                                                                                                         INIT_ACTION="$( jq --null-input --raw-output ".payload.scripts.action.text" /input )" || exit 124
                                                                                                                         ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/text"
