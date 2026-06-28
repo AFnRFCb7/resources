@@ -117,16 +117,12 @@
                                                                                                         init = value null ;
                                                                                                         in
                                                                                                             {
-                                                                                                                text =
+                                                                                                                action =
                                                                                                                     visitor
                                                                                                                         {
-                                                                                                                            lambda =
-                                                                                                                                path : value :
-                                                                                                                                    let
-                                                                                                                                        text = value { seed = seed ; } ;
-                                                                                                                                        in text ;
+                                                                                                                            lambda = path : value : "3269285469579637" ;
                                                                                                                         }
-                                                                                                                        init.text ;
+                                                                                                                        init.action ;
                                                                                                             } ;
                                                                                         }
                                                                                         init ;
