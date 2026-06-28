@@ -116,12 +116,15 @@
                                                                                                     let
                                                                                                         init = value null ;
                                                                                                         in
-                                                                                                            visitor
-                                                                                                                {
-                                                                                                                    lambda =
-                                                                                                                        path : value : "8193122262821141" ;
-                                                                                                                }
-                                                                                                                init.action ;
+                                                                                                            {
+                                                                                                                action =
+                                                                                                                    visitor
+                                                                                                                        {
+                                                                                                                            lambda =
+                                                                                                                                path : value : "8193122262821141" ;
+                                                                                                                        }
+                                                                                                                        init.action ;
+                                                                                                            } ;
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
