@@ -115,7 +115,7 @@
                                                                                                                         INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
                                                                                                                         mkdir --parents "${ resources-directory }/scripts/$INDEX"
                                                                                                                         INIT_ACTION="$( jq --null-input --raw-output ".payload.scripts.action.text" /input )" || exit 124
-                                                                                                                        ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init
+                                                                                                                        ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init"
                                                                                                                         mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
