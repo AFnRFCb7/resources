@@ -102,7 +102,7 @@
                                                                                                                     then
                                                                                                                         LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
                                                                                                                         INDEX="$( basename "$LINK" )" || exit 176
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
                                                                                                                         ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
                                                                                                                         echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                     else
