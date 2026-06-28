@@ -118,12 +118,23 @@
                                                                                                         in
                                                                                                             {
                                                                                                                 action =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda =
-                                                                                                                                path : value : "8193122262821141" ;
-                                                                                                                        }
-                                                                                                                        init.action ;
+                                                                                                                    {
+                                                                                                                        text =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    lambda =
+                                                                                                                                        path : value :
+                                                                                                                                            let
+                                                                                                                                                action = value null ;
+                                                                                                                                                in
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            lambda = path : value : builtins.toFile "text" value { seed = seed ; } ;
+                                                                                                                                                        }
+                                                                                                                                                        action.text ;
+                                                                                                                                }
+                                                                                                                                init.action ;
+                                                                                                                    } ;
                                                                                                             } ;
                                                                                         }
                                                                                         init ;
@@ -148,7 +159,7 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --rawfile SCRIPTS '${ builtins.toFile "scripts" ( builtins.toJSON scripts ) }' \
+                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { } ,
@@ -162,7 +173,7 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --rawfile SCRIPTS '${ builtins.toFile "scripts" ( builtins.toJSON scripts ) }' \
+                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { "standard" : . } ,
