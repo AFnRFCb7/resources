@@ -115,7 +115,6 @@
                                                                                                 path : value :
                                                                                                     let
                                                                                                         init = value null ;
-                                                                                                        resource-path = path ;
                                                                                                         in
                                                                                                             {
                                                                                                                 text =
@@ -124,7 +123,7 @@
                                                                                                                             lambda =
                                                                                                                                 path : value :
                                                                                                                                     let
-                                                                                                                                        text = value { resource-path = resource-path ; } ;
+                                                                                                                                        text = value { seed = seed ; } ;
                                                                                                                                         in text ;
                                                                                                                         }
                                                                                                                         init.text ;
@@ -132,7 +131,6 @@
                                                                                         }
                                                                                         init ;
                                                                                 release = null ;
-                                                                                seed = seed ;
                                                                                 temporary = temporary ;
                                                                             } ;
                                                                         in
