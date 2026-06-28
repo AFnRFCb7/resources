@@ -108,17 +108,10 @@
                                                                     let
                                                                         scripts =
                                                                             {
-                                                                                init =
-                                                                                    visitor
-                                                                                        {
-                                                                                            lambda =
-                                                                                                path : value :
-                                                                                                    {
-                                                                                                        text = value null ;
-                                                                                                    } ;
-                                                                                        }
-                                                                                        init ;
+                                                                                init = "6312879459284479" ;
                                                                                 release = null ;
+                                                                                seed = seed ;
+                                                                                temporary = temporary ;
                                                                             } ;
                                                                         in
                                                                             ''
