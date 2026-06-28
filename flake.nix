@@ -151,7 +151,7 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                        --rawfile SCRIPTS '${ builtins.toFile "scripts" ( builtins.toJSON scripts ) }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { } ,
@@ -165,7 +165,7 @@
                                                                                         --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                        --rawfile SCRIPTS '${ builtins.toFile "scripts" ( builtins.toJSON scripts ) }' \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
                                                                                             "inputs" : { "standard" : . } ,
