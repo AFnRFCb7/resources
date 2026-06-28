@@ -94,10 +94,28 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "resource" ;
-                                                                                                            runtimeInputs = [ pkgs.jq ] ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq ] ;
                                                                                                             text =
                                                                                                                 ''
-
+                                                                                                                    HASH="$( jq --null-input ".payload" /input | sha512sum | cut --characters 1-128 )" || exit 191
+                                                                                                                    if [[ -L ${ resources-directory }/canonical ]]
+                                                                                                                    then
+                                                                                                                        LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
+                                                                                                                        INDEX="$( basename "$LINK" ) || exit 176
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                                                                                                    else
+                                                                                                                        mkdir --parents "${ resources-directory }/locks"
+                                                                                                                        exec 109> "${ resources-directory }/locks/sequential"
+                                                                                                                        flock -x 109
+                                                                                                                        CURRENT="$( cat ${ resources-directory }/sequence )" || exit 117
+                                                                                                                        NEXT=$(( CURRENT + 1 ))
+                                                                                                                        echo "$NEXT" >> ${ resources-directory }/sequence
+                                                                                                                        INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
+                                                                                                                        mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                        mkdir --parents ${ resources-directory }/canonical
+                                                                                                                        ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                                                                                                    fi
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -148,6 +166,10 @@
                                                                                 mkdir --parents ${ resources-directory }/locks
                                                                                 exec 191> ${ resources-directory }/locks/temporary
                                                                                 flock -s 191
+                                                                                if [[ ! -f ${ resources-directory }/sequence ]]
+                                                                                then
+                                                                                    echo 0 > ${ resources-directory }/sequence
+                                                                                fi
                                                                                 ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
                                                                                 INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 187
                                                                                 export INPUT_FILE
@@ -189,12 +211,16 @@
                                                                                         }' > "$INPUT_FILE"
                                                                                 fi
                                                                                 resource
+                                                                                INDEX="$( jq --raw-output ".index "$OUTPUT_FILE" )" || exit 146
+                                                                                echo "${ resources-directory }/mounts/$INDEX"
+                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             '' ;
                                                             } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
                             in
-                                {
+                                {                                                                                                                    jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+
                                     check =
                                         {
                                             actions ,
