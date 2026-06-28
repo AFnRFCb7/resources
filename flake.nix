@@ -109,14 +109,14 @@
                                                                                                                         mkdir --parents "${ resources-directory }/locks"
                                                                                                                         exec 109> "${ resources-directory }/locks/sequential"
                                                                                                                         flock -x 109
+                                                                                                                        mkdir --parents ${ resources-directory }/canonical
+                                                                                                                        ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
                                                                                                                         CURRENT="$( cat ${ resources-directory }/sequence )" || exit 117
                                                                                                                         NEXT=$(( CURRENT + 1 ))
                                                                                                                         echo "$NEXT" >> ${ resources-directory }/sequence
                                                                                                                         INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
                                                                                                                         mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                        mkdir --parents ${ resources-directory }/canonical
-                                                                                                                        ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
                                                                                                                     fi
                                                                                                                 '' ;
                                                                                                         }
