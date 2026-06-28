@@ -94,9 +94,10 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "resource" ;
-                                                                                                            runtimeInputs = [ ] ;
+                                                                                                            runtimeInputs = [ pkgs.jq ] ;
                                                                                                             text =
                                                                                                                 ''
+
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -161,10 +162,13 @@
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                         --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
-                                                                                            "arguments" : $ARGUMENTS ,
-                                                                                            "inputs" : { } ,
                                                                                             "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "payload" :
+                                                                                                {
+                                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                                    "inputs" : { } ,
+                                                                                                    "scripts" : $SCRIPTS
+                                                                                                }
                                                                                         }' > "$INPUT_FILE"
                                                                                 else
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
@@ -175,10 +179,13 @@
                                                                                         --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                         --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                         '{
-                                                                                            "arguments" : $ARGUMENTS ,
-                                                                                            "inputs" : { "standard" : . } ,
                                                                                             "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "payload" :
+                                                                                                {
+                                                                                                    "arguments" : $ARGUMENTS ,
+                                                                                                    "inputs" : { "standard" : . } ,
+                                                                                                    "scripts" : $SCRIPTS
+                                                                                                }
                                                                                         }' > "$INPUT_FILE"
                                                                                 fi
                                                                                 resource
