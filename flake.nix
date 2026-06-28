@@ -103,6 +103,8 @@
                                                                                                                         LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
                                                                                                                         INDEX="$( basename "$LINK" )" || exit 176
                                                                                                                         jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                                                                                                        ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
+                                                                                                                        echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                     else
                                                                                                                         mkdir --parents "${ resources-directory }/locks"
                                                                                                                         exec 109> "${ resources-directory }/locks/sequential"
@@ -114,7 +116,7 @@
                                                                                                                         mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
                                                                                                                     fi
                                                                                                                 '' ;
                                                                                                         }
