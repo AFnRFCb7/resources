@@ -176,6 +176,7 @@
                                                                                     echo 0 > ${ resources-directory }/sequence
                                                                                 fi
                                                                                 ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
+                                                                                mkdir --parents ${ resources-directory }/temporary
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 187
                                                                                 export INPUT_FILE
                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 164
