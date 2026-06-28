@@ -213,7 +213,7 @@
                                                                                         }' > "$INPUT_FILE"
                                                                                 fi
                                                                                 resource
-                                                                                INDEX="$( jq --raw-output ".index "$OUTPUT_FILE" )" || exit 146
+                                                                                INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 146
                                                                                 echo "${ resources-directory }/mounts/$INDEX"
                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             '' ;
