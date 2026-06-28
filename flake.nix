@@ -129,7 +129,7 @@
                                                                                                                                                 in
                                                                                                                                                     visitor
                                                                                                                                                         {
-                                                                                                                                                            lambda = path : value : value { seed = seed ; } ;
+                                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
                                                                                                                                                         }
                                                                                                                                                         action.text ;
                                                                                                                                 }
