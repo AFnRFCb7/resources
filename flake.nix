@@ -219,7 +219,7 @@
                                                     in "${ application }/bin/resource" ;
                                     } ;
                             in
-                                {                                                                                                                    jq --null-input --arg INDEX "$INDEX" { "index" : $INDEX } > /output
+                                {
 
                                     check =
                                         {
