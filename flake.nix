@@ -176,9 +176,9 @@
                                                                                     echo 0 > ${ resources-directory }/sequence
                                                                                 fi
                                                                                 ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
-                                                                                INPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 187
+                                                                                INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 187
                                                                                 export INPUT_FILE
-                                                                                OUTPUT_FILE="$( mktemp ${ resources-directory }/temporary/XXXXXXXX.json )" || exit 164
+                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 164
                                                                                 export OUTPUT_FILE
                                                                                 if [[ -t 0 ]]
                                                                                 then
