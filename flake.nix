@@ -113,6 +113,9 @@
                                                                                                                         NEXT=$(( CURRENT + 1 ))
                                                                                                                         echo "$NEXT" >> ${ resources-directory }/sequence
                                                                                                                         INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
+                                                                                                                        mkdir --parents "${ resources-directory }/scripts/$INDEX"
+                                                                                                                        # INIT_ACTION="$( jq --null-input --raw-output ".payload.scripts.action" )" || exit 124
+                                                                                                                        # ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init
                                                                                                                         mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                         mkdir --parents ${ resources-directory }/canonical
                                                                                                                         ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
