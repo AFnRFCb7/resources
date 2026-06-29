@@ -222,22 +222,22 @@
                                                                                                                                                         path : value :
                                                                                                                                                             mkDerivation
                                                                                                                                                                 {
-                                                                                                                                                                    installPhase = ''runtimeInputs "$1"'' ;
-                                                                                                                                                                    name = "runtimeInputs" ;
+                                                                                                                                                                    installPhase = ''init "$1"'' ;
+                                                                                                                                                                    name = "init" ;
                                                                                                                                                                     nativeBuildInputs =
                                                                                                                                                                         [
                                                                                                                                                                             (
                                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                                     {
-                                                                                                                                                                                        name = "runtimeInputs" ;
-                                                                                                                                                                                        runScript = "runtimeInputs" ;
+                                                                                                                                                                                        name = "init" ;
+                                                                                                                                                                                        runScript = ''init "$out"'' ;
                                                                                                                                                                                         targetPkgs =
                                                                                                                                                                                             pkgs :
                                                                                                                                                                                                 [
                                                                                                                                                                                                     (
                                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                                             {
-                                                                                                                                                                                                                name = "runtimeInputs" ;
+                                                                                                                                                                                                                name = "init" ;
                                                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                                                                 text =
                                                                                                                                                                                                                     ''
