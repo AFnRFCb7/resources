@@ -132,63 +132,61 @@
                                                                         )
                                                                     ] ;
                                                                 text =
-                                                                    let
-                                                                        in
-                                                                            ''
-                                                                                mkdir --parents ${ gc-roots-directory }
-                                                                                mkdir --parents ${ resources-directory }/locks
-                                                                                exec 191> ${ resources-directory }/locks/temporary
-                                                                                flock -s 191
-                                                                                if [[ ! -f ${ resources-directory }/sequence ]]
-                                                                                then
-                                                                                    echo 0 > ${ resources-directory }/sequence
-                                                                                fi
-                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
-                                                                                mkdir --parents ${ resources-directory }/temporary
-                                                                                INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 187
-                                                                                export INPUT_FILE
-                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 164
-                                                                                export OUTPUT_FILE
-                                                                                if [[ -t 0 ]]
-                                                                                then
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
-                                                                                    jq \
-                                                                                        --null-input \
-                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                        --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
-                                                                                        '{
-                                                                                            "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "payload" :
-                                                                                                {
-                                                                                                    "arguments" : $ARGUMENTS ,
-                                                                                                    "inputs" : { } ,
-                                                                                                    "scripts" : $SCRIPTS
-                                                                                                }
-                                                                                        }' > "$INPUT_FILE"
-                                                                                else
-                                                                                    PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
-                                                                                    jq \
-                                                                                        --null-input \
-                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                        --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --argjson SCRIPTS '${ builtins.toJSON scripts }' \
-                                                                                        '{
-                                                                                            "originator-pid" : $ORIGINATOR_PID ,
-                                                                                            "payload" :
-                                                                                                {
-                                                                                                    "arguments" : $ARGUMENTS ,
-                                                                                                    "inputs" : { "standard" : . } ,
-                                                                                                    "scripts" : $SCRIPTS
-                                                                                                }
-                                                                                        }' > "$INPUT_FILE"
-                                                                                fi
-                                                                                resource
-                                                                                INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 146
-                                                                                echo "${ resources-directory }/mounts/$INDEX"
-                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                            '' ;
+                                                                    ''
+                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 191> ${ resources-directory }/locks/temporary
+                                                                        flock -s 191
+                                                                        if [[ ! -f ${ resources-directory }/sequence ]]
+                                                                        then
+                                                                            echo 0 > ${ resources-directory }/sequence
+                                                                        fi
+                                                                        ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
+                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 187
+                                                                        export INPUT_FILE
+                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 164
+                                                                        export OUTPUT_FILE
+                                                                        if [[ -t 0 ]]
+                                                                        then
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                '{
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "payload" :
+                                                                                        {
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" : { } ,
+                                                                                            "scripts" : $SCRIPTS
+                                                                                        }
+                                                                                }' > "$INPUT_FILE"
+                                                                        else
+                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                '{
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "payload" :
+                                                                                        {
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" : { "standard" : . } ,
+                                                                                            "scripts" : $SCRIPTS
+                                                                                        }
+                                                                                }' > "$INPUT_FILE"
+                                                                        fi
+                                                                        resource
+                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 146
+                                                                        echo "${ resources-directory }/mounts/$INDEX"
+                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                    '' ;
                                                             } ;
                                                         scripts =
                                                             {
