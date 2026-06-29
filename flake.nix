@@ -336,7 +336,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         INDEX="$( jq --null-input --raw-output ".index" /input )" || exit 121
-                                                                                                                                                        find ${ gc-root-directory } -type L | while read -r LINK
+                                                                                                                                                        find ${ gc-roots-directory } -type L | while read -r LINK
                                                                                                                                                         do
                                                                                                                                                             if [[ ! -s /output ]]
                                                                                                                                                             then
