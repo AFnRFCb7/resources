@@ -197,35 +197,38 @@
                                                                 parameters =
                                                                     {
                                                                         init =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            let
-                                                                                                init = value null ;
-                                                                                                in
-                                                                                                    {
-                                                                                                        action =
+                                                                            {
+                                                                                text =
+                                                                                    visitor
+                                                                                        {
+                                                                                            lambda =
+                                                                                                path : value :
+                                                                                                    let
+                                                                                                        init = value null ;
+                                                                                                        in
                                                                                                             {
-                                                                                                                text =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda =
-                                                                                                                                path : value :
-                                                                                                                                    let
-                                                                                                                                        action = value null ;
-                                                                                                                                        in
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                                }
-                                                                                                                                                action.text ;
-                                                                                                                        }
-                                                                                                                        init.action ;
+                                                                                                                action =
+                                                                                                                    {
+                                                                                                                        text =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    lambda =
+                                                                                                                                        path : value :
+                                                                                                                                            let
+                                                                                                                                                action = value null ;
+                                                                                                                                                in
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                                        }
+                                                                                                                                                        action.text ;
+                                                                                                                                }
+                                                                                                                                init.action ;
+                                                                                                                    } ;
                                                                                                             } ;
-                                                                                                    } ;
-                                                                                }
-                                                                                init ;
+                                                                                        }
+                                                                                        init ;
+                                                                            } ;
                                                                         release =
                                                                             visitor
                                                                                 {
@@ -357,6 +360,29 @@
                                                                                                                                 ] ;
                                                                                                                     }
                                                                                                             )
+                                                                                                            (
+                                                                                                                buildFHSUserEnv
+                                                                                                                    {
+                                                                                                                        extraBwrapArgs =
+                                                                                                                            [
+                                                                                                                                "--ro-bind" "${ resources-directory }" "${ resources-directory }"
+                                                                                                                            ] ;
+                                                                                                                        name = "release" ;
+                                                                                                                        runScript = "release" ;
+                                                                                                                        targetPkgs =
+                                                                                                                            pkgs :
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "release" ;
+                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                text =
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                    }
+                                                                                                            )
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
@@ -385,10 +411,15 @@
                                                                                                             IS_MARKED_FOR_GARBAGE_COLLECTION="$( jq --null-input --raw-output "." )" || exit 143
                                                                                                             if "$IS_MARKED_FOR_GARBAGE_COLLECTION"
                                                                                                             then
-                                                                                                                garbage-collect
-                                                                                                                TARGET="$( jq --null-input "." $OUTPUT_FILE )" || exit 162
-                                                                                                                ARCHIVE="$( mktemp --suffix .xz.tar )" || exit 186
-                                                                                                                mv "$TARGET" "$ARCHIVE"
+                                                                                                                release
+                                                                                                                IS_RELEASED="$( jq --raw-input --raw-output "." "$OUTPUT_FILE" )" || exit 4784873797123221
+                                                                                                                if "$IS_RELEASED"
+                                                                                                                then
+                                                                                                                    garbage-collect
+                                                                                                                    TARGET="$( jq --null-input "." $OUTPUT_FILE )" || exit 162
+                                                                                                                    ARCHIVE="$( mktemp --suffix .xz.tar )" || exit 186
+                                                                                                                    mv "$TARGET" "$ARCHIVE"
+                                                                                                                fi
                                                                                                             else
                                                                                                                 flock -u 111
                                                                                                                 "$0"
