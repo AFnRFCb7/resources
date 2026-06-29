@@ -68,17 +68,17 @@
                                                 temporary
                                             } :
                                                 let
-                                                    parameters =
+                                                    resource =
                                                         mkDerivation
                                                             {
-                                                                installPhase = ''parameters "$1"'' ;
-                                                                name = "parameters" ;
+                                                                installPhase = ''resource "$1"'' ;
+                                                                name = "resource" ;
                                                                 nativeBuildInputs =
                                                                     [
                                                                         (
                                                                             writeShellApplication
                                                                                 {
-                                                                                    name = "parameters" ;
+                                                                                    name = "resource" ;
                                                                                     runtimeInputs =
                                                                                         [
                                                                                             coreutils
@@ -86,19 +86,74 @@
                                                                                                 buildFHSUserEnv
                                                                                                     {
                                                                                                         extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                        name = "parameters" ;
-                                                                                                        runScript = "parameters" ;
+                                                                                                        name = "resource" ;
+                                                                                                        runScript = "resource" ;
                                                                                                         targetPkgs =
                                                                                                             pkgs :
                                                                                                                 [
                                                                                                                     (
                                                                                                                         pkgs.writeShellApplication
                                                                                                                             {
-                                                                                                                                name = "parameters" ;
-                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                name = "resource" ;
+                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                 text =
-                                                                                                                                    ''
-                                                                                                                                    '' ;
+                                                                                                                                    let
+                                                                                                                                        resource =
+                                                                                                                                            {
+                                                                                                                                                init =
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            lambda =
+                                                                                                                                                                path : value :
+                                                                                                                                                                    let
+                                                                                                                                                                        init = value null ;
+                                                                                                                                                                        in
+                                                                                                                                                                            {
+                                                                                                                                                                                action =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            lambda =
+                                                                                                                                                                                                path : value :
+                                                                                                                                                                                                    let
+                                                                                                                                                                                                        action = value null ;
+                                                                                                                                                                                                        in
+                                                                                                                                                                                                            buildFHSUserEnv
+                                                                                                                                                                                                                {
+                                                                                                                                                                                                                    name = "action" ;
+                                                                                                                                                                                                                    runScript = "action" ;
+                                                                                                                                                                                                                    targetPkgs =
+                                                                                                                                                                                                                        pkgs :
+                                                                                                                                                                                                                            [
+                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                                            name = "action" ;
+                                                                                                                                                                                                                                            runtimeInputs = action.targetPkgs pkgs ;
+                                                                                                                                                                                                                                            text = action.text { seed = seed } ;
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                )
+                                                                                                                                                                                                                            ] ;
+                                                                                                                                                                                                                } ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        init.action ;
+                                                                                                                                                                            } ;
+                                                                                                                                                        }
+                                                                                                                                                        init ;
+                                                                                                                                                seed = builtins.toJSON seed ;
+                                                                                                                                                temporary =
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            bool = path : value : builtins.toJSON value ;
+                                                                                                                                                        }
+                                                                                                                                                        temporary ;
+                                                                                                                                            } ;
+                                                                                                                                        in
+                                                                                                                                            ''
+                                                                                                                                                mkdir --parents /out/init
+                                                                                                                                                ln --symbolic ${ resource.init.action } > /out/init/action
+                                                                                                                                                echo ${ resource.seed } > /out/seed
+                                                                                                                                                echo ${ resource.temporary } > /out/temporary
+                                                                                                                                            '' ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
@@ -117,409 +172,6 @@
                                                                     ] ;
                                                                 src = ./. ;
                                                             } ;
-
-                                                    application =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "resource" ;
-                                                                runtimeInputs =
-                                                                    [
-                                                                        coreutils
-                                                                        jq
-                                                                        (
-                                                                            buildFHSUserEnv
-                                                                                {
-                                                                                    extraBwrapArgs =
-                                                                                        [
-                                                                                            "--bind" "${ gc-roots-directory }" "${ gc-roots-directory }"
-                                                                                            "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                            "--bind" "$OUTPUT_FILE" "/output"
-                                                                                            "--bind" "${ resources-directory }" "${ resources-directory }"
-                                                                                        ] ;
-                                                                                    name = "resource" ;
-                                                                                    runScript = "resource" ;
-                                                                                    targetPkgs =
-                                                                                        pkgs :
-                                                                                            [
-                                                                                                (
-                                                                                                    pkgs.writeShellApplication
-                                                                                                        {
-                                                                                                            name = "resource" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq ] ;
-                                                                                                            text =
-                                                                                                                ''
-                                                                                                                    HASH="$( jq --null-input ".payload" /input | sha512sum | cut --characters 1-128 )" || exit 191
-                                                                                                                    if [[ -L ${ resources-directory }/canonical ]]
-                                                                                                                    then
-                                                                                                                        LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
-                                                                                                                        INDEX="$( basename "$LINK" )" || exit 176
-                                                                                                                        export INDEX
-                                                                                                                        mkdir --parents ${ resources-directory }/flags
-                                                                                                                        touch "${ resources-directory }/flags/$INDEX"
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
-                                                                                                                        ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
-                                                                                                                        echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
-                                                                                                                    else
-                                                                                                                        mkdir --parents "${ resources-directory }/locks"
-                                                                                                                        exec 109> "${ resources-directory }/locks/sequential"
-                                                                                                                        flock -x 109
-                                                                                                                        CURRENT="$( cat ${ resources-directory }/sequence )" || exit 117
-                                                                                                                        NEXT=$(( CURRENT + 1 ))
-                                                                                                                        echo "$NEXT" >> ${ resources-directory }/sequence
-                                                                                                                        INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
-                                                                                                                        export INDEX
-                                                                                                                        mkdir --parents ${ resources-directory }/flags
-                                                                                                                        touch "${ resources-directory }/flags/$INDEX"
-                                                                                                                        mkdir --parents "${ resources-directory }/scripts/$INDEX/init/action"
-                                                                                                                        INIT_ACTION="$( jq --raw-output ".payload.scripts.init.action.text" /input )" || exit 124
-                                                                                                                        ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/action/text"
-
-                                                                                                                        mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                        mkdir --parents ${ resources-directory }/canonical
-                                                                                                                        ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
-                                                                                                                    fi
-                                                                                                                '' ;
-                                                                                                        }
-                                                                                                )
-                                                                                            ] ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 191> ${ resources-directory }/locks/temporary
-                                                                        flock -s 191
-                                                                        if [[ ! -f ${ resources-directory }/sequence ]]
-                                                                        then
-                                                                            echo 0 > ${ resources-directory }/sequence
-                                                                        fi
-                                                                        ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 110
-                                                                        mkdir --parents ${ resources-directory }/temporary
-                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 187
-                                                                        export INPUT_FILE
-                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 164
-                                                                        export OUTPUT_FILE
-                                                                        if [[ -t 0 ]]
-                                                                        then
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 185
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson PARAMETERS '${ builtins.toJSON runtime.parameters }' \
-                                                                                '{
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "payload" :
-                                                                                        {
-                                                                                            "arguments" : $ARGUMENTS ,
-                                                                                            "parameters" : $PARAMETERS ,
-                                                                                            "inputs" : { }
-                                                                                        }
-                                                                                }' > "$INPUT_FILE"
-                                                                        else
-                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 172
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 144
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                --argjson PARAMETERS '${ builtins.toJSON runtime.parameters }' \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                '{
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "payload" :
-                                                                                        {
-                                                                                            "arguments" : $ARGUMENTS ,
-                                                                                            "parameters" : $PARAMETERS ,
-                                                                                            "inputs" : { "standard" : . }
-                                                                                        }
-                                                                                }' > "$INPUT_FILE"
-                                                                        fi
-                                                                        resource
-                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 146
-                                                                        echo "${ resources-directory }/mounts/$INDEX"
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                    '' ;
-                                                            } ;
-                                                        runtime =
-                                                            let
-                                                                parameters =
-                                                                    {
-                                                                        init =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            let
-                                                                                                init = value null ;
-                                                                                                in
-                                                                                                    {
-                                                                                                        action =
-                                                                                                            {
-                                                                                                                runtimeInputs =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda =
-                                                                                                                                path : value :
-                                                                                                                                    let
-                                                                                                                                        action = value null ;
-                                                                                                                                        in
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    lambda =
-                                                                                                                                                        path : value :
-                                                                                                                                                            mkDerivation
-                                                                                                                                                                {
-                                                                                                                                                                    installPhase = ''init "$out"'' ;
-                                                                                                                                                                    name = "init" ;
-                                                                                                                                                                    nativeBuildInputs =
-                                                                                                                                                                        [
-                                                                                                                                                                            (
-                                                                                                                                                                                writeShellApplication
-                                                                                                                                                                                    {
-                                                                                                                                                                                        name = "init" ;
-                                                                                                                                                                                        runtimeInputs =
-                                                                                                                                                                                            [
-                                                                                                                                                                                                (
-                                                                                                                                                                                                    buildFHSUserEnv
-                                                                                                                                                                                                        {
-                                                                                                                                                                                                            extraBwrapArgs = [ "--bind" "$OUT" "/mount" ] ;
-                                                                                                                                                                                                            name = "init" ;
-                                                                                                                                                                                                            runScript = ''init "$out"'' ;
-                                                                                                                                                                                                            targetPkgs =
-                                                                                                                                                                                                                pkgs :
-                                                                                                                                                                                                                    [
-                                                                                                                                                                                                                        (
-                                                                                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                                                                                {
-                                                                                                                                                                                                                                    name = "init" ;
-                                                                                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                                                                                                    text =
-                                                                                                                                                                                                                                        ''
-                                                                                                                                                                                                                                            echo '${ builtins.toJSON ( value pkgs ) }' > "$OUT/action"
-                                                                                                                                                                                                                                        '' ;
-                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                        )
-                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                )
-                                                                                                                                                                                            ] ;
-                                                                                                                                                                                        text =
-                                                                                                                                                                                            ''
-                                                                                                                                                                                                OUT="$1"
-                                                                                                                                                                                                export OUT
-                                                                                                                                                                                                mkdir --parents "$OUT"
-                                                                                                                                                                                                init
-                                                                                                                                                                                            '' ;
-                                                                                                                                                                                    }
-                                                                                                                                                                            )
-                                                                                                                                                                        ] ;
-                                                                                                                                                                    src = ./. ;
-                                                                                                                                                                } ;
-                                                                                                                                                }
-                                                                                                                                                action.runtimeInputs ;
-                                                                                                                        }
-                                                                                                                        init.action ;
-                                                                                                                text =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda =
-                                                                                                                                path : value :
-                                                                                                                                    let
-                                                                                                                                        action = value null ;
-                                                                                                                                        in
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                                }
-                                                                                                                                                action.text ;
-                                                                                                                        }
-                                                                                                                        init.action ;
-                                                                                                            } ;
-                                                                                                    } ;
-                                                                                }
-                                                                                init ;
-                                                                        release =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            let
-                                                                                                release = value null ;
-                                                                                                in
-                                                                                                    {
-                                                                                                        action =
-                                                                                                            {
-                                                                                                                text =
-                                                                                                                    visitor
-                                                                                                                        {
-                                                                                                                            lambda =
-                                                                                                                                path : value :
-                                                                                                                                    let
-                                                                                                                                        action = value null ;
-                                                                                                                                        in
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                                }
-                                                                                                                                                action.text ;
-                                                                                                                        }
-                                                                                                                        release.action ;
-                                                                                                            } ;
-                                                                                                    } ;
-                                                                                }
-                                                                                release ;
-                                                                        temporary = temporary ;
-                                                                    } ;
-                                                                in
-                                                                    {
-                                                                        parameters = parameters ;
-                                                                        user-environments =
-                                                                            {
-                                                                                init =
-                                                                                    {
-                                                                                        action = null ;
-                                                                                        recovery = { } ;
-                                                                                    } ;
-                                                                                release =
-                                                                                    {
-                                                                                        action =
-                                                                                            writeShellApplication
-                                                                                                {
-                                                                                                    name = "action" ;
-                                                                                                    runtimeInputs =
-                                                                                                        [
-                                                                                                            coreutils
-                                                                                                            flock
-                                                                                                            (
-                                                                                                                buildFHSUserEnv
-                                                                                                                    {
-                                                                                                                        extraBwrapArgs =
-                                                                                                                            [
-                                                                                                                                "--mount" "${ gc-roots-directory }" "${ gc-roots-directory }"
-                                                                                                                                "--mount" "${ resources-directory }" "${ resources-directory }"
-                                                                                                                                "--mount" "$OUTPUT_FILE" "/output"
-                                                                                                                            ] ;
-                                                                                                                        name = "garbage-collection" ;
-                                                                                                                        runScript = "garbage-collection" ;
-                                                                                                                        targetPkgs =
-                                                                                                                            pkgs :
-                                                                                                                                [
-                                                                                                                                    (
-                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "garbage-collection" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.flock ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        GC_ROOT_COLLECT="$( find ${ gc-roots-directory } -mindepth 1 -maxdepth 1 -name "$INDEX" )" || exit 140
-                                                                                                                                                        RESOURCES_COLLECT="$( find ${ resources-directory } -mindepth 1 -maxdepth 1 -name "INDEX" )" || exit 157
-                                                                                                                                                        mkdir --parents ${ resources-directory }/temporary
-                                                                                                                                                        TARGET="$( mktemp --sufix .xz.tar ${ resources-directory }/temporary/XXXXXXXX )" || exit 178
-                                                                                                                                                        SOURCE="$GC_ROOT_COLLECT $RESOURCES_COLLECT"
-                                                                                                                                                        tar --create --xz --file "$TARGET" "$SOURCE"
-                                                                                                                                                        rm --recursive --force "$SOURCE"
-                                                                                                                                                        jq --null-input --arg TARGET "$TARGET" '$TARGET' > /output
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                ] ;
-                                                                                                                    }
-                                                                                                            )
-                                                                                                            (
-                                                                                                                buildFHSUserEnv
-                                                                                                                    {
-                                                                                                                        extraBwrapArgs =
-                                                                                                                            [
-                                                                                                                                "--ro-mount" "$INPUT_FILE" "/input"
-                                                                                                                                "--ro-mount" "${ gc-roots-directory }" "${ gc-roots-directory }"
-                                                                                                                                "--ro-mount" "${ resources-directory }" "${ resources-directory }"
-                                                                                                                                "--mount" "$OUTPUT_FILE" "/output"
-                                                                                                                            ] ;
-                                                                                                                        name = "is-marked-for-garbage-collection" ;
-                                                                                                                        runScript = "is-marked-for-garbage-collection" ;
-                                                                                                                        targetPkgs =
-                                                                                                                            pkgs :
-                                                                                                                                [
-                                                                                                                                    (
-                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "is-marked-for-garbage-collection" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.gnugrep pkgs.jq ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        INDEX="$( jq --null-input --raw-output ".index" /input )" || exit 121
-                                                                                                                                                        find ${ gc-roots-directory } -type L | while read -r LINK
-                                                                                                                                                        do
-                                                                                                                                                            if [[ ! -s /output ]]
-                                                                                                                                                            then
-                                                                                                                                                                OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 122
-                                                                                                                                                                if [[ "${ resources-directory }/mounts/$INDEX" == "$OBSERVED" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    jq --null-input 'false' > /output
-                                                                                                                                                                fi
-                                                                                                                                                            fi
-                                                                                                                                                        done
-                                                                                                                                                        if [[ ! -s /output ]]
-                                                                                                                                                        then
-                                                                                                                                                            jq --null-input 'true' > /output
-                                                                                                                                                        fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                ] ;
-                                                                                                                    }
-                                                                                                            )
-                                                                                                        ] ;
-                                                                                                    text =
-                                                                                                        ''
-                                                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                                                            exec 172> ${ resources-directory }/locks/temporary
-                                                                                                            flock -s 172
-                                                                                                            mkdir --parents ${ resources-directory }/temporary
-                                                                                                            INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 101
-                                                                                                            export INPUT_FILE
-                                                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 100
-                                                                                                            export OUTPUT_FILE
-                                                                                                            mkdir --parents ${ gc-roots-directory }
-                                                                                                            mkdir --parents ${ resources-directory }
-                                                                                                            exec 111> "${ resources-directory }/locks/$INDEX"
-                                                                                                            flock -x 111
-                                                                                                            mkdir --parents ${ resources-directory }/flags
-                                                                                                            rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                            find "${ resources-directory }/pids/$INDEX" -type f | while read PID_FILE
-                                                                                                            do
-                                                                                                                PID="$( basename "$PID_FILE" )" || exit 122
-                                                                                                                tail --follow /dev/null --pid "$PID"
-                                                                                                                rm "$PID_FILE"
-                                                                                                            done
-                                                                                                            is-marked-for-garbage-collection
-                                                                                                            IS_MARKED_FOR_GARBAGE_COLLECTION="$( jq --null-input --raw-output "." )" || exit 143
-                                                                                                            if "$IS_MARKED_FOR_GARBAGE_COLLECTION"
-                                                                                                            then
-                                                                                                                release
-                                                                                                                IS_RELEASED="$( jq --raw-input --raw-output "." "$OUTPUT_FILE" )" || exit 4784873797123221
-                                                                                                                if "$IS_RELEASED"
-                                                                                                                then
-                                                                                                                    garbage-collect
-                                                                                                                    TARGET="$( jq --null-input "." $OUTPUT_FILE )" || exit 162
-                                                                                                                    ARCHIVE="$( mktemp --suffix .xz.tar )" || exit 186
-                                                                                                                    mv "$TARGET" "$ARCHIVE"
-                                                                                                                fi
-                                                                                                            else
-                                                                                                                flock -u 111
-                                                                                                                "$0"
-                                                                                                            fi
-                                                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                                                        '' ;
-                                                                                                } ;
-                                                                                        recovery = { } ;
-                                                                                    } ;
-                                                                            } ;
-                                                                    } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
                             in
