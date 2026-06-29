@@ -94,6 +94,11 @@
                                                                                                                     (
                                                                                                                         pkgs.writeShellApplication
                                                                                                                             {
+                                                                                                                                name = "parameters" ;
+                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                    '' ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
@@ -103,8 +108,9 @@
                                                                                     text =
                                                                                         ''
                                                                                             OUT="$1"
+                                                                                            export OUT
                                                                                             mkdir --parents "$OUT"
-
+                                                                                            parameters
                                                                                         '' ;
                                                                                 }
                                                                         )
