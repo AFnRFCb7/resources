@@ -575,8 +575,8 @@
                                                                                                                                                     runtimeInputs = [ ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
-                                                                                                                                                            UUID="$1"
-                                                                                                                                                            EXECUTABLE="$2"
+                                                                                                                                                            EXECUTABLE="$1"
+                                                                                                                                                            UUID="$2"
                                                                                                                                                             if [[ ! -x "$EXECUTABLE" ]]
                                                                                                                                                             then
                                                                                                                                                                 echo "UUID=$UUID" "EXECUTABLE=$EXECUTABLE" >&2
