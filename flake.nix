@@ -133,41 +133,6 @@
                                                                     ] ;
                                                                 text =
                                                                     let
-                                                                        scripts =
-                                                                            {
-                                                                                init =
-                                                                                    visitor
-                                                                                        {
-                                                                                            lambda =
-                                                                                                path : value :
-                                                                                                    let
-                                                                                                        init = value null ;
-                                                                                                        in
-                                                                                                            {
-                                                                                                                action =
-                                                                                                                    {
-                                                                                                                        text =
-                                                                                                                            visitor
-                                                                                                                                {
-                                                                                                                                    lambda =
-                                                                                                                                        path : value :
-                                                                                                                                            let
-                                                                                                                                                action = value null ;
-                                                                                                                                                in
-                                                                                                                                                    visitor
-                                                                                                                                                        {
-                                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                                        }
-                                                                                                                                                        action.text ;
-                                                                                                                                }
-                                                                                                                                init.action ;
-                                                                                                                    } ;
-                                                                                                            } ;
-                                                                                        }
-                                                                                        init ;
-                                                                                release = null ;
-                                                                                temporary = temporary ;
-                                                                            } ;
                                                                         in
                                                                             ''
                                                                                 mkdir --parents ${ gc-roots-directory }
@@ -224,6 +189,41 @@
                                                                                 echo "${ resources-directory }/mounts/$INDEX"
                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             '' ;
+                                                            } ;
+                                                        scripts =
+                                                            {
+                                                                init =
+                                                                    visitor
+                                                                        {
+                                                                            lambda =
+                                                                                path : value :
+                                                                                    let
+                                                                                        init = value null ;
+                                                                                        in
+                                                                                            {
+                                                                                                action =
+                                                                                                    {
+                                                                                                        text =
+                                                                                                            visitor
+                                                                                                                {
+                                                                                                                    lambda =
+                                                                                                                        path : value :
+                                                                                                                            let
+                                                                                                                                action = value null ;
+                                                                                                                                in
+                                                                                                                                    visitor
+                                                                                                                                        {
+                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                        }
+                                                                                                                                        action.text ;
+                                                                                                                }
+                                                                                                                init.action ;
+                                                                                                    } ;
+                                                                                            } ;
+                                                                        }
+                                                                        init ;
+                                                                release = null ;
+                                                                temporary = temporary ;
                                                             } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
