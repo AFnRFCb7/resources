@@ -259,7 +259,7 @@
                                                                                                                                                                                         text =
                                                                                                                                                                                             ''
                                                                                                                                                                                                 OUT="$1"
-                                                                                                                                                                                                export "$OUT"
+                                                                                                                                                                                                export OUT
                                                                                                                                                                                                 mkdir --parents "$OUT"
                                                                                                                                                                                                 init
                                                                                                                                                                                             '' ;
