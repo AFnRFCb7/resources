@@ -220,7 +220,36 @@
                                                                                             } ;
                                                                         }
                                                                         init ;
-                                                                release = null ;
+                                                                release =
+                                                                    visitor
+                                                                        {
+                                                                            lambda =
+                                                                                path : value :
+                                                                                    let
+                                                                                        release = value null ;
+                                                                                        in
+                                                                                            {
+                                                                                                action =
+                                                                                                    {
+                                                                                                        text =
+                                                                                                            visitor
+                                                                                                                {
+                                                                                                                    lambda =
+                                                                                                                        path : value :
+                                                                                                                            let
+                                                                                                                                action = value null ;
+                                                                                                                                in
+                                                                                                                                    visitor
+                                                                                                                                        {
+                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                        }
+                                                                                                                                        action.text ;
+                                                                                                                }
+                                                                                                                release.action ;
+                                                                                                    } ;
+                                                                                            } ;
+                                                                        }
+                                                                        release ;
                                                                 temporary = temporary ;
                                                             } ;
                                                     in "${ application }/bin/resource" ;
