@@ -10,6 +10,7 @@
 		                coreutils ,
 		                flock ,
 		                jq ,
+		                mkDerivation ,
 		                visitor ,
 		                writeShellApplication
                     } :
