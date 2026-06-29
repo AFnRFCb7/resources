@@ -103,6 +103,8 @@
                                                                                                                         LINK="$( readlink --canonical "${ resources-directory }/canonical/$HASH" )" || exit 197
                                                                                                                         INDEX="$( basename "$LINK" )" || exit 176
                                                                                                                         export INDEX
+                                                                                                                        mkdir --parents ${ resources-directory }/flags
+                                                                                                                        touch "${ resources-directory }/flags/$INDEX"
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > /output
                                                                                                                         ORIGINATOR_PID="$( jq --null-input --raw-output ".originator-pid" /input )" || exit 192
                                                                                                                         echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
@@ -115,6 +117,8 @@
                                                                                                                         echo "$NEXT" >> ${ resources-directory }/sequence
                                                                                                                         INDEX="$( printf "%016d" "$CURRENT" )" || exit 157
                                                                                                                         export INDEX
+                                                                                                                        mkdir --parents ${ resources-directory }/flags
+                                                                                                                        touch "${ resources-directory }/flags/$INDEX"
                                                                                                                         mkdir --parents "${ resources-directory }/scripts/$INDEX/init/action"
                                                                                                                         INIT_ACTION="$( jq --raw-output ".payload.scripts.init.action.text" /input )" || exit 124
                                                                                                                         ln --symbolic "$INIT_ACTION" "${ resources-directory }/scripts/$INDEX/init/action/text"
@@ -257,6 +261,144 @@
                                                                 in
                                                                     {
                                                                         parameters = parameters ;
+                                                                        user-environments =
+                                                                            {
+                                                                                init =
+                                                                                    {
+                                                                                        action = null ;
+                                                                                        recovery = { } ;
+                                                                                    } ;
+                                                                                release =
+                                                                                    {
+                                                                                        action =
+                                                                                            writeShellApplication
+                                                                                                {
+                                                                                                    name = "action" ;
+                                                                                                    runtimeInputs =
+                                                                                                        [
+                                                                                                            coreutils
+                                                                                                            flock
+                                                                                                            (
+                                                                                                                buildFHSUserEnv
+                                                                                                                    {
+                                                                                                                        extraBwrapArgs =
+                                                                                                                            [
+                                                                                                                                "--mount" "${ gc-roots-directory }" "${ gc-roots-directory }"
+                                                                                                                                "--mount" "${ resources-directory }" "${ resources-directory }"
+                                                                                                                                "--mount" "$OUTPUT_FILE" "/output"
+                                                                                                                            ] ;
+                                                                                                                        name = "garbage-collection" ;
+                                                                                                                        runScript = "garbage-collection" ;
+                                                                                                                        targetPkgs =
+                                                                                                                            pkgs :
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "garbage-collection" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.flock ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        GC_ROOT_COLLECT="$( find ${ gc-roots-directory } -mindepth 1 -maxdepth 1 -name "$INDEX" )" || exit 140
+                                                                                                                                                        RESOURCES_COLLECT="$( find ${ resources-directory } -mindepth 1 -maxdepth 1 -name "INDEX" )" || exit 157
+                                                                                                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                                                                                                        TARGET="$( mktemp --sufix .xz.tar ${ resources-directory }/temporary/XXXXXXXX )" || exit 178
+                                                                                                                                                        SOURCE="$GC_ROOT_COLLECT $RESOURCES_COLLECT"
+                                                                                                                                                        tar --create --xz --file "$TARGET" "$SOURCE"
+                                                                                                                                                        rm --recursive --force "$SOURCE"
+                                                                                                                                                        jq --null-input --arg TARGET "$TARGET" '$TARGET' > /output
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                    }
+                                                                                                            )
+                                                                                                            (
+                                                                                                                buildFHSUserEnv
+                                                                                                                    {
+                                                                                                                        extraBwrapArgs =
+                                                                                                                            [
+                                                                                                                                "--ro-mount" "$INPUT_FILE" "/input"
+                                                                                                                                "--ro-mount" "${ gc-roots-directory }" "${ gc-roots-directory }"
+                                                                                                                                "--ro-mount" "${ resources-directory }" "${ resources-directory }"
+                                                                                                                                "--mount" "$OUTPUT_FILE" "/output"
+                                                                                                                            ] ;
+                                                                                                                        name = "is-marked-for-garbage-collection" ;
+                                                                                                                        runScript = "is-marked-for-garbage-collection" ;
+                                                                                                                        targetPkgs =
+                                                                                                                            pkgs :
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "is-marked-for-garbage-collection" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.gnugrep pkgs.jq ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        INDEX="$( jq --null-input --raw-output ".index" /input )" || exit 121
+                                                                                                                                                        find ${ gc-root-directory } -type L | while read -r LINK
+                                                                                                                                                        do
+                                                                                                                                                            if [[ ! -s /output ]]
+                                                                                                                                                            then
+                                                                                                                                                                OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 122
+                                                                                                                                                                if [[ "${ resources-directory }/mounts/$INDEX" == "$OBSERVED" ]]
+                                                                                                                                                                then
+                                                                                                                                                                    jq --null-input 'false' > /output
+                                                                                                                                                                fi
+                                                                                                                                                            fi
+                                                                                                                                                        done
+                                                                                                                                                        if [[ ! -s /output ]]
+                                                                                                                                                        then
+                                                                                                                                                            jq --null-input 'true' > /output
+                                                                                                                                                        fi
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                    }
+                                                                                                            )
+                                                                                                        ] ;
+                                                                                                    text =
+                                                                                                        ''
+                                                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                                                            exec 172> ${ resources-directory }/locks/temporary
+                                                                                                            flock -s 172
+                                                                                                            mkdir --parents ${ resources-directory }/temporary
+                                                                                                            INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 101
+                                                                                                            export INPUT_FILE
+                                                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 100
+                                                                                                            export OUTPUT_FILE
+                                                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                                                            mkdir --parents ${ resources-directory }
+                                                                                                            exec 111> "${ resources-directory }/locks/$INDEX"
+                                                                                                            flock -x 111
+                                                                                                            mkdir --parents ${ resources-directory }/flags
+                                                                                                            rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            find "${ resources-directory }/pids/$INDEX" -type f | while read PID_FILE
+                                                                                                            do
+                                                                                                                PID="$( basename "$PID_FILE" )" || exit 122
+                                                                                                                tail --follow /dev/null --pid "$PID"
+                                                                                                                rm "$PID_FILE"
+                                                                                                            done
+                                                                                                            is-marked-for-garbage-collection
+                                                                                                            IS_MARKED_FOR_GARBAGE_COLLECTION="$( jq --null-input --raw-output "." )" || exit 143
+                                                                                                            if "$IS_MARKED_FOR_GARBAGE_COLLECTION"
+                                                                                                            then
+                                                                                                                garbage-collect
+                                                                                                                TARGET="$( jq --null-input "." $OUTPUT_FILE )" || exit 162
+                                                                                                                ARCHIVE="$( mktemp --suffix .xz.tar )" || exit 186
+                                                                                                                mv "$TARGET" "$ARCHIVE"
+                                                                                                            else
+                                                                                                                flock -u 111
+                                                                                                                "$0"
+                                                                                                            fi
+                                                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                        '' ;
+                                                                                                } ;
+                                                                                        recovery = { } ;
+                                                                                    } ;
+                                                                            } ;
                                                                     } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
