@@ -207,6 +207,21 @@
                                                                                                     {
                                                                                                         action =
                                                                                                             {
+                                                                                                                runtimeInputs =
+                                                                                                                    visitor
+                                                                                                                        {
+                                                                                                                            lambda =
+                                                                                                                                path : value :
+                                                                                                                                    let
+                                                                                                                                        action = value null ;
+                                                                                                                                        in
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                                }
+                                                                                                                                                action.text ;
+                                                                                                                        }
+                                                                                                                        init.action ;
                                                                                                                 text =
                                                                                                                     visitor
                                                                                                                         {
