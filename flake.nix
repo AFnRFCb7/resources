@@ -68,6 +68,15 @@
                                                 temporary
                                             } :
                                                 let
+                                                    application =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "action" ;
+                                                                runtimeInputs = [ ] ;
+                                                                text =
+                                                                    ''
+                                                                    '' ;
+                                                            } ;
                                                     resource =
                                                         mkDerivation
                                                             {
