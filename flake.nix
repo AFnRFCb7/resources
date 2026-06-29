@@ -219,29 +219,37 @@
                                                                                                                                                 {
                                                                                                                                                     lambda =
                                                                                                                                                         path : value :
-                                                                                                                                                            let
-                                                                                                                                                                user-environment =
-                                                                                                                                                                    buildFHSUserEnv
-                                                                                                                                                                        {
-                                                                                                                                                                            name = "runtimeInputs" ;
-                                                                                                                                                                            runScript = "runtimeInputs" ;
-                                                                                                                                                                            targetPkgs =
-                                                                                                                                                                                pkgs :
-                                                                                                                                                                                    [
-                                                                                                                                                                                        (
-                                                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                                                {
-                                                                                                                                                                                                    name = "runtimeInputs" ;
-                                                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                                                                    text =
-                                                                                                                                                                                                        ''
-                                                                                                                                                                                                            echo '${ builtins.toJSON ( value pkgs ) }'
-                                                                                                                                                                                                        '' ;
-                                                                                                                                                                                                }
-                                                                                                                                                                                        )
-                                                                                                                                                                                    ] ;
-                                                                                                                                                                        } ;
-                                                                                                                                                                in "${ user-environment }/bin/runtimeInputs" ;
+                                                                                                                                                            mkDerivation
+                                                                                                                                                                {
+                                                                                                                                                                    installPhase = ''runtimeInputs "$1"'' ;
+                                                                                                                                                                    name = "runtimeInputs" ;
+                                                                                                                                                                    nativeBuildInputs =
+                                                                                                                                                                        [
+                                                                                                                                                                            (
+                                                                                                                                                                                buildFHSUserEnv
+                                                                                                                                                                                    {
+                                                                                                                                                                                        name = "runtimeInputs" ;
+                                                                                                                                                                                        runScript = "runtimeInputs" ;
+                                                                                                                                                                                        targetPkgs =
+                                                                                                                                                                                            pkgs :
+                                                                                                                                                                                                [
+                                                                                                                                                                                                    (
+                                                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                name = "runtimeInputs" ;
+                                                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                                                                text =
+                                                                                                                                                                                                                    ''
+                                                                                                                                                                                                                        echo '${ builtins.toJSON ( value pkgs ) }' > "$1"
+                                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                    )
+                                                                                                                                                                                                ] ;
+                                                                                                                                                                                    }
+                                                                                                                                                                            )
+                                                                                                                                                                        ] ;
+                                                                                                                                                                    src = ./. ;
+                                                                                                                                                                } ;
                                                                                                                                                 }
                                                                                                                                                 action.runtimeInputs ;
                                                                                                                         }
