@@ -217,9 +217,33 @@
                                                                                                                                         in
                                                                                                                                             visitor
                                                                                                                                                 {
-                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                                    lambda =
+                                                                                                                                                        path : value :
+                                                                                                                                                            let
+                                                                                                                                                                user-environment =
+                                                                                                                                                                    buildFHSUserEnv
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "runtimeInputs" ;
+                                                                                                                                                                            runScript = "runtimeInputs" ;
+                                                                                                                                                                            targetPkgs =
+                                                                                                                                                                                pkgs :
+                                                                                                                                                                                    [
+                                                                                                                                                                                        (
+                                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    name = "runtimeInputs" ;
+                                                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                                                    text =
+                                                                                                                                                                                                        ''
+                                                                                                                                                                                                            echo '${ builtins.toJSON ( value pkgs ) }'
+                                                                                                                                                                                                        '' ;
+                                                                                                                                                                                                }
+                                                                                                                                                                                        )
+                                                                                                                                                                                    ] ;
+                                                                                                                                                                        } ;
+                                                                                                                                                                in "${ user-environment }/bin/runtimeInputs" ;
                                                                                                                                                 }
-                                                                                                                                                action.text ;
+                                                                                                                                                action.runtimeInputs ;
                                                                                                                         }
                                                                                                                         init.action ;
                                                                                                                 text =
