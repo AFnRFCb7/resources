@@ -360,29 +360,6 @@
                                                                                                                                 ] ;
                                                                                                                     }
                                                                                                             )
-                                                                                                            (
-                                                                                                                buildFHSUserEnv
-                                                                                                                    {
-                                                                                                                        extraBwrapArgs =
-                                                                                                                            [
-                                                                                                                                "--ro-bind" "${ resources-directory }" "${ resources-directory }"
-                                                                                                                            ] ;
-                                                                                                                        name = "release" ;
-                                                                                                                        runScript = "release" ;
-                                                                                                                        targetPkgs =
-                                                                                                                            pkgs :
-                                                                                                                                [
-                                                                                                                                    (
-                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "release" ;
-                                                                                                                                                runtimeInputs = [ ] ;
-                                                                                                                                                text =
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                ] ;
-                                                                                                                    }
-                                                                                                            )
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
