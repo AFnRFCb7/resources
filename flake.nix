@@ -154,7 +154,7 @@
                                                                                 --null-input \
                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson PARAMETERS '${ builtins.toJSON scripts.parameters }' \
+                                                                                --argjson PARAMETERS '${ builtins.toJSON runtime.parameters }' \
                                                                                 '{
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "payload" :
@@ -170,7 +170,7 @@
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
-                                                                                --argjson PARAMETERS '${ builtins.toJSON scripts.parameters }' \
+                                                                                --argjson PARAMETERS '${ builtins.toJSON runtime.parameters }' \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 '{
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
@@ -188,7 +188,7 @@
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
                                                             } ;
-                                                        scripts =
+                                                        runtime =
                                                             let
                                                                 parameters =
                                                                     {
