@@ -154,14 +154,14 @@
                                                                                 --null-input \
                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SCRIPTS '${ builtins.toJSON scripts }' \
+                                                                                --argjson PARAMETERS '${ builtins.toJSON scripts.parameters }' \
                                                                                 '{
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "payload" :
                                                                                         {
                                                                                             "arguments" : $ARGUMENTS ,
-                                                                                            "inputs" : { } ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "parameters" : $PARAMETERS ,
+                                                                                            "inputs" : { }
                                                                                         }
                                                                                 }' > "$INPUT_FILE"
                                                                         else
@@ -170,15 +170,15 @@
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                --argjson PARAMETERS '${ builtins.toJSON scripts.parameters }' \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SCRIPTS '${ builtins.toJSON scripts }' \
                                                                                 '{
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "payload" :
                                                                                         {
                                                                                             "arguments" : $ARGUMENTS ,
-                                                                                            "inputs" : { "standard" : . } ,
-                                                                                            "scripts" : $SCRIPTS
+                                                                                            "parameters" : $PARAMETERS ,
+                                                                                            "inputs" : { "standard" : . }
                                                                                         }
                                                                                 }' > "$INPUT_FILE"
                                                                         fi
@@ -189,69 +189,75 @@
                                                                     '' ;
                                                             } ;
                                                         scripts =
-                                                            {
-                                                                init =
-                                                                    visitor
-                                                                        {
-                                                                            lambda =
-                                                                                path : value :
-                                                                                    let
-                                                                                        init = value null ;
-                                                                                        in
-                                                                                            {
-                                                                                                action =
+                                                            let
+                                                                parameters =
+                                                                    {
+                                                                        init =
+                                                                            visitor
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value :
+                                                                                            let
+                                                                                                init = value null ;
+                                                                                                in
                                                                                                     {
-                                                                                                        text =
-                                                                                                            visitor
-                                                                                                                {
-                                                                                                                    lambda =
-                                                                                                                        path : value :
-                                                                                                                            let
-                                                                                                                                action = value null ;
-                                                                                                                                in
-                                                                                                                                    visitor
-                                                                                                                                        {
-                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                        }
-                                                                                                                                        action.text ;
-                                                                                                                }
-                                                                                                                init.action ;
+                                                                                                        action =
+                                                                                                            {
+                                                                                                                text =
+                                                                                                                    visitor
+                                                                                                                        {
+                                                                                                                            lambda =
+                                                                                                                                path : value :
+                                                                                                                                    let
+                                                                                                                                        action = value null ;
+                                                                                                                                        in
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                                }
+                                                                                                                                                action.text ;
+                                                                                                                        }
+                                                                                                                        init.action ;
+                                                                                                            } ;
                                                                                                     } ;
-                                                                                            } ;
-                                                                        }
-                                                                        init ;
-                                                                release =
-                                                                    visitor
-                                                                        {
-                                                                            lambda =
-                                                                                path : value :
-                                                                                    let
-                                                                                        release = value null ;
-                                                                                        in
-                                                                                            {
-                                                                                                action =
+                                                                                }
+                                                                                init ;
+                                                                        release =
+                                                                            visitor
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value :
+                                                                                            let
+                                                                                                release = value null ;
+                                                                                                in
                                                                                                     {
-                                                                                                        text =
-                                                                                                            visitor
-                                                                                                                {
-                                                                                                                    lambda =
-                                                                                                                        path : value :
-                                                                                                                            let
-                                                                                                                                action = value null ;
-                                                                                                                                in
-                                                                                                                                    visitor
-                                                                                                                                        {
-                                                                                                                                            lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
-                                                                                                                                        }
-                                                                                                                                        action.text ;
-                                                                                                                }
-                                                                                                                release.action ;
+                                                                                                        action =
+                                                                                                            {
+                                                                                                                text =
+                                                                                                                    visitor
+                                                                                                                        {
+                                                                                                                            lambda =
+                                                                                                                                path : value :
+                                                                                                                                    let
+                                                                                                                                        action = value null ;
+                                                                                                                                        in
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    lambda = path : value : builtins.toFile "text" ( value { seed = seed ; } ) ;
+                                                                                                                                                }
+                                                                                                                                                action.text ;
+                                                                                                                        }
+                                                                                                                        release.action ;
+                                                                                                            } ;
                                                                                                     } ;
-                                                                                            } ;
-                                                                        }
-                                                                        release ;
-                                                                temporary = temporary ;
-                                                            } ;
+                                                                                }
+                                                                                release ;
+                                                                        temporary = temporary ;
+                                                                    } ;
+                                                                in
+                                                                    {
+                                                                        parameters = parameters ;
+                                                                    } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
                             in
