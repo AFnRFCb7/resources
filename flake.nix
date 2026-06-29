@@ -68,6 +68,50 @@
                                                 temporary
                                             } :
                                                 let
+                                                    parameters =
+                                                        mkDerivation
+                                                            {
+                                                                installPhase = ''parameters "$1"'' ;
+                                                                name = "parameters" ;
+                                                                nativeBuildInputs =
+                                                                    [
+                                                                        (
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "parameters" ;
+                                                                                    runtimeInputs =
+                                                                                        [
+                                                                                            coreutils
+                                                                                            (
+                                                                                                buildFHSUserEnv
+                                                                                                    {
+                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
+                                                                                                        name = "parameters" ;
+                                                                                                        runScript = "parameters" ;
+                                                                                                        targetPkgs =
+                                                                                                            pkgs :
+                                                                                                                [
+                                                                                                                    (
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                            }
+                                                                                                                    )
+                                                                                                                ] ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                                    text =
+                                                                                        ''
+                                                                                            OUT="$1"
+                                                                                            mkdir --parents "$OUT"
+
+                                                                                        '' ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                src = ./. ;
+                                                            } ;
+
                                                     application =
                                                         writeShellApplication
                                                             {
