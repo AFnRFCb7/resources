@@ -149,7 +149,7 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            HASH="$( jq "[ .arguments , .inputs , $RESOURCE ]" /input )" || exit 140
+                                                                                                                            HASH="$( jq "[ .arguments , .inputs ]" /input )" || exit 140
                                                                                                                             jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                         '' ;
                                                                                                         }
