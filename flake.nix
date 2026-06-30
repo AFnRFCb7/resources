@@ -121,7 +121,14 @@
                                                                                                                                                                             pkgs :
                                                                                                                                                                                 [
                                                                                                                                                                                     (
-
+                                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                                            {
+                                                                                                                                                                                                name = "resource" ;
+                                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                                text =
+                                                                                                                                                                                                    ''
+                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                            }
                                                                                                                                                                                     )
                                                                                                                                                                                 ] ;
                                                                                                                                                                     }
