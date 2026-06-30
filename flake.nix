@@ -125,9 +125,26 @@
                                                                                                                                                                                                 runtimeInputs = [ ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     let
+                                                                                                                                                                                                        resource =
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                temporary =
+                                                                                                                                                                                                                    visitor
+                                                                                                                                                                                                                        {
+                                                                                                                                                                                                                            bool = path : value : value ;
+                                                                                                                                                                                                                            int = path : value : false ;
+                                                                                                                                                                                                                            float = path : value : false ;
+                                                                                                                                                                                                                            lambda = path : value : false ;
+                                                                                                                                                                                                                            list = path : list : false ;
+                                                                                                                                                                                                                            path = path : value : false ;
+                                                                                                                                                                                                                            set = path : value : false ;
+                                                                                                                                                                                                                            string = path : value : false ;
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                        temporary ;
+                                                                                                                                                                                                            } ;
                                                                                                                                                                                                         in
                                                                                                                                                                                                             ''
-
+                                                                                                                                                                                                                TEMPORARY="$( jq --null-input --raw-output '${ builtins.toJSON }' )" || exit 198
+                                                                                                                                                                                                                echo "$TEMPORARY" > /out/temporary
                                                                                                                                                                                                             '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
@@ -170,7 +187,7 @@
                                                                                 } ;
                                                                         in
                                                                             ''
-                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )"
+                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 160
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                                 export INPUT_FILE
                                                                                 if [[ -t 0 ]]
@@ -189,7 +206,6 @@
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
-                                                                                        --null-input \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
