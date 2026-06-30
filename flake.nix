@@ -89,15 +89,16 @@
                                                                                     runScript =
                                                                                         let
                                                                                             application =
-                                                                                                {
-                                                                                                    name = "resource" ;
-                                                                                                    text =
-                                                                                                        ''
-                                                                                                            echo 1723258852938545 4153358153712572 >&2
-                                                                                                            resource
-                                                                                                            echo 1723258852938545 2657298849318383 >&2
-                                                                                                        '' ;
-                                                                                                } ;
+                                                                                                writeShellApplication
+                                                                                                    {
+                                                                                                        name = "resource" ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                                echo 1723258852938545 4153358153712572 >&2
+                                                                                                                resource
+                                                                                                                echo 1723258852938545 2657298849318383 >&2
+                                                                                                            '' ;
+                                                                                                    } ;
                                                                                             in "${ application }/bin/resource" ;
                                                                                     targetPkgs =
                                                                                         pkgs :
