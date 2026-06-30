@@ -124,8 +124,11 @@
                                                                                                                                                                                                 name = "resource" ;
                                                                                                                                                                                                 runtimeInputs = [ ] ;
                                                                                                                                                                                                 text =
-                                                                                                                                                                                                    ''
-                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                                    let
+                                                                                                                                                                                                        in
+                                                                                                                                                                                                            ''
+
+                                                                                                                                                                                                            '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
                                                                                                                                                                                 ] ;
@@ -137,7 +140,7 @@
                                                                                                                                                             OUT="$1"
                                                                                                                                                             export OUT
                                                                                                                                                             mkdir --parents "$OUT"
-                                                                                                                                                            resource
+                                                                                                                                                            # resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
