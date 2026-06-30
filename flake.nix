@@ -96,7 +96,7 @@
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    jq --null-input --arg OUTPUT "" --argjson STATUS 0 '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                    jq --null-input --arg OUTPUT "adfadsfads" --argjson STATUS 0 '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
