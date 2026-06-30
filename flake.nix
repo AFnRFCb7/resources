@@ -103,6 +103,23 @@
                                                                                                                                 name = "resource" ;
                                                                                                                                 nativeBuildInputs =
                                                                                                                                     [
+                                                                                                                                        (
+                                                                                                                                            buildFHSUserEnv
+                                                                                                                                                {
+                                                                                                                                                    extraBwrapArgs =
+                                                                                                                                                        [
+                                                                                                                                                        ] ;
+                                                                                                                                                    name = "resource" ;
+                                                                                                                                                    runScript = "resource" ;
+                                                                                                                                                    targetPkgs =
+                                                                                                                                                        pkgs :
+                                                                                                                                                            [
+                                                                                                                                                                (
+
+                                                                                                                                                                )
+                                                                                                                                                            ] ;
+                                                                                                                                                }
+                                                                                                                                        )
                                                                                                                                     ] ;
                                                                                                                                 src = ./. ;
                                                                                                                             } ;
