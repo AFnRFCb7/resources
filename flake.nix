@@ -156,114 +156,14 @@
                                                                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     let
-                                                                                                                                                                                                        resource =
-                                                                                                                                                                                                            {
-                                                                                                                                                                                                                init =
-                                                                                                                                                                                                                    visitor
-                                                                                                                                                                                                                        {
-                                                                                                                                                                                                                            lambda =
-                                                                                                                                                                                                                                path : value :
-                                                                                                                                                                                                                                    let
-                                                                                                                                                                                                                                        init = value null ;
-                                                                                                                                                                                                                                        in
-                                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                                action =
-                                                                                                                                                                                                                                                    visitor
-                                                                                                                                                                                                                                                        {
-                                                                                                                                                                                                                                                            lambda =
-                                                                                                                                                                                                                                                                path : value :
-                                                                                                                                                                                                                                                                    let
-                                                                                                                                                                                                                                                                        action = value null ;
-                                                                                                                                                                                                                                                                        in
-                                                                                                                                                                                                                                                                            let
-                                                                                                                                                                                                                                                                                application =
-                                                                                                                                                                                                                                                                                    pkgs.writeShellApplication
-                                                                                                                                                                                                                                                                                        {
-                                                                                                                                                                                                                                                                                            name = "action" ;
-                                                                                                                                                                                                                                                                                            runtimeInputs =
-                                                                                                                                                                                                                                                                                                [
-                                                                                                                                                                                                                                                                                                    (
-                                                                                                                                                                                                                                                                                                        pkgs.buildFHSUserEnv
-                                                                                                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                                                                                                extraBwrapArgs =
-                                                                                                                                                                                                                                                                                                                    [
-                                                                                                                                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                                                                                                                                name = "action" ;
-                                                                                                                                                                                                                                                                                                                runScript = "action" ;
-                                                                                                                                                                                                                                                                                                                targetPkgs =
-                                                                                                                                                                                                                                                                                                                    pkgs :
-                                                                                                                                                                                                                                                                                                                        [
-                                                                                                                                                                                                                                                                                                                            (
-                                                                                                                                                                                                                                                                                                                                pkgs.writeShellApplication
-                                                                                                                                                                                                                                                                                                                                    {
-                                                                                                                                                                                                                                                                                                                                        name = "action" ;
-                                                                                                                                                                                                                                                                                                                                        runtimeInputs = [ ] ;
-                                                                                                                                                                                                                                                                                                                                        text = "" ;
-                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                            )
-                                                                                                                                                                                                                                                                                                                        ] ;
-                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                    )
-                                                                                                                                                                                                                                                                                                ] ;
-                                                                                                                                                                                                                                                                                            text =
-                                                                                                                                                                                                                                                                                                ''
-                                                                                                                                                                                                                                                                                                '' ;
-                                                                                                                                                                                                                                                                                        } ;
-                                                                                                                                                                                                                                                                                in "${ application }/bin/action" ;
-                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                        init.action ;
-                                                                                                                                                                                                                                            } ;
-                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                        init ;
-                                                                                                                                                                                                                seed =
-                                                                                                                                                                                                                    visitor
-                                                                                                                                                                                                                        (
-                                                                                                                                                                                                                            let
-                                                                                                                                                                                                                                to-string =
-                                                                                                                                                                                                                                    path : value :
-                                                                                                                                                                                                                                        let
-                                                                                                                                                                                                                                            type = builtins.typeOf value ;
-                                                                                                                                                                                                                                            in
-                                                                                                                                                                                                                                                {
-                                                                                                                                                                                                                                                    path = path ;
-                                                                                                                                                                                                                                                    type = type ;
-                                                                                                                                                                                                                                                    value = if type == "lambda" then null else value ;
-                                                                                                                                                                                                                                                } ;
-                                                                                                                                                                                                                                in
-                                                                                                                                                                                                                                {
-                                                                                                                                                                                                                                    bool = to-string ;
-                                                                                                                                                                                                                                    float = to-string ;
-                                                                                                                                                                                                                                    int = to-string ;
-                                                                                                                                                                                                                                    lambda = to-string ;
-                                                                                                                                                                                                                                    list = to-string ;
-                                                                                                                                                                                                                                    path = to-string ;
-                                                                                                                                                                                                                                    set = to-string ;
-                                                                                                                                                                                                                                    string = to-string ;
-                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                        )
-                                                                                                                                                                                                                        seed ;
-                                                                                                                                                                                                                temporary =
-                                                                                                                                                                                                                    visitor
-                                                                                                                                                                                                                        {
-                                                                                                                                                                                                                            bool = path : value : value ;
-                                                                                                                                                                                                                            float = path : value : false ;
-                                                                                                                                                                                                                            int = path : value : false ;
-                                                                                                                                                                                                                            lambda = path : value : false ;
-                                                                                                                                                                                                                            list = path : list : false ;
-                                                                                                                                                                                                                            path = path : value : false ;
-                                                                                                                                                                                                                            set = path : value : false ;
-                                                                                                                                                                                                                            string = path : value : false ;
-                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                        temporary ;
-                                                                                                                                                                                                            } ;
                                                                                                                                                                                                         in
-                                                                                                                                                                                                            ''
-                                                                                                                                                                                                                mkdir --parents /out/init/recovery
-                                                                                                                                                                                                                ln --symbolic ${ resource.init.action } /out/init/action
-                                                                                                                                                                                                                mkdir --parents /out/release/recovery
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource.seed }' > /out/seed.json
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource.temporary }' > /out/temporary.json
-                                                                                                                                                                                                            '' ;
+                                                                                                                                                                                                    ''
+                                                                                                                                                                                                        mkdir --parents /out/init/recovery
+                                                                                                                                                                                                        ln --symbolic ${ resource.init.action } /out/init/action
+                                                                                                                                                                                                        mkdir --parents /out/release/recovery
+                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON resource.seed }' > /out/seed.json
+                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON resource.temporary }' > /out/temporary.json
+                                                                                                                                                                                                    '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
                                                                                                                                                                                 ] ;
@@ -374,11 +274,110 @@
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
+                                                        resource =
+                                                            {
+                                                                init =
+                                                                    visitor
+                                                                        {
+                                                                            lambda =
+                                                                                path : value :
+                                                                                    let
+                                                                                        init = value null ;
+                                                                                        in
+                                                                                            {
+                                                                                                action =
+                                                                                                    visitor
+                                                                                                        {
+                                                                                                            lambda =
+                                                                                                                path : value :
+                                                                                                                    let
+                                                                                                                        action = value null ;
+                                                                                                                        in
+                                                                                                                            let
+                                                                                                                                application =
+                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                        {
+                                                                                                                                            name = "action" ;
+                                                                                                                                            runtimeInputs =
+                                                                                                                                                [
+                                                                                                                                                    (
+                                                                                                                                                        pkgs.buildFHSUserEnv
+                                                                                                                                                            {
+                                                                                                                                                                extraBwrapArgs =
+                                                                                                                                                                    [
+                                                                                                                                                                    ] ;
+                                                                                                                                                                name = "action" ;
+                                                                                                                                                                runScript = "action" ;
+                                                                                                                                                                targetPkgs =
+                                                                                                                                                                    pkgs :
+                                                                                                                                                                        [
+                                                                                                                                                                            (
+                                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                                    {
+                                                                                                                                                                                        name = "action" ;
+                                                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                                                        text = "" ;
+                                                                                                                                                                                    }
+                                                                                                                                                                            )
+                                                                                                                                                                        ] ;
+                                                                                                                                                            }
+                                                                                                                                                    )
+                                                                                                                                                ] ;
+                                                                                                                                            text =
+                                                                                                                                                ''
+                                                                                                                                                '' ;
+                                                                                                                                        } ;
+                                                                                                                                in "${ application }/bin/action" ;
+                                                                                                        }
+                                                                                                        init.action ;
+                                                                                            } ;
+                                                                        }
+                                                                        init ;
+                                                                seed =
+                                                                    visitor
+                                                                        (
+                                                                            let
+                                                                                to-string =
+                                                                                    path : value :
+                                                                                        let
+                                                                                            type = builtins.typeOf value ;
+                                                                                            in
+                                                                                                {
+                                                                                                    path = path ;
+                                                                                                    type = type ;
+                                                                                                    value = if type == "lambda" then null else value ;
+                                                                                                } ;
+                                                                                in
+                                                                                {
+                                                                                    bool = to-string ;
+                                                                                    float = to-string ;
+                                                                                    int = to-string ;
+                                                                                    lambda = to-string ;
+                                                                                    list = to-string ;
+                                                                                    path = to-string ;
+                                                                                    set = to-string ;
+                                                                                    string = to-string ;
+                                                                                }
+                                                                        )
+                                                                        seed ;
+                                                                temporary =
+                                                                    visitor
+                                                                        {
+                                                                            bool = path : value : value ;
+                                                                            float = path : value : false ;
+                                                                            int = path : value : false ;
+                                                                            lambda = path : value : false ;
+                                                                            list = path : list : false ;
+                                                                            path = path : value : false ;
+                                                                            set = path : value : false ;
+                                                                            string = path : value : false ;
+                                                                        }
+                                                                        temporary ;
+                                                            } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
                             in
                                 {
-
                                     check =
                                         {
                                             actions ,
