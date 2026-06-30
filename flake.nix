@@ -94,59 +94,7 @@
                                                                                                         {
                                                                                                             name = "resource" ;
                                                                                                             runtimeInputs = [ ] ;
-                                                                                                            text =
-                                                                                                                let
-                                                                                                                    resource =
-                                                                                                                        mkDerivation
-                                                                                                                            {
-                                                                                                                                installPhase = ''resource "$out"'' ;
-                                                                                                                                name = "resource" ;
-                                                                                                                                nativeBuildInputs =
-                                                                                                                                    [
-                                                                                                                                        (
-                                                                                                                                            writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "resource" ;
-                                                                                                                                                    runtimeInputs =
-                                                                                                                                                        [
-                                                                                                                                                            (
-                                                                                                                                                                buildFHSUserEnv
-                                                                                                                                                                    {
-                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                                                                                        name = "resource" ;
-                                                                                                                                                                        runScript = "resource" ;
-                                                                                                                                                                        targetPkgs =
-                                                                                                                                                                            pkgs :
-                                                                                                                                                                                [
-                                                                                                                                                                                    (
-                                                                                                                                                                                        writeShellApplication
-                                                                                                                                                                                            {
-                                                                                                                                                                                                name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = [ ] ;
-                                                                                                                                                                                                text =
-                                                                                                                                                                                                    ''
-                                                                                                                                                                                                    '' ;
-                                                                                                                                                                                            }
-                                                                                                                                                                                    )
-                                                                                                                                                                                ] ;
-                                                                                                                                                                    }
-                                                                                                                                                            )
-                                                                                                                                                        ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            OUT="$1"
-                                                                                                                                                            export OUT
-                                                                                                                                                            resource
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                    ] ;
-                                                                                                                                src = ./. ;
-                                                                                                                            } ;
-                                                                                                                    in
-                                                                                                                        ''
-                                                                                                                            jq --null-input '{ "output" : "" , "status" : 0 }' > /output
-                                                                                                                        '' ;
+                                                                                                            text = '''' ;
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
