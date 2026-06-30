@@ -79,7 +79,7 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
-                                                                                            "--fstemp" "1723258852938545-4792127977533221"
+                                                                                            "--tmpfs" "1723258852938545-4792127977533221"
                                                                                             "--ro-bind" "$INPUT_FILE" "/input"
                                                                                             "--bind" gc-roots-directory gc-roots-directory
                                                                                             "--bind" resources-directory resources-directory
