@@ -93,7 +93,35 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "resource" ;
-                                                                                                            runtimeInputs = [ ] ;
+                                                                                                            runtimeInputs =
+                                                                                                                [
+                                                                                                                    (
+                                                                                                                        pkgs.buildFSHUserEnv
+                                                                                                                            {
+                                                                                                                                extraBWrapArgs =
+                                                                                                                                    [
+                                                                                                                                        "--mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--ro-mount" "$OUTPUT_FILE" "/output"
+                                                                                                                                    ] ;
+                                                                                                                                name = "resource" ;
+                                                                                                                                runtimeScript = "resource" ;
+                                                                                                                                targetPkgs =
+                                                                                                                                    pkgs :
+                                                                                                                                        [
+                                                                                                                                            (
+                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                    {
+                                                                                                                                                        name = "resource" ;
+                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                        text =
+                                                                                                                                                            ''
+                                                                                                                                                            '' ;
+                                                                                                                                                    }
+                                                                                                                                            )
+                                                                                                                                        ] ;
+                                                                                                                            }
+                                                                                                                    )
+                                                                                                                ] ;
                                                                                                             text =
                                                                                                                 let
                                                                                                                     resource =
@@ -277,8 +305,11 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
+                                                                                                                                SEQUENTIAL="$( )" || exit 162
+                                                                                                                                printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
                                                                                                                                 export INPUT_FILE
+                                                                                                                                jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
