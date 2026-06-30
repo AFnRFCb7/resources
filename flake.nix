@@ -254,19 +254,17 @@
                                                                                                                             flock -x 139
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
-                                                                                                                            ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
+                                                                                                                            # ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
                                                                                                                             if [[ -d "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
                                                                                                                                 OUTPUT=${ resources-directory }/mounts/$INDEX
                                                                                                                                 STATUS=0
                                                                                                                                 jq \
                                                                                                                                     --null-input \
-                                                                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                                                                     --arg OUTPUT "$OUTPUT" \
                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                     '{
                                                                                                                                         "output" : $OUTPUT ,
-                                                                                                                                        "originator-pid" : $ORIGINATOR_PID ,
                                                                                                                                         "status" : $STATUS
                                                                                                                                     }' \
                                                                                                                                     /input > /output
@@ -275,7 +273,6 @@
                                                                                                                                 export INPUT_FILE
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
-
                                                                                                                                 jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
