@@ -207,7 +207,7 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
-                                                                                        --args "$@" \
+                                                                                        --args -- "$@" \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" :
