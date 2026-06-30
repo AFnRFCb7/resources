@@ -143,8 +143,7 @@
                                                                                                                                                                                                             } ;
                                                                                                                                                                                                         in
                                                                                                                                                                                                             ''
-                                                                                                                                                                                                                TEMPORARY="$( jq --null-input --raw-output '${ builtins.toJSON resource.temporary }' )" || exit 198
-                                                                                                                                                                                                                echo "$TEMPORARY" > /out/temporary
+                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource }'
                                                                                                                                                                                                             '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
@@ -156,7 +155,7 @@
                                                                                                                                                         ''
                                                                                                                                                             OUT="$1"
                                                                                                                                                             export OUT
-                                                                                                                                                            mkdir --parents "$OUT"
+                                                                                                                                                            touch "$OUT"
                                                                                                                                                             # resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
