@@ -204,15 +204,18 @@
                                                                                         -- "$@" > "$INPUT_FILE"
                                                                                 else
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
+                                                                                    STANDARD_INPUT="$( cat )" || exit 103
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
+                                                                                        --null-input \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                         --args \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" :
                                                                                                 {
-                                                                                                    "standard" : .
+                                                                                                    "standard" : $STANDARD_INPUT
                                                                                                 } ,
                                                                                             "origin-pid" : $ORIGIN_PID
                                                                                         }' \
