@@ -282,9 +282,6 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                                                                            exec 139> ${ resources-directory }/locks/clean
-                                                                                                                            flock -x 139
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
