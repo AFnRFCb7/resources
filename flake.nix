@@ -108,8 +108,7 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            HASH=wetrew
-                                                                                                                            # HASH="$( jq "[ .arguments , .inputs ]" | sha512sum | cut --characters 1-128 )" || exit 140
+                                                                                                                            HASH="$( jq "[ .arguments , .inputs ]" /input | sha512sum | cut --characters 1-128 )" || exit 140
                                                                                                                             jq --null-input --arg OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                         '' ;
                                                                                                         }
