@@ -96,7 +96,7 @@
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    jq --null-input --arg OUTPUT "adfadsfads" --argjson STATUS 0 '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                    jq --null-input --arg OUTPUT "adfadsfads" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -123,8 +123,8 @@
                                                                                 mkdir --parents ${ gc-roots-directory }
                                                                                 mkdir --parents ${ resources-directory }
                                                                                 resource
-                                                                                OUTPUT="$( jq --null-input --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
-                                                                                STATUS="$( jq --null-input --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
+                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                                 echo "$OUTPUT"
                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                 exit "$STATUS"
