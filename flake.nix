@@ -100,10 +100,10 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--ro-mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--ro-mount" "/input" "/input"
                                                                                                                                         "--mount" gc-roots-directory gc-roots-directory
                                                                                                                                         "--mount" resources-directory resources-directory
-                                                                                                                                        "--mount" "$OUTPUT_FILE" "/output"
+                                                                                                                                        "--mount" "/output" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
                                                                                                                                 runtimeScript = "resource" ;
@@ -115,7 +115,6 @@
                                                                                                                                                     {
                                                                                                                                                         name = "resource" ;
                                                                                                                                                         runtimeInputs = [ ] ;
-                                                                                                                                                        ### PASTE
                                                                                                                                                         text =
                                                                                                                                                             let
                                                                                                                                                                 resource =
@@ -317,15 +316,8 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    INPUT_FILE="$( mktemp --suffix ".json" )" || exit 197
-                                                                                                                    export INPUT_FILE
-                                                                                                                    OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 197
-                                                                                                                    export OUTPUT_FILE
                                                                                                                     resource
                                                                                                                 '' ;
-                                                                                                                ### REPLACE "resource"
-                                                                                                                ### BEGIN CUT
-                                                                                                                ### END CUT
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
