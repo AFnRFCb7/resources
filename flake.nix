@@ -110,7 +110,7 @@
                                                                                                                                                     runtimeInputs =
                                                                                                                                                         [
                                                                                                                                                             (
-                                                                                                                                                                buildHSFUserEnv
+                                                                                                                                                                buildFHSUserEnv
                                                                                                                                                                     {
                                                                                                                                                                         extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
                                                                                                                                                                         name = "action" ;
