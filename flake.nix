@@ -96,7 +96,7 @@
                                                                                                             runtimeInputs =
                                                                                                                 [
                                                                                                                     (
-                                                                                                                        pkgs.buildFSHUserEnv
+                                                                                                                        pkgs.buildFHSUserEnv
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
