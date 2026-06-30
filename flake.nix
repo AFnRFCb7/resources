@@ -100,10 +100,10 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--ro-mount" "$INPUT_FILE" "/input"
                                                                                                                                         "--mount" gc-roots-directory gc-roots-directory
                                                                                                                                         "--mount" resources-directory resources-directory
-                                                                                                                                        "--ro-mount" "$OUTPUT_FILE" "/output"
+                                                                                                                                        "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
                                                                                                                                 runtimeScript = "resource" ;
