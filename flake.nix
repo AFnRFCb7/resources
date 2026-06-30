@@ -99,7 +99,12 @@
                                                                                                                     resource =
                                                                                                                         mkDerivation
                                                                                                                             {
-
+                                                                                                                                installPhase = ''resource "$out"'' ;
+                                                                                                                                name = "resource" ;
+                                                                                                                                nativeBuildInputs =
+                                                                                                                                    [
+                                                                                                                                    ] ;
+                                                                                                                                src = ./. ;
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
@@ -136,6 +141,7 @@
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" : { } ,
                                                                                             "origin-pid" : $ORIGIN_PID
                                                                                         }' > "$INPUT_FILE"
                                                                                 else
@@ -147,6 +153,10 @@
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
                                                                                             "arguments" : $ARGUMENTS ,
+                                                                                            "inputs" :
+                                                                                                {
+                                                                                                    "standard" : .
+                                                                                                } ,
                                                                                             "origin-pid" : $ORIGIN_PID
                                                                                         }' > "$INPUT_FILE"
                                                                                 fi
