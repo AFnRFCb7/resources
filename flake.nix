@@ -313,9 +313,6 @@
                                                                                                                     )
                                                                                                                 ] ;
                                                                                                             text = "resource" ;
-                                                                                                                ### REPLACE "resource"
-                                                                                                                ### BEGIN CUT
-                                                                                                                ### END CUT
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
@@ -365,7 +362,9 @@
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
+                                                                        echo 1723258852938545 7711931992851441 >&2
                                                                         resource
+                                                                        echo 1723258852938545 9946137267159921 >&2
                                                                         OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo "$OUTPUT"
