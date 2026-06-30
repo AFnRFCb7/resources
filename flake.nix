@@ -114,6 +114,7 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
+                                                                                                                                        "--tmpfs" "1723258852938545-8616278834475747"
                                                                                                                                         "--ro-mount" "$INPUT_FILE" "/input"
                                                                                                                                         "--mount" gc-roots-directory gc-roots-directory
                                                                                                                                         "--mount" resources-directory resources-directory
@@ -348,7 +349,7 @@
                                                                                                                                 name = "resource" ;
                                                                                                                                 text =
                                                                                                                                     ''
-                                                                                                                                        echo 1723258852938545 1583666346816296 >&2
+                                                                                                                                        echo 1723258852938545 1583666346816296 "$PATH" >&2
                                                                                                                                         resource
                                                                                                                                         echo 1723258852938545 1814722161265871 >&2
                                                                                                                                     '' ;
