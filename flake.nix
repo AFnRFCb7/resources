@@ -113,6 +113,7 @@
                                                                                                                                                     {
                                                                                                                                                         name = "resource" ;
                                                                                                                                                         runtimeInputs = [ ] ;
+                                                                                                                                                        ### PASTE
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                             '' ;
@@ -123,6 +124,7 @@
                                                                                                                     )
                                                                                                                 ] ;
                                                                                                             text =
+                                                                                                                ### REPLACE "resource"
                                                                                                                 ### BEGIN CUT
                                                                                                                 let
                                                                                                                     resource =
