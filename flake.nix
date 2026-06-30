@@ -313,7 +313,12 @@
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
-                                                                                                            text = "resource" ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    INPUT_FILE="$( mktemp --suffix ".json" )" || exit 197
+                                                                                                                    exi
+                                                                                                                    resource
+                                                                                                                '' ;
                                                                                                                 ### REPLACE "resource"
                                                                                                                 ### BEGIN CUT
                                                                                                                 ### END CUT
