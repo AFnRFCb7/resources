@@ -112,9 +112,7 @@
                                                                                                                                                             (
                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                     {
-                                                                                                                                                                        extraBwrapArgs =
-                                                                                                                                                                            [
-                                                                                                                                                                            ] ;
+                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
                                                                                                                                                                         name = "resource" ;
                                                                                                                                                                         runScript = "resource" ;
                                                                                                                                                                         targetPkgs =
@@ -136,6 +134,10 @@
                                                                                                                                                         ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            OUT="$1"
+                                                                                                                                                            export OUT
+                                                                                                                                                            mkdir --parents "$OUT"
+                                                                                                                                                            resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
