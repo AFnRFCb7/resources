@@ -94,7 +94,10 @@
                                                                                                         {
                                                                                                             name = "resource" ;
                                                                                                             runtimeInputs = [ ] ;
-                                                                                                            text = '''' ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    jq --null-input --arg OUTPUT "" --argjson STATUS 0 '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                '' ;
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
