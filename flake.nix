@@ -155,7 +155,14 @@
                                                                     ] ;
                                                                 text =
                                                                     let
-                                                                        resource = null ;
+                                                                        resource =
+                                                                            mkDerivation
+                                                                                {
+                                                                                    installPhase = ''resource "$1"'' ;
+                                                                                    name = "resource" ;
+                                                                                    nativeBuildInputs = [ ] ;
+                                                                                    src = ./. ;
+                                                                                } ;
                                                                         in
                                                                             ''
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
