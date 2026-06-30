@@ -99,7 +99,7 @@
                                                                                                                     resources =
                                                                                                                         mkDerivation
                                                                                                                             {
-                                                                                                                                installPhase = ''action "$out"''
+                                                                                                                                installPhase = ''action "$out"'' ;
                                                                                                                                 name = "action" ;
                                                                                                                                 nativeBuildInputs =
                                                                                                                                     [
