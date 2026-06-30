@@ -122,7 +122,7 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     let
                                                                                                                                                                                                         resource =
