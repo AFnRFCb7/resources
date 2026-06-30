@@ -124,32 +124,32 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    resource =
+                                                                                                                    derivation =
                                                                                                                         mkDerivation
                                                                                                                             {
-                                                                                                                                installPhase = ''resource "$out"'' ;
-                                                                                                                                name = "resource" ;
+                                                                                                                                installPhase = ''derivation "$out"'' ;
+                                                                                                                                name = "derivation" ;
                                                                                                                                 nativeBuildInputs =
                                                                                                                                     [
                                                                                                                                         (
                                                                                                                                             writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    name = "resource" ;
+                                                                                                                                                    name = "derivation" ;
                                                                                                                                                     runtimeInputs =
                                                                                                                                                         [
                                                                                                                                                             (
                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                     {
                                                                                                                                                                         extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                                                                                        name = "resource" ;
-                                                                                                                                                                        runScript = "resource" ;
+                                                                                                                                                                        name = "derivation" ;
+                                                                                                                                                                        runScript = "derivation" ;
                                                                                                                                                                         targetPkgs =
                                                                                                                                                                             pkgs :
                                                                                                                                                                                 [
                                                                                                                                                                                     (
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
-                                                                                                                                                                                                name = "resource" ;
+                                                                                                                                                                                                name = "derivation" ;
                                                                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     let
@@ -256,10 +256,10 @@
                                                                                                                                                                                                         in
                                                                                                                                                                                                             ''
                                                                                                                                                                                                                 mkdir --parents /out/init/recovery
-                                                                                                                                                                                                                ln --symbolic ${ resource.init.action } /out/init/action
+                                                                                                                                                                                                                ln --symbolic ${ derivation.init.action } /out/init/action
                                                                                                                                                                                                                 mkdir --parents /out/release/recovery
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource.seed }' > /out/seed.json
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource.temporary }' > /out/temporary.json
+                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON derivation.seed }' > /out/seed.json
+                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON derivation.temporary }' > /out/temporary.json
                                                                                                                                                                                                             '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
