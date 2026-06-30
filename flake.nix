@@ -227,7 +227,8 @@
                                                                                                                                                                                                             } ;
                                                                                                                                                                                                         in
                                                                                                                                                                                                             ''
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource }' > /out
+                                                                                                                                                                                                                jq --null-output '${ builtins.toJSON resource.seed }' > /out/seed.json
+                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource.temporary }' > /out/temporary.json
                                                                                                                                                                                                             '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
@@ -239,7 +240,7 @@
                                                                                                                                                         ''
                                                                                                                                                             OUT="$1"
                                                                                                                                                             export OUT
-                                                                                                                                                            touch "$OUT"
+                                                                                                                                                            mkdir --parents "$OUT"
                                                                                                                                                             resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
