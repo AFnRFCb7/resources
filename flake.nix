@@ -295,7 +295,7 @@
                                                                                                                         in
                                                                                                                             let
                                                                                                                                 application =
-                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                    writeShellApplication
                                                                                                                                         {
                                                                                                                                             name = "action" ;
                                                                                                                                             runtimeInputs =
