@@ -195,13 +195,12 @@
                                                                                     jq \
                                                                                         --null-input \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
-                                                                                        --args \
+                                                                                        --args -- "$@" \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" : { } ,
                                                                                             "origin-pid" : $ORIGIN_PID
-                                                                                        }' \
-                                                                                        -- "$@" > "$INPUT_FILE"
+                                                                                        }' > "$INPUT_FILE"
                                                                                 else
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
