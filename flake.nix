@@ -94,7 +94,7 @@
                                                                                                         name = "resource" ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 4153358153712572 >&2
+                                                                                                                echo 1723258852938545 4153358153712572 "$PATH" >&2
                                                                                                                 resource
                                                                                                                 echo 1723258852938545 2657298849318383 >&2
                                                                                                             '' ;
@@ -340,7 +340,20 @@
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
-                                                                                                            text = "resource" ;
+                                                                                                            text =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "resource" ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                        echo 1723258852938545 1583666346816296 >&2
+                                                                                                                                        resource
+                                                                                                                                        echo 1723258852938545 1814722161265871 >&2
+                                                                                                                                    '' ;
+                                                                                                                            } ;
+                                                                                                                    in "${ application }/bin/resource" ;
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
