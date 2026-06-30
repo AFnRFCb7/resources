@@ -113,7 +113,6 @@
                                                                                                                                                     {
                                                                                                                                                         name = "resource" ;
                                                                                                                                                         runtimeInputs = [ ] ;
-                                                                                                                                                        ### PASTE
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                             '' ;
@@ -124,8 +123,6 @@
                                                                                                                     )
                                                                                                                 ] ;
                                                                                                             text =
-                                                                                                                ### REPLACE "resource"
-                                                                                                                ### BEGIN CUT
                                                                                                                 let
                                                                                                                     resource =
                                                                                                                         mkDerivation
@@ -316,7 +313,6 @@
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
                                                                                                                         '' ;
-                                                                                                                ### END CUT
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
