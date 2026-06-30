@@ -274,6 +274,7 @@
                                                                                                                                                                         } ;
                                                                                                                                                                 in
                                                                                                                                                                     ''
+                                                                                                                                                                        echo 1723258852938545 1711152144212724 >&2
                                                                                                                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                                                                                                                         HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
