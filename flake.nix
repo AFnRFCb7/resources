@@ -156,7 +156,7 @@
                                                                                                                                                             OUT="$1"
                                                                                                                                                             export OUT
                                                                                                                                                             touch "$OUT"
-                                                                                                                                                            # resource
+                                                                                                                                                            resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
