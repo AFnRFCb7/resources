@@ -169,13 +169,13 @@
                                                                                 export INPUT_FILE
                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                                 export OUTPUT_FILE
-                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                 mkdir --parents ${ gc-roots-directory }
                                                                                 mkdir --parents ${ resources-directory }
                                                                                 resource
                                                                                 OUTPUT="$( jq --null-input --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
                                                                                 STATUS="$( jq --null-input --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                                 echo "$OUTPUT"
+                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                 exit "$STATUS"
                                                                             '' ;
                                                             } ;
