@@ -216,7 +216,7 @@
                                                                                                 } ,
                                                                                             "origin-pid" : $ORIGIN_PID
                                                                                         }' \
-                                                                                        -- "$@" > "$INPUT_FILE"                                                                                fi
+                                                                                        -- "$@" > "$INPUT_FILE"
                                                                                 fi
                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                                 export OUTPUT_FILE
