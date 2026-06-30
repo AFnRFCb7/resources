@@ -96,7 +96,7 @@
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    resource =
+                                                                                                                    resource_ =
                                                                                                                         mkDerivation
                                                                                                                             {
                                                                                                                                 installPhase = ''resource "$out"'' ;
@@ -166,7 +166,7 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            HASH="$( jq --argjson RESOURCE '${ builtins.toJSON true }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
+                                                                                                                            HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource_ }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                         '' ;
                                                                                                         }
