@@ -106,7 +106,20 @@
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
-                                                                                                                                runtimeScript = "resource" ;
+                                                                                                                                runtimeScript =
+                                                                                                                                    let
+                                                                                                                                        application =
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "resource" ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            echo 1723258852938545 7464963288759335 >&2
+                                                                                                                                                            resource
+                                                                                                                                                            echo 1723258852938545 7624978484663336 >&2
+                                                                                                                                                        '' ;
+                                                                                                                                                } ;
+                                                                                                                                            in "${ application }/bin/resource" ;
                                                                                                                                 targetPkgs =
                                                                                                                                     pkgs :
                                                                                                                                         [
