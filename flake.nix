@@ -80,7 +80,7 @@
                                                                                     extraBwrapArgs =
                                                                                         [
                                                                                             "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                            "--bind" gc-root-directory gc-roots-directory
+                                                                                            "--bind" gc-roots-directory gc-roots-directory
                                                                                             "--bind" resources-directory resources-directory
                                                                                             "--bind" "$OUTPUT_FILE" "/output"
                                                                                         ] ;
