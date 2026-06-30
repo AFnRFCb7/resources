@@ -96,7 +96,8 @@
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    jq --null-input --arg OUTPUT "adfadsfads" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                    HASH="$( jq "[ .arguments , .inputs ]" | sha512sum | cut --characters 1-128 )" || exit 140
+                                                                                                                    jq --null-input --arg OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -116,8 +117,32 @@
                                                                                 } ;
                                                                         in
                                                                             ''
+                                                                                ARGUMENTS="$( printf '%s\n' "$@ | jq --raw-output . | jq --slurp . )"
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                                 export INPUT_FILE
+                                                                                if [[ -t 0 ]]
+                                                                                then
+                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                        --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        '{
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "origin-pid" : $ORIGIN_PID
+                                                                                        }' > "$INPUT_FILE"
+                                                                                else
+                                                                                    PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
+                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                        --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        '{
+                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "origin-pid" : $ORIGIN_PID
+                                                                                        }' > "$INPUT_FILE"
+                                                                                fi
                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                                 export OUTPUT_FILE
                                                                                 mkdir --parents ${ gc-roots-directory }
