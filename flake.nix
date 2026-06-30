@@ -104,20 +104,15 @@
                                                                                                                                 nativeBuildInputs =
                                                                                                                                     [
                                                                                                                                         (
-                                                                                                                                            buildFHSUserEnv
+                                                                                                                                            writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    extraBwrapArgs =
+                                                                                                                                                    name = "resource" ;
+                                                                                                                                                    runtimeInputs =
                                                                                                                                                         [
                                                                                                                                                         ] ;
-                                                                                                                                                    name = "resource" ;
-                                                                                                                                                    runScript = "resource" ;
-                                                                                                                                                    targetPkgs =
-                                                                                                                                                        pkgs :
-                                                                                                                                                            [
-                                                                                                                                                                (
-
-                                                                                                                                                                )
-                                                                                                                                                            ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                        '' ;
                                                                                                                                                 }
                                                                                                                                         )
                                                                                                                                     ] ;
