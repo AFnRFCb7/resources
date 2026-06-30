@@ -149,8 +149,8 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            HASH="$( jq --argjson RESOURCE '${ resource }' "[ .arguments , .inputs , $RESOURCE ]" /input | sha512sum | cut --characters 1-128 )" || exit 140
-                                                                                                                            jq --null-input --arg OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                            HASH="$( jq "[ .arguments , .inputs , $RESOURCE ]" /input )" || exit 140
+                                                                                                                            jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
