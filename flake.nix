@@ -198,63 +198,11 @@
                                                                                                                                 name = "resource" ;
                                                                                                                                 runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                 text =
-                                                                                                                                    let
-                                                                                                                                        resource =
-                                                                                                                                            {
-                                                                                                                                                init =
-                                                                                                                                                    visitor
-                                                                                                                                                        {
-                                                                                                                                                            lambda =
-                                                                                                                                                                path : value :
-                                                                                                                                                                    let
-                                                                                                                                                                        init = value null ;
-                                                                                                                                                                        in
-                                                                                                                                                                            {
-                                                                                                                                                                                action =
-                                                                                                                                                                                    visitor
-                                                                                                                                                                                        {
-                                                                                                                                                                                            lambda =
-                                                                                                                                                                                                path : value :
-                                                                                                                                                                                                    let
-                                                                                                                                                                                                        action = value null ;
-                                                                                                                                                                                                        in
-                                                                                                                                                                                                            buildFHSUserEnv
-                                                                                                                                                                                                                {
-                                                                                                                                                                                                                    name = "action" ;
-                                                                                                                                                                                                                    runScript = "action" ;
-                                                                                                                                                                                                                    targetPkgs =
-                                                                                                                                                                                                                        pkgs :
-                                                                                                                                                                                                                            [
-                                                                                                                                                                                                                                (
-                                                                                                                                                                                                                                    pkgs.writeShellApplication
-                                                                                                                                                                                                                                        {
-                                                                                                                                                                                                                                            name = "action" ;
-                                                                                                                                                                                                                                            runtimeInputs = action.targetPkgs pkgs ;
-                                                                                                                                                                                                                                            text = action.text { seed = seed ; } ;
-                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                )
-                                                                                                                                                                                                                            ] ;
-                                                                                                                                                                                                                } ;
-                                                                                                                                                                                        }
-                                                                                                                                                                                        init.action ;
-                                                                                                                                                                            } ;
-                                                                                                                                                        }
-                                                                                                                                                        init ;
-                                                                                                                                                seed = builtins.toJSON seed ;
-                                                                                                                                                temporary =
-                                                                                                                                                    visitor
-                                                                                                                                                        {
-                                                                                                                                                            bool = path : value : builtins.toJSON value ;
-                                                                                                                                                        }
-                                                                                                                                                        temporary ;
-                                                                                                                                            } ;
-                                                                                                                                        in
-                                                                                                                                            ''
-                                                                                                                                                mkdir --parents /out/init
-                                                                                                                                                ln --symbolic ${ resource.init.action } > /out/init/action
-                                                                                                                                                echo ${ resource.seed } > /out/seed
-                                                                                                                                                echo ${ resource.temporary } > /out/temporary
-                                                                                                                                            '' ;
+                                                                                                                                    ''
+                                                                                                                                        mkdir --parents /out/init
+                                                                                                                                        echo ${ resource.seed } > /out/seed
+                                                                                                                                        echo ${ resource.temporary } > /out/temporary
+                                                                                                                                    '' ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
