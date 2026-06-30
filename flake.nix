@@ -72,9 +72,101 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "action" ;
-                                                                runtimeInputs = [ ] ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        (
+                                                                            buildHSFUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
+                                                                                        [
+                                                                                            "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" gc-root-directory gc-roots-directory
+                                                                                            "--bind" resources-directory resources-directory
+                                                                                            "--bind" "$OUTPUT_FILE" "/output"
+                                                                                        ] ;
+                                                                                    name = "action" ;
+                                                                                    runScript = "action" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "action" ;
+                                                                                                            runtimeInputs = [ ] ;
+                                                                                                            text =
+                                                                                                                let
+                                                                                                                    resources =
+                                                                                                                        mkDerivation
+                                                                                                                            {
+                                                                                                                                installPhase = ''action "$out"''
+                                                                                                                                name = "action" ;
+                                                                                                                                nativeBuildInputs =
+                                                                                                                                    [
+                                                                                                                                        (
+                                                                                                                                            writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "action" ;
+                                                                                                                                                    runtimeInputs =
+                                                                                                                                                        [
+                                                                                                                                                            (
+                                                                                                                                                                buildHSFUserEnv
+                                                                                                                                                                    {
+                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
+                                                                                                                                                                        name = "action" ;
+                                                                                                                                                                        runScript = "action" ;
+                                                                                                                                                                        targetPkgs =
+                                                                                                                                                                            pkgs :
+                                                                                                                                                                                [
+                                                                                                                                                                                    (
+                                                                                                                                                                                        writeShellApplication
+                                                                                                                                                                                            {
+                                                                                                                                                                                                name = "action" ;
+                                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                                text =
+                                                                                                                                                                                                    ''
+                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                            }
+                                                                                                                                                                                    )
+                                                                                                                                                                                ] ;
+                                                                                                                                                                    }
+                                                                                                                                                            )
+                                                                                                                                                        ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            OUT="$1"
+                                                                                                                                                            export OUT
+                                                                                                                                                            action
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                    ] ;
+                                                                                                                                src = ./. ;
+                                                                                                                            } ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            jq --null-input '{ "output" : "" , "status" : 0 }' > /output
+                                                                                                                        '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
                                                                 text =
                                                                     ''
+                                                                        INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
+                                                                        export INPUT_FILE
+                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                        export OUTPUT_FILE
+                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                        mkdir --parents ${ resources-directory }
+                                                                        resource
+                                                                        OUTPUT="$( jq --null-input --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
+                                                                        STATUS="$( jq --null-input --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                        echo "$OUTPUT"
+                                                                        exit "$STATUS"
                                                                     '' ;
                                                             } ;
                                                     resource =
