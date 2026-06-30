@@ -143,7 +143,7 @@
                                                                                                                                                                                                             } ;
                                                                                                                                                                                                         in
                                                                                                                                                                                                             ''
-                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource }'
+                                                                                                                                                                                                                jq --null-input '${ builtins.toJSON resource }' > /out
                                                                                                                                                                                                             '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
