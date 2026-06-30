@@ -75,7 +75,7 @@
                                                                 runtimeInputs =
                                                                     [
                                                                         (
-                                                                            buildHFSUserEnv
+                                                                            buildFHSUserEnv
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
