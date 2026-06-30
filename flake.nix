@@ -154,72 +154,23 @@
                                                                         )
                                                                     ] ;
                                                                 text =
-                                                                    ''
-                                                                        INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
-                                                                        export INPUT_FILE
-                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                        export OUTPUT_FILE
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }
-                                                                        resource
-                                                                        OUTPUT="$( jq --null-input --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
-                                                                        STATUS="$( jq --null-input --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
-                                                                        echo "$OUTPUT"
-                                                                        exit "$STATUS"
-                                                                    '' ;
-                                                            } ;
-                                                    resource =
-                                                        mkDerivation
-                                                            {
-                                                                installPhase = ''resource "$1"'' ;
-                                                                name = "resource" ;
-                                                                nativeBuildInputs =
-                                                                    [
-                                                                        (
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "resource" ;
-                                                                                    runtimeInputs =
-                                                                                        [
-                                                                                            coreutils
-                                                                                            (
-                                                                                                buildFHSUserEnv
-                                                                                                    {
-                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                        name = "resource" ;
-                                                                                                        runScript = "resource" ;
-                                                                                                        targetPkgs =
-                                                                                                            pkgs :
-                                                                                                                [
-                                                                                                                    (
-                                                                                                                        pkgs.writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "resource" ;
-                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                text =
-                                                                                                                                    ''
-                                                                                                                                        mkdir --parents /out/init
-                                                                                                                                        echo ${ resource.seed } > /out/seed
-                                                                                                                                        echo ${ resource.temporary } > /out/temporary
-                                                                                                                                    '' ;
-                                                                                                                            }
-                                                                                                                    )
-                                                                                                                ] ;
-                                                                                                    }
-                                                                                            )
-                                                                                        ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            OUT="$1"
-                                                                                            export OUT
-                                                                                            mkdir --parents "$OUT"
-                                                                                            parameters
-                                                                                        '' ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                src = ./. ;
+                                                                    let
+                                                                        resource = null ;
+                                                                        in
+                                                                            ''
+                                                                                INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
+                                                                                export INPUT_FILE
+                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                                export OUTPUT_FILE
+                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                mkdir --parents ${ gc-roots-directory }
+                                                                                mkdir --parents ${ resources-directory }
+                                                                                resource
+                                                                                OUTPUT="$( jq --null-input --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
+                                                                                STATUS="$( jq --null-input --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                                echo "$OUTPUT"
+                                                                                exit "$STATUS"
+                                                                            '' ;
                                                             } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
