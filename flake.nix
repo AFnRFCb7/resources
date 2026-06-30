@@ -152,7 +152,7 @@
                                                                                                                                                                                                                                                                                             runtimeInputs =
                                                                                                                                                                                                                                                                                                 [
                                                                                                                                                                                                                                                                                                     (
-                                                                                                                                                                                                                                                                                                        pkgs.buildHSFUserEnv
+                                                                                                                                                                                                                                                                                                        pkgs.buildFHSUserEnv
                                                                                                                                                                                                                                                                                                             {
                                                                                                                                                                                                                                                                                                                 extraBwrapArgs =
                                                                                                                                                                                                                                                                                                                     [
@@ -244,10 +244,6 @@
                                                                                                                             exec 139> ${ resources-directory }/locks/clean
                                                                                                                             flock -x 139
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
-                                                                                                                            INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
-                                                                                                                            export INPUT_FILE
-                                                                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
-                                                                                                                            export OUTPUT_FILE
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
                                                                                                                             if [[ -d "${ resources-directory }/canonical/$HASH" ]]
@@ -265,9 +261,13 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
+                                                                                                                                INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
+                                                                                                                                export INPUT_FILE
+                                                                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
+                                                                                                                                export OUTPUT_FILE
                                                                                                                                 jq --null-input --argjson OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
-                                                                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
