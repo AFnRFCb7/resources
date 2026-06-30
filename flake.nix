@@ -68,7 +68,7 @@
                                                 temporary
                                             } :
                                                 let
-                                                    application =
+                                                    resource =
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
@@ -200,6 +200,7 @@
                                                                                                                                                                                                                                                                                                                                         runtimeInputs = [ ] ;
                                                                                                                                                                                                                                                                                                                                         text =
                                                                                                                                                                                                                                                                                                                                             ''
+                                                                                                                                                                                                                                                                                                                                                #
                                                                                                                                                                                                                                                                                                                                             '' ;
                                                                                                                                                                                                                                                                                                                                     }
                                                                                                                                                                                                                                                                                                                             )
@@ -209,8 +210,6 @@
                                                                                                                                                                                                                                                                                                 ] ;
                                                                                                                                                                                                                                                                                             text =
                                                                                                                                                                                                                                                                                                 ''
-                                                                                                                                                                                                                                                                                                    mkdir --parents ${ gc-roots-directory }
-                                                                                                                                                                                                                                                                                                    mkdir --parents ${ resources-directory }
                                                                                                                                                                                                                                                                                                     action
                                                                                                                                                                                                                                                                                                 '' ;
                                                                                                                                                                                                                                                                                         } ;
@@ -379,7 +378,7 @@
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
-                                                    in "${ application }/bin/resource" ;
+                                                    in "${ resource }/bin/resource" ;
                                     } ;
                             in
                                 {
