@@ -124,7 +124,7 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    resource =
+                                                                                                                    derivation =
                                                                                                                         mkDerivation
                                                                                                                             {
                                                                                                                                 installPhase = ''resource "$out"'' ;
@@ -282,7 +282,7 @@
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
-                                                                                                                            HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
+                                                                                                                            HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
