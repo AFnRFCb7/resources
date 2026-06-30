@@ -109,6 +109,23 @@
                                                                                                                                                     name = "resource" ;
                                                                                                                                                     runtimeInputs =
                                                                                                                                                         [
+                                                                                                                                                            (
+                                                                                                                                                                buildFHSUserEnv
+                                                                                                                                                                    {
+                                                                                                                                                                        extraBwrapArgs =
+                                                                                                                                                                            [
+                                                                                                                                                                            ] ;
+                                                                                                                                                                        name = "resource" ;
+                                                                                                                                                                        runScript = "resource" ;
+                                                                                                                                                                        targetPkgs =
+                                                                                                                                                                            pkgs :
+                                                                                                                                                                                [
+                                                                                                                                                                                    (
+
+                                                                                                                                                                                    )
+                                                                                                                                                                                ] ;
+                                                                                                                                                                    }
+                                                                                                                                                            )
                                                                                                                                                         ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
