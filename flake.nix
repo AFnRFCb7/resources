@@ -71,7 +71,7 @@
                                                     application =
                                                         writeShellApplication
                                                             {
-                                                                name = "action" ;
+                                                                name = "resource" ;
                                                                 runtimeInputs =
                                                                     [
                                                                         (
@@ -84,44 +84,44 @@
                                                                                             "--bind" resources-directory resources-directory
                                                                                             "--bind" "$OUTPUT_FILE" "/output"
                                                                                         ] ;
-                                                                                    name = "action" ;
-                                                                                    runScript = "action" ;
+                                                                                    name = "resource" ;
+                                                                                    runScript = "resource" ;
                                                                                     targetPkgs =
                                                                                         pkgs :
                                                                                             [
                                                                                                 (
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
-                                                                                                            name = "action" ;
+                                                                                                            name = "resource" ;
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    resources =
+                                                                                                                    resource =
                                                                                                                         mkDerivation
                                                                                                                             {
-                                                                                                                                installPhase = ''action "$out"'' ;
-                                                                                                                                name = "action" ;
+                                                                                                                                installPhase = ''resource "$out"'' ;
+                                                                                                                                name = "resource" ;
                                                                                                                                 nativeBuildInputs =
                                                                                                                                     [
                                                                                                                                         (
                                                                                                                                             writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    name = "action" ;
+                                                                                                                                                    name = "resource" ;
                                                                                                                                                     runtimeInputs =
                                                                                                                                                         [
                                                                                                                                                             (
                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                     {
                                                                                                                                                                         extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                                                                                        name = "action" ;
-                                                                                                                                                                        runScript = "action" ;
+                                                                                                                                                                        name = "resource" ;
+                                                                                                                                                                        runScript = "resource" ;
                                                                                                                                                                         targetPkgs =
                                                                                                                                                                             pkgs :
                                                                                                                                                                                 [
                                                                                                                                                                                     (
                                                                                                                                                                                         writeShellApplication
                                                                                                                                                                                             {
-                                                                                                                                                                                                name = "action" ;
+                                                                                                                                                                                                name = "resource" ;
                                                                                                                                                                                                 runtimeInputs = [ ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
@@ -136,7 +136,7 @@
                                                                                                                                                         ''
                                                                                                                                                             OUT="$1"
                                                                                                                                                             export OUT
-                                                                                                                                                            action
+                                                                                                                                                            resource
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
