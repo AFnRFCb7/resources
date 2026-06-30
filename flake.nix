@@ -95,10 +95,17 @@
                                                                                                             name = "resource" ;
                                                                                                             runtimeInputs = [ ] ;
                                                                                                             text =
-                                                                                                                ''
-                                                                                                                    HASH="$( jq "[ .arguments , .inputs ]" | sha512sum | cut --characters 1-128 )" || exit 140
-                                                                                                                    jq --null-input --arg OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
-                                                                                                                '' ;
+                                                                                                                let
+                                                                                                                    resource =
+                                                                                                                        mkDerivation
+                                                                                                                            {
+
+                                                                                                                            } ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            HASH="$( jq "[ .arguments , .inputs ]" | sha512sum | cut --characters 1-128 )" || exit 140
+                                                                                                                            jq --null-input --arg OUTPUT "$HASH" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                        '' ;
                                                                                                         }
                                                                                                 )
                                                                                             ] ;
@@ -117,7 +124,7 @@
                                                                                 } ;
                                                                         in
                                                                             ''
-                                                                                ARGUMENTS="$( printf '%s\n' "$@ | jq --raw-output . | jq --slurp . )"
+                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )"
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                                 export INPUT_FILE
                                                                                 if [[ -t 0 ]]
