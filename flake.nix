@@ -101,6 +101,8 @@
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
                                                                                                                                         "--mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--mount" gc-roots-directory gc-roots-directory
+                                                                                                                                        "--mount" resources-directory resources-directory
                                                                                                                                         "--ro-mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
@@ -316,7 +318,9 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" )" || exit 197
-                                                                                                                    exi
+                                                                                                                    export INPUT_FILE
+                                                                                                                    OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 197
+                                                                                                                    export OUTPUT_FILE
                                                                                                                     resource
                                                                                                                 '' ;
                                                                                                                 ### REPLACE "resource"
