@@ -194,19 +194,20 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
                                                                                     jq \
                                                                                         --null-input \
-                                                                                        --args -- "$@" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        --args \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" : { } ,
                                                                                             "origin-pid" : $ORIGIN_PID
-                                                                                        }' > "$INPUT_FILE"
+                                                                                        }' \
+                                                                                        -- "$@" > "$INPUT_FILE"
                                                                                 else
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
-                                                                                        --args -- "$@" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        --args \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" :
@@ -214,7 +215,8 @@
                                                                                                     "standard" : .
                                                                                                 } ,
                                                                                             "origin-pid" : $ORIGIN_PID
-                                                                                        }' > "$INPUT_FILE"
+                                                                                        }' \
+                                                                                        -- "$@" > "$INPUT_FILE"
                                                                                 fi
                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                                 export OUTPUT_FILE
