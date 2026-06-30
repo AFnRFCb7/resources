@@ -159,7 +159,7 @@
                                                                                                                                                                                                         in
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         mkdir --parents /out/init/recovery
-                                                                                                                                                                                                        ln --symbolic ${ resource.init.action } /out/init/action
+                                                                                                                                                                                                        ln --symbolic ${ resource_.init.action } /out/init/action
                                                                                                                                                                                                         mkdir --parents /out/release/recovery
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON resource.seed }' > /out/seed.json
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON resource.temporary }' > /out/temporary.json
@@ -274,7 +274,7 @@
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
-                                                        resource =
+                                                        resource_ =
                                                             {
                                                                 init =
                                                                     visitor
