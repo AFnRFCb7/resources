@@ -195,7 +195,6 @@
                                                                                     jq \
                                                                                         --null-input \
                                                                                         --args -- "@" \
-                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
@@ -206,7 +205,6 @@
                                                                                     PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
-                                                                                        --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --args -- "@" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
