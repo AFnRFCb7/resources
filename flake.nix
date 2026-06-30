@@ -187,7 +187,6 @@
                                                                                 } ;
                                                                         in
                                                                             ''
-                                                                                ARGUMENTS="$( printf '%s\n' "$@" | jq --raw-output . | jq --slurp . )" || exit 160
                                                                                 INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                                 export INPUT_FILE
                                                                                 if [[ -t 0 ]]
@@ -195,10 +194,11 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
                                                                                     jq \
                                                                                         --null-input \
+                                                                                        --args -- "@" \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
-                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "arguments" : $ARGS.positional ,
                                                                                             "inputs" : { } ,
                                                                                             "origin-pid" : $ORIGIN_PID
                                                                                         }' > "$INPUT_FILE"
@@ -207,9 +207,10 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
                                                                                         --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                                        --args -- "@" \
                                                                                         --arg ORIGIN_PID "$ULTIMATE_PID" \
                                                                                         '{
-                                                                                            "arguments" : $ARGUMENTS ,
+                                                                                            "arguments" : $ARGS.positional ,
                                                                                             "inputs" :
                                                                                                 {
                                                                                                     "standard" : .
