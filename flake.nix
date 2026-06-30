@@ -256,7 +256,7 @@
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
-                                                                                                                            then #
+                                                                                                                            then
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 184
                                                                                                                                 INDEX="$( basename "$LINK" )" || exit 122
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
@@ -306,12 +306,12 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
                                                                                     jq \
                                                                                         --null-input \
-                                                                                        --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                         --args \
                                                                                         '{
                                                                                             "arguments" : $ARGS.positional ,
                                                                                             "inputs" : { } ,
-                                                                                            "origin-pid" : $ORIGIN_PID
+                                                                                            "originator-pid" : $ORIGINATOR_PID
                                                                                         }' \
                                                                                         -- "$@" > "$INPUT_FILE"
                                                                                 else
@@ -320,7 +320,7 @@
                                                                                     ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                                     jq \
                                                                                         --null-input \
-                                                                                        --arg ORIGIN_PID "$ULTIMATE_PID" \
+                                                                                        --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                         --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                         --args \
                                                                                         '{
@@ -329,7 +329,7 @@
                                                                                                 {
                                                                                                     "standard" : $STANDARD_INPUT
                                                                                                 } ,
-                                                                                            "origin-pid" : $ORIGIN_PID
+                                                                                            "originator-pid" : $ORIGINATOR_PID
                                                                                         }' \
                                                                                         -- "$@" > "$INPUT_FILE"
                                                                                 fi
