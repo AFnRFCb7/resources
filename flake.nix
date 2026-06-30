@@ -322,63 +322,7 @@
                                                                                 }
                                                                         )
                                                                     ] ;
-                                                                text =
-                                                                    let
-                                                                        resource =
-                                                                            mkDerivation
-                                                                                {
-                                                                                    installPhase = ''resource "$1"'' ;
-                                                                                    name = "resource" ;
-                                                                                    nativeBuildInputs = [ ] ;
-                                                                                    src = ./. ;
-                                                                                } ;
-                                                                        in
-                                                                            ''
-                                                                                INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
-                                                                                export INPUT_FILE
-                                                                                if [[ -t 0 ]]
-                                                                                then
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
-                                                                                    jq \
-                                                                                        --null-input \
-                                                                                        --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --args \
-                                                                                        '{
-                                                                                            "arguments" : $ARGS.positional ,
-                                                                                            "inputs" : { } ,
-                                                                                            "originator-pid" : $ORIGINATOR_PID
-                                                                                        }' \
-                                                                                        -- "$@" > "$INPUT_FILE"
-                                                                                else
-                                                                                    PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
-                                                                                    STANDARD_INPUT="$( cat )" || exit 103
-                                                                                    ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
-                                                                                    jq \
-                                                                                        --null-input \
-                                                                                        --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                        --args \
-                                                                                        '{
-                                                                                            "arguments" : $ARGS.positional ,
-                                                                                            "inputs" :
-                                                                                                {
-                                                                                                    "standard" : $STANDARD_INPUT
-                                                                                                } ,
-                                                                                            "originator-pid" : $ORIGINATOR_PID
-                                                                                        }' \
-                                                                                        -- "$@" > "$INPUT_FILE"
-                                                                                fi
-                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                                export OUTPUT_FILE
-                                                                                mkdir --parents ${ gc-roots-directory }
-                                                                                mkdir --parents ${ resources-directory }
-                                                                                resource
-                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
-                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
-                                                                                echo "$OUTPUT"
-                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                                exit "$STATUS"
-                                                                            '' ;
+                                                                text = "resource" ;
                                                             } ;
                                                     in "${ application }/bin/resource" ;
                                     } ;
