@@ -254,9 +254,13 @@
                                                                                                                             flock -x 139
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON resource }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
-                                                                                                                            # ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
-                                                                                                                            if [[ -d "${ resources-directory }/canonical/$HASH" ]]
+                                                                                                                            ORIGINATOR_PID="$( jq --raw-output ".originator-pid" /input )" || exit 124
+                                                                                                                            if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
+                                                                                                                                LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 184
+                                                                                                                                INDEX="$( basename "$LINK" )" || exit 122
+                                                                                                                                echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                chmod 0400 "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                                 OUTPUT=${ resources-directory }/mounts/$INDEX
                                                                                                                                 STATUS=0
                                                                                                                                 jq \
