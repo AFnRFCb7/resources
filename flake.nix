@@ -319,7 +319,7 @@
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 OUTPUT="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                jq --null-input --argjson OUTPUT "$OUTPUT" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                                jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
                                                                                                                         '' ;
