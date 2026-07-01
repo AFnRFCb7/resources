@@ -95,16 +95,107 @@
                                                         {
                                                             init =
                                                                 {
+                                                                    adapter =
+                                                                        pkgs :
+                                                                            visitor
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value
+                                                                                            buildFHSUserEnv
+                                                                                                {
+                                                                                                    extraBwrapArgs =
+                                                                                                        [
+                                                                                                            "--ro-bind" "$INPUT" "/input"
+                                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                            "--tmpfs" "/private"
+                                                                                                            "--tmpfs" "/scratch"
+                                                                                                        ] ;
+                                                                                                    name = "init" ;
+                                                                                                    runScript =
+                                                                                                        let
+                                                                                                            application =
+                                                                                                                writeShellApplication
+                                                                                                                    {
+                                                                                                                        name = "init" ;
+                                                                                                                        text =
+                                                                                                                            ''
+                                                                                                                                jq --raw-output ".arguments[]" /input > /private/jq
+                                                                                                                                readarray -t ARGUMENTS < <( jq --raw-output ".arguments[]" /input )
+                                                                                                                                if jq -e '.inputs | has("standard")'
+                                                                                                                                then
+                                                                                                                                    if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+                                                                                                                                    then
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    else
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    fi
+                                                                                                                                else
+                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+                                                                                                                                    then
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    else
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    fi
+                                                                                                                                fi
+                                                                                                                                jq \
+                                                                                                                                    --null-input \
+                                                                                                                                    --argjson STATUS "$STATUS" \
+                                                                                                                                    '$STATUS'
+                                                                                                                            '' ;
+                                                                                                                    } ;
+                                                                                                                in "${ application }/bin/init" ;
+                                                                                                    targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
+                                                                                                } ;
+                                                                                }
+                                                                                ( parameters.init.payload pkgs ) ;
                                                                     action =
                                                                         {
                                                                             lambda = path : value : value null ;
                                                                         }
                                                                         parameters.init.action ;
+                                                                    driver =
+                                                                        pkgs :
+                                                                            {
+                                                                                lambda =
+                                                                                    path : value :
+                                                                                        pkgs.writeShellApplication
+                                                                                            {
+                                                                                                name = "init" ;
+                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq sequential ( parameters.init.adapter pkgs ) ] ;
+                                                                                                text =
+                                                                                                    ''
+                                                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                                                        exec 165> ${ resources-directory }/locks/clean
+                                                                                                        flock -s 165
+                                                                                                        SEQUENTIAL="$( sequential )" || exit 127
+                                                                                                        printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                        export INDEX
+                                                                                                        mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                                                        OUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 157
+                                                                                                        init > "$OUT"
+                                                                                                        STATUS="$( jq --raw-output "." "$OUT" )" || exit 182
+                                                                                                        exit "$STATUS"
+                                                                                                    '' ;
+                                                                                            } ;
+                                                                            } ;
                                                                     init =
                                                                         {
                                                                             lambda = path : value : value null ;
                                                                         }
                                                                         init ;
+                                                                    payload =
+                                                                        pkgs.writeShellApplication
+                                                                            {
+                                                                                lambda =
+                                                                                    path : value :
+                                                                                        pkgs.writeShellApplication
+                                                                                            {
+                                                                                                name = "init" ;
+                                                                                                runtimeInputs = parameters.targetPkgs pkgs ;
+                                                                                                text = parameters.text ;
+                                                                                            } ;
+                                                                            } ;
                                                                     targetPkgs =
                                                                         {
                                                                             lambda = path : value : value ;
@@ -192,6 +283,7 @@
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
                                                                                                                                         "--ro-mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--mount" gc-roots-directory gc-roots-directory
                                                                                                                                         "--mount" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
@@ -211,8 +303,30 @@
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.buildFHSUserEnv
                                                                                                                                                                         {
-                                                                                                                                                                            name = "init" ;
-                                                                                                                                                                            runtimeScript = "init" ;
+                                                                                                                                                                            extraBwrapArgs =
+                                                                                                                                                                                [
+                                                                                                                                                                                    "--mount" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                                                                                    "--tmpfs" "/scratch"
+                                                                                                                                                                                ] ;
+                                                                                                                                                                            name = "resource" ;
+                                                                                                                                                                            runtimeScript =
+                                                                                                                                                                                let
+                                                                                                                                                                                    application =
+                                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                                            {
+                                                                                                                                                                                                name = "resource" ;
+                                                                                                                                                                                                runtimeInputs =
+                                                                                                                                                                                                    [
+                                                                                                                                                                                                    ] ;
+                                                                                                                                                                                                text =
+                                                                                                                                                                                                    ''
+
+                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                            } ;
+                                                                                                                                                                                                runtimeInputs = parameters.init.action.targetPkgs ;
+                                                                                                                                                                                                text = parameters.init.action.text ;
+                                                                                                                                                                                            } ;
+                                                                                                                                                                                    in "${ application }/bin/resource" ;
                                                                                                                                                                             targetPkgs = parameters.init.action.targetPkgs ;
                                                                                                                                                                         }
                                                                                                                                                                 )
@@ -221,6 +335,7 @@
                                                                                                                                                             ''
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                                                                                export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 resource
                                                                                                                                                             '' ;
@@ -315,8 +430,10 @@
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
-                                                                                                                                OUTPUT="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "0" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                                resource
+                                                                                                                                OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
+                                                                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT )" || exit 118
+                                                                                                                                jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
                                                                                                                         '' ;
