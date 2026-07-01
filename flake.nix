@@ -186,10 +186,11 @@
                                                                                             } ;
                                                                             } ;
                                                                     init =
-                                                                        {
-                                                                            lambda = path : value : value null ;
-                                                                        }
-                                                                        init ;
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            }
+                                                                            init ;
                                                                     payload =
                                                                         pkgs :
                                                                             writeShellApplication
