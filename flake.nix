@@ -95,7 +95,7 @@
                                                         {
                                                             init =
                                                                 {
-                                                                    targetPkgs = pkgs : [ "5543377853935988" ] ;
+                                                                    targetPkgs = pkgs : [ pkgs.coreutils ] ;
                                                                 } ;
                                                             seed = "5186738316555337" ;
                                                             temporary = "1681354669888713" ;
