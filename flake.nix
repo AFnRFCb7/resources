@@ -155,10 +155,11 @@
                                                                                 }
                                                                                 ( parameters.init.payload pkgs ) ;
                                                                     action =
-                                                                        {
-                                                                            lambda = path : value : value null ;
-                                                                        }
-                                                                        parameters.init ;
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            }
+                                                                            parameters.init ;
                                                                     driver =
                                                                         pkgs :
                                                                             {
