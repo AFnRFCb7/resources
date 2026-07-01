@@ -137,6 +137,12 @@
                                                                                                                                         STATUS="$?"
                                                                                                                                     fi
                                                                                                                                 fi
+                                                                                                                                if [[ "$STATUS" == 0 ]]
+                                                                                                                                then
+                                                                                                                                    true # FIXME
+                                                                                                                                else
+                                                                                                                                    true # FIXME
+                                                                                                                                fi
                                                                                                                                 jq \
                                                                                                                                     --null-input \
                                                                                                                                     --argjson STATUS "$STATUS" \
