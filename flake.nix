@@ -222,7 +222,7 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                SEQUENTIAL="$( sequential }" || exit 117
+                                                                                                                                                                SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 resource
