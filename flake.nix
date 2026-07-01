@@ -378,6 +378,51 @@
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
+                                                    sequential =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "sequential" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs = [ "--mount" "${ resources-directory }/sequential" "${ resources-directory }/sequential" ] ;
+                                                                                    name = "sequential" ;
+                                                                                    runScript = "sequential" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "sequential" ;
+                                                                                                            runtimeInputs = [ ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    CURRENT="$( cat ${ resources-directory }/sequential )" || exit 117
+                                                                                                                    NEXT=$(( CURRENT + 1 ))
+                                                                                                                    echo "$NEXT" > "$CURRENT"
+                                                                                                                    echo "$CURRENT"
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 140> ${ resources-directory }/locks/clean
+                                                                        flock -s 140
+                                                                        if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                        then
+                                                                            echo 0 > ${ resources-directory }/sequential
+                                                                        fi
+                                                                        sequential
+                                                                    '' ;
+                                                            } ;
                                                     in "${ resource }/bin/resource" ;
                                     } ;
                             in
