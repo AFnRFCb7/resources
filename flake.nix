@@ -315,14 +315,6 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "resource" ;
-                                                                                                                                                                                                runtimeInputs =
-                                                                                                                                                                                                    [
-                                                                                                                                                                                                    ] ;
-                                                                                                                                                                                                text =
-                                                                                                                                                                                                    ''
-
-                                                                                                                                                                                                    '' ;
-                                                                                                                                                                                            } ;
                                                                                                                                                                                                 runtimeInputs = parameters.init.action.targetPkgs ;
                                                                                                                                                                                                 text = parameters.init.action.text ;
                                                                                                                                                                                             } ;
