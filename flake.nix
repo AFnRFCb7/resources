@@ -205,15 +205,17 @@
                                                                                                 } ;
                                                                                 } ;
                                                                     targetPkgs =
-                                                                        {
-                                                                            lambda = path : value : value ;
-                                                                        }
-                                                                        parameters.action.targetPkgs ;
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value ;
+                                                                            }
+                                                                            parameters.action.targetPkgs ;
                                                                     text =
-                                                                        {
-                                                                            lambda = path : value : value { seed = seed ; } ;
-                                                                        }
-                                                                        parameters.action.text ;
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value { seed = seed ; } ;
+                                                                            }
+                                                                            parameters.action.text ;
                                                                 } ;
                                                             release = null ;
                                                             seed =
@@ -543,7 +545,6 @@
                                     } ;
                             in
                                 {
-
                                     check =
                                         {
                                             actions ,
