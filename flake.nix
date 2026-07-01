@@ -217,11 +217,6 @@
                                                                                                                                                                                 pkgs :
                                                                                                                                                                                     [
                                                                                                                                                                                         (
-                                                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                                                {
-                                                                                                                                                                                                    name = "resource" ;
-                                                                                                                                                                                                    runtimeInputs = derivation.init.action.ta
-                                                                                                                                                                                                }
                                                                                                                                                                                         )
                                                                                                                                                                                     ] ;
                                                                                                                                                                         }
