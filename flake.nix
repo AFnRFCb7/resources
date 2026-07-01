@@ -109,12 +109,12 @@
                                                                         {
                                                                             lambda = path : value : value ;
                                                                         }
-                                                                        action.targetPkgs ;
+                                                                        parameters.action.targetPkgs ;
                                                                     text =
                                                                         {
                                                                             lambda = path : value : value { seed = seed ; } ;
                                                                         }
-                                                                        action.text ;
+                                                                        parameters.action.text ;
                                                                 } ;
                                                             release = null ;
                                                             seed =
