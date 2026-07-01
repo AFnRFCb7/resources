@@ -34,6 +34,9 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
+                                                                                        "--bind" gc-roots-directory "/gc-roots"
+                                                                                        "--bind" resources-directory "/resources"
+                                                                                        "--bind" "$TEMPORARY" "/temporary"
                                                                                     ] ;
                                                                                 name = "clean" ;
                                                                                 runScript = "clean" ;
@@ -44,9 +47,22 @@
                                                                                                 pkgs.writeShellApplication
                                                                                                     {
                                                                                                         name = "clean" ;
-                                                                                                        runtimeInputs = [ ] ;
+                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
                                                                                                         text =
                                                                                                             ''
+                                                                                                                cleanup ( ) {
+                                                                                                                    echo "$?" > /temporary/status
+                                                                                                                }
+                                                                                                                find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
+                                                                                                                mkdir --parents /resources/release
+                                                                                                                mkdir --parents /resources/invalid-init
+                                                                                                                mkdir --parents /resources/invalid-release
+                                                                                                                PROBLEMS="$( find /resources/release /resources/invalid-init /resources/invalid-release )" || exit 127
+                                                                                                                if [[ -z "$PROBLEMS" ]]
+                                                                                                                then
+                                                                                                                    tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources
+                                                                                                                    rm --recursive --force /gc-roots /resources
+                                                                                                                fi
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
@@ -56,7 +72,14 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    mkdir --parents ${ resources-directory }/locks
+                                                                    exec 149> ${ resources-directory }/locks/clean
+                                                                    flock -x 149
+                                                                    TEMPORARY="$( mktemp --directory )" || exit 113
+                                                                    export TEMPORARY
                                                                     clean
+                                                                    STATUS="$( cat "$TEMPORARY/status" )" || exit 102
+                                                                    exit "$STATUS"
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/clean" ;
@@ -101,8 +124,9 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--mount" "$INPUT_FILE" "/input"
-                                                                                                                                        "--ro-mount" "$OUTPUT_FILE" "/output"
+                                                                                                                                        "--ro-mount" "$INPUT_FILE" "/input"
+                                                                                                                                        "--mount" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
+                                                                                                                                        "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
                                                                                                                                 runtimeScript = "resource" ;
@@ -113,9 +137,35 @@
                                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                                     {
                                                                                                                                                         name = "resource" ;
-                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                        runtimeInputs =
+                                                                                                                                                            [
+                                                                                                                                                                pkgs.coreutils
+                                                                                                                                                                sequential
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.buildFSHUserEnv
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "resource" ;
+                                                                                                                                                                            runScript = "resource" ;
+                                                                                                                                                                            targetPkgs =
+                                                                                                                                                                                pkgs :
+                                                                                                                                                                                    [
+                                                                                                                                                                                        (
+                                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    name = "resource" ;
+                                                                                                                                                                                                    runtimeInputs = derivation.init.action.ta
+                                                                                                                                                                                                }
+                                                                                                                                                                                        )
+                                                                                                                                                                                    ] ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                            ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                SEQUENTIAL="$( sequential }" || exit 117
+                                                                                                                                                                printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                                                                                mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                resource
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
@@ -315,6 +365,7 @@
                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
                                                                                                                                 export INPUT_FILE
+                                                                                                                                echo "$INDEX" > "$INPUT_FILE"
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
