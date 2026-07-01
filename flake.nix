@@ -327,8 +327,8 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = parameters.init.action.targetPkgs ;
-                                                                                                                                                                                                text = parameters.init.action.text ;
+                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs ;
+                                                                                                                                                                                                text = parameters.init.text ;
                                                                                                                                                                                             } ;
                                                                                                                                                                                     in "${ application }/bin/resource" ;
                                                                                                                                                                             targetPkgs = parameters.init.targetPkgs ;
