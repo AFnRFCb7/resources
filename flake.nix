@@ -388,7 +388,7 @@
                                                                         (
                                                                             buildFHSUserEnv
                                                                                 {
-                                                                                    extraBwrapArgs = [ "--mount" "${ resources-directory }/sequential" "${ resources-directory }/sequential" ] ;
+                                                                                    extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "${ resources-directory }/sequential" ] ;
                                                                                     name = "sequential" ;
                                                                                     runScript = "sequential" ;
                                                                                     targetPkgs =
