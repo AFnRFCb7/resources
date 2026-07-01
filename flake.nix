@@ -161,30 +161,32 @@
                                                                                 } ;
                                                                     driver =
                                                                         pkgs :
-                                                                            {
-                                                                                lambda =
-                                                                                    path : value :
-                                                                                        pkgs.writeShellApplication
-                                                                                            {
-                                                                                                name = "init" ;
-                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq sequential ( parameters.init.adapter pkgs ) ] ;
-                                                                                                text =
-                                                                                                    ''
-                                                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                                                        exec 165> ${ resources-directory }/locks/clean
-                                                                                                        flock -s 165
-                                                                                                        SEQUENTIAL="$( sequential )" || exit 127
-                                                                                                        printf -v INDEX "%016d\n" "$SEQUENTIAL"
-                                                                                                        export INDEX
-                                                                                                        mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                        mkdir --parents ${ resources-directory }/temporary
-                                                                                                        OUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 157
-                                                                                                        init > "$OUT"
-                                                                                                        STATUS="$( jq --raw-output "." "$OUT" )" || exit 182
-                                                                                                        exit "$STATUS"
-                                                                                                    '' ;
-                                                                                            } ;
-                                                                            } ;
+                                                                            visitor
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value :
+                                                                                            pkgs.writeShellApplication
+                                                                                                {
+                                                                                                    name = "init" ;
+                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq sequential ( parameters.init.adapter pkgs ) ] ;
+                                                                                                    text =
+                                                                                                        ''
+                                                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                                                            exec 165> ${ resources-directory }/locks/clean
+                                                                                                            flock -s 165
+                                                                                                            SEQUENTIAL="$( sequential )" || exit 127
+                                                                                                            printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                            export INDEX
+                                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }/temporary
+                                                                                                            OUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 157
+                                                                                                            init > "$OUT"
+                                                                                                            STATUS="$( jq --raw-output "." "$OUT" )" || exit 182
+                                                                                                            exit "$STATUS"
+                                                                                                        '' ;
+                                                                                                } ;
+                                                                                }
+                                                                                parameters.init.driver ;
                                                                     init =
                                                                         visitor
                                                                             {
