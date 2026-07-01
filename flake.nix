@@ -95,6 +95,12 @@
                                                         {
                                                             init =
                                                                 {
+                                                                    action =
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            }
+                                                                            parameters.init.init ;
                                                                     adapter =
                                                                         pkgs :
                                                                             visitor
@@ -153,12 +159,6 @@
                                                                                                     targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
                                                                                                 } ;
                                                                                 } ;
-                                                                    action =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value null ;
-                                                                            }
-                                                                            parameters.init ;
                                                                     driver =
                                                                         pkgs :
                                                                             {
