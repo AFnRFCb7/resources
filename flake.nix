@@ -152,7 +152,7 @@
                                                                         {
                                                                             lambda = path : value : value null ;
                                                                         }
-                                                                        parameters.init.action ;
+                                                                        parameters.init ;
                                                                     driver =
                                                                         pkgs :
                                                                             {
