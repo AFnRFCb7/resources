@@ -189,7 +189,7 @@
                                                                             {
                                                                                 lambda =
                                                                                     path : value :
-                                                                                        pkgs.writeShellApplication
+                                                                                        writeShellApplication
                                                                                             {
                                                                                                 name = "init" ;
                                                                                                 runtimeInputs = parameters.targetPkgs pkgs ;
