@@ -209,13 +209,13 @@
                                                                             {
                                                                                 lambda = path : value : value ;
                                                                             }
-                                                                            parameters.action ;
+                                                                            parameters.init.action ;
                                                                     text =
                                                                         visitor
                                                                             {
                                                                                 lambda = path : value : value { seed = seed ; } ;
                                                                             }
-                                                                            parameters.action ;
+                                                                            parameters.init.action ;
                                                                 } ;
                                                             release = null ;
                                                             seed =
