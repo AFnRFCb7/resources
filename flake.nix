@@ -95,6 +95,7 @@
                                                                                                             name = "resource" ;
                                                                                                             runtimeInputs =
                                                                                                                 [
+                                                                                                                    sequential
                                                                                                                     (
                                                                                                                         pkgs.buildFHSUserEnv
                                                                                                                             {
@@ -310,7 +311,7 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
-                                                                                                                                SEQUENTIAL="$( )" || exit 162
+                                                                                                                                SEQUENTIAL="$( sequential )" || exit 162
                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
                                                                                                                                 export INPUT_FILE
