@@ -216,8 +216,6 @@
                                                                                                                                                                             targetPkgs =
                                                                                                                                                                                 pkgs :
                                                                                                                                                                                     [
-                                                                                                                                                                                        (
-                                                                                                                                                                                        )
                                                                                                                                                                                     ] ;
                                                                                                                                                                         }
                                                                                                                                                                 )
