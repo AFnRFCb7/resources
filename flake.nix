@@ -209,7 +209,7 @@
                                                                                                                                                                 pkgs.coreutils
                                                                                                                                                                 sequential
                                                                                                                                                                 (
-                                                                                                                                                                    pkgs.buildFSHUserEnv
+                                                                                                                                                                    pkgs.buildFHSUserEnv
                                                                                                                                                                         {
                                                                                                                                                                             name = "resource" ;
                                                                                                                                                                             runScript = "resource" ;
