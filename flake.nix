@@ -209,13 +209,13 @@
                                                                             {
                                                                                 lambda = path : value : value ;
                                                                             }
-                                                                            parameters.action.targetPkgs ;
+                                                                            parameters.action ;
                                                                     text =
                                                                         visitor
                                                                             {
                                                                                 lambda = path : value : value { seed = seed ; } ;
                                                                             }
-                                                                            parameters.action.text ;
+                                                                            parameters.action ;
                                                                 } ;
                                                             release = null ;
                                                             seed =
