@@ -152,8 +152,7 @@
                                                                                                                 in "${ application }/bin/init" ;
                                                                                                     targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
                                                                                                 } ;
-                                                                                }
-                                                                                ( parameters.init.payload pkgs ) ;
+                                                                                } ;
                                                                     action =
                                                                         visitor
                                                                             {
