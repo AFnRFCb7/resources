@@ -329,7 +329,7 @@
                                                                                                                                                                                                 text = parameters.init.action.text ;
                                                                                                                                                                                             } ;
                                                                                                                                                                                     in "${ application }/bin/resource" ;
-                                                                                                                                                                            targetPkgs = parameters.init.action.targetPkgs ;
+                                                                                                                                                                            targetPkgs = parameters.init.targetPkgs ;
                                                                                                                                                                         }
                                                                                                                                                                 )
                                                                                                                                                             ] ;
