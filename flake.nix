@@ -185,17 +185,18 @@
                                                                         }
                                                                         init ;
                                                                     payload =
-                                                                        writeShellApplication
-                                                                            {
-                                                                                lambda =
-                                                                                    path : value :
-                                                                                        writeShellApplication
-                                                                                            {
-                                                                                                name = "init" ;
-                                                                                                runtimeInputs = parameters.targetPkgs pkgs ;
-                                                                                                text = parameters.text ;
-                                                                                            } ;
-                                                                            } ;
+                                                                        pkgs :
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value :
+                                                                                            writeShellApplication
+                                                                                                {
+                                                                                                    name = "init" ;
+                                                                                                    runtimeInputs = parameters.targetPkgs pkgs ;
+                                                                                                    text = parameters.text ;
+                                                                                                } ;
+                                                                                } ;
                                                                     targetPkgs =
                                                                         {
                                                                             lambda = path : value : value ;
