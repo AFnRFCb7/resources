@@ -185,7 +185,7 @@
                                                                         }
                                                                         init ;
                                                                     payload =
-                                                                        pkgs.writeShellApplication
+                                                                        writeShellApplication
                                                                             {
                                                                                 lambda =
                                                                                     path : value :
