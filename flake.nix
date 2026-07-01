@@ -142,7 +142,6 @@
                                                                                     set = to-string ;
                                                                                     string = to-string ;
                                                                                 }
-                                                                                seed ;
                                                                     )
                                                                     seed ;
                                                             temporary =
