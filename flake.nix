@@ -100,7 +100,7 @@
                                                                             visitor
                                                                                 {
                                                                                     lambda =
-                                                                                        path : value
+                                                                                        path : value :
                                                                                             buildFHSUserEnv
                                                                                                 {
                                                                                                     extraBwrapArgs =
