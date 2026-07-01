@@ -211,12 +211,9 @@
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.buildFHSUserEnv
                                                                                                                                                                         {
-                                                                                                                                                                            name = "resource" ;
-                                                                                                                                                                            runScript = "resource" ;
-                                                                                                                                                                            targetPkgs =
-                                                                                                                                                                                pkgs :
-                                                                                                                                                                                    [
-                                                                                                                                                                                    ] ;
+                                                                                                                                                                            name = "init" ;
+                                                                                                                                                                            runtimeScript = "init" ;
+                                                                                                                                                                            targetPkgs = parameters.init.action.targetPkgs ;
                                                                                                                                                                         }
                                                                                                                                                                 )
                                                                                                                                                             ] ;
