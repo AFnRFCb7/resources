@@ -91,176 +91,177 @@
                                                 temporary
                                             } :
                                                 let
-                                                    parameters =
-                                                        {
-                                                            init =
-                                                                {
-                                                                    action =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value null ;
-                                                                            }
-                                                                            parameters.init.init ;
-                                                                    adapter =
-                                                                        pkgs :
-                                                                            visitor
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            buildFHSUserEnv
-                                                                                                {
-                                                                                                    extraBwrapArgs =
-                                                                                                        [
-                                                                                                            "--ro-bind" "$INPUT" "/input"
-                                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                            "--tmpfs" "/private"
-                                                                                                            "--tmpfs" "/scratch"
-                                                                                                        ] ;
-                                                                                                    name = "init" ;
-                                                                                                    runScript =
-                                                                                                        let
-                                                                                                            application =
-                                                                                                                writeShellApplication
-                                                                                                                    {
-                                                                                                                        name = "init" ;
-                                                                                                                        text =
-                                                                                                                            ''
-                                                                                                                                jq --raw-output ".arguments[]" /input > /private/jq
-                                                                                                                                readarray -t ARGUMENTS < <( jq --raw-output ".arguments[]" /input )
-                                                                                                                                if jq -e '.inputs | has("standard")'
-                                                                                                                                then
-                                                                                                                                    if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
-                                                                                                                                    then
-                                                                                                                                        STATUS="$?"
-                                                                                                                                    else
-                                                                                                                                        STATUS="$?"
-                                                                                                                                    fi
-                                                                                                                                else
-                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
-                                                                                                                                    then
-                                                                                                                                        STATUS="$?"
-                                                                                                                                    else
-                                                                                                                                        STATUS="$?"
-                                                                                                                                    fi
-                                                                                                                                fi
-                                                                                                                                if [[ "$STATUS" == 0 ]]
-                                                                                                                                then
-                                                                                                                                    true # FIXME
-                                                                                                                                else
-                                                                                                                                    true # FIXME
-                                                                                                                                fi
-                                                                                                                                jq \
-                                                                                                                                    --null-input \
-                                                                                                                                    --argjson STATUS "$STATUS" \
-                                                                                                                                    '$STATUS'
-                                                                                                                            '' ;
-                                                                                                                    } ;
-                                                                                                                in "${ application }/bin/init" ;
-                                                                                                    targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
-                                                                                                } ;
-                                                                                } ;
-                                                                    driver =
-                                                                        pkgs :
-                                                                            visitor
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            pkgs.writeShellApplication
-                                                                                                {
-                                                                                                    name = "init" ;
-                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq sequential ( parameters.init.adapter pkgs ) ] ;
-                                                                                                    text =
-                                                                                                        ''
-                                                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                                                            exec 165> ${ resources-directory }/locks/clean
-                                                                                                            flock -s 165
-                                                                                                            SEQUENTIAL="$( sequential )" || exit 127
-                                                                                                            printf -v INDEX "%016d\n" "$SEQUENTIAL"
-                                                                                                            export INDEX
-                                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                            mkdir --parents ${ resources-directory }/temporary
-                                                                                                            OUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 157
-                                                                                                            init > "$OUT"
-                                                                                                            STATUS="$( jq --raw-output "." "$OUT" )" || exit 182
-                                                                                                            exit "$STATUS"
-                                                                                                        '' ;
-                                                                                                } ;
-                                                                                }
-                                                                                parameters.init.driver ;
-                                                                    init =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value null ;
-                                                                            }
-                                                                            init ;
-                                                                    payload =
-                                                                        pkgs :
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            writeShellApplication
-                                                                                                {
-                                                                                                    name = "init" ;
-                                                                                                    runtimeInputs = parameters.init.targetPkgs pkgs ;
-                                                                                                    text = parameters.text ;
-                                                                                                } ;
-                                                                                } ;
-                                                                    targetPkgs =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value ;
-                                                                            }
-                                                                            parameters.init.action ;
-                                                                    text =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value { seed = seed ; } ;
-                                                                            }
-                                                                            parameters.init.action ;
-                                                                } ;
-                                                            release = null ;
-                                                            seed =
-                                                                visitor
-                                                                    (
-                                                                        let
-                                                                            to-string =
-                                                                                path : value :
-                                                                                    let
-                                                                                        type = builtins.typeOf value ;
-                                                                                        in
-                                                                                            {
-                                                                                                path = path ;
-                                                                                                type = type ;
-                                                                                                value = if type == "lambda" then null else value ;
-                                                                                            } ;
-                                                                            in
-                                                                                {
-                                                                                    bool = to-string ;
-                                                                                    float = to-string ;
-                                                                                    int = to-string ;
-                                                                                    lambda = to-string ;
-                                                                                    list = to-string ;
-                                                                                    path = to-string ;
-                                                                                    set = to-string ;
-                                                                                    string = to-string ;
-                                                                                }
-                                                                    )
-                                                                    seed ;
-                                                            temporary =
-                                                                visitor
-                                                                    {
-                                                                        bool = path : value : value ;
-                                                                        float = path : value : false ;
-                                                                        int = path : value : false ;
-                                                                        lambda = path : value : false ;
-                                                                        list = path : value : false ;
-                                                                        path = path : value : false ;
-                                                                        set = path : value : false ;
-                                                                        string = path : value : false ;
-                                                                    }
-                                                                temporary ;
-                                                        } ;
+                                                    parameters = { } ;
+#                                                    parameters =
+#                                                        {
+#                                                            init =
+#                                                                {
+#                                                                    action =
+#                                                                        visitor
+#                                                                            {
+#                                                                                lambda = path : value : value null ;
+#                                                                            }
+#                                                                            parameters.init.init ;
+#                                                                    adapter =
+#                                                                        pkgs :
+#                                                                            visitor
+#                                                                                {
+#                                                                                    lambda =
+#                                                                                        path : value :
+#                                                                                            buildFHSUserEnv
+#                                                                                                {
+#                                                                                                    extraBwrapArgs =
+#                                                                                                        [
+#                                                                                                            "--ro-bind" "$INPUT" "/input"
+#                                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+#                                                                                                            "--tmpfs" "/private"
+#                                                                                                            "--tmpfs" "/scratch"
+#                                                                                                        ] ;
+#                                                                                                    name = "init" ;
+#                                                                                                    runScript =
+#                                                                                                        let
+#                                                                                                            application =
+#                                                                                                                writeShellApplication
+#                                                                                                                    {
+#                                                                                                                        name = "init" ;
+#                                                                                                                        text =
+#                                                                                                                            ''
+#                                                                                                                                jq --raw-output ".arguments[]" /input > /private/jq
+#                                                                                                                                readarray -t ARGUMENTS < <( jq --raw-output ".arguments[]" /input )
+#                                                                                                                                if jq -e '.inputs | has("standard")'
+#                                                                                                                                then
+#                                                                                                                                    if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+#                                                                                                                                    then
+#                                                                                                                                        STATUS="$?"
+#                                                                                                                                    else
+#                                                                                                                                        STATUS="$?"
+#                                                                                                                                    fi
+#                                                                                                                                else
+#                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+#                                                                                                                                    then
+#                                                                                                                                        STATUS="$?"
+#                                                                                                                                    else
+#                                                                                                                                        STATUS="$?"
+#                                                                                                                                    fi
+#                                                                                                                                fi
+#                                                                                                                                if [[ "$STATUS" == 0 ]]
+#                                                                                                                                then
+#                                                                                                                                    true # FIXME
+#                                                                                                                                else
+#                                                                                                                                    true # FIXME
+#                                                                                                                                fi
+#                                                                                                                                jq \
+#                                                                                                                                    --null-input \
+#                                                                                                                                    --argjson STATUS "$STATUS" \
+#                                                                                                                                    '$STATUS'
+#                                                                                                                            '' ;
+#                                                                                                                    } ;
+#                                                                                                                in "${ application }/bin/init" ;
+#                                                                                                    targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
+#                                                                                                } ;
+#                                                                                } ;
+#                                                                    driver =
+#                                                                        pkgs :
+#                                                                            visitor
+#                                                                                {
+#                                                                                    lambda =
+#                                                                                        path : value :
+#                                                                                            pkgs.writeShellApplication
+#                                                                                                {
+#                                                                                                    name = "init" ;
+#                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq sequential ( parameters.init.adapter pkgs ) ] ;
+#                                                                                                    text =
+#                                                                                                        ''
+#                                                                                                            mkdir --parents ${ resources-directory }/locks
+#                                                                                                            exec 165> ${ resources-directory }/locks/clean
+#                                                                                                            flock -s 165
+#                                                                                                            SEQUENTIAL="$( sequential )" || exit 127
+#                                                                                                            printf -v INDEX "%016d\n" "$SEQUENTIAL"
+#                                                                                                            export INDEX
+#                                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
+#                                                                                                            mkdir --parents ${ resources-directory }/temporary
+#                                                                                                            OUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 157
+#                                                                                                            init > "$OUT"
+#                                                                                                            STATUS="$( jq --raw-output "." "$OUT" )" || exit 182
+#                                                                                                            exit "$STATUS"
+#                                                                                                        '' ;
+#                                                                                                } ;
+#                                                                                }
+#                                                                                parameters.init.driver ;
+#                                                                    init =
+#                                                                        visitor
+#                                                                            {
+#                                                                                lambda = path : value : value null ;
+#                                                                            }
+#                                                                            init ;
+#                                                                    payload =
+#                                                                        pkgs :
+#                                                                            writeShellApplication
+#                                                                                {
+#                                                                                    lambda =
+#                                                                                        path : value :
+#                                                                                            writeShellApplication
+#                                                                                                {
+#                                                                                                    name = "init" ;
+#                                                                                                    runtimeInputs = parameters.init.targetPkgs pkgs ;
+#                                                                                                    text = parameters.text ;
+#                                                                                                } ;
+#                                                                                } ;
+#                                                                    targetPkgs =
+#                                                                        visitor
+#                                                                            {
+#                                                                                lambda = path : value : value ;
+#                                                                            }
+#                                                                            parameters.init.action ;
+#                                                                    text =
+#                                                                        visitor
+#                                                                            {
+#                                                                                lambda = path : value : value { seed = seed ; } ;
+#                                                                            }
+#                                                                            parameters.init.action ;
+#                                                                } ;
+#                                                            release = null ;
+#                                                            seed =
+#                                                                visitor
+#                                                                    (
+#                                                                        let
+#                                                                            to-string =
+#                                                                                path : value :
+#                                                                                    let
+#                                                                                        type = builtins.typeOf value ;
+#                                                                                        in
+#                                                                                            {
+#                                                                                                path = path ;
+#                                                                                                type = type ;
+#                                                                                                value = if type == "lambda" then null else value ;
+#                                                                                            } ;
+#                                                                            in
+#                                                                                {
+#                                                                                    bool = to-string ;
+#                                                                                    float = to-string ;
+#                                                                                    int = to-string ;
+#                                                                                    lambda = to-string ;
+#                                                                                    list = to-string ;
+#                                                                                    path = to-string ;
+#                                                                                    set = to-string ;
+#                                                                                    string = to-string ;
+#                                                                                }
+#                                                                    )
+#                                                                    seed ;
+#                                                            temporary =
+#                                                                visitor
+#                                                                    {
+#                                                                        bool = path : value : value ;
+#                                                                        float = path : value : false ;
+#                                                                        int = path : value : false ;
+#                                                                        lambda = path : value : false ;
+#                                                                        list = path : value : false ;
+#                                                                        path = path : value : false ;
+#                                                                        set = path : value : false ;
+#                                                                        string = path : value : false ;
+#                                                                    }
+#                                                                temporary ;
+#                                                        } ;
                                                     resource =
                                                         writeShellApplication
                                                             {
@@ -382,6 +383,8 @@
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         mkdir --parents /out/init/recovery
                                                                                                                                                                                                         mkdir --parents /out/release/recovery
+                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
+                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
