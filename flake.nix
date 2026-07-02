@@ -362,7 +362,7 @@
                                                                                                                                                                                     "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
-                                                                                                                                                                            name = "resource" ;
+                                                                                                                                                                            name = "resource-4452583465729895-9362245666185533" ;
                                                                                                                                                                             runtimeScript =
                                                                                                                                                                                 let
                                                                                                                                                                                     application =
@@ -387,8 +387,8 @@
                                                                                                                                                                 export INDEX
                                                                                                                                                                 echo 4452583465729895 2262439465944489 >&2
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                echo 4452583465729895 9335949453422381 >&2
-                                                                                                                                                                resource
+                                                                                                                                                                echo 4452583465729895 9335949453422381 "${ resources-directory }/mounts/$INDEX" >&2
+                                                                                                                                                                resource-4452583465729895-9362245666185533
                                                                                                                                                                 echo 4452583465729895 3443619844455215 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
