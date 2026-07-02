@@ -222,7 +222,7 @@
                                                                                 {
                                                                                     lambda = path : value : value pkgs ;
                                                                                 }
-                                                                                ( builtins.trace "${ builtins.concatStringsSep ";" ( builtins.attrNames parameters.init.action ) }" parameters.init.action.targetPkgs ) ;
+                                                                                parameters.init.action.targetPkgs ;
                                                                     text =
                                                                         visitor
                                                                             {
@@ -324,7 +324,20 @@
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
-                                                                                                                                runtimeScript = "resource" ;
+                                                                                                                                runtimeScript =
+                                                                                                                                    let
+                                                                                                                                        application =
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "resource" ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            echo 4452583465729895 1533174597343564 >&2
+                                                                                                                                                            resource
+                                                                                                                                                            echo 4452583465729895 9921688628344452 >&2
+                                                                                                                                                        '' ;
+                                                                                                                                                } ;
+                                                                                                                                            in "${ application }/bin/resource" ;
                                                                                                                                 targetPkgs =
                                                                                                                                     pkgs :
                                                                                                                                         [
