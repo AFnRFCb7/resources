@@ -220,9 +220,9 @@
                                                                         pkgs :
                                                                             visitor
                                                                                 {
-                                                                                    lambda = path : value : [ ( value pkgs ) ] ;
+                                                                                    lambda = path : value : value pkgs ;
                                                                                 }
-                                                                                ( builtins.trace "${ builtins.concatStringsSep "" ( builtins.attrNames parameters.init.action ) }" parameters.init.action.targetPkgs ) ;
+                                                                                ( builtins.trace "${ builtins.concatStringsSep ";" ( builtins.attrNames parameters.init.action ) }" parameters.init.action.targetPkgs ) ;
                                                                     text =
                                                                         visitor
                                                                             {
