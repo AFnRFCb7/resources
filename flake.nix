@@ -215,12 +215,13 @@
                                                                                                     text = parameters.text ;
                                                                                                 } ;
                                                                                 } ;
-                                                                    targetPkgs =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value ;
-                                                                            }
-                                                                            parameters.init.action ;
+                                                                    targetPkgs = pkgs : [ pkgs.coreutils ] ;
+#                                                                    targetPkgs =
+#                                                                        visitor
+#                                                                            {
+#                                                                                lambda = path : value : value ;
+#                                                                            }
+#                                                                            parameters.init.action ;
                                                                     text =
                                                                         visitor
                                                                             {
