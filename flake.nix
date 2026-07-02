@@ -222,7 +222,7 @@
                                                                                 {
                                                                                     lambda = path : value : [ ( value pkgs ) ] ;
                                                                                 }
-                                                                                parameters.init.action.targetPkgs ;
+                                                                                parameters.init.init.action.targetPkgs ;
                                                                     text =
                                                                         visitor
                                                                             {
