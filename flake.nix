@@ -34,6 +34,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
+                                                                                        "--tmpfs /4452583465729895-2775875463829512"
                                                                                         "--bind" gc-roots-directory "/gc-roots"
                                                                                         "--bind" resources-directory "/resources"
                                                                                         "--bind" "$TEMPORARY" "/temporary"
@@ -120,6 +121,7 @@
                                                                                                 {
                                                                                                     extraBwrapArgs =
                                                                                                         [
+                                                                                                            "--tmpfs /4452583465729895-7265256581685862"
                                                                                                             "--ro-bind" "$INPUT" "/input"
                                                                                                             "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                             "--tmpfs" "/private"
@@ -283,6 +285,7 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
+                                                                                            "--tmpfs /4452583465729895-7616833674256888"
                                                                                             "--ro-bind" "$INPUT_FILE" "/input"
                                                                                             "--bind" gc-roots-directory gc-roots-directory
                                                                                             "--bind" resources-directory resources-directory
@@ -355,6 +358,7 @@
                                                                                                                                                                         {
                                                                                                                                                                             extraBwrapArgs =
                                                                                                                                                                                 [
+                                                                                                                                                                                    "--tmpfs /4452583465729895-9986361875922816"
                                                                                                                                                                                     "--mount" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
@@ -406,7 +410,11 @@
                                                                                                                                                             (
                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                     {
-                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
+                                                                                                                                                                        extraBwrapArgs =
+                                                                                                                                                                            [
+                                                                                                                                                                                "--tmpfs /4452583465729895-6956854592914922"
+                                                                                                                                                                                "--bind" "$OUT" "/out"
+                                                                                                                                                                            ] ;
                                                                                                                                                                         name = "resource" ;
                                                                                                                                                                         runScript = "resource" ;
                                                                                                                                                                         targetPkgs =
@@ -572,7 +580,11 @@
                                                                         (
                                                                             buildFHSUserEnv
                                                                                 {
-                                                                                    extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "${ resources-directory }/sequential" ] ;
+                                                                                    extraBwrapArgs =
+                                                                                        [
+                                                                                            "--tmpfs /4452583465729895-7741388126178638"
+                                                                                            "--bind" "${ resources-directory }/sequential" "${ resources-directory }/sequential"
+                                                                                        ] ;
                                                                                     name = "sequential" ;
                                                                                     runScript = "sequential" ;
                                                                                     targetPkgs =
