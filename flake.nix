@@ -322,10 +322,10 @@
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
                                                                                                                                         "--tmpfs /4452583465729895-3183749435423111"
-                                                                                                                                        "--ro-mount" "$INPUT_FILE" "/input"
-                                                                                                                                        "--mount" gc-roots-directory gc-roots-directory
-                                                                                                                                        "--mount" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
-                                                                                                                                        "--mount" "$OUTPUT_FILE" "/output"
+                                                                                                                                        "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                                                                        "--bind" gc-roots-directory gc-roots-directory
+                                                                                                                                        "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
+                                                                                                                                        "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource-4452583465729895-6512189672183937" ;
                                                                                                                                 runScript =
@@ -359,7 +359,7 @@
                                                                                                                                                                             extraBwrapArgs =
                                                                                                                                                                                 [
                                                                                                                                                                                     "--tmpfs /4452583465729895-9986361875922816"
-                                                                                                                                                                                    "--mount" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                                                                                    "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
                                                                                                                                                                             name = "resource" ;
