@@ -387,6 +387,7 @@
                                                                                                                                                                 export INDEX
                                                                                                                                                                 echo 4452583465729895 2262439465944489 >&2
                                                                                                                                                                 find "${ resources-directory }" >&2 # 4452583465729895
+                                                                                                                                                                echo 4452583465729895 mkdir --parents 4452583465729895 "${ resources-directory }/mounts/$INDEX" 4452583465729895
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 echo 4452583465729895 6326261954785325 >&2
                                                                                                                                                                 find "${ resources-directory }" >&2 # 4452583465729895
