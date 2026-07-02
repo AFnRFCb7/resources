@@ -297,7 +297,7 @@
                                                                                                         name = "resource" ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 4452583465729895 8952615412358218 >&2
+                                                                                                                echo 4452583465729895 8952615412358218 $( which resource ) >&2
                                                                                                                 resource
                                                                                                                 echo 4452583465729895 1433495495347374 >&2
                                                                                                             '' ;
@@ -443,6 +443,7 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
+                                                                                                                            echo 4452583465729895 3189187795972269 >&2
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
