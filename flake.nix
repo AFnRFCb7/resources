@@ -431,10 +431,15 @@
                                                                                                                                                         ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            echo 4452583465729895 7251918488719776 >&2
                                                                                                                                                             OUT="$1"
+                                                                                                                                                            echo 4452583465729895 6535877481227527 >&2
                                                                                                                                                             export OUT
+                                                                                                                                                            echo 4452583465729895 2761477663565886 >&2
                                                                                                                                                             mkdir --parents "$OUT"
+                                                                                                                                                            echo 4452583465729895 9249964893353297 >&2
                                                                                                                                                             resource
+                                                                                                                                                            echo 4452583465729895 4547814543813578 >&2
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
@@ -485,7 +490,7 @@
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 echo 4452583465729895 2752233854758745 >&2
                                                                                                                                 export OUTPUT_FILE
-                                                                                                                                echo 4452583465729895 2277617436676285 >&2
+                                                                                                                                echo 4452583465729895 2277617436676285 "$( which resource )" >&2
                                                                                                                                 resource
                                                                                                                                 echo 4452583465729895 7199692357729978 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
