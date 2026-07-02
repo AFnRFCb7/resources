@@ -445,10 +445,14 @@
                                                                                                                         ''
                                                                                                                             echo 4452583465729895 3189187795972269 >&2
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
+                                                                                                                            echo 4452583465729895 3215251157819278 >&2
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
+                                                                                                                            echo 4452583465729895 9745867225173441 >&2
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
+                                                                                                                            echo 4452583465729895 6754386453921587 >&2
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
+                                                                                                                                echo 4452583465729895 6171343921298523 >&2
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 184
                                                                                                                                 INDEX="$( basename "$LINK" )" || exit 122
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
@@ -465,6 +469,7 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
+                                                                                                                                echo 4452583465729895 6754384777488487 >&2
                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 162
                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
