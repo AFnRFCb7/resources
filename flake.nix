@@ -109,7 +109,7 @@
                                                                             {
                                                                                 lambda = path : value : value null ;
                                                                             }
-                                                                            parameters.init.init ;
+                                                                            parameters.init.init.action ;
                                                                     adapter =
                                                                         pkgs :
                                                                             visitor
