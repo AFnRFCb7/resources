@@ -292,7 +292,7 @@
                                                                                     runScript =
                                                                                         let
                                                                                             application =
-                                                                                                pkgs.writeShellApplication
+                                                                                                writeShellApplication
                                                                                                     {
                                                                                                         name = "resource" ;
                                                                                                         text =
