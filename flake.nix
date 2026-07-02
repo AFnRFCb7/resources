@@ -386,10 +386,10 @@
                                                                                                                                                                 echo 4452583465729895 4489132965559815 >&2
                                                                                                                                                                 export INDEX
                                                                                                                                                                 echo 4452583465729895 2262439465944489 >&2
-                                                                                                                                                                find "${ resources-directory }/mounts" >&2 # 4452583465729895
+                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 echo 4452583465729895 6326261954785325 >&2
-                                                                                                                                                                find "${ resources-directory }/mounts" >&2 # 4452583465729895
+                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
                                                                                                                                                                 echo 4452583465729895 9335949453422381 "${ resources-directory }/mounts/$INDEX" >&2
                                                                                                                                                                 resource-4452583465729895-9362245666185533
                                                                                                                                                                 echo 4452583465729895 3443619844455215 >&2
