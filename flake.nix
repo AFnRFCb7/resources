@@ -321,13 +321,13 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--tmpfs" "/4452583465729895-3183749435423111"
+                                                                                                                                        "--tmpfs /4452583465729895-3183749435423111"
                                                                                                                                         "--ro-mount" "$INPUT_FILE" "/input"
                                                                                                                                         "--mount" gc-roots-directory gc-roots-directory
                                                                                                                                         "--mount" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
-                                                                                                                                name = "resource" ;
+                                                                                                                                name = "resource_" ;
                                                                                                                                 runtimeScript =
                                                                                                                                     let
                                                                                                                                         application =
@@ -500,7 +500,7 @@
                                                                                                                                 echo 4452583465729895 2752233854758745 >&2
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 echo 4452583465729895 2277617436676285 "$( which resource )" >&2
-                                                                                                                                resource
+                                                                                                                                resource_
                                                                                                                                 echo 4452583465729895 7199692357729978 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 echo 4452583465729895 4398658281664119 >&2
