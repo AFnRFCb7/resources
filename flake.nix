@@ -328,7 +328,7 @@
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource-4452583465729895-6512189672183937" ;
-                                                                                                                                runtimeScript =
+                                                                                                                                runScript =
                                                                                                                                     let
                                                                                                                                         application =
                                                                                                                                             pkgs.writeShellApplication
