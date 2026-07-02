@@ -348,6 +348,7 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 4452583465729895 3718814934194739 >&2
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
                                                                                                                                                                 export INDEX
@@ -501,7 +502,9 @@
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
+                                                                        echo 4452583465729895 3563372738612441 >&2
                                                                         resource
+                                                                        echo 4452583465729895 8523496992617627 >&2
                                                                         OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo "$OUTPUT"
