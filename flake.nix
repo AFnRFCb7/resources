@@ -289,7 +289,20 @@
                                                                                             "--bind" "$OUTPUT_FILE" "/output"
                                                                                         ] ;
                                                                                     name = "resource" ;
-                                                                                    runScript = "resource" ;
+                                                                                    runScript =
+                                                                                        let
+                                                                                            application =
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "resource" ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                                echo 4452583465729895 8952615412358218 >&2
+                                                                                                                resource
+                                                                                                                echo 4452583465729895 1433495495347374 >&2
+                                                                                                            '' ;
+                                                                                                    } ;
+                                                                                               in "${ application }/bin/resource" ;
                                                                                     targetPkgs =
                                                                                         pkgs :
                                                                                             [
