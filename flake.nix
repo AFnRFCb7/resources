@@ -327,7 +327,7 @@
                                                                                                                                         "--mount" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--mount" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
-                                                                                                                                name = "resource_" ;
+                                                                                                                                name = "resource-4452583465729895-6512189672183937" ;
                                                                                                                                 runtimeScript =
                                                                                                                                     let
                                                                                                                                         application =
@@ -500,7 +500,7 @@
                                                                                                                                 echo 4452583465729895 2752233854758745 >&2
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 echo 4452583465729895 2277617436676285 "$( which resource )" >&2
-                                                                                                                                resource_
+                                                                                                                                resource-4452583465729895-6512189672183937
                                                                                                                                 echo 4452583465729895 7199692357729978 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 echo 4452583465729895 4398658281664119 >&2
