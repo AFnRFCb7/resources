@@ -350,7 +350,7 @@
                                                                                                                                                                                     "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
-                                                                                                                                                                            name = "resource-4452583465729895-9362245666185533" ;
+                                                                                                                                                                            name = "resource" ;
                                                                                                                                                                             runtimeScript =
                                                                                                                                                                                 let
                                                                                                                                                                                     application =
@@ -380,7 +380,7 @@
                                                                                                                                                                 echo 4452583465729895 6326261954785325 >&2
                                                                                                                                                                 find "${ resources-directory }" >&2 # 4452583465729895
                                                                                                                                                                 echo 4452583465729895 9335949453422381 "${ resources-directory }/mounts/$INDEX" >&2
-                                                                                                                                                                resource-4452583465729895-9362245666185533
+                                                                                                                                                                resource
                                                                                                                                                                 echo 4452583465729895 3443619844455215 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
