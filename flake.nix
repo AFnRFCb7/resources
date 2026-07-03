@@ -476,7 +476,7 @@
                                                                                                                                 ERROR="$( jq --raw-output ".error" "$OUTPUT_FILE" )" || exit 172
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
-                                                                                                                                echo 1723258852938545 7884435697338186 "OUTPUT=$OUTPUT" "ERROR=$ERROR"" "STATUS=$STATUS" >&2
+                                                                                                                                echo 1723258852938545 7884435697338186 "OUTPUT=$OUTPUT" "ERROR=$ERROR" "STATUS=$STATUS" >&2
                                                                                                                                 jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
