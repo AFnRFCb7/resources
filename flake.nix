@@ -328,7 +328,7 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "resource" ;
-                                                                                                                                                    text = "resource" ;
+                                                                                                                                                    text = "resource > /output" ;
                                                                                                                                                 } ;
                                                                                                                                             in "${ application }/bin/resource" ;
                                                                                                                                 targetPkgs =
@@ -361,8 +361,6 @@
                                                                                                                                                                                                 runtimeInputs = [ ] ; # parameters.init.targetPkgs pkgs ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
-                                                                                                                                                                                                        echo 1723258852938545 6723956881124369 >&2
-                                                                                                                                                                                                        echo 1723258852938545 3853135926543871 >&2
                                                                                                                                                                                                         jq --null-input '{ "standard-error" : "8823935991752945" , "standard-output" : "8915563151488162" , "status" : 117 }' # 1723258852938545
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             } ;
@@ -470,8 +468,9 @@
                                                                                                                                 export INPUT_FILE
                                                                                                                                 echo "$INDEX" > "$INPUT_FILE"
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
-                                                                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
+                                                                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-diecho 1723258852938545 2153511877264731 >&2rectory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
+                                                                                                                                echo 1723258852938545 2153511877264731 >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" 118 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
