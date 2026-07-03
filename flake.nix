@@ -328,12 +328,7 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "resource" ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            echo 4452583465729895 1533174597343564 >&2
-                                                                                                                                                            resource
-                                                                                                                                                            echo 4452583465729895 9921688628344452 >&2
-                                                                                                                                                        '' ;
+                                                                                                                                                    text = "resource" ;
                                                                                                                                                 } ;
                                                                                                                                             in "${ application }/bin/resource" ;
                                                                                                                                 targetPkgs =
