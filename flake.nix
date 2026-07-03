@@ -473,7 +473,7 @@
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 resource
-                                                                                                                                echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" >&2
+                                                                                                                                echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" 118 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
                                                                                                                                 echo 1723258852938545 7884435697338186 "STATUS=$STATUS" >&2
