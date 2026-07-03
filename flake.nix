@@ -367,11 +367,14 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 1723258852938545 8435442733891984 >&2
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 printf -v INDEX "%016d" "$SEQUENTIAL"
                                                                                                                                                                 export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                echo 1723258852938545 9445855959298195 >&2
                                                                                                                                                                 resource
+                                                                                                                                                                echo 1723258852938545 9325236315398739 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
