@@ -347,6 +347,7 @@
                                                                                                                                                                         {
                                                                                                                                                                             extraBwrapArgs =
                                                                                                                                                                                 [
+                                                                                                                                                                                    "--tmpfs /1723258852938545-8241596144353995"
                                                                                                                                                                                     "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
