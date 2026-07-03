@@ -352,7 +352,7 @@
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
                                                                                                                                                                             name = "resource" ;
-                                                                                                                                                                            runtimeScript =
+                                                                                                                                                                            runScript =
                                                                                                                                                                                 let
                                                                                                                                                                                     application =
                                                                                                                                                                                         pkgs.writeShellApplication
