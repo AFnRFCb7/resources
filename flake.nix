@@ -382,7 +382,7 @@
                                                                                                                                                                 echo 4452583465729895 3718814934194739 >&2
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 echo 4452583465729895 3858225768842251 >&2
-                                                                                                                                                                printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                                                                                printf -v INDEX "%016d" "$SEQUENTIAL"
                                                                                                                                                                 echo 4452583465729895 4489132965559815 >&2
                                                                                                                                                                 export INDEX
                                                                                                                                                                 echo 4452583465729895 2262439465944489 >&2
