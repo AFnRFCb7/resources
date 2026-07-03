@@ -361,7 +361,7 @@
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         echo 1723258852938545 6723956881124369 >&2
-                                                                                                                                                                                                        ${ paraameters.init.text }
+                                                                                                                                                                                                        ${ parameters.init.text }
                                                                                                                                                                                                         echo 1723258852938545 3853135926543871 >&2
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             } ;
