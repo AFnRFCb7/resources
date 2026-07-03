@@ -321,7 +321,7 @@
                                                                                                                                         "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
-                                                                                                                                name = "resource-4452583465729895-6512189672183937" ;
+                                                                                                                                name = "resource" ;
                                                                                                                                 runScript =
                                                                                                                                     let
                                                                                                                                         application =
@@ -502,8 +502,8 @@
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 echo 4452583465729895 2752233854758745 >&2
                                                                                                                                 export OUTPUT_FILE
-                                                                                                                                echo 4452583465729895 2277617436676285 "$( which resource-4452583465729895-6512189672183937 )" "$( cat "$( which resource-4452583465729895-6512189672183937 )" )" >&2
-                                                                                                                                resource-4452583465729895-6512189672183937
+                                                                                                                                echo 4452583465729895 2277617436676285 "$( which resource )" "$( cat "$( which resource )" )" >&2
+                                                                                                                                resource
                                                                                                                                 echo 4452583465729895 7199692357729978 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 echo 4452583465729895 4398658281664119 >&2
