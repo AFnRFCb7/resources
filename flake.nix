@@ -462,8 +462,8 @@
                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                                 STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
-                                                                                                                                echo 1723258852938545 7884435697338186 "OUTPUT=$OUTPUT" "STANDARD_ERROR=$STANDARD_ERROR" "STATUS=$STATUS" "$( cat "$OUTPUT_FILE" )" >&2
-                                                                                                                                jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $STANDARD_OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                                echo 1723258852938545 7884435697338186 "STANDARD_OUTPUT=$STANDARD_OUTPUT" "STANDARD_ERROR=$STANDARD_ERROR" "STATUS=$STATUS" "$( cat "$OUTPUT_FILE" )" >&2
+                                                                                                                                jq --null-input --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $STANDARD_OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
                                                                                                                         '' ;
