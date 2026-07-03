@@ -464,7 +464,9 @@
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
+                                                                                                                                echo 1723258852938545 6155715262984436 >&2
                                                                                                                                 resource
+                                                                                                                                echo 1723258852938545 9339874243253161 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 118
                                                                                                                                 jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
