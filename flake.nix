@@ -370,9 +370,7 @@
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
                                                                                                                                                                 printf -v INDEX "%016d" "$SEQUENTIAL"
                                                                                                                                                                 export INDEX
-                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
                                                                                                                                                                 resource
                                                                                                                                                             '' ;
                                                                                                                                                     }
