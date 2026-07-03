@@ -316,9 +316,7 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--tmpfs /1723258852938545-3479285162134363"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                        "--bind" gc-roots-directory gc-roots-directory
                                                                                                                                         "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
@@ -344,29 +342,14 @@
                                                                                                                                                                 pkgs.coreutils
                                                                                                                                                                 sequential
                                                                                                                                                                 (
-                                                                                                                                                                    pkgs.buildFHSUserEnv
+                                                                                                                                                                    pkgs.writeShellApplication
                                                                                                                                                                         {
-                                                                                                                                                                            extraBwrapArgs =
-                                                                                                                                                                                [
-                                                                                                                                                                                    "--tmpfs /1723258852938545-8241596144353995"
-                                                                                                                                                                                    "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                                                                                    "--tmpfs" "/scratch"
-                                                                                                                                                                                ] ;
                                                                                                                                                                             name = "resource" ;
-                                                                                                                                                                            runScript =
-                                                                                                                                                                                let
-                                                                                                                                                                                    application =
-                                                                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                                                                            {
-                                                                                                                                                                                                name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = [ ] ; # parameters.init.targetPkgs pkgs ;
-                                                                                                                                                                                                text =
-                                                                                                                                                                                                    ''
-                                                                                                                                                                                                        jq --null-input '{ "standard-error" : "8823935991752945" , "standard-output" : "8915563151488162" , "status" : 117 }' # 1723258852938545
-                                                                                                                                                                                                    '' ;
-                                                                                                                                                                                            } ;
-                                                                                                                                                                                    in "${ application }/bin/resource" ;
-                                                                                                                                                                            targetPkgs = parameters.init.targetPkgs ;
+                                                                                                                                                                            runtimeInputs = [ ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    jq --null-input --arg STANDARD_ERROR "1128574734324969" --arg STANDARD_OUTPUT standard-output "2926751385425387" --argjson STATUS 158 '{ "standard-error" : $STANDARD_ERROR , "standard-output" : $STANDARD_OUTPUT , "status" : $STATUS }' # 1723258852938545
+                                                                                                                                                                                '' ;
                                                                                                                                                                         }
                                                                                                                                                                 )
                                                                                                                                                             ] ;
@@ -471,7 +454,6 @@
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
-
                                                                                                                                 echo 1723258852938545 2153511877264731 "$( which resource )" >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" 118 >&2
