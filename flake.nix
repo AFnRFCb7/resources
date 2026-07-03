@@ -297,9 +297,7 @@
                                                                                                         name = "resource" ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 4452583465729895 8952615412358218 "$( which resource )" >&2
                                                                                                                 resource
-                                                                                                                echo 4452583465729895 1433495495347374 >&2
                                                                                                             '' ;
                                                                                                     } ;
                                                                                                in "${ application }/bin/resource" ;
