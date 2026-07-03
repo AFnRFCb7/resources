@@ -363,7 +363,7 @@
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         echo 1723258852938545 6723956881124369 >&2
                                                                                                                                                                                                         echo 1723258852938545 3853135926543871 >&2
-                                                                                                                                                                                                        jq --null-input '{ "standard-error" : "8823935991752945" , "standard-output" : "8915563151488162" , "status" : 117 }' > /output # 1723258852938545
+                                                                                                                                                                                                        jq --null-input '{ "standard-error" : "8823935991752945" , "standard-output" : "8915563151488162" , "status" : 117 }' # 1723258852938545
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             } ;
                                                                                                                                                                                     in "${ application }/bin/resource" ;
@@ -378,7 +378,7 @@
                                                                                                                                                                 export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 echo 1723258852938545 9445855959298195 "$( which resource )" >&2
-                                                                                                                                                                resource
+                                                                                                                                                                resource > /output
                                                                                                                                                                 echo 1723258852938545 9325236315398739 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
