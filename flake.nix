@@ -456,7 +456,7 @@
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 echo 1723258852938545 2153511877264731 "$( which resource )" >&2
                                                                                                                                 resource
-                                                                                                                                echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" 118 >&2
+                                                                                                                                echo 1723258852938545 9339874243253161 "$( cat "$OUTPUT_FILE" )" >&2
                                                                                                                                 ERROR="$( jq --raw-output ".error" "$OUTPUT_FILE" )" || exit 172
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
