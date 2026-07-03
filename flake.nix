@@ -468,7 +468,7 @@
                                                                                                                                 export INPUT_FILE
                                                                                                                                 echo "$INDEX" > "$INPUT_FILE"
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
-                                                                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-diecho 1723258852938545 2153511877264731 >&2rectory }/temporary/XXXXXXXX )" || exit 152
+                                                                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
                                                                                                                                 echo 1723258852938545 2153511877264731 >&2
                                                                                                                                 resource
