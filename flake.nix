@@ -358,7 +358,7 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs ;
+                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs pkgs ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         echo 1723258852938545 6723956881124369 >&2
