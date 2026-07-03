@@ -318,7 +318,7 @@
                                                                                                                                     [
                                                                                                                                         "--tmpfs /1723258852938545-2171876755314291"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                        "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
+                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/mounts/$INDEX"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
@@ -455,6 +455,7 @@
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
+                                                                                                                                mkdir --parents ${ resources-directory }/mounts/$INDEX
                                                                                                                                 echo 1723258852938545 2153511877264731 "$( which resource )" >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 OUTPUT_FILE="$( cat "$OUTPUT_FILE" )" >&2
