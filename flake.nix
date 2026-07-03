@@ -34,7 +34,6 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
-                                                                                        "--tmpfs /4452583465729895-2775875463829512"
                                                                                         "--bind" gc-roots-directory "/gc-roots"
                                                                                         "--bind" resources-directory "/resources"
                                                                                         "--bind" "$TEMPORARY" "/temporary"
