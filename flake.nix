@@ -435,7 +435,6 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            echo 4452583465729895 3189187795972269 >&2
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             echo 4452583465729895 3215251157819278 >&2
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
