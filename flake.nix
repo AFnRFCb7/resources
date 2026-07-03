@@ -360,7 +360,7 @@
                                                                                                                                                                 export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 echo 1723258852938545 9445855959298195 "$( which resource )" >&2
-                                                                                                                                                                resource > /output
+                                                                                                                                                                resource
                                                                                                                                                                 echo 1723258852938545 9325236315398739 "$( cat /output )" >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
