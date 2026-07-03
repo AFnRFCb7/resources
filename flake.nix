@@ -316,7 +316,6 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--tmpfs /4452583465729895-3183749435423111"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                         "--bind" gc-roots-directory gc-roots-directory
                                                                                                                                         "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
