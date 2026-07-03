@@ -397,11 +397,7 @@
                                                                                                                                                             (
                                                                                                                                                                 buildFHSUserEnv
                                                                                                                                                                     {
-                                                                                                                                                                        extraBwrapArgs =
-                                                                                                                                                                            [
-                                                                                                                                                                                "--tmpfs /4452583465729895-6956854592914922"
-                                                                                                                                                                                "--bind" "$OUT" "/out"
-                                                                                                                                                                            ] ;
+                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
                                                                                                                                                                         name = "resource" ;
                                                                                                                                                                         runScript = "resource" ;
                                                                                                                                                                         targetPkgs =
