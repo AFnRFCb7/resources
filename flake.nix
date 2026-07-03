@@ -477,7 +477,7 @@
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
-                                                                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 118
+                                                                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
                                                                                                                                 jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
