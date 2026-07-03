@@ -377,7 +377,7 @@
                                                                                                                                                                 printf -v INDEX "%016d" "$SEQUENTIAL"
                                                                                                                                                                 export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                echo 1723258852938545 9445855959298195 >&2
+                                                                                                                                                                echo 1723258852938545 9445855959298195 "$( which resource )" "$( cat "$( which resource )" )" >&2
                                                                                                                                                                 resource
                                                                                                                                                                 echo 1723258852938545 9325236315398739 >&2
                                                                                                                                                             '' ;
