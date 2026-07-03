@@ -362,8 +362,8 @@
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         echo 1723258852938545 6723956881124369 >&2
-
                                                                                                                                                                                                         echo 1723258852938545 3853135926543871 >&2
+                                                                                                                                                                                                        jq --null-input '{ "output" : 117 }' # 1723258852938545
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             } ;
                                                                                                                                                                                     in "${ application }/bin/resource" ;
@@ -381,7 +381,6 @@
                                                                                                                                                                 echo 1723258852938545 9445855959298195 "$( which resource )" "$( cat "$( which resource )" )" >&2
                                                                                                                                                                 resource
                                                                                                                                                                 echo 1723258852938545 9325236315398739 >&2
-                                                                                                                                                                jq --null-input '{ "output" : 117 }' > /output
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
