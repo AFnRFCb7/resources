@@ -34,6 +34,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
+                                                                                        "--tmpfs /4452583465729895-2775875463829512"
                                                                                         "--bind" gc-roots-directory "/gc-roots"
                                                                                         "--bind" resources-directory "/resources"
                                                                                         "--bind" "$TEMPORARY" "/temporary"
@@ -120,6 +121,7 @@
                                                                                                 {
                                                                                                     extraBwrapArgs =
                                                                                                         [
+                                                                                                            "--tmpfs /4452583465729895-7265256581685862"
                                                                                                             "--ro-bind" "$INPUT" "/input"
                                                                                                             "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                             "--tmpfs" "/private"
@@ -283,6 +285,7 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
+                                                                                            "--tmpfs /4452583465729895-7616833674256888"
                                                                                             "--ro-bind" "$INPUT_FILE" "/input"
                                                                                             "--bind" gc-roots-directory gc-roots-directory
                                                                                             "--bind" resources-directory resources-directory
@@ -297,7 +300,9 @@
                                                                                                         name = "resource" ;
                                                                                                         text =
                                                                                                             ''
+                                                                                                                echo 4452583465729895 8952615412358218 "$( which resource )" >&2
                                                                                                                 resource
+                                                                                                                echo 4452583465729895 1433495495347374 >&2
                                                                                                             '' ;
                                                                                                     } ;
                                                                                                in "${ application }/bin/resource" ;
@@ -316,11 +321,13 @@
                                                                                                                             {
                                                                                                                                 extraBWrapArgs =
                                                                                                                                     [
+                                                                                                                                        "--tmpfs /4452583465729895-3183749435423111"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                         "--bind" gc-roots-directory gc-roots-directory
                                                                                                                                         "--bind" "${ resources-directory }/mounts" "${ resources-directory }/mounts"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                     ] ;
+                                                                                                                                name = "resource-4452583465729895-6512189672183937" ;
                                                                                                                                 runScript =
                                                                                                                                     let
                                                                                                                                         application =
@@ -329,7 +336,9 @@
                                                                                                                                                     name = "resource" ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            echo 4452583465729895 1533174597343564 >&2
                                                                                                                                                             resource
+                                                                                                                                                            echo 4452583465729895 9921688628344452 >&2
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
                                                                                                                                             in "${ application }/bin/resource" ;
@@ -349,9 +358,11 @@
                                                                                                                                                                         {
                                                                                                                                                                             extraBwrapArgs =
                                                                                                                                                                                 [
+                                                                                                                                                                                    "--tmpfs /4452583465729895-9986361875922816"
                                                                                                                                                                                     "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                                                                     "--tmpfs" "/scratch"
                                                                                                                                                                                 ] ;
+                                                                                                                                                                            name = "resource-4452583465729895-9362245666185533" ;
                                                                                                                                                                             runtimeScript =
                                                                                                                                                                                 let
                                                                                                                                                                                     application =
@@ -368,10 +379,21 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 4452583465729895 3718814934194739 >&2
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
+                                                                                                                                                                echo 4452583465729895 3858225768842251 >&2
                                                                                                                                                                 printf -v INDEX "%016d" "$SEQUENTIAL"
+                                                                                                                                                                echo 4452583465729895 4489132965559815 >&2
                                                                                                                                                                 export INDEX
+                                                                                                                                                                echo 4452583465729895 2262439465944489 >&2
+                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
+                                                                                                                                                                echo 4452583465729895 mkdir --parents INDEX=AA"$INDEX"ZZ
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                echo 4452583465729895 6326261954785325 >&2
+                                                                                                                                                                find "${ resources-directory }" >&2 # 4452583465729895
+                                                                                                                                                                echo 4452583465729895 9335949453422381 "${ resources-directory }/mounts/$INDEX" >&2
+                                                                                                                                                                resource-4452583465729895-9362245666185533
+                                                                                                                                                                echo 4452583465729895 3443619844455215 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
@@ -399,6 +421,7 @@
                                                                                                                                                                     {
                                                                                                                                                                         extraBwrapArgs =
                                                                                                                                                                             [
+                                                                                                                                                                                "--tmpfs /4452583465729895-6956854592914922"
                                                                                                                                                                                 "--bind" "$OUT" "/out"
                                                                                                                                                                             ] ;
                                                                                                                                                                         name = "resource" ;
@@ -426,10 +449,15 @@
                                                                                                                                                         ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            echo 4452583465729895 7251918488719776 >&2
                                                                                                                                                             OUT="$1"
+                                                                                                                                                            echo 4452583465729895 6535877481227527 >&2
                                                                                                                                                             export OUT
+                                                                                                                                                            echo 4452583465729895 2761477663565886 >&2
                                                                                                                                                             mkdir --parents "$OUT"
+                                                                                                                                                            echo 4452583465729895 9249964893353297 >&2
                                                                                                                                                             resource
+                                                                                                                                                            echo 4452583465729895 4547814543813578 >&2
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
@@ -438,11 +466,16 @@
                                                                                                                             } ;
                                                                                                                     in
                                                                                                                         ''
+                                                                                                                            echo 4452583465729895 3189187795972269 >&2
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
+                                                                                                                            echo 4452583465729895 3215251157819278 >&2
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
+                                                                                                                            echo 4452583465729895 9745867225173441 >&2
                                                                                                                             ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
+                                                                                                                            echo 4452583465729895 6754386453921587 >&2
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
+                                                                                                                                echo 4452583465729895 6171343921298523 >&2
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 184
                                                                                                                                 INDEX="$( basename "$LINK" )" || exit 122
                                                                                                                                 echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
@@ -459,18 +492,33 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
+                                                                                                                                echo 4452583465729895 6754384777488487 >&2
                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 162
+                                                                                                                                echo 4452583465729895 9715925265492414 >&2
                                                                                                                                 printf -v INDEX "%016d\n" "$SEQUENTIAL"
+                                                                                                                                echo 4452583465729895 4927535531517983 >&2
                                                                                                                                 INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 183
+                                                                                                                                echo 4452583465729895 7583811855943911 >&2
                                                                                                                                 export INPUT_FILE
+                                                                                                                                echo 4452583465729895 5235645494885145 >&2
                                                                                                                                 echo "$INDEX" > "$INPUT_FILE"
+                                                                                                                                echo 4452583465729895 2289898411296887 >&2
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
+                                                                                                                                echo 4452583465729895 4619483997746943 >&2
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
+                                                                                                                                echo 4452583465729895 2752233854758745 >&2
                                                                                                                                 export OUTPUT_FILE
+                                                                                                                                echo 4452583465729895 2277617436676285 "$( which resource-4452583465729895-6512189672183937 )" "$( cat "$( which resource-4452583465729895-6512189672183937 )" )" >&2
+                                                                                                                                resource-4452583465729895-6512189672183937
+                                                                                                                                echo 4452583465729895 7199692357729978 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
+                                                                                                                                echo 4452583465729895 4398658281664119 >&2
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 118
+                                                                                                                                echo 4452583465729895 3729854419635337 >&2
                                                                                                                                 jq --null-input --arg OUTPUT "$OUTPUT" --argjson STATUS "$STATUS" '{ "output" : $OUTPUT , "status" : $STATUS }' > /output
+                                                                                                                                echo 4452583465729895 1753137253425725 >&2
                                                                                                                                 rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                                                echo 4452583465729895 7891145453941613 >&2
                                                                                                                             fi
                                                                                                                         '' ;
                                                                                                         }
@@ -522,7 +570,9 @@
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
+                                                                        echo 4452583465729895 3563372738612441 >&2
                                                                         resource
+                                                                        echo 4452583465729895 8523496992617627 >&2
                                                                         OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo "$OUTPUT"
@@ -541,6 +591,7 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
+                                                                                            "--tmpfs /4452583465729895-7741388126178638"
                                                                                             "--bind" "${ resources-directory }/sequential" "${ resources-directory }/sequential"
                                                                                         ] ;
                                                                                     name = "sequential" ;
