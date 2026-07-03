@@ -363,7 +363,7 @@
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         echo 1723258852938545 6723956881124369 >&2
                                                                                                                                                                                                         echo 1723258852938545 3853135926543871 >&2
-                                                                                                                                                                                                        jq --null-input '{ "output" : 117 }' # 1723258852938545
+                                                                                                                                                                                                        jq --null-input '{ "standard-error" : "8823935991752945" , "standard-output" : "8915563151488162" , "status" : 117 }' > /output # 1723258852938545
                                                                                                                                                                                                     '' ;
                                                                                                                                                                                             } ;
                                                                                                                                                                                     in "${ application }/bin/resource" ;
@@ -472,7 +472,6 @@
                                                                                                                                 jq --null-input --arg INDEX "$INDEX" '$INDEX' > "$INPUT_FILE"
                                                                                                                                 OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 152
                                                                                                                                 export OUTPUT_FILE
-                                                                                                                                echo 1723258852938545 6155715262984436 >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 >&2
                                                                                                                                 OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 185
