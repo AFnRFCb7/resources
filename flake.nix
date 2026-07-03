@@ -367,21 +367,13 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                echo 4452583465729895 3718814934194739 >&2
                                                                                                                                                                 SEQUENTIAL="$( sequential )" || exit 117
-                                                                                                                                                                echo 4452583465729895 3858225768842251 >&2
                                                                                                                                                                 printf -v INDEX "%016d" "$SEQUENTIAL"
-                                                                                                                                                                echo 4452583465729895 4489132965559815 >&2
                                                                                                                                                                 export INDEX
-                                                                                                                                                                echo 4452583465729895 2262439465944489 >&2
                                                                                                                                                                 find "${ resources-directory }" >&2 # 4452583465729895
-                                                                                                                                                                echo 4452583465729895 mkdir --parents INDEX=AA"$INDEX"ZZ
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                echo 4452583465729895 6326261954785325 >&2
                                                                                                                                                                 find "${ resources-directory }" >&2 # 4452583465729895
-                                                                                                                                                                echo 4452583465729895 9335949453422381 "${ resources-directory }/mounts/$INDEX" >&2
                                                                                                                                                                 resource
-                                                                                                                                                                echo 4452583465729895 3443619844455215 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
