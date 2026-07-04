@@ -554,7 +554,6 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         resource
-                                                                        echo 1723258852938545 9887671867954512 >&2
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         echo 1723258852938545 3619657782912312 >&2
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
