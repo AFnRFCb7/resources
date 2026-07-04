@@ -499,7 +499,6 @@
                                                                                                                                             "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                             "status" : $STATUS
                                                                                                                                         }' > /output
-                                                                                                                                # rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                                             fi
                                                                                                                         '' ;
                                                                                                         }
@@ -552,10 +551,18 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         resource
-                                                                        OUTPUT="$( jq --raw-output ".output" "$OUTPUT_FILE" )" || exit 158
+                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
+                                                                        STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
-                                                                        echo "$OUTPUT"
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                        if [[ -n "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            echo "$STANDARD_ERROR" >&2
+                                                                        fi
+                                                                        if [[ -n "$STANDARD_OUTPUT" ]]
+                                                                        then
+                                                                            echo "$STANDARD_OUTPUT"
+                                                                        fi
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
