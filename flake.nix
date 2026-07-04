@@ -400,7 +400,6 @@
                                                                                                                                                                 export INDEX
                                                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                                                 resource
-                                                                                                                                                                echo 1723258852938545 9325236315398739 "$( cat /output )" >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
