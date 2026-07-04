@@ -597,6 +597,22 @@
                                                                                     "standard-output" : $STANDARD_OUTPUT ,
                                                                                     "status" : $STATUS
                                                                                 }'
+                                                                        elif [[ -n "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --argjson STATUS "$STATUS" \
+                                                                                --args \
+                                                                                '{
+                                                                                    "arguments" : $ARGS.positional ,
+                                                                                    "index" : $INDEX ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                    "standard-error" : $STANDARD_ERROR
+                                                                                }'
                                                                         fi
                                                                     '' ;
                                                             } ;
