@@ -306,7 +306,7 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     JSON="$( cat )" || exit 141
-                                                                                                                    "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
                                                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > /standard-output 2> /standard-error
                                                                                                                 '' ;
                                                                                                         }
@@ -613,6 +613,7 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
