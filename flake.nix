@@ -134,7 +134,6 @@
                                                                                                                         name = "init" ;
                                                                                                                         text =
                                                                                                                             ''
-                                                                                                                                echo 1723258852938545 7267535548579275 >&2
                                                                                                                                 jq --raw-output ".arguments[]" /input > /private/jq
                                                                                                                                 mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                 if jq -e '.inputs | has("standard")'
