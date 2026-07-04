@@ -601,7 +601,7 @@
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=valid-init
                                                                             jq \
@@ -624,7 +624,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -649,7 +649,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -675,7 +675,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -702,10 +702,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-
-
-
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=valid-init
                                                                             jq \
@@ -733,7 +730,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -764,7 +761,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -796,7 +793,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
