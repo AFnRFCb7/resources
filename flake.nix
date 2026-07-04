@@ -382,10 +382,12 @@
                                                                                                                                                                                     fi
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --arg INDEX "$INDEX" ,
                                                                                                                                                                                         --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                                         --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                                                         --argjson STATUS "$STATUS" \
                                                                                                                                                                                             '{
+                                                                                                                                                                                                "index" : $INDEX ,
                                                                                                                                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                                                 "status" : $STATUS
@@ -574,19 +576,19 @@
                                                                         fi
                                                                         if [[ "$STATUS" == 0 ]]
                                                                         then
-                                                                        jq \
-                                                                            --null-input \
-                                                                            --arg INDEX "$INDEX" \
-                                                                            --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                            --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                            --args \
-                                                                            '{
-                                                                                "arguments" : $ARGS.positional ,
-                                                                                "index" : $INDEX ,
-                                                                                "originator-pid" : $ORIGINATOR_PID ,
-                                                                                "standard-output" : $STANDARD_OUTPUT
-                                                                            }' \
-                                                                            "$_FILE"
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --args \
+                                                                                '{
+                                                                                    "arguments" : $ARGS.positional ,
+                                                                                    "index" : $INDEX ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "standard-output" : $STANDARD_OUTPUT
+                                                                                }' \
+                                                                                "$_FILE"
                                                                         fi
                                                                     '' ;
                                                             } ;
