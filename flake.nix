@@ -376,7 +376,6 @@
                                                                                                                                                                                         else
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         fi
-                                                                                                                                                                                        echo 1723258852938545 7794872667774543 >&2
                                                                                                                                                                                     fi
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
