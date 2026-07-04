@@ -105,12 +105,12 @@
 #                                                        } ;
                                                     parameters =
                                                         {
-                                                            errors =
+                                                            error =
                                                                 visitor
                                                                     {
                                                                         init = path : value : builtins.toString value ;
                                                                     }
-                                                                    errors ;
+                                                                    error ;
                                                             init =
                                                                 {
                                                                     action =
