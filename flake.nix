@@ -728,8 +728,8 @@
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "targets" :
                                                                                             {
-                                                                                                "expected" = $TARGETS ,
-                                                                                                "observed" = $TARGETS
+                                                                                                "expected" : $TARGETS ,
+                                                                                                "observed" : $TARGETS
                                                                                             } ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
