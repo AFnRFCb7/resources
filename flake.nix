@@ -262,6 +262,9 @@
                                                             targets =
                                                                 visitor
                                                                     {
+                                                                        list =
+                                                                            path : list :
+                                                                                builtins.sort builtins.lessThan list ;
                                                                         string = path : value : value ;
                                                                     }
                                                                     targets ;
@@ -592,11 +595,13 @@
                                                                         mkdir --parents ${ resources-directory }
                                                                         resource
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                        EXPECTED_TARGETS='${ builtins.toJSON parameters.target }'
+                                                                        OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 | sort | jq -R "." | jq -s "." )" || exit 111
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
                                                                         then
                                                                             export CHANNEL=valid-init
                                                                             jq \
@@ -619,7 +624,58 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED '${ builtins.toJSON seed }' \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "status" : $STATUS ,
+                                                                                        "targets" : $TARGETS ,
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }'
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED '${ builtins.toJSON seed }' \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "standard-error" : $STANDARD_ERROR ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "targets" : $TARGETS ,
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }'
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGET" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -646,12 +702,45 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ 0 != "$STATUS" ]]
+
+
+
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        then
+                                                                            export CHANNEL=valid-init
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED '${ builtins.toJSON seed }' \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "targets" :
+                                                                                            {
+                                                                                                "expected" = $TARGETS ,
+                                                                                                "observed" = $TARGETS
+                                                                                            } ,
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' | log
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --null-input \
+                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                 --arg INDEX "$INDEX" \
+                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
@@ -667,11 +756,47 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
-                                                                                        "targets" : $TARGETS ,
+                                                                                        "targets" :
+                                                                                            {
+                                                                                                "expected" : $EXPECTED_TARGETS ,
+                                                                                                "observed" : $OBSERVED_TARGETS
+                                                                                            } ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                        elif [[ -n "$STANDARD_ERROR" ]]
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED '${ builtins.toJSON seed }' \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
+                                                                                        "standard-error" : $STANDARD_ERROR ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "targets" :
+                                                                                            {
+                                                                                                "expected" : $EXPECTED_TARGETS ,
+                                                                                                "observed" : $OBSERVED_TARGETS
+                                                                                            } ,
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }'
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGET" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -693,6 +818,7 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "status" : $STATUS ,
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
