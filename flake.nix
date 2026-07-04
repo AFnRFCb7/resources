@@ -300,7 +300,7 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     JSON="$( cat )" || exit 141
-                                                                                                                    "${ builtins.concatSepWith "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
+                                                                                                                    "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
                                                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > /standard-output 2> /standard-error
                                                                                                                 '' ;
                                                                                                         }
@@ -615,6 +615,7 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --rawfile TEXT ${ builtins.toFile parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -622,7 +623,8 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS
+                                                                                        "status" : $STATUS ,
+                                                                                        "text" : $TEXT
                                                                                     }'
                                                                         elif [[ 0 != "$STATUS" ]]
                                                                         then
