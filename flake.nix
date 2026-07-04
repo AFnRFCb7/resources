@@ -363,14 +363,14 @@
                                                                                                                                                                                     mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                                                                     if jq -e '.inputs | has("standard")' /input
                                                                                                                                                                                     then
-                                                                                                                                                                                        if jq '.inputs.standard' /input | init "$ARGUMENTS"
+                                                                                                                                                                                        if jq '.inputs.standard' /input | init "${ builtions.concatStringsWith "" [ "$" "{" "ARGUMENTS" "}" ] }"
                                                                                                                                                                                         then
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         else
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         fi
                                                                                                                                                                                     else
-                                                                                                                                                                                        if init "$ARGUMENTS"
+                                                                                                                                                                                        if init "${ builtions.concatStringsWith "" [ "$" "{" "ARGUMENTS" "}" ] }"
                                                                                                                                                                                         then
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         else
