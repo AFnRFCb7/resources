@@ -597,13 +597,15 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "text" : $TEXT
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
                                                                                     }' | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
