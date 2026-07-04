@@ -596,7 +596,7 @@
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --rawfile TEXT ${ builtins.toFile parameters.init.text } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -615,7 +615,7 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
-                                                                                --rawfile TEXT ${ builtins.toFile parameters.init.text } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -635,13 +635,15 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS
+                                                                                        "status" : $STATUS ,
+                                                                                        "text" : $TEXT
                                                                                     }'
                                                                         elif [[ -n "$STANDARD_ERROR" ]]
                                                                         then
@@ -653,13 +655,15 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "text" : $TEXT
                                                                                     }'
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
