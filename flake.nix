@@ -300,7 +300,7 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     JSON="$( cat )" || exit 141
-                                                                                                                    "${ builtins.concatSepWith "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }
+                                                                                                                    "${ builtins.concatSepWith "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
                                                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > /standard-output 2> /standard-error
                                                                                                                 '' ;
                                                                                                         }
@@ -596,12 +596,14 @@
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --rawfile TEXT ${ builtins.toFile parameters.init.text } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "text" : $TEXT
                                                                                     }' | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
