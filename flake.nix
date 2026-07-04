@@ -607,6 +607,9 @@
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
+                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                            echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
+                                                                            chmod 0400 "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             export CHANNEL=valid-init
                                                                             jq \
                                                                                 --null-input \
@@ -708,7 +711,7 @@
                                                                                     }'
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
-                                                                            export CHANNEL=valid-init
+                                                                            export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
