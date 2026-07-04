@@ -108,7 +108,7 @@
                                                             error =
                                                                 visitor
                                                                     {
-                                                                        init = path : value : builtins.toString value ;
+                                                                        int = path : value : builtins.toString value ;
                                                                     }
                                                                     error ;
                                                             init =
