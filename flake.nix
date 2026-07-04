@@ -134,9 +134,9 @@
                                                                                                                         name = "init" ;
                                                                                                                         text =
                                                                                                                             ''
-                                                                                                                                cat /input
+                                                                                                                                echo 1723258852938545 7267535548579275 >&2
                                                                                                                                 jq --raw-output ".arguments[]" /input > /private/jq
-                                                                                                                                readarray -t ARGUMENTS < <( jq --raw-output ".arguments[]" /input )
+                                                                                                                                mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                 if jq -e '.inputs | has("standard")'
                                                                                                                                 then
                                                                                                                                     if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
@@ -361,6 +361,7 @@
                                                                                                                                                                                 ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
+                                                                                                                                                                                    echo 1723258852938545 1579798248316268 >&2
                                                                                                                                                                                     jq --raw-output '.arguments[]' /input > /private/jq
                                                                                                                                                                                     mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                                                                     if jq -e '.inputs | has("standard")' /input
