@@ -555,7 +555,6 @@
                                                                         mkdir --parents ${ resources-directory }
                                                                         resource
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        echo 1723258852938545 3619657782912312 >&2
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
                                                                         echo 1723258852938545 3824441994684162 >&2
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
