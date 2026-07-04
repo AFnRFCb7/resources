@@ -359,7 +359,6 @@
                                                                                                                                                                                 ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
-                                                                                                                                                                                    echo 1723258852938545 1579798248316268 "$( cat "/input" )" >&2
                                                                                                                                                                                     jq --raw-output '.arguments[]' /input > /private/jq
                                                                                                                                                                                     mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                                                                     if jq -e '.inputs | has("standard")' /input
