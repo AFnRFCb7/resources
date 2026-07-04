@@ -88,6 +88,7 @@
                                                 init ,
                                                 release ,
                                                 seed ,
+                                                targets ,
                                                 temporary
                                             } :
                                                 let
@@ -258,6 +259,12 @@
                                                                                 }
                                                                     )
                                                                     seed ;
+                                                            targets =
+                                                                visitor
+                                                                    {
+                                                                        string = path : value : value ;
+                                                                    }
+                                                                    targets ;
                                                             temporary =
                                                                 visitor
                                                                     {
