@@ -529,10 +529,12 @@
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
                                                                                                                                 jq \
                                                                                                                                     --null-input \
+                                                                                                                                    --arg INDEX "$INDEX" \
                                                                                                                                     --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                                                                     --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                                                                     --argjson STATUS "$STATUS" \
                                                                                                                                         '{
+                                                                                                                                            "index" : $INDEX ,
                                                                                                                                             "standard-error" : $STANDARD_ERROR ,
                                                                                                                                             "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                             "status" : $STATUS
