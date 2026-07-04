@@ -489,7 +489,6 @@
                                                                                                                                 export INDEX
                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                 resource
-                                                                                                                                echo 1723258852938545 9339874243253161 OUTPUT_FILE="$( cat "$OUTPUT_FILE" )" >&2
                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                                 STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
