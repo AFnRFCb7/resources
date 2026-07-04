@@ -603,6 +603,7 @@
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
@@ -614,6 +615,7 @@
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED "${ builtins.toJSON seed }" \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
@@ -624,6 +626,7 @@
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
@@ -637,6 +640,7 @@
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED "${ builtins.toJSON seed }" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
@@ -646,6 +650,7 @@
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
                                                                                         "text" : $TEXT ,
@@ -658,6 +663,7 @@
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED "${ builtins.toJSON seed }" \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
@@ -668,6 +674,7 @@
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "text" : $TEXT ,
