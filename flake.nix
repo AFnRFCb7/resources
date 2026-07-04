@@ -283,6 +283,36 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
+                                                                                            "--ro-bind" "$" "/message"
+                                                                                            "--tmpfs" "/standard-error"
+                                                                                            "--tmpfs" "/standard-output"
+                                                                                        ] ;
+                                                                                    name = "cat | log" ;
+                                                                                    runScript = "log" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "log" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    JSON="$( cat )" || exit 141
+                                                                                                                    "${ builtins.concatSepWith "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }
+                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /standard-output 2> /standard-error
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
+                                                                                        [
                                                                                             "--ro-bind" "$INPUT_FILE" "/input"
                                                                                             "--bind" gc-roots-directory gc-roots-directory
                                                                                             "--bind" resources-directory resources-directory
@@ -558,9 +588,9 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            export CHANNEL=valid-init
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
@@ -572,9 +602,10 @@
                                                                                         "index" : $INDEX ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-output" : $STANDARD_OUTPUT
-                                                                                    }'
+                                                                                    }' | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
@@ -593,6 +624,7 @@
                                                                                     }'
                                                                         elif [[ 0 != "$STATUS" ]]
                                                                         then
+                                                                            export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
@@ -609,6 +641,7 @@
                                                                                     }'
                                                                         elif [[ -n "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
@@ -625,6 +658,7 @@
                                                                                         "standard-output" : $STANDARD_OUTPUT
                                                                                     }'
                                                                         fi
+                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
                                                             } ;
                                                     sequential =
