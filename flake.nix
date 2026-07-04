@@ -559,7 +559,7 @@
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        if [[ 0 == "$STATUS" ]]
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
                                                                                 --null-input \
@@ -567,12 +567,30 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --args \
-                                                                                '{
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "index" : $INDEX ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "standard-output" : $STANDARD_OUTPUT
-                                                                                }'
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT
+                                                                                    }'
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg INDEX "$INDEX" \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                --argjson STATUS "$STATUS" \
+                                                                                --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "standard-error" : $STANDARD_ERROR ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "status" : $STATUS
+                                                                                    }'
                                                                         elif [[ 0 != "$STATUS" ]]
                                                                         then
                                                                             jq \
@@ -582,29 +600,30 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --args \
-                                                                                '{
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "index" : $INDEX ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                    "status" : $STATUS
-                                                                                }'
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "status" : $STATUS
+                                                                                    }'
                                                                         elif [[ -n "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --args \
-                                                                                '{
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "index" : $INDEX ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                    "standard-error" : $STANDARD_ERROR
-                                                                                }'
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "index" : $INDEX ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "standard-error" : $STANDARD_ERROR ,
+                                                                                        "standard-output" : $STANDARD_OUTPUT
+                                                                                    }'
                                                                         fi
                                                                     '' ;
                                                             } ;
