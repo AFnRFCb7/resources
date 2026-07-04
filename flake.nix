@@ -679,6 +679,7 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
@@ -689,6 +690,7 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
