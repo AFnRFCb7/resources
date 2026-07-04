@@ -287,7 +287,7 @@
                                                                                             "--tmpfs" "/standard-error"
                                                                                             "--tmpfs" "/standard-output"
                                                                                         ] ;
-                                                                                    name = "cat | log" ;
+                                                                                    name = "log" ;
                                                                                     runScript = "log" ;
                                                                                     targetPkgs =
                                                                                         pkgs :
@@ -618,6 +618,7 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -626,7 +627,8 @@
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
-                                                                                        "text" : $TEXT
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
                                                                                     }'
                                                                         elif [[ 0 != "$STATUS" ]]
                                                                         then
@@ -638,6 +640,7 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -645,7 +648,8 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
-                                                                                        "text" : $TEXT
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
                                                                                     }'
                                                                         elif [[ -n "$STANDARD_ERROR" ]]
                                                                         then
@@ -658,6 +662,7 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
@@ -665,7 +670,8 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "text" : $TEXT
+                                                                                        "text" : $TEXT ,
+                                                                                        "temporary" : $TEMPORARY
                                                                                     }'
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
