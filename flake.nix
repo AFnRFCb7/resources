@@ -567,7 +567,6 @@
                                                                         then
                                                                             echo "$STANDARD_OUTPUT"
                                                                         fi
-                                                                        echo 1723258852938545 7746191783541647 >&2
                                                                         if [[ "$STATUS" == 0 ]]
                                                                         then
                                                                             jq \
