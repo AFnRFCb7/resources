@@ -671,7 +671,7 @@
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED "${ builtins.toJSON seed }" \
+                                                                                --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
