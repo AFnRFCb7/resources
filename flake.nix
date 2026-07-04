@@ -567,14 +567,6 @@
                                                                         echo 1723258852938545 3644777937483279 >&2
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                         echo 1723258852938545 7424584788474334 >&2
-                                                                        if [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            echo "$STANDARD_ERROR" >&2
-                                                                        fi
-                                                                        if [[ -n "$STANDARD_OUTPUT" ]]
-                                                                        then
-                                                                            echo "$STANDARD_OUTPUT"
-                                                                        fi
                                                                         if [[ 0 == "$STATUS" ]]
                                                                         then
                                                                             jq \
