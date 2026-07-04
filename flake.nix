@@ -134,6 +134,7 @@
                                                                                                                         name = "init" ;
                                                                                                                         text =
                                                                                                                             ''
+                                                                                                                                cat /input
                                                                                                                                 jq --raw-output ".arguments[]" /input > /private/jq
                                                                                                                                 readarray -t ARGUMENTS < <( jq --raw-output ".arguments[]" /input )
                                                                                                                                 if jq -e '.inputs | has("standard")'
