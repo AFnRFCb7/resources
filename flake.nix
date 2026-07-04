@@ -352,8 +352,8 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "init" ;
-                                                                                                                                                                                                runtimeInputs = parameters.targetPkgs pkgs ;
-                                                                                                                                                                                                text = parameters.text ;
+                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs pkgs ;
+                                                                                                                                                                                                text = parameters.init.text ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
                                                                                                                                                                                 ] ;
