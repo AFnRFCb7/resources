@@ -547,6 +547,7 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 1723258852938545 2568125792425572 >&2
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 157> ${ resources-directory }/locks/clean
                                                                         flock -s 157
@@ -593,6 +594,7 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                        echo 1723258852938545 1228573722283479 >&2
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             export CHANNEL=valid-init
