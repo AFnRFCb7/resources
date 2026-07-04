@@ -367,7 +367,7 @@
                                                                                                                             {
                                                                                                                                 extraBwrapArgs =
                                                                                                                                     [
-                                                                                                                                        "--tmpfs /1723258852938545-5292672484497917"
+                                                                                                                                        "--tmpfs /1723258852938545-2848371191743536"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                         "--bind" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/mounts/$INDEX"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
