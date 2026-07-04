@@ -557,7 +557,6 @@
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
-                                                                        echo 1723258852938545 6387583369957443 >&2
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo 1723258852938545 3644777937483279 >&2
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
