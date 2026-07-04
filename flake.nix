@@ -86,6 +86,7 @@
                                                 in "${ application }/bin/clean" ;
                                         resource =
                                             {
+                                                error ,
                                                 init ,
                                                 release ,
                                                 seed ,
@@ -104,6 +105,12 @@
 #                                                        } ;
                                                     parameters =
                                                         {
+                                                            errors =
+                                                                visitor
+                                                                    {
+                                                                        init = path : value : builtins.toString value ;
+                                                                    }
+                                                                    errors ;
                                                             init =
                                                                 {
                                                                     action =
@@ -480,6 +487,7 @@
                                                                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                                 text =
                                                                                                                                                                                                     ''
+                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
                                                                                                                                                                                                         mkdir --parents /out/init/recovery
                                                                                                                                                                                                         mkdir --parents /out/release/recovery
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
@@ -656,6 +664,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -682,6 +691,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -709,6 +719,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -737,6 +748,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -768,6 +780,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -800,6 +813,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -827,6 +841,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
+                                                                            exit ${ parameters.exit }
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
