@@ -492,7 +492,6 @@
                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                                 STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 185
                                                                                                                                 STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 118
-                                                                                                                                echo 1723258852938545 7884435697338186 "STANDARD_OUTPUT=$STANDARD_OUTPUT" "STANDARD_ERROR=$STANDARD_ERROR" "STATUS=$STATUS" "$( cat "$OUTPUT_FILE" )" >&2
                                                                                                                                 jq \
                                                                                                                                     --null-input \
                                                                                                                                     --arg STANDARD_ERROR "$STANDARD_ERROR" \
