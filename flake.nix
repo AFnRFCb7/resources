@@ -488,7 +488,6 @@
                                                                                                                                 printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                                                 export INDEX
                                                                                                                                 mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                                                echo 1723258852938545 2153511877264731 "$( which resource )" >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 OUTPUT_FILE="$( cat "$OUTPUT_FILE" )" >&2
                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
