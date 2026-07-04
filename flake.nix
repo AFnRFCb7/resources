@@ -137,6 +137,7 @@
                                                                                                                             ''
                                                                                                                                 jq --raw-output ".arguments[]" /input > /private/jq
                                                                                                                                 mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                cd /mount
                                                                                                                                 if jq -e '.inputs | has("standard")'
                                                                                                                                 then
                                                                                                                                     if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
