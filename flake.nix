@@ -691,7 +691,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -719,7 +719,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -748,7 +748,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' | log
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -780,7 +780,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -813,7 +813,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
@@ -841,7 +841,7 @@
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
-                                                                            exit ${ parameters.exit }
+                                                                            exit ${ parameters.error }
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
