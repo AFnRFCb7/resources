@@ -589,8 +589,7 @@
                                                                                     "index" : $INDEX ,
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "standard-output" : $STANDARD_OUTPUT
-                                                                                }' \
-                                                                                "$_FILE"
+                                                                                }'
                                                                         fi
                                                                     '' ;
                                                             } ;
