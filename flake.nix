@@ -478,6 +478,9 @@
                                                                                                                                     }' \
                                                                                                                                     /input > /output
                                                                                                                             else
+                                                                                                                                SEQUENCE="$( sequential )" || exit 123
+                                                                                                                                printf -v INDEX "%016d" "$SEQUENTIAL"
+                                                                                                                                mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                                                 echo 1723258852938545 2153511877264731 "$( which resource )" >&2
                                                                                                                                 resource
                                                                                                                                 echo 1723258852938545 9339874243253161 OUTPUT_FILE="$( cat "$OUTPUT_FILE" )" >&2
