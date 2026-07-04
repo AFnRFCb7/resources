@@ -289,6 +289,8 @@
                                                                 name = "resource" ;
                                                                 runtimeInputs =
                                                                     [
+                                                                        coreutils
+                                                                        findutils
                                                                         (
                                                                             buildFHSUserEnv
                                                                                 {
