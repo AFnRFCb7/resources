@@ -229,7 +229,7 @@
                                                                             {
                                                                                 lambda = path : value : value { seed = seed ; } ;
                                                                             }
-                                                                            parameters.init.action ;
+                                                                            parameters.init.action.text ;
                                                                 } ;
                                                             release = null ;
                                                             seed =
