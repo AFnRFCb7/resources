@@ -353,7 +353,7 @@
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "init" ;
                                                                                                                                                                                                 runtimeInputs = [ ] ; # parameters.init.targetPkgs pkgs ;
-                                                                                                                                                                                                text = parameters.init.text ;
+                                                                                                                                                                                                text = "" ; # parameters.init.text ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
                                                                                                                                                                                 ] ;
