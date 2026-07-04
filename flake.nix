@@ -369,7 +369,7 @@
                                                                                                                                     [
                                                                                                                                         "--tmpfs /1723258852938545-2848371191743536"
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/mounts/$INDEX"
+                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                         "--tmpfs" "/private"
                                                                                                                                     ] ;
