@@ -575,6 +575,7 @@
                                                                         if [[ "$STATUS" == 0 ]]
                                                                         then
                                                                         jq \
+                                                                            --null-input \
                                                                             --argjson ARGUMENTS "$ARGUMENTS" \
                                                                             --arg INDEX "$INDEX" \
                                                                             --arg ORIGINATOR_PID "$ULTIMATE_PID" \
@@ -585,8 +586,7 @@
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                             }' \
-                                                                            "$OUTPUT_FILE
-                                                                        exit "$STATUS"
+                                                                            "$_FILE"
                                                                     '' ;
                                                             } ;
                                                     sequential =
