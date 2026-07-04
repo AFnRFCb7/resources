@@ -556,11 +556,17 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         resource
+                                                                        echo 1723258852938545 9887671867954512 >&2
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                        echo 1723258852938545 3619657782912312 >&2
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
+                                                                        echo 1723258852938545 3824441994684162 >&2
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
+                                                                        echo 1723258852938545 6387583369957443 >&2
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                        echo 1723258852938545 3644777937483279 >&2
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                        echo 1723258852938545 7424584788474334 >&2
                                                                         if [[ -n "$STANDARD_ERROR" ]]
                                                                         then
                                                                             echo "$STANDARD_ERROR" >&2
@@ -569,7 +575,7 @@
                                                                         then
                                                                             echo "$STANDARD_OUTPUT"
                                                                         fi
-                                                                        if [[ "$STATUS" == 0 ]]
+                                                                        if [[ 0 == "$STATUS" ]]
                                                                         then
                                                                             jq \
                                                                                 --null-input \
@@ -583,7 +589,7 @@
                                                                                     "originator-pid" : $ORIGINATOR_PID ,
                                                                                     "standard-output" : $STANDARD_OUTPUT
                                                                                 }'
-                                                                        elif [[ "$STATUS" != 0 ]]
+                                                                        elif [[ 0 != "$STATUS" ]]
                                                                         then
                                                                             jq \
                                                                                 --null-input \
