@@ -382,7 +382,7 @@
                                                                                                                                                                                     fi
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
-                                                                                                                                                                                        --arg INDEX "$INDEX" ,
+                                                                                                                                                                                        --arg INDEX "$INDEX" \
                                                                                                                                                                                         --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                                         --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                                                         --argjson STATUS "$STATUS" \
