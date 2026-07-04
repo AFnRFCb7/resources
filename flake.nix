@@ -572,6 +572,20 @@
                                                                         then
                                                                             echo "$STANDARD_OUTPUT"
                                                                         fi
+                                                                        if [[ "$STATUS" == 0 ]]
+                                                                        then
+                                                                        jq \
+                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
+                                                                            --arg INDEX "$INDEX" \
+                                                                            --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                            --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                            '{
+                                                                                "arguments" : $ARGUMENTS ,
+                                                                                "index" : $INDEX ,
+                                                                                "originator-pid" : $ORIGINATOR_PID ,
+                                                                                "standard-output" : $STANDARD_OUTPUT
+                                                                            }' \
+                                                                            "$OUTPUT_FILE
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
