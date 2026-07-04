@@ -321,6 +321,7 @@
                                                                                                                     JSON="$( cat )" || exit 141
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
                                                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-output 2> /private/standard-error
+                                                                                                                    echo "$JSON"
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
