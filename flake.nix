@@ -587,6 +587,7 @@
                                                                                 "standard-output" : $STANDARD_OUTPUT
                                                                             }' \
                                                                             "$_FILE"
+                                                                        fi
                                                                     '' ;
                                                             } ;
                                                     sequential =
