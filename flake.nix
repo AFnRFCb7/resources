@@ -290,8 +290,7 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
-                                                                                            "--tmpfs" "/standard-error"
-                                                                                            "--tmpfs" "/standard-output"
+                                                                                            "--tmpfs" "/private"
                                                                                         ] ;
                                                                                     name = "log" ;
                                                                                     runScript = "log" ;
@@ -307,7 +306,7 @@
                                                                                                                 ''
                                                                                                                     JSON="$( cat )" || exit 141
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?CHANNEL must be exported" "}" ] }"
-                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /standard-output 2> /standard-error
+                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-output 2> /private/standard-error
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -628,6 +627,7 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
@@ -639,6 +639,7 @@
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
+                                                                                        "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
@@ -652,6 +653,7 @@
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
+                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
                                                                                 --args \
@@ -662,6 +664,7 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
+                                                                                        "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }'
