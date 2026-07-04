@@ -576,12 +576,12 @@
                                                                         then
                                                                         jq \
                                                                             --null-input \
-                                                                            --argjson ARGUMENTS "$ARGUMENTS" \
                                                                             --arg INDEX "$INDEX" \
                                                                             --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                             --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                            --args \
                                                                             '{
-                                                                                "arguments" : $ARGUMENTS ,
+                                                                                "arguments" : $ARGS.positional ,
                                                                                 "index" : $INDEX ,
                                                                                 "originator-pid" : $ORIGINATOR_PID ,
                                                                                 "standard-output" : $STANDARD_OUTPUT
