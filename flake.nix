@@ -352,7 +352,7 @@
                                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                                             {
                                                                                                                                                                                                 name = "init" ;
-                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs pkgs ;
+                                                                                                                                                                                                runtimeInputs = [ ] ; # parameters.init.targetPkgs pkgs ;
                                                                                                                                                                                                 text = parameters.init.text ;
                                                                                                                                                                                             }
                                                                                                                                                                                     )
