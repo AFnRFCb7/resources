@@ -283,7 +283,6 @@
                                                                                 {
                                                                                     extraBwrapArgs =
                                                                                         [
-                                                                                            "--ro-bind" "$" "/message"
                                                                                             "--tmpfs" "/standard-error"
                                                                                             "--tmpfs" "/standard-output"
                                                                                         ] ;
@@ -595,6 +594,7 @@
                                                                                 --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson SEED "${ builtins.toJSON seed }" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
