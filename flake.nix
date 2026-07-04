@@ -8,6 +8,7 @@
 		            {
 		                buildFHSUserEnv ,
 		                coreutils ,
+		                findutils ,
 		                flock ,
 		                jq ,
 		                mkDerivation ,
