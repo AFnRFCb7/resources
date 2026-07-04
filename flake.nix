@@ -559,7 +559,6 @@
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        echo 1723258852938545 7424584788474334 >&2
                                                                         if [[ 0 == "$STATUS" ]]
                                                                         then
                                                                             jq \
