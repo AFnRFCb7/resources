@@ -321,6 +321,7 @@
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                         "--bind" "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/mounts/$INDEX"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
+                                                                                                                                        "--tmpfs" "/private"
                                                                                                                                     ] ;
                                                                                                                                 name = "resource" ;
                                                                                                                                 runScript =
