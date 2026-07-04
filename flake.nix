@@ -370,7 +370,6 @@
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         fi
                                                                                                                                                                                     else
-                                                                                                                                                                                        echo 1723258852938545 8331298989821683 >&2
                                                                                                                                                                                         if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                                         then
                                                                                                                                                                                             STATUS="$?"
