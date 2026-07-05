@@ -655,9 +655,8 @@
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -683,9 +682,8 @@
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -711,9 +709,8 @@
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -739,9 +736,8 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -771,9 +767,8 @@
                                                                                 --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .input ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -805,9 +800,8 @@
                                                                                 --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -837,9 +831,8 @@
                                                                                 --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
