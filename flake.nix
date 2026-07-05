@@ -493,7 +493,7 @@
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
                                                                                                                                                                                                         mkdir --parents /out/init/recovery
-                                                                                                                                                                                                        ln --symbolic ${ parameters.init.parcel pkgs } /out/init/action
+
                                                                                                                                                                                                         mkdir --parents /out/release/recovery
                                                                                                                                                                                                         ln --symbolic ${ parameters.release.parcel pkgs } /out/release/action
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
