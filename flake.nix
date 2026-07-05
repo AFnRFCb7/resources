@@ -647,7 +647,6 @@
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
@@ -660,6 +659,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
@@ -667,13 +667,13 @@
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
@@ -687,6 +687,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
@@ -694,13 +695,13 @@
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
@@ -714,6 +715,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
@@ -722,13 +724,13 @@
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
@@ -741,6 +743,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
@@ -751,13 +754,13 @@
                                                                                             } ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }' | log
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
@@ -772,6 +775,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .input ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
@@ -783,13 +787,13 @@
                                                                                             } ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$OUTPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
@@ -805,6 +809,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "input" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
@@ -816,13 +821,13 @@
                                                                                             } ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
@@ -836,6 +841,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .input ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
@@ -844,7 +850,8 @@
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }'
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                             exit ${ parameters.error }
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
