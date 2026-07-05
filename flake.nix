@@ -54,6 +54,7 @@
                                                                                                                 cleanup ( ) {
                                                                                                                     echo "$?" > /temporary/status
                                                                                                                 }
+                                                                                                                mkdir --parents /resources/release
                                                                                                                 find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
