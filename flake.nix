@@ -125,15 +125,232 @@
                                                                                                                                 name = "resource" ;
                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                 text =
-                                                                                                                                    ''
-                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
-                                                                                                                                        mkdir --parents /out/init/recovery
-                                                                                                                                        ln --symbolic ${ parameters.init.parcel pkgs } /out/init/action
-                                                                                                                                        mkdir --parents /out/release/recovery
-                                                                                                                                        ln --symbolic ${ parameters.release.parcel pkgs } /out/release/action
-                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
-                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
-                                                                                                                                    '' ;
+                                                                                                                                    let
+                                                                                                                                        parameters_ =
+                                                                                                                                            {
+                                                                                                                                                errors =
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            int = path : value : builtins.toString value ;
+                                                                                                                                                        }
+                                                                                                                                                        errors ;
+                                                                                                                                                init =
+                                                                                                                                                    {
+                                                                                                                                                        action =
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    lambda = path : value : value null ;
+                                                                                                                                                                }
+                                                                                                                                                                parameters_.init.init.action ;
+                                                                                                                                                        application =
+                                                                                                                                                            writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "init" ;
+                                                                                                                                                                    runtimeInputs =
+                                                                                                                                                                        [
+                                                                                                                                                                            coreutils
+                                                                                                                                                                            flock
+                                                                                                                                                                            sequential
+                                                                                                                                                                            (
+                                                                                                                                                                                buildFHSUserEnv
+                                                                                                                                                                                    {
+                                                                                                                                                                                        extraBwrapArgs =
+                                                                                                                                                                                            [
+                                                                                                                                                                                                "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
+                                                                                                                                                                                                "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                                                                                                "--tmpfs" "/private"
+                                                                                                                                                                                                "--tmpfs" "/scratch"
+                                                                                                                                                                                            ] ;
+                                                                                                                                                                                        name = "init" ;
+                                                                                                                                                                                        runScript = "init" ;
+                                                                                                                                                                                        targetPkgs =
+                                                                                                                                                                                            pkgs :
+                                                                                                                                                                                                [
+                                                                                                                                                                                                    (
+                                                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                name = "init" ;
+                                                                                                                                                                                                                runtimeInputs =
+                                                                                                                                                                                                                    [
+                                                                                                                                                                                                                        pkgs.coreutils
+                                                                                                                                                                                                                        pkgs.jq
+                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                                                                {
+                                                                                                                                                                                                                                    name = "init" ;
+                                                                                                                                                                                                                                    runtimeInputs = parameters_.init.targetPkgs pkgs ;
+                                                                                                                                                                                                                                    text = parameters_.init.text ;
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                        )
+                                                                                                                                                                                                                    ] ;
+                                                                                                                                                                                                                text =
+                                                                                                                                                                                                                    ''
+                                                                                                                                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
+                                                                                                                                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                                                                                                        if jq -e '.inputs | has("standard")' /input
+                                                                                                                                                                                                                        then
+                                                                                                                                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                                                                            then
+                                                                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                                                                            fi
+                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                            if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                                                                            then
+                                                                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                                                                            else
+                                                                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                                                                            fi
+                                                                                                                                                                                                                        fi
+                                                                                                                                                                                                                        jq \
+                                                                                                                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                                                                                                                            --arg STANDARD_ERROR "$STANDARD_ERROR" \
+                                                                                                                                                                                                                            --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                                                                                                                                                            --argjson STATUS "$STATUS" \
+                                                                                                                                                                                                                            '{
+                                                                                                                                                                                                                                "arguments" : .arguments ,
+                                                                                                                                                                                                                                "index" : $INDEX ,
+                                                                                                                                                                                                                                "inputs" : .inputs ,
+                                                                                                                                                                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                                                                                "status" : $STATUS
+                                                                                                                                                                                                                            }' \
+                                                                                                                                                                                                                            "$INPUT_FILE"
+                                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                    )
+                                                                                                                                                                                                ] ;
+                                                                                                                                                                                    }
+                                                                                                                                                                            )
+                                                                                                                                                                        ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            mkdir --parents ${ resource-directory }/locks
+                                                                                                                                                                            exec 160> ${ resource-directory }/locks/clean
+                                                                                                                                                                            flock -s 160
+                                                                                                                                                                            SEQUENCE="$( sequential )" || exit 105
+                                                                                                                                                                            printf -v INDEX "%016d" "$SEQUENCE"
+                                                                                                                                                                            export INDEX
+                                                                                                                                                                            mkdir --parents "${ resources-directory }/$INDEX"
+                                                                                                                                                                        '' ;
+                                                                                                                                                                } ;
+                                                                                                                                                        init =
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    lambda = path : value : value null ;
+                                                                                                                                                                }
+                                                                                                                                                                init ;
+                                                                                                                                                        targetPkgs =
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    lambda = path : value : value ;
+                                                                                                                                                                }
+                                                                                                                                                                parameters_.init.action.targetPkgs ;
+                                                                                                                                                        text =
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    string = path : value : value ;
+                                                                                                                                                                }
+                                                                                                                                                                parameters_.init.action.text ;
+                                                                                                                                                    } ;
+                                                                                                                                                seed =
+                                                                                                                                                    let
+                                                                                                                                                        to-string =
+                                                                                                                                                            path : value :
+                                                                                                                                                                let
+                                                                                                                                                                    type = builtins.typeOf value ;
+                                                                                                                                                                    in
+                                                                                                                                                                        {
+                                                                                                                                                                            path = path ;
+                                                                                                                                                                            type = type ;
+                                                                                                                                                                            value = if type == "lambda" then null else value ;
+                                                                                                                                                                        } ;
+                                                                                                                                                        in
+                                                                                                                                                            visitor
+                                                                                                                                                                {
+                                                                                                                                                                    bool = to-string ;
+                                                                                                                                                                    float = to-string ;
+                                                                                                                                                                    int = to-string ;
+                                                                                                                                                                    lambda = to-string ;
+                                                                                                                                                                    list = to-string ;
+                                                                                                                                                                    path = to-string ;
+                                                                                                                                                                    set = to-string ;
+                                                                                                                                                                    string = to-string ;
+                                                                                                                                                                }
+                                                                                                                                                                seed ;
+                                                                                                                                                temporary =
+                                                                                                                                                    visitor
+                                                                                                                                                        {
+                                                                                                                                                            bool = path : value : value ;
+                                                                                                                                                            float = path : value : false ;
+                                                                                                                                                            int = path : value : false ;
+                                                                                                                                                            lambda = path : value : false ;
+                                                                                                                                                            list = path : value : false ;
+                                                                                                                                                            path = path : value : false ;
+                                                                                                                                                            set = path : value : false ;
+                                                                                                                                                            string = path : value : false ;
+                                                                                                                                                        }
+                                                                                                                                                        temporary ;
+                                                                                                                                            } ;
+                                                                                                                                        sequential =
+                                                                                                                                            writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "sequential" ;
+                                                                                                                                                    runtimeInputs =
+                                                                                                                                                        [
+                                                                                                                                                            coreutils
+                                                                                                                                                            flock
+                                                                                                                                                            (
+                                                                                                                                                                buildFHSUserEnv
+                                                                                                                                                                    {
+                                                                                                                                                                        extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
+                                                                                                                                                                        name = "sequential" ;
+                                                                                                                                                                        runScript = "sequential" ;
+                                                                                                                                                                        targetPkgs =
+                                                                                                                                                                            pkgs :
+                                                                                                                                                                                [
+                                                                                                                                                                                    (
+                                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                                            {
+                                                                                                                                                                                                name = "sequential" ;
+                                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                                                text =
+                                                                                                                                                                                                    ''
+                                                                                                                                                                                                        CURRENT="$( cat /sequential )" || exit 166
+                                                                                                                                                                                                        NEXT=$(( CURRENT + 1 ))
+                                                                                                                                                                                                        echo "$NEXT" > /sequential
+                                                                                                                                                                                                        echo "$CURRENT"
+                                                                                                                                                                                                    '' ;
+                                                                                                                                                                                            }
+                                                                                                                                                                                    )
+                                                                                                                                                                                ] ;
+                                                                                                                                                                    }
+                                                                                                                                                            )
+                                                                                                                                                        ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                                                                                                            exec 113> ${ resources-directory }/locks/clean
+                                                                                                                                                            flock -s 113
+                                                                                                                                                            if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo 0 > ${ resources-directory }/sequential
+                                                                                                                                                            fi
+                                                                                                                                                            sequential
+                                                                                                                                                        '' ;
+                                                                                                                                                } ;
+
+                                                                                                                                        in
+                                                                                                                                            ''
+                                                                                                                                                jq --null-input '${ builtins.toJSON parameters_.error }' > /out/error.json
+                                                                                                                                                mkdir --parents /out/init/recovery
+                                                                                                                                                ln --symbolic ${ parameters.init.application } /out/init/action.sh
+                                                                                                                                                mkdir --parents /out/release/recovery
+                                                                                                                                                jq --null-input '${ builtins.toJSON parameters_.seed }' > /out/seed.json
+                                                                                                                                                jq --null-input '${ builtins.toJSON parameters_.temporary }' > /out/temporary.json
+                                                                                                                                            '' ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
