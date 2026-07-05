@@ -97,6 +97,60 @@
                                                 temporary
                                             } :
                                                 let
+                                                    derivation =
+                                                        mkDerivation
+                                                            {
+                                                                installPhase = ''resource "$out"'' ;
+                                                                name = "resource" ;
+                                                                nativeBuildInputs =
+                                                                    [
+                                                                        (
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "resource" ;
+                                                                                    runtimeInputs =
+                                                                                        [
+                                                                                            (
+                                                                                                buildFHSUserEnv
+                                                                                                    {
+                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
+                                                                                                        name = "resource" ;
+                                                                                                        runScript = "resource" ;
+                                                                                                        targetPkgs =
+                                                                                                            pkgs :
+                                                                                                                [
+                                                                                                                    (
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "resource" ;
+                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
+                                                                                                                                        mkdir --parents /out/init/recovery
+                                                                                                                                        ln --symbolic ${ parameters.init.parcel pkgs } /out/init/action
+                                                                                                                                        mkdir --parents /out/release/recovery
+                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
+                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
+                                                                                                                                    '' ;
+                                                                                                                            }
+                                                                                                                    )
+                                                                                                                ] ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                                    text =
+                                                                                        ''
+                                                                                            OUT="$1"
+                                                                                            export OUT
+                                                                                            mkdir --parents "$OUT"
+                                                                                            resource
+                                                                                        '' ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                src = ./. ;
+                                                            } ;
                                                     parameters =
                                                         {
                                                             error =
@@ -462,60 +516,6 @@
                                                                                                             runtimeInputs = [ sequential ] ;
                                                                                                             text =
                                                                                                                 let
-                                                                                                                    derivation =
-                                                                                                                        mkDerivation
-                                                                                                                            {
-                                                                                                                                installPhase = ''resource "$out"'' ;
-                                                                                                                                name = "resource" ;
-                                                                                                                                nativeBuildInputs =
-                                                                                                                                    [
-                                                                                                                                        (
-                                                                                                                                            writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "resource" ;
-                                                                                                                                                    runtimeInputs =
-                                                                                                                                                        [
-                                                                                                                                                            (
-                                                                                                                                                                buildFHSUserEnv
-                                                                                                                                                                    {
-                                                                                                                                                                        extraBwrapArgs = [ "--bind" "$OUT" "/out" ] ;
-                                                                                                                                                                        name = "resource" ;
-                                                                                                                                                                        runScript = "resource" ;
-                                                                                                                                                                        targetPkgs =
-                                                                                                                                                                            pkgs :
-                                                                                                                                                                                [
-                                                                                                                                                                                    (
-                                                                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                                                                            {
-                                                                                                                                                                                                name = "resource" ;
-                                                                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
-                                                                                                                                                                                                text =
-                                                                                                                                                                                                    ''
-                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
-                                                                                                                                                                                                        mkdir --parents /out/init/recovery
-                                                                                                                                                                                                        ln --symbolic ${ parameters.init.parcel pkgs } /out/init/action
-                                                                                                                                                                                                        mkdir --parents /out/release/recovery
-                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
-                                                                                                                                                                                                        jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
-                                                                                                                                                                                                    '' ;
-                                                                                                                                                                                            }
-                                                                                                                                                                                    )
-                                                                                                                                                                                ] ;
-                                                                                                                                                                    }
-                                                                                                                                                            )
-                                                                                                                                                        ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            OUT="$1"
-                                                                                                                                                            export OUT
-                                                                                                                                                            mkdir --parents "$OUT"
-                                                                                                                                                            resource
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                    ] ;
-                                                                                                                                src = ./. ;
-                                                                                                                            } ;
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
