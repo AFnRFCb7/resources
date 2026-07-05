@@ -441,11 +441,7 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "resource" ;
-                                                                                                            runtimeInputs =
-                                                                                                                [
-                                                                                                                    sequential
-                                                                                                                    ( parameters.init.parcel pkgs )
-                                                                                                                ] ;
+                                                                                                            runtimeInputs = [ sequential ( parameters.init.parcel pkgs ) ] ;
                                                                                                             text =
                                                                                                                 let
                                                                                                                     derivation =
