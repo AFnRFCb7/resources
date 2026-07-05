@@ -318,14 +318,9 @@
                                                                         pkgs :
                                                                             writeShellApplication
                                                                                 {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            writeShellApplication
-                                                                                                {
-                                                                                                    name = "release" ;
-                                                                                                    runtimeInputs = parameters.release.targetPkgs pkgs ;
-                                                                                                    text = release.text ;
-                                                                                                } ;
+                                                                                    name = "release" ;
+                                                                                    runtimeInputs = parameters.release.targetPkgs pkgs ;
+                                                                                    text = release.text ;
                                                                                 } ;
                                                                     release =
                                                                         visitor
