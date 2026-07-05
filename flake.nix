@@ -179,7 +179,29 @@
                                                                                 lambda = path : value : value null ;
                                                                             }
                                                                             init ;
-                                                                    parcel = null ;
+                                                                    parcel =
+                                                                        pkgs :
+                                                                            pkgs.buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
+                                                                                        [
+                                                                                            "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                            "--bind" "$OUTPUT_FILE" "/output"
+                                                                                            "--tmpfs" "/private"
+                                                                                        ] ;
+                                                                                    name = "resource" ;
+                                                                                    runScript =
+                                                                                        let
+                                                                                            application =
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "resource" ;
+                                                                                                        text = "resource > /output" ;
+                                                                                                    } ;
+                                                                                                in "${ application }/bin/resource" ;
+                                                                                    targetPkgs = pkgs : [ ( parameters.init.envelope pkgs ) ] ;
+                                                                                } ;
                                                                     payload =
                                                                         pkgs :
                                                                             writeShellApplication
@@ -422,29 +444,7 @@
                                                                                                             runtimeInputs =
                                                                                                                 [
                                                                                                                     sequential
-                                                                                                                    (
-                                                                                                                        pkgs.buildFHSUserEnv
-                                                                                                                            {
-                                                                                                                                extraBwrapArgs =
-                                                                                                                                    [
-                                                                                                                                        "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                                        "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                                                        "--tmpfs" "/private"
-                                                                                                                                    ] ;
-                                                                                                                                name = "resource" ;
-                                                                                                                                runScript =
-                                                                                                                                    let
-                                                                                                                                        application =
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "resource" ;
-                                                                                                                                                    text = "resource > /output" ;
-                                                                                                                                                } ;
-                                                                                                                                            in "${ application }/bin/resource" ;
-                                                                                                                                targetPkgs = pkgs : [ ( parameters.init.envelope pkgs ) ] ;
-                                                                                                                            }
-                                                                                                                    )
+                                                                                                                    ( parameters.init.parcel pkgs )
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 let
