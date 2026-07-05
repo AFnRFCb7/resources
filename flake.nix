@@ -618,12 +618,13 @@
                                                                         echo "STATUS=$STATUS" "STANDARD_ERROR=$STANDARD_ERROR" "OBSERVED_TARGETS=$OBSERVED_TARGETS" 1723258852938545
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
-                                                                            echo  1723258852938545
+                                                                            echo 1723258852938545
                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                             echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             chmod 0400 "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             export CHANNEL=valid-init
                                                                             jq \
+                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
