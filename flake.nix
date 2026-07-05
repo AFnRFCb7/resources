@@ -1117,16 +1117,11 @@
                                                                                                                                         fi
                                                                                                                                         if [[ "$OBSERVED_STATUS" == 124 ]]
                                                                                                                                         then
-                                                                                                                                            echo 2739396698441122 >&2
                                                                                                                                             echo time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } >&2
                                                                                                                                             echo >&2
                                                                                                                                             cat ${ builtins.toString action.text } >&2
-                                                                                                                                            echo 6953992692648714 >&2
                                                                                                                                             echo "RESOURCES=$RESOURCES" >&2
-                                                                                                                                            echo 3876262385333986 >&2
                                                                                                                                             cat "$RESOURCES/[\"checks\",\"true\",\"true\"]/resource" >&2
-                                                                                                                                            echo 7926178834245513 >&2
-                                                                                                                                            echo >&2
                                                                                                                                             exit 183
                                                                                                                                         fi
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
