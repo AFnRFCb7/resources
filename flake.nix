@@ -97,7 +97,10 @@
                                                 temporary
                                             } :
                                                 let
-#                                                    parameters =
+                                                    parameters =
+                                                        {
+                                                            error =
+                                                                visitor#                                                    parameters =
 #                                                        {
 #                                                            init =
 #                                                                {
@@ -106,10 +109,6 @@
 #                                                            seed = "5186738316555337" ;
 #                                                            temporary = "1681354669888713" ;
 #                                                        } ;
-                                                    parameters =
-                                                        {
-                                                            error =
-                                                                visitor
                                                                     {
                                                                         int = path : value : builtins.toString value ;
                                                                     }
@@ -243,7 +242,20 @@
                                                                             }
                                                                             parameters.init.action.text ;
                                                                 } ;
-                                                            release = null ;
+                                                            release =
+                                                                {
+                                                                    action =
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            } ;
+                                                                    release =
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            }
+                                                                            parameters.release.release.action ;
+                                                                } ;
                                                             seed =
                                                                 visitor
                                                                     (
