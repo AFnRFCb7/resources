@@ -227,7 +227,7 @@
                                                                                                                                                                         ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            mkdir --parents ${ resource-directory }/locks
+                                                                                                                                                                            mkdir --parents ${ resources-directory }/locks
                                                                                                                                                                             exec 160> ${ resource-directory }/locks/clean
                                                                                                                                                                             flock -s 160
                                                                                                                                                                             SEQUENCE="$( sequential )" || exit 105
