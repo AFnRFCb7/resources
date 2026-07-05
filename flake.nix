@@ -624,7 +624,6 @@
                                                                             chmod 0400 "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             export CHANNEL=valid-init
                                                                             jq \
-                                                                                --null-input \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
@@ -632,9 +631,8 @@
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
                                                                                 --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
