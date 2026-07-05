@@ -346,7 +346,7 @@
                                                                                                                                             ''
                                                                                                                                                 jq --null-input '${ builtins.toJSON parameters_.error }' > /out/error.json
                                                                                                                                                 mkdir --parents /out/init/recovery
-                                                                                                                                                ln --symbolic ${ parameters.init.application } /out/init/action.sh
+                                                                                                                                                ln --symbolic ${ parameters_.init.application } /out/init/action.sh
                                                                                                                                                 mkdir --parents /out/release/recovery
                                                                                                                                                 jq --null-input '${ builtins.toJSON parameters_.seed }' > /out/seed.json
                                                                                                                                                 jq --null-input '${ builtins.toJSON parameters_.temporary }' > /out/temporary.json
