@@ -51,10 +51,10 @@
                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                if true ; then echo 119 > /temporary/status && exit 0 ; fi
                                                                                                                 cleanup ( ) {
                                                                                                                     echo "$?" > /temporary/status
                                                                                                                 }
+                                                                                                                trap cleanup EXIT
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
                                                                                                                 mkdir --parents /resources/release
