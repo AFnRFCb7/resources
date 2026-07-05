@@ -459,7 +459,7 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "resource" ;
-                                                                                                            runtimeInputs = [ sequential ( parameters.init.parcel pkgs ) ] ;
+                                                                                                            runtimeInputs = [ sequential ] ;
                                                                                                             text =
                                                                                                                 let
                                                                                                                     derivation =
