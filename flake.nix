@@ -179,6 +179,7 @@
                                                                                 lambda = path : value : value null ;
                                                                             }
                                                                             init ;
+                                                                    parcel = null ;
                                                                     payload =
                                                                         pkgs :
                                                                             writeShellApplication
