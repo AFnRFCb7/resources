@@ -249,6 +249,65 @@
                                                                             {
                                                                                 lambda = path : value : value null ;
                                                                             } ;
+                                                                    adapter =
+                                                                        pkgs :
+                                                                            visitor
+                                                                                {
+                                                                                    lambda =
+                                                                                        path : value :
+                                                                                            buildFHSUserEnv
+                                                                                                {
+                                                                                                    extraBwrapArgs =
+                                                                                                        [
+                                                                                                            "--ro-bind" "$INPUT" "/input"
+                                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                            "--tmpfs" "/private"
+                                                                                                            "--tmpfs" "/scratch"
+                                                                                                        ] ;
+                                                                                                    name = "init" ;
+                                                                                                    runScript =
+                                                                                                        let
+                                                                                                            application =
+                                                                                                                writeShellApplication
+                                                                                                                    {
+                                                                                                                        name = "init" ;
+                                                                                                                        text =
+                                                                                                                            ''
+                                                                                                                                jq --raw-output ".arguments[]" /input > /private/jq
+                                                                                                                                mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                cd /mount
+                                                                                                                                if jq -e '.inputs | has("standard")'
+                                                                                                                                then
+                                                                                                                                    if jq --raw-output '.inputs["standard"]' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+                                                                                                                                    then
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    else
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    fi
+                                                                                                                                else
+                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS" "}" ] }"
+                                                                                                                                    then
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    else
+                                                                                                                                        STATUS="$?"
+                                                                                                                                    fi
+                                                                                                                                fi
+                                                                                                                                if [[ "$STATUS" == 0 ]]
+                                                                                                                                then
+                                                                                                                                    true # FIXME
+                                                                                                                                else
+                                                                                                                                    true # FIXME
+                                                                                                                                fi
+                                                                                                                                jq \
+                                                                                                                                    --null-input \
+                                                                                                                                    --argjson STATUS "$STATUS" \
+                                                                                                                                    '$STATUS'
+                                                                                                                            '' ;
+                                                                                                                    } ;
+                                                                                                                in "${ application }/bin/init" ;
+                                                                                                    targetPkgs = [ pkgs.coreutils pkgs.jq ( parameters.init.payload pkgs ) ] ;
+                                                                                                } ;
+                                                                                } ;
                                                                     payload =
                                                                         pkgs :
                                                                             writeShellApplication
