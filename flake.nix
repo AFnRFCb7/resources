@@ -142,7 +142,7 @@
                                                                                                                                                                     lambda = path : value : value null ;
                                                                                                                                                                 }
                                                                                                                                                                 parameters_.init.init.action ;
-                                                                                                                                                        application = builtins.trace ( "4569493725642337" ) ./. ;
+                                                                                                                                                        application = builtins.trace ( builtins.typeOf parameters_.init.text ) ./. ;
 #                                                                                                                                                            writeShellApplication
 #                                                                                                                                                                {
 #                                                                                                                                                                    name = "init" ;
