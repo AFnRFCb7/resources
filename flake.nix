@@ -614,6 +614,7 @@
                                                                         EXPECTED_TARGETS='${ builtins.toJSON parameters.targets }'
                                                                         echo 1723258852938545 8211592914312647 >&2
                                                                         ${ findutils }/bin/find "${ resources-directory }/mounts/$INDEX" | sort >&2 # 1723258852938545
+                                                                        echo 1723258852938545 5772293331339852 '${ builtins.toFile "file" parameters.init.text }' >&2
                                                                         echo 1723258852938545 7462419645652545 >&2
                                                                         OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 | sort | jq -R "." | jq -s "." )" || exit 111
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
