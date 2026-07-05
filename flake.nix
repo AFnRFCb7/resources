@@ -249,6 +249,12 @@
                                                                             {
                                                                                 lambda = path : value : value null ;
                                                                             } ;
+                                                                    text =
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value { seed = seed ; } ;
+                                                                            }
+                                                                            parameters.release.release.text ;
                                                                     release =
                                                                         visitor
                                                                             {
