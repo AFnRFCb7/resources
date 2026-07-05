@@ -1048,6 +1048,7 @@
                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            if true ; then echo 1723258852938545 3255746827563135 >&2 && exit ; fi
                                                                                                                                                             TIMEOUT="$1"
                                                                                                                                                             UUID="$2"
                                                                                                                                                             if read -t "$TIMEOUT" -r VALUE <&189
