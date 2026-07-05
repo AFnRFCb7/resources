@@ -73,6 +73,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    mkdir --parents ${ gc-roots-directory }
                                                                     mkdir --parents ${ resources-directory }/locks
                                                                     exec 149> ${ resources-directory }/locks/clean
                                                                     flock -x 149
@@ -566,6 +567,7 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 157> ${ resources-directory }/locks/clean
                                                                         flock -s 157
