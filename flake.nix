@@ -249,6 +249,13 @@
                                                                             {
                                                                                 lambda = path : value : value null ;
                                                                             } ;
+                                                                    targetPkgs =
+                                                                        pkgs :
+                                                                            visitor
+                                                                                {
+                                                                                    lambda = path : value : value pkgs ;
+                                                                                }
+                                                                                parameters.release.action.targetPkgs ;
                                                                     text =
                                                                         visitor
                                                                             {
