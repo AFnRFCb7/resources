@@ -129,7 +129,6 @@
                                                                                                 {
                                                                                                     extraBwrapArgs =
                                                                                                         [
-                                                                                                            "--tmpfs /1723258852938545-1192663528863781"
                                                                                                             "--ro-bind" "$INPUT" "/input"
                                                                                                             "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                             "--tmpfs" "/private"
