@@ -621,6 +621,9 @@
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
+                                                                            mkdir --parents ${ resources-directory }/release
+                                                                            sed -e "s#\$INDEX#$INDEX#" ${ parameters.release.parcel } "${ resources-directory }/release/$INDEX"
+                                                                            chmod 0500 "${ resources-directory }/release/$INDEX"
                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                             echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             chmod 0400 "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
