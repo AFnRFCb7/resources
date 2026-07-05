@@ -210,14 +210,9 @@
                                                                         pkgs :
                                                                             writeShellApplication
                                                                                 {
-                                                                                    lambda =
-                                                                                        path : value :
-                                                                                            writeShellApplication
-                                                                                                {
-                                                                                                    name = "init" ;
-                                                                                                    runtimeInputs = parameters.init.targetPkgs pkgs ;
-                                                                                                    text = parameters.text ;
-                                                                                                } ;
+                                                                                    name = "init" ;
+                                                                                    runtimeInputs = parameters.init.targetPkgs pkgs ;
+                                                                                    text = parameters.init.text ;
                                                                                 } ;
                                                                     targetPkgs =
                                                                         pkgs :
