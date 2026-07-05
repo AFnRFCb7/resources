@@ -573,6 +573,7 @@
                                                                         export INPUT_FILE
                                                                         if [[ -t 0 ]]
                                                                         then
+                                                                            HAS_STANDARD_INPUT=false
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
                                                                             jq \
                                                                                 --null-input \
@@ -585,6 +586,7 @@
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
+                                                                            HAS_STANDARD_INPUT=true
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
