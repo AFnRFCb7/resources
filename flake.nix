@@ -99,66 +99,6 @@
                                                 let
                                                     parameters =
                                                         {
-                                                            envelope =
-                                                                pkgs :
-                                                                    pkgs.writeShellApplication
-                                                                        {
-                                                                            name = "resource" ;
-                                                                            runtimeInputs =
-                                                                                [
-                                                                                    pkgs.coreutils
-                                                                                    sequential
-                                                                                    (
-                                                                                        pkgs.writeShellApplication
-                                                                                            {
-                                                                                                name = "resource" ;
-                                                                                                runtimeInputs = [ ( parameters.init.payload pkgs ) ] ;
-                                                                                                text =
-                                                                                                    ''
-                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
-                                                                                                        cd /mount
-                                                                                                        if jq -e '.inputs | has("standard")' /input
-                                                                                                        then
-                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                            then
-                                                                                                                STATUS="$?"
-                                                                                                            else
-                                                                                                                STATUS="$?"
-                                                                                                            fi
-                                                                                                        else
-                                                                                                            if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                            then
-                                                                                                                STATUS="$?"
-                                                                                                            else
-                                                                                                                STATUS="$?"
-                                                                                                            fi
-                                                                                                        fi
-                                                                                                        jq \
-                                                                                                            --null-input \
-                                                                                                            --arg INDEX "$INDEX" \
-                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                            --argjson STATUS "$STATUS" \
-                                                                                                                '{
-                                                                                                                    "index" : $INDEX ,
-                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                    "status" : $STATUS
-                                                                                                                }' > /output
-                                                                                                    '' ;
-                                                                                            }
-                                                                                    )
-                                                                                ] ;
-                                                                            text =
-                                                                                ''
-                                                                                    SEQUENTIAL="$( sequential )" || exit 117
-                                                                                    printf -v INDEX "%016d" "$SEQUENTIAL"
-                                                                                    export INDEX
-                                                                                    mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                    resource
-                                                                                '' ;
-                                                                        } ;
                                                             error =
                                                                 visitor
                                                                     {
@@ -260,6 +200,66 @@
                                                                                                 } ;
                                                                                 }
                                                                                 parameters.init.driver ;
+                                                                            envelope =
+                                                                                pkgs :
+                                                                                    pkgs.writeShellApplication
+                                                                                        {
+                                                                                            name = "resource" ;
+                                                                                            runtimeInputs =
+                                                                                                [
+                                                                                                    pkgs.coreutils
+                                                                                                    sequential
+                                                                                                    (
+                                                                                                        pkgs.writeShellApplication
+                                                                                                            {
+                                                                                                                name = "resource" ;
+                                                                                                                runtimeInputs = [ ( parameters.init.payload pkgs ) ] ;
+                                                                                                                text =
+                                                                                                                    ''
+                                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
+                                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                        cd /mount
+                                                                                                                        if jq -e '.inputs | has("standard")' /input
+                                                                                                                        then
+                                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                            then
+                                                                                                                                STATUS="$?"
+                                                                                                                            else
+                                                                                                                                STATUS="$?"
+                                                                                                                            fi
+                                                                                                                        else
+                                                                                                                            if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                            then
+                                                                                                                                STATUS="$?"
+                                                                                                                            else
+                                                                                                                                STATUS="$?"
+                                                                                                                            fi
+                                                                                                                        fi
+                                                                                                                        jq \
+                                                                                                                            --null-input \
+                                                                                                                            --arg INDEX "$INDEX" \
+                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                            --argjson STATUS "$STATUS" \
+                                                                                                                                '{
+                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                    "status" : $STATUS
+                                                                                                                                }' > /output
+                                                                                                                    '' ;
+                                                                                                            }
+                                                                                                    )
+                                                                                                ] ;
+                                                                                            text =
+                                                                                                ''
+                                                                                                    SEQUENTIAL="$( sequential )" || exit 117
+                                                                                                    printf -v INDEX "%016d" "$SEQUENTIAL"
+                                                                                                    export INDEX
+                                                                                                    mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                    resource
+                                                                                                '' ;
+                                                                                        } ;
                                                                     init =
                                                                         visitor
                                                                             {
@@ -468,7 +468,7 @@
                                                                                                                                                     text = "resource > /output" ;
                                                                                                                                                 } ;
                                                                                                                                             in "${ application }/bin/resource" ;
-                                                                                                                                targetPkgs = pkgs : [ (parameters.init.envelope pkgs ) ] ;
+                                                                                                                                targetPkgs = pkgs : [ ( parameters.init.envelope pkgs ) ] ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
