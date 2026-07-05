@@ -228,7 +228,7 @@
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             mkdir --parents ${ resources-directory }/locks
-                                                                                                                                                                            exec 160> ${ resource-directory }/locks/clean
+                                                                                                                                                                            exec 160> ${ resources-directory }/locks/clean
                                                                                                                                                                             flock -s 160
                                                                                                                                                                             SEQUENCE="$( sequential )" || exit 105
                                                                                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
