@@ -221,6 +221,12 @@
                                                                                                     text = release.text ;
                                                                                                 } ;
                                                                                 } ;
+                                                                    release =
+                                                                        visitor
+                                                                            {
+                                                                                lambda = path : value : value null ;
+                                                                            }
+                                                                            parameters.release.release.action ;
                                                                     targetPkgs =
                                                                         pkgs :
                                                                             visitor
@@ -234,12 +240,6 @@
                                                                                 lambda = path : value : value { seed = seed ; } ;
                                                                             }
                                                                             parameters.release.release.text ;
-                                                                    release =
-                                                                        visitor
-                                                                            {
-                                                                                lambda = path : value : value null ;
-                                                                            }
-                                                                            parameters.release.release.action ;
                                                                 } ;
                                                             seed =
                                                                 visitor
