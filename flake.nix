@@ -51,7 +51,7 @@
                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                if true ; then exit 0 ; fi
+                                                                                                                if true ; then echo 119 > /temporary/status && exit 0 ; fi
                                                                                                                 cleanup ( ) {
                                                                                                                     echo "$?" > /temporary/status
                                                                                                                 }
