@@ -1121,7 +1121,7 @@
                                                                                                                                         OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
                                                                                                                                         if [[ -n "$OBSERVED_STANDARD_ERROR" ]]
                                                                                                                                         then
-                                                                                                                                            echo "1369941427493491 7435388963624748 OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" '${ builtins.toString action.text }' >&2
+                                                                                                                                            echo "1369941427493491 7435388963624748 OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" >&2
                                                                                                                                             exit 102
                                                                                                                                         fi
                                                                                                                                         OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
