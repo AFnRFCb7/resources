@@ -1065,8 +1065,8 @@
                                                                                                                                                     runtimeInputs = [ ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
-                                                                                                                                                            if true ; then echo 1723258852938545 3255746827563135 >&2 && exit ; fi
                                                                                                                                                             EXECUTABLE="$1"
+                                                                                                                                                            if true ; then echo 1723258852938545 3255746827563135 >&2 && exit ; fi
                                                                                                                                                             UUID="$2"
                                                                                                                                                             if [[ ! -x "$EXECUTABLE" ]]
                                                                                                                                                             then
