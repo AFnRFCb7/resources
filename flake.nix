@@ -615,6 +615,7 @@
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                        echo "STATUS=$STATUS" "STANDARD_ERROR=$STANDARD_ERROR" "OBSERVED_TARGETS=$OBSERVED_TARGETS" 1723258852938545
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
