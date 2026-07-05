@@ -100,15 +100,7 @@
                                                     parameters =
                                                         {
                                                             error =
-                                                                visitor#                                                    parameters =
-#                                                        {
-#                                                            init =
-#                                                                {
-#                                                                    targetPkgs = pkgs : [ pkgs.coreutils ] ;
-#                                                                } ;
-#                                                            seed = "5186738316555337" ;
-#                                                            temporary = "1681354669888713" ;
-#                                                        } ;
+                                                                visitor
                                                                     {
                                                                         int = path : value : builtins.toString value ;
                                                                     }
@@ -436,17 +428,7 @@
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
                                                                                                                                                                             name = "resource" ;
-                                                                                                                                                                            runtimeInputs =
-                                                                                                                                                                                [
-                                                                                                                                                                                    (
-                                                                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                                                                            {
-                                                                                                                                                                                                name = "init" ;
-                                                                                                                                                                                                runtimeInputs = parameters.init.targetPkgs pkgs ;
-                                                                                                                                                                                                text = parameters.init.text ;
-                                                                                                                                                                                            }
-                                                                                                                                                                                    )
-                                                                                                                                                                                ] ;
+                                                                                                                                                                            runtimeInputs = [ ( parameters.init.payload pkgs ) ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
                                                                                                                                                                                     jq --raw-output '.arguments[]' /input > /private/jq
