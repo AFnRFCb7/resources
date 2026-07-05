@@ -622,7 +622,7 @@
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            sed -e "s#\$INDEX#$INDEX#" ${ parameters.release.parcel pkgs } "${ resources-directory }/release/$INDEX"
+                                                                            sed -e "s#\$INDEX#$INDEX#" ${ parameters.release.parcel null } "${ resources-directory }/release/$INDEX"
                                                                             chmod 0500 "${ resources-directory }/release/$INDEX"
                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                             echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
