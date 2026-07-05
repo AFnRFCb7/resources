@@ -631,7 +631,7 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
                                                                                 "$INPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBStext" :ERVED_TARGETS" ]]
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
