@@ -1115,7 +1115,9 @@
                                                                                                                                         fi
                                                                                                                                         rm "$COMMANDS/${ builtins.toString index }"
                                                                                                                                         date
+                                                                                                                                        echo 1723258852938545 9385935949743828 >&2
                                                                                                                                         OBSERVED_STANDARD_ERROR="$( cat "$STANDARD_ERROR_FILE" )" || exit 134
+                                                                                                                                        echo 1723258852938545 8174645137759918 >&2
                                                                                                                                         OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
                                                                                                                                         if [[ -n "$OBSERVED_STANDARD_ERROR" ]]
                                                                                                                                         then
