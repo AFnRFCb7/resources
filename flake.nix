@@ -519,7 +519,7 @@
                                                                                                                         ''
                                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                                             HASH="$( jq --argjson RESOURCE '${ builtins.toJSON derivation }' '[ .arguments , .inputs , $RESOURCE ]' /input )" || exit 140
-                                                                                                                            ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 124
+                                                                                                                            ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 137
                                                                                                                             if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                                                                             then
                                                                                                                                 LINK="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || exit 184
