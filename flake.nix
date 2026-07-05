@@ -199,7 +199,7 @@
                                                                                                         '' ;
                                                                                                 } ;
                                                                                 }
-                                                                                parameters.init.driver ;
+                                                                                parameters.init.init.driver ;
                                                                             envelope =
                                                                                 pkgs :
                                                                                     pkgs.writeShellApplication
