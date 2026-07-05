@@ -809,7 +809,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
-                                                                                        "input" : .inputs ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
@@ -841,7 +841,7 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
-                                                                                        "inputs" : .input ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
