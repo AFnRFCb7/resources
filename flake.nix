@@ -299,7 +299,7 @@
                                                                                                 pkgs.writeShellApplication
                                                                                                     {
                                                                                                         name = "resource" ;
-                                                                                                        runtimeInputs = [ ( parameters.release.payload pkgs ) ] ;
+                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                         text =
                                                                                                             ''
                                                                                                                 jq --raw-output '.arguments[]' /input > /private/jq
