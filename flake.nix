@@ -291,6 +291,29 @@
                                                                                             resource
                                                                                         '' ;
                                                                                 } ;
+                                                                    parcel =
+                                                                        pkgs :
+                                                                            pkgs.buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs =
+                                                                                        [
+                                                                                            "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                            "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                            "--bind" "$OUTPUT_FILE" "/output"
+                                                                                            "--tmpfs" "/private"
+                                                                                        ] ;
+                                                                                    name = "resource" ;
+                                                                                    runScript =
+                                                                                        let
+                                                                                            application =
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "resource" ;
+                                                                                                        text = "resource > /output" ;
+                                                                                                    } ;
+                                                                                                in "${ application }/bin/resource" ;
+                                                                                    targetPkgs = pkgs : [ ( parameters.release.envelope pkgs ) ] ;
+                                                                                } ;
                                                                     payload =
                                                                         pkgs :
                                                                             writeShellApplication
@@ -475,8 +498,9 @@
                                                                                                                                                                                                     ''
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
                                                                                                                                                                                                         mkdir --parents /out/init/recovery
-                                                                                                                                                                                                        ln --symbolic ${ parameters.init.envelope pkgs } /out/init/action
+                                                                                                                                                                                                        ln --symbolic ${ parameters.init.parcel pkgs } /out/init/action
                                                                                                                                                                                                         mkdir --parents /out/release/recovery
+                                                                                                                                                                                                        ln --symbolic ${ parameters.release.parcel pkgs } /out/release/action
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
                                                                                                                                                                                                         jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
                                                                                                                                                                                                     '' ;
