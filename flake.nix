@@ -573,7 +573,6 @@
                                                                         export INPUT_FILE
                                                                         if [[ -t 0 ]]
                                                                         then
-                                                                            HAS_STANDARD_INPUT=false
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
                                                                             jq \
                                                                                 --null-input \
@@ -586,7 +585,6 @@
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
-                                                                            HAS_STANDARD_INPUT=true
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
@@ -617,7 +615,7 @@
                                                                         STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ ! "$HAS_STANDARD_INPUT" ]] && [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                             echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
@@ -636,13 +634,15 @@
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "index" : $INDEX ,
+                                                                                        "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "targets" : $TARGETS ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }' | log
+                                                                                    }' \
+                                                                                "$INPUT_FILE" | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
