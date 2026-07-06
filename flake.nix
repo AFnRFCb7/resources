@@ -246,7 +246,7 @@
                                                                                                                                         then
                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                            ln --symbolic ${ derivation }/release/action/bin/action /release/action
+                                                                                                                                            ### FIXME
                                                                                                                                             jq \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
