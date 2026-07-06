@@ -101,6 +101,38 @@
                                                 temporary
                                             } :
                                                 let
+                                                    store =
+                                                        mkDerivation
+                                                            {
+                                                                installPhase = ''resource "$error" "$init" "$release" "$seed" "$targets" "$temporary'' ;
+                                                                name = "alpha" ;
+                                                                nativeBuildInputs =
+                                                                    [
+                                                                        (
+                                                                            writeShellApplication
+                                                                                {
+                                                                                    name = "resource" ;
+                                                                                    runtimeInputs = [ ] ;
+                                                                                    text =
+                                                                                        let
+                                                                                            resource-parameters =
+                                                                                                {
+                                                                                                    error =
+                                                                                                        visitor
+                                                                                                            {
+                                                                                                                int = path : value : builtins.toString value ;
+                                                                                                            } ;
+                                                                                                } ;
+                                                                                            in
+                                                                                                ''
+
+                                                                                                '' ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                out = [ "resource" "error" "init" "release" "seed" "targets" "temporary" ] ;
+                                                                src = ./. ;
+                                                            }
                                                     derivation =
                                                         mkDerivation
                                                             {
@@ -246,7 +278,7 @@
                                                                                                                                         then
                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                            ln --symbolic ${ derivation }/release/action/bin/release /release/action
+                                                                                                                                            ### FIXME
                                                                                                                                             jq \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
