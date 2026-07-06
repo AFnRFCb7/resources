@@ -136,6 +136,7 @@
                                                                                                                                                 mkdir --parents /out/init/recovery
                                                                                                                                                 ln --symbolic ${ resource-parameters.init.application } /out/init/action
                                                                                                                                                 mkdir --parents /out/release/recovery
+                                                                                                                                                ln --symbolic ${ resource-parameters.release.application } /out/release/action
                                                                                                                                                 jq --null-input '${ builtins.toJSON resource-parameters.seed }' > /out/seed.json
                                                                                                                                                 jq --null-input '${ builtins.toJSON resource-parameters.temporary }' > /out/temporary.json
                                                                                                                                             '' ;
@@ -191,6 +192,7 @@
                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
+                                                                                                                "--bind" "${ resources-directory }/release/$INDEX" "/release"
                                                                                                                 "--tmpfs" "/private"
                                                                                                                 "--tmpfs" "/scratch"
                                                                                                             ] ;
@@ -244,6 +246,7 @@
                                                                                                                                         then
                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                            ln --symbolic ${ derivation }/release/action/bin/action /release/action
                                                                                                                                             jq \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
@@ -315,6 +318,7 @@
                                                                                             export INDEX
                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                            mkdir --parents "${ resources-directory }/release/$INDEX"
                                                                                             init
                                                                                         '' ;
                                                                                 } ;
