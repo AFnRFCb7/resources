@@ -382,7 +382,7 @@
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
-                                                                        resource
+                                                                        init
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EXPECTED_TARGETS='${ builtins.toJSON parameters.targets }'
                                                                         OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
