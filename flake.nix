@@ -247,6 +247,7 @@
                                                                                                                                             jq \
                                                                                                                                                 --arg EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
+                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                 --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
                                                                                                                                                 --rawfile STANDARD_ERROR /private/standard-error \
