@@ -337,7 +337,6 @@
                                                                     [
                                                                         coreutils
                                                                         findutils
-                                                                        log
                                                                         "${ derivation }/init/action"
                                                                     ] ;
                                                                 text =
@@ -627,7 +626,51 @@
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
                                                             } ;
-                                                         sequential =
+                                                        log =
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "log" ;
+                                                                    runtimeInputs =
+                                                                        [
+                                                                            coreutils
+                                                                            (
+                                                                                buildHSFUserEnv
+                                                                                    {
+                                                                                        extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                        name = "log" ;
+                                                                                        runScript = "log" ;
+                                                                                        targetPkgs =
+                                                                                            pkgs :
+                                                                                                [
+                                                                                                    (
+                                                                                                        pkgs.writeShellApplication
+                                                                                                            {
+                                                                                                                name = "log" ;
+                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                                text =
+                                                                                                                    ''
+                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }
+                                                                                                                        JSON="$( cat )" || exit 129
+                                                                                                                        redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                                    '' ;
+                                                                                                            }
+                                                                                                    )
+                                                                                                ] ;
+                                                                                    }
+                                                                            )
+                                                                        ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                            exec 174> ${ resources-directory }/locks/clean
+                                                                            flock -s 174
+                                                                            exec 143> ${ resources-directory }/locks/log
+                                                                            flock -x 143
+                                                                            mkdir --parents ${ resources-directory }/log.yaml
+                                                                            log
+                                                                        '' ;
+                                                                } ;
+                                                        sequential =
                                                             writeShellApplication
                                                                 {
                                                                     name = "sequential" ;
