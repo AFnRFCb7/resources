@@ -387,7 +387,7 @@
                                                                         mkdir --parents ${ resources-directory }
                                                                         init
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EXPECTED_TARGETS='${ builtins.toJSON parameters.targets }'
+                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON parameters.targets }' )" || exit 167
                                                                         OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
                                                                         echo 1723258852938545 1369941427493491 2529786667113218 "EXPECTED_TARGETS" "$EXPECTED_TARGETS" "OBSERVED_TARGETS" "$OBSERVED_TARGETS" >&2
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
