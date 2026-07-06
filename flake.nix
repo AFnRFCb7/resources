@@ -223,7 +223,7 @@
                                                                                                                                         mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                         cd /mount
                                                                                                                                         echo 1723258852938545 1369941427493491 8444577414851746 >&2
-                                                                                                                                        if jq -e '.inputs | has("standard")' /input
+                                                                                                                                        if jq -e '.inputs | has("standard")' /input > /private/jq
                                                                                                                                         then
                                                                                                                                             if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                             then
