@@ -307,6 +307,13 @@
                                                                                     string = to-string ;
                                                                                 }
                                                                                 seed ;
+                                                                targets =
+                                                                    visitor
+                                                                        {
+                                                                            list = path : list : builtins.sort builtins.lessThan list ;
+                                                                            string = path : value : value ;
+                                                                        }
+                                                                        targets ;
                                                                 temporary =
                                                                     visitor
                                                                         {
