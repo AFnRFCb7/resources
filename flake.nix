@@ -307,6 +307,7 @@
                                                                                                     INIT="$2"
                                                                                                     INIT_RECOVERY="$3"
                                                                                                     RELEASE="$4"
+                                                                                                    RELEASE_RECOVERY="$5"
                                                                                                     SEED="$6"
                                                                                                     TARGETS="$7"
                                                                                                     TEMPORARY="$8"
@@ -315,6 +316,8 @@
                                                                                                     jq "." ${ builtins.toFile "seed.json" ( builtins.toJSON resource-parameters.seed ) } > "$SEED"
                                                                                                     jq "." ${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) } > "$TARGETS"
                                                                                                     jq "." ${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) } > "$TEMPORARY"
+                                                                                                    export RELEASE
+                                                                                                    export RELEASE_RECOVERY
                                                                                                 '' ;
                                                                                 }
                                                                         )
