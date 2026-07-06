@@ -218,9 +218,11 @@
                                                                                                                                     ] ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        echo 1723258852938545 1369941427493491 1996519968779528 >&2
                                                                                                                                         jq --raw-output '.arguments[]' /input > /private/jq
                                                                                                                                         mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                         cd /mount
+                                                                                                                                        echo 1723258852938545 1369941427493491 8444577414851746 >&2
                                                                                                                                         if jq -e '.inputs | has("standard")' /input
                                                                                                                                         then
                                                                                                                                             if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
@@ -237,9 +239,11 @@
                                                                                                                                                 STATUS="$?"
                                                                                                                                             fi
                                                                                                                                         fi
+                                                                                                                                        echo 1723258852938545 1369941427493491 4638725837289329 >&2
                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
                                                                                                                                         OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
+                                                                                                                                        echo 1723258852938545 1369941427493491 5347779399313892 >&2
                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                         then
                                                                                                                                             mkdir --parents "/pid/$INDEX"
