@@ -186,6 +186,7 @@
                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                 "--tmpfs" "/private"
                                                                                                                 "--tmpfs" "/scratch"
                                                                                                             ] ;
@@ -232,6 +233,12 @@
                                                                                                                                                 STATUS="$?"
                                                                                                                                             fi
                                                                                                                                         fi
+                                                                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON parameters.targets }' )" || exit 167
+                                                                                                                                        OBSERVED_TARGETS="$( LC_ALL=C find "/mounts" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
+                                                                                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                        then
+                                                                                                                                            cat "$ORIGINATOR_PID" > "/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                        fi
                                                                                                                                         jq \
                                                                                                                                             --arg INDEX "$INDEX" \
                                                                                                                                             --rawfile STANDARD_ERROR /private/standard-error \
@@ -262,6 +269,7 @@
                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                             export INDEX
                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                             init
                                                                                         '' ;
                                                                                 } ;
@@ -396,9 +404,6 @@
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
-                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                            echo "$ULTIMATE_PID" > "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
-                                                                            chmod 0400 "${ resources-directory }/pids/$INDEX/$ULTIMATE_PID"
                                                                             export CHANNEL=valid-init
                                                                             jq \
                                                                                 --arg INDEX "$INDEX" \
