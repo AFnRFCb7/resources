@@ -246,7 +246,7 @@
                                                                                                                                         then
                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                            ### FIXME
+                                                                                                                                            ln --symbolic ${ derivation }/release/action/bin/release /release/action
                                                                                                                                             jq \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
@@ -354,7 +354,7 @@
                                                                         application =
                                                                             writeShellApplication
                                                                                 {
-                                                                                    name = "init" ;
+                                                                                    name = "release" ;
                                                                                     runtimeInputs =
                                                                                         [
                                                                                             coreutils
@@ -372,15 +372,15 @@
                                                                                                                 "--tmpfs" "/private"
                                                                                                                 "--tmpfs" "/scratch"
                                                                                                             ] ;
-                                                                                                        name = "init" ;
-                                                                                                        runScript = "init" ;
+                                                                                                        name = "release" ;
+                                                                                                        runScript = "release" ;
                                                                                                         targetPkgs =
                                                                                                             pkgs :
                                                                                                                 [
                                                                                                                     (
                                                                                                                         pkgs.writeShellApplication
                                                                                                                             {
-                                                                                                                                name = "init" ;
+                                                                                                                                name = "release" ;
                                                                                                                                 runtimeInputs =
                                                                                                                                     [
                                                                                                                                         pkgs.coreutils
@@ -388,94 +388,14 @@
                                                                                                                                         (
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    name = "init" ;
-                                                                                                                                                    runtimeInputs = resource-parameters.init.targetPkgs pkgs ;
-                                                                                                                                                    text = resource-parameters.init.text ;
+                                                                                                                                                    name = "release" ;
+                                                                                                                                                    runtimeInputs = resource-parameters.release.targetPkgs pkgs ;
+                                                                                                                                                    text = resource-parameters.release.text ;
                                                                                                                                                 }
                                                                                                                                         )
                                                                                                                                     ] ;
                                                                                                                                 text =
                                                                                                                                     ''
-                                                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
-                                                                                                                                        cd /mount
-                                                                                                                                        if jq -e '.inputs | has("standard")' /input > /private/jq
-                                                                                                                                        then
-                                                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                            then
-                                                                                                                                                STATUS="$?"
-                                                                                                                                            else
-                                                                                                                                                STATUS="$?"
-                                                                                                                                            fi
-                                                                                                                                        else
-                                                                                                                                            if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                            then
-                                                                                                                                                STATUS="$?"
-                                                                                                                                            else
-                                                                                                                                                STATUS="$?"
-                                                                                                                                            fi
-                                                                                                                                        fi
-                                                                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
-                                                                                                                                        OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                        ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
-                                                                                                                                        if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
-                                                                                                                                        then
-                                                                                                                                            mkdir --parents "/pid/$INDEX"
-                                                                                                                                            echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                            jq \
-                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.valid-channel } \
-                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                --arg INDEX "$INDEX" \
-                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                --argjson STATUS "$STATUS" \
-                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
-                                                                                                                                                --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
-                                                                                                                                                '{
-                                                                                                                                                    "arguments" : .arguments ,
-                                                                                                                                                    "channel" : $CHANNEL ,
-                                                                                                                                                    "evaluation" : 0 ,
-                                                                                                                                                    "index" : $INDEX ,
-                                                                                                                                                    "inputs" : .inputs ,
-                                                                                                                                                    "seed" : $SEED ,
-                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                    "status" : $STATUS ,
-                                                                                                                                                    "targets" : $EXPECTED_TARGETS ,
-                                                                                                                                                    "text" : $TEXT
-                                                                                                                                                }' \
-                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                        else
-                                                                                                                                            jq \
-                                                                                                                                                --arg INDEX "$INDEX" \
-                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
-                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                --argjson STATUS "$STATUS" \
-                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
-                                                                                                                                                '{
-                                                                                                                                                    "arguments" : .arguments ,
-                                                                                                                                                    "channel" : $CHANNEL
-                                                                                                                                                    "evalutation" : ${ resource-parameters.error } ,
-                                                                                                                                                    "index" : $INDEX ,
-                                                                                                                                                    "inputs" : .inputs ,
-                                                                                                                                                    "seed" : $SEED ,
-                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                    "status" : $STATUS ,
-                                                                                                                                                    "targets" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_TARGETS ,
-                                                                                                                                                            "observed" : $OBSERVED_TARGETS
-                                                                                                                                                        } ,
-                                                                                                                                                    "text" : $TEXT
-                                                                                                                                                }' \
-                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                        fi
                                                                                                                                     '' ;
                                                                                                                             }
                                                                                                                     )
@@ -485,15 +405,7 @@
                                                                                         ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                                            exec 160> ${ resources-directory }/locks/clean
-                                                                                            flock -s 160
-                                                                                            SEQUENCE="$( sequential )" || exit 105
-                                                                                            printf -v INDEX "%016d" "$SEQUENCE"
-                                                                                            export INDEX
-                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                            init
+                                                                                            release
                                                                                         '' ;
                                                                                 } ;
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
