@@ -212,7 +212,6 @@
                                                                                                                                                 mkdir --parents /out/init/recovery
                                                                                                                                                 ln --symbolic ${ resource-parameters.init.application } /out/init/action
                                                                                                                                                 mkdir --parents /out/release/recovery
-                                                                                                                                                ln --symbolic ${ resource-parameters.release.application } /out/release/action
                                                                                                                                                 jq --null-input '${ builtins.toJSON resource-parameters.seed }' > /out/seed.json
                                                                                                                                                 jq --null-input '${ builtins.toJSON resource-parameters.temporary }' > /out/temporary.json
                                                                                                                                             '' ;
