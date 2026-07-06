@@ -250,6 +250,7 @@
                                                                                                                                                 --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                 --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                 --argjson STATUS "$STATUS" \
+                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
                                                                                                                                                 '{
                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                     "channel" : $CHANNEL ,
@@ -260,7 +261,8 @@
                                                                                                                                                     "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                     "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                     "status" : $STATUS ,
-                                                                                                                                                    "targets" : $EXPECTED_ARGUMENTS
+                                                                                                                                                    "targets" : $EXPECTED_ARGUMENTS ,
+                                                                                                                                                    "text" : $TEXT
                                                                                                                                                 }' \
                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                         else
@@ -273,6 +275,7 @@
                                                                                                                                                 --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                 --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                 --argjson STATUS "$STATUS" \
+                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
                                                                                                                                                 '{
                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                     "channel" : $CHANNEL
@@ -287,7 +290,8 @@
                                                                                                                                                         {
                                                                                                                                                             "expected" : $EXPECTED_TARGETS ,
                                                                                                                                                             "observed" : $OBSERVED_TARGETS
-                                                                                                                                                        }
+                                                                                                                                                        } ,
+                                                                                                                                                    "text" : $TEXT
                                                                                                                                                 }' \
                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                         fi
@@ -446,7 +450,6 @@
                                                                             export CHANNEL=valid-init
                                                                             jq \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
@@ -456,7 +459,7 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : $TEXT ,
+                                                                                        "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
                                                                                 "$OUTPUT_FILE" | log
@@ -467,21 +470,19 @@
                                                                             jq \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
+                                                                                        "seed" : .seed ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : $TEXT ,
+                                                                                        "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
                                                                                 "$OUTPUT_FILE" | log
@@ -492,23 +493,21 @@
                                                                             jq \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
+                                                                                        "seed" : .seed ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : $TEXT ,
+                                                                                        "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
                                                                                 "$OUTPUT_FILE" | log
@@ -519,23 +518,21 @@
                                                                             jq \
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
+                                                                                        "seed" : .seed ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : $TEXT ,
+                                                                                        "text" : .text$TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
                                                                                 "$OUTPUT_FILE" | log
