@@ -330,7 +330,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils log ] ;
+                                                                runtimeInputs = [ coreutils findutils log store.init ] ;
                                                                 text =
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
