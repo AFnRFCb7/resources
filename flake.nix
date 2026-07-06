@@ -215,6 +215,7 @@
                                                                                                                                     ''
                                                                                                                                         jq --raw-output '.arguments[]' /input > /private/jq
                                                                                                                                         mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                        cd /mount
                                                                                                                                         if jq -e '.inputs | has("standard")' /input
                                                                                                                                         then
                                                                                                                                             if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
@@ -650,6 +651,7 @@
                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                 text =
                                                                                                                     ''
+                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                         : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                         JSON="$( cat )" || exit 129
                                                                                                                         redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
