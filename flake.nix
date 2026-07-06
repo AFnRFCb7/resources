@@ -286,11 +286,7 @@
                                                                                                                         set = path : value : builtins.concatLists ( builtins.attrValue value ) ;
                                                                                                                         string = to-string ;
                                                                                                                     }
-                                                                                                            visitor
-                                                                                                            {
-
-                                                                                                            }
-                                                                                                            seed ;
+                                                                                                                    seed ;
                                                                                                     targets =
                                                                                                         visitor
                                                                                                             {
