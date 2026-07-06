@@ -86,7 +86,7 @@
                                                                     TEMPORARY="$( mktemp --directory )" || exit 113
                                                                     export TEMPORARY
                                                                     clean
-                                                                    STATUS="$( cat "$TEMPORARY/status" )" || exit 102
+                                                                    STATUS="$( cat "$TEMPORARY/status" )" || exit 158
                                                                     exit "$STATUS"
                                                                 '' ;
                                                         } ;
@@ -239,7 +239,7 @@
                                                                                                                                         fi
                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
                                                                                                                                         OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                        ORIGINATOR_PID="$( jq --null-input ".originator-pid" )" || exit 102
+                                                                                                                                        ORIGINATOR_PID="$( jq --null-input ".originator-pid" )" || exit 156
                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                         then
                                                                                                                                             cat "$ORIGINATOR_PID" > "/pids/$INDEX/$ORIGINATOR_PID"
@@ -868,7 +868,7 @@
                                                                                                                                         if [[ -n "$OBSERVED_STANDARD_ERROR" ]]
                                                                                                                                         then
                                                                                                                                             echo "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" >&2
-                                                                                                                                            exit 102
+                                                                                                                                            exit 188
                                                                                                                                         fi
                                                                                                                                         OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
                                                                                                                                         if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
