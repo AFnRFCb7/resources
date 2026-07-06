@@ -385,7 +385,7 @@
                                                                         init
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EXPECTED_TARGETS='${ builtins.toJSON parameters.targets }'
-                                                                        echo 1723258852938545 1369941427493491 8343286599518876 "INDEX=$INDEX" "$( cat "$OUTPUT_FILE" )" >&2
+                                                                        echo 1723258852938545 1369941427493491 8343286599518876 "INDEX=$INDEX" AA"$( cat "$OUTPUT_FILE" )"BB >&2
                                                                         OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
                                                                         echo 1723258852938545 1369941427493491 4925868913296833 >&2
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
