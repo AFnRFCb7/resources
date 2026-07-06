@@ -423,7 +423,7 @@
                                                                                 "$INPUT_FILE" | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                         then
-                                                                            echo 1723258852938545 1369941427493491 2529786667113218 "EXPECTED_TARGETS" "$EXPECTED_TARGET" "OBSERVED_TARGETS" "$OBSERVED_TARGETS" >&2
+                                                                            echo 1723258852938545 1369941427493491 2529786667113218 "EXPECTED_TARGETS" "$EXPECTED_TARGETS" "OBSERVED_TARGETS" "$OBSERVED_TARGETS" >&2
                                                                             export CHANNEL=invalid-init
                                                                             jq \
                                                                                 --arg INDEX "$INDEX" \
