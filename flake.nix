@@ -261,6 +261,7 @@
                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                             export INDEX
                                                                                             mkdir --parents "${ resources-directory }/$INDEX"
+                                                                                            init
                                                                                         '' ;
                                                                                 } ;
                                                                         init =
