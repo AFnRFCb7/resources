@@ -471,7 +471,6 @@
                                                                                 --arg INDEX "$INDEX" \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
@@ -480,7 +479,7 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "seed" : .seed ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS ,
+                                                                                        "status" : .status ,
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
@@ -495,7 +494,6 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
@@ -506,6 +504,7 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "status" : ./status ,
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
@@ -520,7 +519,6 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
@@ -530,7 +528,7 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS ,
+                                                                                        "status" : .status ,
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text$TEXT ,
                                                                                         "temporary" : $TEMPORARY
