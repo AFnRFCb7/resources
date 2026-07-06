@@ -149,7 +149,24 @@
                                                                                                                         set = path : value : builtins.concatLists ( builtins.attrValue value ) ;
                                                                                                                         string = to-string ;
                                                                                                                     }
-                                                                                                                    seed ;
+                                                                                                            visitor
+                                                                                                            {
+
+                                                                                                            }
+                                                                                                            seed ;
+                                                                                                    targets =
+                                                                                                        visitor
+                                                                                                            {
+                                                                                                                list = path : value : builtins.sort builtins.lessThan value ;
+                                                                                                                string = path : value : value ;
+                                                                                                            }
+                                                                                                            targets ;
+                                                                                                    temporary =
+                                                                                                        visitor
+                                                                                                            {
+                                                                                                                bool = path : value : value ;
+                                                                                                            }
+                                                                                                            temporary ;
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
@@ -401,92 +418,6 @@
                                                                                 }
                                                                                 resource-parameters.init.action.text ;
                                                                         valid-channel = root-parameters.valid-init-channel ;
-                                                                    } ;
-                                                                release =
-                                                                    {
-                                                                        action =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda = path : value : value null ;
-                                                                                }
-                                                                                resource-parameters.release.release.action ;
-                                                                        application =
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "release" ;
-                                                                                    runtimeInputs =
-                                                                                        [
-                                                                                            coreutils
-                                                                                            flock
-                                                                                            sequential
-                                                                                            (
-                                                                                                buildFHSUserEnv
-                                                                                                    {
-                                                                                                        extraBwrapArgs =
-                                                                                                            [
-                                                                                                                "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                                "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
-                                                                                                                "--tmpfs" "/private"
-                                                                                                                "--tmpfs" "/scratch"
-                                                                                                            ] ;
-                                                                                                        name = "release" ;
-                                                                                                        runScript = "release" ;
-                                                                                                        targetPkgs =
-                                                                                                            pkgs :
-                                                                                                                [
-                                                                                                                    (
-                                                                                                                        pkgs.writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "release" ;
-                                                                                                                                runtimeInputs =
-                                                                                                                                    [
-                                                                                                                                        pkgs.coreutils
-                                                                                                                                        pkgs.jq
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "release" ;
-                                                                                                                                                    runtimeInputs = resource-parameters.release.targetPkgs pkgs ;
-                                                                                                                                                    text = resource-parameters.release.text ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                    ] ;
-                                                                                                                                text =
-                                                                                                                                    ''
-                                                                                                                                    '' ;
-                                                                                                                            }
-                                                                                                                    )
-                                                                                                                ] ;
-                                                                                                    }
-                                                                                            )
-                                                                                        ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            release
-                                                                                        '' ;
-                                                                                } ;
-                                                                        invalid-channel = root-parameters.invalid-release-channel ;
-                                                                        release =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda = path : value : value null ;
-                                                                                }
-                                                                                release ;
-                                                                        targetPkgs =
-                                                                            visitor
-                                                                                {
-                                                                                    lambda = path : value : value ;
-                                                                                }
-                                                                                resource-parameters.release.action.targetPkgs ;
-                                                                        text =
-                                                                            visitor
-                                                                                {
-                                                                                    string = path : value : value ;
-                                                                                }
-                                                                                resource-parameters.release.action.text ;
-                                                                        valid-channel = root-parameters.valid-release-channel ;
                                                                     } ;
                                                                 seed =
                                                                     let
