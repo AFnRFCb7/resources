@@ -263,7 +263,7 @@
                                                                                                                                                     "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                     "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                     "status" : $STATUS ,
-                                                                                                                                                    "targets" : $EXPECTED_ARGUMENTS ,
+                                                                                                                                                    "targets" : $EXPECTED_TARGETS ,
                                                                                                                                                     "text" : $TEXT
                                                                                                                                                 }' \
                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
