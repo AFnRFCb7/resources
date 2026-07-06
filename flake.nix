@@ -242,7 +242,7 @@
                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                         then
-                                                                                                                                            cat "$ORIGINATOR_PID" > "/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                            cat "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
                                                                                                                                             jq \
                                                                                                                                                 --arg EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
