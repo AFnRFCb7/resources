@@ -312,7 +312,7 @@
                                                                                                     TARGETS="$7"
                                                                                                     TEMPORARY="$8"
                                                                                                     jq "." ${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) } > "$ERROR"
-
+                                                                                                    ### FIXME
                                                                                                     jq "." ${ builtins.toFile "seed.json" ( builtins.toJSON resource-parameters.seed ) } > "$SEED"
                                                                                                     jq "." ${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) } > "$TARGETS"
                                                                                                     jq "." ${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) } > "$TEMPORARY"
