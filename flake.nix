@@ -422,20 +422,19 @@
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
-                                                                                    '{
-                                                                                        "arguments" : .arguments ,
-                                                                                        "index" : .index ,
-                                                                                        "inputs" : .inputs ,
-                                                                                        "originator-pid" : .["originator-pid"] ,
-                                                                                        "seed" : .seed ,
-                                                                                        "standard-error" : .["standard-error"] ,
-                                                                                        "standard-output" : .["standard-error"] ,
-                                                                                        "status" : ./status ,
-                                                                                        "targets" : .targets ,
-                                                                                        "text" : .text ,
-                                                                                        "temporary" : .temporary
-                                                                                    }' \
+                                                                                '{
+                                                                                    "arguments" : .arguments ,
+                                                                                    "index" : .index ,
+                                                                                    "inputs" : .inputs ,
+                                                                                    "originator-pid" : .["originator-pid"] ,
+                                                                                    "seed" : .seed ,
+                                                                                    "standard-error" : .["standard-error"] ,
+                                                                                    "standard-output" : .["standard-error"] ,
+                                                                                    "status" : ./status ,
+                                                                                    "targets" : .targets ,
+                                                                                    "text" : .text ,
+                                                                                    "temporary" : .temporary
+                                                                                }' \
                                                                                 "$OUTPUT_FILE" | log
                                                                             exit "$EVALUATION"
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
