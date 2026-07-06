@@ -634,7 +634,7 @@
                                                                         [
                                                                             coreutils
                                                                             (
-                                                                                buildHSFUserEnv
+                                                                                buildFHSUserEnv
                                                                                     {
                                                                                         extraBwrapArgs = [ "--tmpfs" "/private" ] ;
                                                                                         name = "log" ;
