@@ -10,8 +10,12 @@
 		                coreutils ,
 		                findutils ,
 		                flock ,
+		                invalid-init-channel ,
+		                invalid-release-channel ,
 		                jq ,
 		                mkDerivation ,
+		                valid-init-channel ,
+		                valid-release-channel ,
 		                visitor ,
 		                writeShellApplication
                     } :
@@ -128,12 +132,12 @@
                                                                                                                                     let
                                                                                                                                         in
                                                                                                                                             ''
-                                                                                                                                                jq --null-input '${ builtins.toJSON parameters.error }' > /out/error.json
+                                                                                                                                                jq --null-input '${ builtins.toJSON resource-parameters.error }' > /out/error.json
                                                                                                                                                 mkdir --parents /out/init/recovery
-                                                                                                                                                ln --symbolic ${ parameters.init.application } /out/init/action
+                                                                                                                                                ln --symbolic ${ resource-parameters.init.application } /out/init/action
                                                                                                                                                 mkdir --parents /out/release/recovery
-                                                                                                                                                jq --null-input '${ builtins.toJSON parameters.seed }' > /out/seed.json
-                                                                                                                                                jq --null-input '${ builtins.toJSON parameters.temporary }' > /out/temporary.json
+                                                                                                                                                jq --null-input '${ builtins.toJSON resource-parameters.seed }' > /out/seed.json
+                                                                                                                                                jq --null-input '${ builtins.toJSON resource-parameters.temporary }' > /out/temporary.json
                                                                                                                                             '' ;
                                                                                                                             }
                                                                                                                     )
@@ -153,7 +157,7 @@
                                                                     ] ;
                                                                 src = ./. ;
                                                             } ;
-                                                       parameters =
+                                                       resource-parameters =
                                                             {
                                                                 error =
                                                                     visitor
@@ -168,7 +172,7 @@
                                                                                 {
                                                                                     lambda = path : value : value null ;
                                                                                 }
-                                                                                parameters.init.init.action ;
+                                                                                resource-parameters.init.init.action ;
                                                                         application =
                                                                             writeShellApplication
                                                                                 {
@@ -207,8 +211,8 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "init" ;
-                                                                                                                                                    runtimeInputs = parameters.init.targetPkgs pkgs ;
-                                                                                                                                                    text = parameters.init.text ;
+                                                                                                                                                    runtimeInputs = resource-parameters.init.targetPkgs pkgs ;
+                                                                                                                                                    text = resource-parameters.init.text ;
                                                                                                                                                 }
                                                                                                                                         )
                                                                                                                                     ] ;
@@ -233,26 +237,60 @@
                                                                                                                                                 STATUS="$?"
                                                                                                                                             fi
                                                                                                                                         fi
-                                                                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON parameters.targets }' )" || exit 167
+                                                                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
                                                                                                                                         OBSERVED_TARGETS="$( LC_ALL=C find "/mounts" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                         then
                                                                                                                                             cat "$ORIGINATOR_PID" > "/pids/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                            jq \
+                                                                                                                                                --arg EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.valid-init } \
+                                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                                '{
+                                                                                                                                                    "arguments" : .arguments ,
+                                                                                                                                                    "channel" : $CHANNEL ,
+                                                                                                                                                    "evaluation" : 0 ,
+                                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                                    "inputs" : .inputs ,
+                                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                    "status" : $STATUS ,
+                                                                                                                                                    "targets" : $EXPECTED_ARGUMENTS
+                                                                                                                                                }' \
+                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                        else
+                                                                                                                                            jq \
+                                                                                                                                                --arg INDEX "$INDEX" \
+                                                                                                                                                --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
+                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                                '{
+                                                                                                                                                    "arguments" : .arguments ,
+                                                                                                                                                    "channel" : $CHANNEL
+                                                                                                                                                    "evalutation" : ${ resource-parameters.error } ,
+                                                                                                                                                    "index" : $INDEX ,
+                                                                                                                                                    "inputs" : .inputs ,
+                                                                                                                                                    "seed" : $SEED ,
+                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                    "status" : $STATUS ,
+                                                                                                                                                    "targets" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_TARGETS ,
+                                                                                                                                                            "observed" : $OBSERVED_TARGETS
+                                                                                                                                                        }
+                                                                                                                                                }' \
+                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                         fi
-                                                                                                                                        jq \
-                                                                                                                                            --arg INDEX "$INDEX" \
-                                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                            --argjson STATUS "$STATUS" \
-                                                                                                                                            '{
-                                                                                                                                                "arguments" : .arguments ,
-                                                                                                                                                "index" : $INDEX ,
-                                                                                                                                                "inputs" : .inputs ,
-                                                                                                                                                "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                "status" : $STATUS
-                                                                                                                                            }' \
-                                                                                                                                            "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                     '' ;
                                                                                                                             }
                                                                                                                     )
@@ -279,18 +317,20 @@
                                                                                     lambda = path : value : value null ;
                                                                                 }
                                                                                 init ;
+                                                                        invalid-channel = root-parameters.invalid-init-channel ;
                                                                         targetPkgs =
                                                                             visitor
                                                                                 {
                                                                                     lambda = path : value : value ;
                                                                                 }
-                                                                                parameters.init.action.targetPkgs ;
+                                                                                resource-parameters.init.action.targetPkgs ;
                                                                         text =
                                                                             visitor
                                                                                 {
                                                                                     string = path : value : value ;
                                                                                 }
-                                                                                parameters.init.action.text ;
+                                                                                resource-parameters.init.action.text ;
+                                                                        valid-channel = root-parameters.valid-init-channel ;
                                                                     } ;
                                                                 seed =
                                                                     let
@@ -394,39 +434,34 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         init
+                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                        export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON parameters.targets }' )" || exit 167
-                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON parameters.targets }' )" || exit 167
-                                                                        OBSERVED_TARGETS="$( LC_ALL=C find "${ resources-directory }/mounts/$INDEX" -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                        echo 1723258852938545 1369941427493491 2529786667113218 "EXPECTED_TARGETS" "$EXPECTED_TARGETS" "OBSERVED_TARGETS" "$OBSERVED_TARGETS" >&2
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 147
-                                                                        STANDARD_OUTPUT="$( jq --raw-output '.["standard-output"]' "$OUTPUT_FILE" )" || exit 197
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 183
+                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
+                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
+                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             export CHANNEL=valid-init
                                                                             jq \
-                                                                                --arg INDEX "$INDEX" \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson TARGETS "$EXPECTED_TARGETS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
-                                                                                        "index" : $INDEX ,
+                                                                                        "index" : .index ,
                                                                                         "inputs" : .inputs ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
+                                                                                        "originator-pid" : .originator-pid ,
+                                                                                        "seed" : .seed ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "targets" : $TARGETS ,
+                                                                                        "targets" : .targets ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
-                                                                                "$INPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -435,9 +470,8 @@
                                                                                 --argjson SEED '${ builtins.toJSON seed }' \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
-                                                                                --argjson TARGETS "$EXPECTED_TARGETS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
@@ -446,13 +480,13 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
-                                                                                        "targets" : $TARGETS ,
+                                                                                        "targets" : .targets ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -463,8 +497,8 @@
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
                                                                                 --argjson TARGETS "$EXPECTED_TARGETS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
@@ -473,13 +507,13 @@
                                                                                         "seed" : $SEED ,
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "targets" : $TARGETS ,
+                                                                                        "targets" : .targets ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
                                                                             export CHANNEL=invalid-init
                                                                             jq \
@@ -489,9 +523,8 @@
                                                                                 --arg STANDARD_ERROR "$STANDARD_ERROR" \
                                                                                 --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson STATUS "$STATUS" \
-                                                                                --argjson TARGETS "$EXPECTED_TARGETS" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
+                                                                                --rawfile TEXT ${ builtins.toFile "text" resource-parameters.init.text } \
+                                                                                --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : $INDEX ,
@@ -501,134 +534,12 @@
                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                         "status" : $STATUS ,
-                                                                                        "targets" : $TARGETS ,
+                                                                                        "targets" : .targets ,
                                                                                         "text" : $TEXT ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                --arg INDEX "$INDEX" \
-                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
-                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                    '{
-                                                                                        "arguments" : .arguments ,
-                                                                                        "index" : $INDEX ,
-                                                                                        "inputs" : .inputs ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "targets" :
-                                                                                            {
-                                                                                                "expected" : $EXPECTED_TARGETS ,
-                                                                                                "observed" : $OBSERVED_TARGETS
-                                                                                            } ,
-                                                                                        "text" : $TEXT ,
-                                                                                        "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                --arg INDEX "$INDEX" \
-                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
-                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
-                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                    '{
-                                                                                        "arguments" : .arguments ,
-                                                                                        "index" : $INDEX ,
-                                                                                        "inputs" : .input ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS ,
-                                                                                        "targets" :
-                                                                                            {
-                                                                                                "expected" : $EXPECTED_TARGETS ,
-                                                                                                "observed" : $OBSERVED_TARGETS
-                                                                                            } ,
-                                                                                        "text" : $TEXT ,
-                                                                                        "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                --arg INDEX "$INDEX" \
-                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
-                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
-                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
-                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                    '{
-                                                                                        "arguments" : .arguments ,
-                                                                                        "index" : $INDEX ,
-                                                                                        "inputs" : .inputs ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
-                                                                                        "standard-error" : $STANDARD_ERROR ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "targets" :
-                                                                                            {
-                                                                                                "expected" : $EXPECTED_TARGETS ,
-                                                                                                "observed" : $OBSERVED_TARGETS
-                                                                                            } ,
-                                                                                        "text" : $TEXT ,
-                                                                                        "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]] && [[ "$EXPECTED_TARGETS" != "$OBSERVED_TARGETS" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                --arg INDEX "$INDEX" \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --argjson SEED '${ builtins.toJSON seed }' \
-                                                                                --arg STANDARD_ERROR "$STANDARD_ERROR" \
-                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
-                                                                                --argjson STATUS "$STATUS" \
-                                                                                --argjson TARGETS '${ builtins.toJSON parameters.targets }' \
-                                                                                --rawfile TEXT ${ builtins.toFile "text" parameters.init.text } \
-                                                                                --argjson TEMPORARY ${ builtins.toJSON parameters.temporary } \
-                                                                                    '{
-                                                                                        "arguments" : .arguments ,
-                                                                                        "index" : $INDEX ,
-                                                                                        "inputs" : .inputs ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "seed" : $SEED ,
-                                                                                        "standard-error" : $STANDARD_ERROR ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                        "status" : $STATUS ,
-                                                                                        "targets" : $TARGETS ,
-                                                                                        "text" : $TEXT ,
-                                                                                        "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                "$INPUT_FILE" | log
-                                                                            exit ${ parameters.error }
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
@@ -728,6 +639,20 @@
                                                                 } ;
                                                     in "${ resource }/bin/resource" ;
                                     } ;
+                            root-parameters =
+                                let
+                                    to-string =
+                                        visitor
+                                            {
+                                                string = path : value : value ;
+                                            } ;
+                                    in
+                                        {
+                                            invalid-init-channel = to-string invalid-init-channel ;
+                                            invalid-release-channel = to-string invalid-release-channel ;
+                                            valid-init-channel = to-string valid-init-channel ;
+                                            valid-release-channel = to-string valid-release-channel ;
+                                        } ;
                             in
                                 {
                                     check =
