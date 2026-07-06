@@ -132,7 +132,7 @@
                                                                     ] ;
                                                                 out = [ "resource" "error" "init" "release" "seed" "targets" "temporary" ] ;
                                                                 src = ./. ;
-                                                            }
+                                                            } ;
                                                     derivation =
                                                         mkDerivation
                                                             {
