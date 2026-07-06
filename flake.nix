@@ -337,6 +337,7 @@
                                                                     [
                                                                         coreutils
                                                                         findutils
+                                                                        log
                                                                         "${ derivation }/init/action"
                                                                     ] ;
                                                                 text =
