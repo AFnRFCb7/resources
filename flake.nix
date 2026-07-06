@@ -244,7 +244,7 @@
                                                                                                                                             cat "$ORIGINATOR_PID" > "/pids/$INDEX/$ORIGINATOR_PID"
                                                                                                                                             jq \
                                                                                                                                                 --arg EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.valid-init } \
+                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                 --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
                                                                                                                                                 --rawfile STANDARD_ERROR /private/standard-error \
@@ -268,7 +268,7 @@
                                                                                                                                         else
                                                                                                                                             jq \
                                                                                                                                                 --arg INDEX "$INDEX" \
-                                                                                                                                                --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
                                                                                                                                                 --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
