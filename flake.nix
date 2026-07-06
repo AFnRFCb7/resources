@@ -440,7 +440,9 @@
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
+                                                                        echo 1723258852938545 1369941427493491 4147717955564924 >&2
                                                                         init
+                                                                        echo 1723258852938545 1369941427493491 2836738527993726 >&2
                                                                         CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
