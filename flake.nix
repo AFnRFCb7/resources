@@ -451,7 +451,6 @@
                                                                         then
                                                                             export CHANNEL=valid-init
                                                                             jq \
-                                                                                --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
                                                                                 --argjson TEMPORARY ${ builtins.toJSON resource-parameters.temporary } \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
@@ -459,7 +458,7 @@
                                                                                         "inputs" : .inputs ,
                                                                                         "originator-pid" : .originator-pid ,
                                                                                         "seed" : .seed ,
-                                                                                        "standard-output" : $STANDARD_OUTPUT ,
+                                                                                        "standard-output" : .standard-output ,
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : $TEMPORARY
