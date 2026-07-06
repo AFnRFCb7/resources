@@ -245,7 +245,6 @@
                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
                                                                                                                                             jq \
-                                                                                                                                                --arg EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                 --arg INDEX "$INDEX" \
