@@ -232,12 +232,18 @@
                                                                                                                                                 STATUS="$?"
                                                                                                                                             fi
                                                                                                                                         else
+                                                                                                                                            echo 1723258852938545 1369941427493491 9715457956497246 >&2
                                                                                                                                             if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                             then
+                                                                                                                                                echo 1723258852938545 1369941427493491 9567457229284874 >&2
                                                                                                                                                 STATUS="$?"
+                                                                                                                                                echo 1723258852938545 1369941427493491 8992495747579658 >&2
                                                                                                                                             else
+                                                                                                                                                echo 1723258852938545 1369941427493491 4423792123195951 >&2
                                                                                                                                                 STATUS="$?"
+                                                                                                                                                echo 1723258852938545 1369941427493491 2853754635321186 >&2
                                                                                                                                             fi
+                                                                                                                                            echo 1723258852938545 1369941427493491 3293539379723942 >&2
                                                                                                                                         fi
                                                                                                                                         echo 1723258852938545 1369941427493491 4638725837289329 >&2
                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
