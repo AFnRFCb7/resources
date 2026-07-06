@@ -244,7 +244,7 @@
                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                 "status" : $STATUS
                                                                                                                                             }' \
-                                                                                                                                            "$INPUT_FILE"
+                                                                                                                                            "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                     '' ;
                                                                                                                             }
                                                                                                                     )
@@ -260,7 +260,7 @@
                                                                                             SEQUENCE="$( sequential )" || exit 105
                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                             export INDEX
-                                                                                            mkdir --parents "${ resources-directory }/$INDEX"
+                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                             init
                                                                                         '' ;
                                                                                 } ;
