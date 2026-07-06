@@ -120,12 +120,39 @@
                                                                                                     error =
                                                                                                         visitor
                                                                                                             {
-                                                                                                                int = path : value : builtins.toString value ;
-                                                                                                            } ;
+                                                                                                                int = path : value : builtins.builtins.toString value ;
+                                                                                                            }
+                                                                                                            error ;
+                                                                                                    seed =
+                                                                                                        let
+                                                                                                            to-string =
+                                                                                                                path : value :
+                                                                                                                    let
+                                                                                                                        type = builtins.typeOf value ;
+                                                                                                                        in
+                                                                                                                            [
+                                                                                                                                {
+                                                                                                                                    path = path ;
+                                                                                                                                    type = type ;
+                                                                                                                                    value = if type == "lambda" then null else value ;
+                                                                                                                                }
+                                                                                                                            ] ;
+                                                                                                            in
+                                                                                                                visitor
+                                                                                                                    {
+                                                                                                                        bool = to-string ;
+                                                                                                                        float = to-string ;
+                                                                                                                        int = to-string ;
+                                                                                                                        lambda = to-string ;
+                                                                                                                        list = path : value : builtins.concatLists value ;
+                                                                                                                        path = to-string ;
+                                                                                                                        set = path : value : builtins.concatLists ( builtins.attrValue value ) ;
+                                                                                                                        string = to-string ;
+                                                                                                                    }
+                                                                                                                    seed ;
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
-
                                                                                                 '' ;
                                                                                 }
                                                                         )
