@@ -233,8 +233,8 @@
                                                                                                                                         fi
                                                                                                                                         jq \
                                                                                                                                             --arg INDEX "$INDEX" \
-                                                                                                                                            --arg STANDARD_ERROR "$STANDARD_ERROR" \
-                                                                                                                                            --arg STANDARD_OUTPUT "$STANDARD_OUTPUT" \
+                                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                             --argjson STATUS "$STATUS" \
                                                                                                                                             '{
                                                                                                                                                 "arguments" : .arguments ,
