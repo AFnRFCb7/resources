@@ -415,9 +415,9 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
-                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "INPUT_FILE:?must be exported" "}" ] }"
-                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "INDEX:?must be exported" "}" ] }"
-                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "OUTPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "INPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }"
+                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "OUTPUT_FILE:?must be exported" "}" ] }"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/release/$INDEX"
