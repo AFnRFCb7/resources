@@ -331,8 +331,8 @@
                                                     store =
                                                         mkDerivation
                                                             {
-                                                                installPhase = ''installPhase "$out"'' ;
-                                                                name = "wtf" ;
+                                                                installPhase = ''install "$out"'' ;
+                                                                name = "resource" ;
                                                                 nativeBuildInputs =
                                                                     [
                                                                         (
