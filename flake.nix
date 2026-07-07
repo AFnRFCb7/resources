@@ -553,7 +553,6 @@
                                                                                                             is-releasable "$INDEX"
                                                                                                             CHANNEL="$( jq --raw-output ".channel" )" || exit 1260
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
-                                                                                                            STANDARD_OUTPUT="$( jq --raw-output '.["standard-output]' "$OUTPUT_FILE" )" || exit 150
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                             if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
