@@ -428,6 +428,8 @@
                                                                                                             SEQUENCE="$( sequential )" || exit 137
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                             export INDEX
+                                                                                                            mkdir --parents ${ resources-directory }/flags
+                                                                                                            touch "${ resources-directory }/flags/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/release/$INDEX"
@@ -496,6 +498,8 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
+                                                                                                            " "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }
+                                                                                                            rm "${ resources-directory }/flags/$INDEX"
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
