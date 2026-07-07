@@ -609,7 +609,7 @@
                                                                                                             then
                                                                                                                 jq \
                                                                                                                     '{
-                                                                                                                        "standard-output" : .standard-output ,
+                                                                                                                        "standard-output" : .["standard-output"] ,
                                                                                                                         "status" : .status
                                                                                                                     }' \
                                                                                                                     "$OUTPUT_FILE" | log
@@ -625,16 +625,16 @@
                                                                                                             then
                                                                                                                 jq \
                                                                                                                     '{
-                                                                                                                        "standard-output" : .standard-output ,
-                                                                                                                        "standard-error" : .standard-error
+                                                                                                                        "standard-output" : .["standard-output"] ,
+                                                                                                                        "standard-error" : .["standard-error"]
                                                                                                                     }' \
                                                                                                                     "$OUTPUT_FILE" | log
                                                                                                             elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                             then
                                                                                                                 jq \
                                                                                                                     '{
-                                                                                                                        "standard-output" : .standard-output ,
-                                                                                                                        "standard-error" : .standard-error ,
+                                                                                                                        "standard-output" : .["standard-output"] ,
+                                                                                                                        "standard-error" : .["standard-error"] ,
                                                                                                                         "status" : .status
                                                                                                                     }' \
                                                                                                                     "$OUTPUT_FILE" | log
