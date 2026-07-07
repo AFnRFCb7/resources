@@ -479,12 +479,16 @@
                                                                                                                 targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
                                                                                                             } ;
                                                                                                 init = visitor { lambda = path : value : value null ; } init ;
+                                                                                                invalid-channel = root-parameters.invalid-init-channel ;
                                                                                                 recovery = null ;
+                                                                                                valid-channel = root-parameters.valid-init-channel ;
                                                                                             } ;
                                                                                         release =
                                                                                             {
                                                                                                 action = null ;
+                                                                                                invalid-channel = root-parameters.invalid-release-channel ;
                                                                                                 recovery = null ;
+                                                                                                valid-channel = root-parameters.valid-release-channel ;
                                                                                             } ;
                                                                                         seed =
                                                                                             let
