@@ -101,6 +101,233 @@
                                                 temporary
                                             } :
                                                 let
+                                                    log =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "log" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        coreutils
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                    name = "log" ;
+                                                                                    runScript = "log" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "log" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                    JSON="$( cat )" || exit 129
+                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                                    echo "$JSON"
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 174> ${ resources-directory }/locks/clean
+                                                                        flock -s 174
+                                                                        exec 143> ${ resources-directory }/locks/log
+                                                                        flock -x 143
+                                                                        mkdir --parents ${ resources-directory }/log.yaml
+                                                                        log
+                                                                    '' ;
+                                                            } ;
+                                                    resource =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "resource" ;
+                                                                runtimeInputs = [ coreutils findutils log store ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 157> ${ resources-directory }/locks/clean
+                                                                        flock -s 157
+                                                                        INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
+                                                                        export INPUT_FILE
+                                                                        if [[ -t 0 ]]
+                                                                        then
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --args \
+                                                                                '{
+                                                                                    "arguments" : $ARGS.positional ,
+                                                                                    "inputs" : { } ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID
+                                                                                }' \
+                                                                                -- "$@" > "$INPUT_FILE"
+                                                                        else
+                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
+                                                                            STANDARD_INPUT="$( cat )" || exit 103
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                --args \
+                                                                                '{
+                                                                                    "arguments" : $ARGS.positional ,
+                                                                                    "inputs" :
+                                                                                        {
+                                                                                            "standard" : $STANDARD_INPUT
+                                                                                        } ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID
+                                                                                }' \
+                                                                                -- "$@" > "$INPUT_FILE"
+                                                                        fi
+                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                        export OUTPUT_FILE
+                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                        mkdir --parents ${ resources-directory }
+                                                                        init
+                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                        export CHANNEL
+                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
+                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
+                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
+                                                                        echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            export CHANNEL=valid-init
+                                                                            jq \
+                                                                                '{
+                                                                                    "arguments" : .arguments ,
+                                                                                    "index" : .index ,
+                                                                                    "inputs" : .inputs ,
+                                                                                    "originator-pid" : .["originator-pid"] ,
+                                                                                    "seed" : .seed ,
+                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                    "targets" : .targets ,
+                                                                                    "text" : .text ,
+                                                                                    "temporary" : .temporary
+                                                                                }' \
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                '{
+                                                                                    "arguments" : .arguments ,
+                                                                                    "index" : .index ,
+                                                                                    "inputs" : .inputs ,
+                                                                                    "originator-pid" : .["originator-pid"] , ,
+                                                                                    "seed" : .seed ,
+                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                    "status" : .status ,
+                                                                                    "targets" : .targets ,
+                                                                                    "text" : .text ,
+                                                                                    "temporary" : .temporary
+                                                                                }' \
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                '{
+                                                                                    "arguments" : .arguments ,
+                                                                                    "index" : .index ,
+                                                                                    "inputs" : .inputs ,
+                                                                                    "originator-pid" : .["originator-pid"] ,
+                                                                                    "seed" : .seed ,
+                                                                                    "standard-error" : .["standard-error"] ,
+                                                                                    "standard-output" : .["standard-error"] ,
+                                                                                    "status" : ./status ,
+                                                                                    "targets" : .targets ,
+                                                                                    "text" : .text ,
+                                                                                    "temporary" : .temporary
+                                                                                }' \
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                        then
+                                                                            export CHANNEL=invalid-init
+                                                                            jq \
+                                                                                '{
+                                                                                    "arguments" : .arguments ,
+                                                                                    "index" : .index ,
+                                                                                    "inputs" : .inputs ,
+                                                                                    "originator-pid" : .["originator-pid"] ,
+                                                                                    "seed" : .seed ,
+                                                                                    "standard-error" : .["standard-error"] ,
+                                                                                    "standard-output" : .["standard-ouput"] ,
+                                                                                    "status" : .status ,
+                                                                                    "targets" : .targets ,
+                                                                                    "text" : .text ,
+                                                                                    "temporary" : .temporary
+                                                                                }' \
+                                                                                "$OUTPUT_FILE" | log
+                                                                            exit "$EVALUATION"
+                                                                        fi
+                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                    '' ;
+                                                            } ;
+                                                        sequential =
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "sequential" ;
+                                                                    runtimeInputs =
+                                                                        [
+                                                                            coreutils
+                                                                            flock
+                                                                            (
+                                                                                buildFHSUserEnv
+                                                                                    {
+                                                                                        extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
+                                                                                        name = "sequential" ;
+                                                                                        runScript = "sequential" ;
+                                                                                        targetPkgs =
+                                                                                            pkgs :
+                                                                                                [
+                                                                                                    (
+                                                                                                        pkgs.writeShellApplication
+                                                                                                            {
+                                                                                                                name = "sequential" ;
+                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                text =
+                                                                                                                    ''
+                                                                                                                        CURRENT="$( cat /sequential )" || exit 166
+                                                                                                                        NEXT=$(( CURRENT + 1 ))
+                                                                                                                        echo "$NEXT" > /sequential
+                                                                                                                        echo "$CURRENT"
+                                                                                                                    '' ;
+                                                                                                            }
+                                                                                                    )
+                                                                                                ] ;
+                                                                                    }
+                                                                            )
+                                                                        ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                            exec 113> ${ resources-directory }/locks/clean
+                                                                            flock -s 113
+                                                                            if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                            then
+                                                                                echo 0 > ${ resources-directory }/sequential
+                                                                            fi
+                                                                            sequential
+                                                                        '' ;
+                                                                } ;
                                                     store =
                                                         mkDerivation
                                                             {
@@ -309,234 +536,6 @@
                                                                         )
                                                                     ] ;
                                                                 src = ./. ;
-                                                    resource =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils log store ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 157> ${ resources-directory }/locks/clean
-                                                                        flock -s 157
-                                                                        INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
-                                                                        export INPUT_FILE
-                                                                        if [[ -t 0 ]]
-                                                                        then
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" : { } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        else
-                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
-                                                                            STANDARD_INPUT="$( cat )" || exit 103
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" :
-                                                                                        {
-                                                                                            "standard" : $STANDARD_INPUT
-                                                                                        } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        fi
-                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                        export OUTPUT_FILE
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }
-                                                                        init
-                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
-                                                                        export CHANNEL
-                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
-                                                                        echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            export CHANNEL=valid-init
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                            exit "$EVALUATION"
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] , ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                            exit "$EVALUATION"
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-error"] ,
-                                                                                    "status" : ./status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                            exit "$EVALUATION"
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            export CHANNEL=invalid-init
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-ouput"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                            exit "$EVALUATION"
-                                                                        fi
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                    '' ;
-                                                            } ;
-                                                        log =
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "log" ;
-                                                                    runtimeInputs =
-                                                                        [
-                                                                            coreutils
-                                                                            (
-                                                                                buildFHSUserEnv
-                                                                                    {
-                                                                                        extraBwrapArgs = [ "--tmpfs" "/private" ] ;
-                                                                                        name = "log" ;
-                                                                                        runScript = "log" ;
-                                                                                        targetPkgs =
-                                                                                            pkgs :
-                                                                                                [
-                                                                                                    (
-                                                                                                        pkgs.writeShellApplication
-                                                                                                            {
-                                                                                                                name = "log" ;
-                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
-                                                                                                                text =
-                                                                                                                    ''
-                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                        JSON="$( cat )" || exit 129
-                                                                                                                        redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
-                                                                                                                        echo "$JSON"
-                                                                                                                    '' ;
-                                                                                                            }
-                                                                                                    )
-                                                                                                ] ;
-                                                                                    }
-                                                                            )
-                                                                        ] ;
-                                                                    text =
-                                                                        ''
-                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                            exec 174> ${ resources-directory }/locks/clean
-                                                                            flock -s 174
-                                                                            exec 143> ${ resources-directory }/locks/log
-                                                                            flock -x 143
-                                                                            mkdir --parents ${ resources-directory }/log.yaml
-                                                                            log
-                                                                        '' ;
-                                                                } ;
-                                                        sequential =
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "sequential" ;
-                                                                    runtimeInputs =
-                                                                        [
-                                                                            coreutils
-                                                                            flock
-                                                                            (
-                                                                                buildFHSUserEnv
-                                                                                    {
-                                                                                        extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
-                                                                                        name = "sequential" ;
-                                                                                        runScript = "sequential" ;
-                                                                                        targetPkgs =
-                                                                                            pkgs :
-                                                                                                [
-                                                                                                    (
-                                                                                                        pkgs.writeShellApplication
-                                                                                                            {
-                                                                                                                name = "sequential" ;
-                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                text =
-                                                                                                                    ''
-                                                                                                                        CURRENT="$( cat /sequential )" || exit 166
-                                                                                                                        NEXT=$(( CURRENT + 1 ))
-                                                                                                                        echo "$NEXT" > /sequential
-                                                                                                                        echo "$CURRENT"
-                                                                                                                    '' ;
-                                                                                                            }
-                                                                                                    )
-                                                                                                ] ;
-                                                                                    }
-                                                                            )
-                                                                        ] ;
-                                                                    text =
-                                                                        ''
-                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                            exec 113> ${ resources-directory }/locks/clean
-                                                                            flock -s 113
-                                                                            if [[ ! -f ${ resources-directory }/sequential ]]
-                                                                            then
-                                                                                echo 0 > ${ resources-directory }/sequential
-                                                                            fi
-                                                                            sequential
-                                                                        '' ;
-                                                                } ;
-                                                            } ;
                                                     in "${ resource }/bin/resource" ;
                                     } ;
                             root-parameters =
