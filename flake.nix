@@ -328,7 +328,7 @@
                                                                                                                                                         (
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
-                                                                                                                                                                    name = init ;
+                                                                                                                                                                    name = "init" ;
                                                                                                                                                                     runtimeInputs = resource-parameters.init.action.targetPkgs pkgs ;
                                                                                                                                                                     text = resource-parameters.init.action.text ;
                                                                                                                                                                 }
