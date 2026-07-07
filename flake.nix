@@ -528,7 +528,7 @@
                                                                                                                     }
                                                                                                             )
                                                                                                             (
-                                                                                                                buildHSFUserEnv
+                                                                                                                buildFSHUserEnv
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
