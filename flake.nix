@@ -468,7 +468,7 @@
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--ro-bind" gc-roots-directory "/gc-roots"
                                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                                                "--tmps" "/private"
+                                                                                                                                "--tmpfs" "/private"
                                                                                                                             ] ;
                                                                                                                         name = "is-releasable" ;
                                                                                                                         runScript = "is-releasable" ;
