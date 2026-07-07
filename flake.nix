@@ -532,6 +532,9 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
+                                                                                                                                "--bind" gc-root-directory "/gc-root"
+                                                                                                                                "--bind" resources-directory "/resources"
+                                                                                                                                "--bind" "$TEMPORARY" "/temporary"
                                                                                                                             ] ;
                                                                                                                         name = "release" ;
                                                                                                                         runScript = "release" ;
@@ -542,9 +545,15 @@
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "release" ;
-                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }"
+                                                                                                                                                        GC_ROOT_DIR_CANDIDATES="$( find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" )" || exit 145
+                                                                                                                                                        RESOURCE_CANDIDATES="$( find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" )" || exit 177
+                                                                                                                                                        CANDIDATES="$GC_ROOT_DIR_CANDIDATES $RESOURCE_CANDIDATES"
+                                                                                                                                                        tar --create --file /temporary/archive.tar.gz --xz "$CANDIDATES"
+                                                                                                                                                        rm --recursive --force "$CANDIDATES"
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -558,6 +567,7 @@
                                                                                                             exec 182> ${ resources-directory }/locks/clean
                                                                                                             flock -s 182
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }/temporary
                                                                                                             INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                             export INPUT_FILE
                                                                                                             jq \
@@ -579,6 +589,8 @@
                                                                                                             export CHANNEL
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
+                                                                                                            TEMPORARY="$( mktemp --directory )" || exit 180
+                                                                                                            release
                                                                                                             if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
                                                                                                                 jq \
