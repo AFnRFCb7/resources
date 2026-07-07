@@ -349,7 +349,7 @@
                                                                                             {
                                                                                                 action =
                                                                                                     let
-                                                                                                        action = visitor { lambda = path : value : value null ; } resource-parameters.init.init ;
+                                                                                                        action = { wtf = true ; } ; # visitor { lambda = path : value : value null ; } resource-parameters.init.init ;
                                                                                                         in
                                                                                                             {
                                                                                                                 script =
