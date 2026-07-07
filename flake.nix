@@ -244,7 +244,7 @@
                                                                                             text = visitor { string = path : value : value ; } action.text ;
                                                                                             targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
                                                                                         } ;
-                                                                            init = visitor { lambda = path : value : value null } init ;
+                                                                            init = visitor { lambda = path : value : value null ; } init ;
                                                                             recovery = null ;
                                                                         } ;
                                                                     release =
