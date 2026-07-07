@@ -606,7 +606,7 @@
                                                                                                             mkdir --parents ${ resources-directory }/locks
                                                                                                             exec 182> ${ resources-directory }/locks/clean
                                                                                                             flock -s 182
-                                                                                                            rm "${ resources-directory }/flags/$INDEX"
+                                                                                                            rm --force "${ resources-directory }/flags/$INDEX"
                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                             do
                                                                                                                 PID="$( basename "$PID_FILE" )" || exit 169
@@ -627,6 +627,7 @@
                                                                                                             is-releasable
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                            echo 1723258852938545 1369941427493491 3913624127772333 "STATUS=$STATUS" "$STANDARD_ERROR" >&2
                                                                                                             if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
                                                                                                                 exec 186> "${ resources-directory }/locks/$INDEX.lock"
