@@ -500,6 +500,12 @@
                                                                                                     text =
                                                                                                         ''
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
+                                                                                                            find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
+                                                                                                            do
+                                                                                                                PID="$( cat "$PID_FILE" )" || exit 169
+                                                                                                                tail --follow /dev/null --pid "$PID"
+                                                                                                                rm "$PID_FILE"
+                                                                                                            done
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
