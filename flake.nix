@@ -324,7 +324,7 @@
                                                                                 }
                                                                         )
                                                                     ] ;
-                                                                out = [ "error" "init" "init-recovery" "release" "release-recovery" "seed" "targets" "temporary" ] ;
+                                                                outputs = [ "error" "init" "init-recovery" "release" "release-recovery" "seed" "targets" "temporary" ] ;
                                                                 src = ./. ;
                                                             } ;
                                                     resource =
