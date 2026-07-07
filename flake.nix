@@ -595,8 +595,11 @@
                                                                                                             is-releasable
                                                                                                             echo 1723258852938545 1369941427493491 1313163434893826 >&2
                                                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
+                                                                                                            echo 1723258852938545 1369941427493491 6919472452776286 >&2
                                                                                                             export CHANNEL
-                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                            echo 1723258852938545 1369941427493491 8182982595947341 >&2
+                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                            echo 1723258852938545 1369941427493491 3777369614853585 >&2
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
 #                                                                                                            TEMPORARY="$( mktemp --directory )" || exit 180
 #                                                                                                            export TEMPORARY
