@@ -412,7 +412,11 @@
                                                                                                                     }
                                                                                                             )
                                                                                                         ] ;
-                                                                                                    text = "init" ;
+                                                                                                    text =
+                                                                                                        ''
+                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "INPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            init
+                                                                                                        '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
                                                                                         targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
