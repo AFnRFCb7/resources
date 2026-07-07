@@ -478,7 +478,7 @@
                                                                                                                                     (
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
-                                                                                                                                                name = "release" ;
+                                                                                                                                                name = "is-releasable" ;
                                                                                                                                                 runtimeInputs =
                                                                                                                                                     [
                                                                                                                                                         pkgs.findutils
