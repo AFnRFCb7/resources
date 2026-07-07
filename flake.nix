@@ -151,7 +151,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils log store ] ;
+                                                                runtimeInputs = [ coreutils findutils log "${ store }/init/action" ] ;
                                                                 text =
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
@@ -512,7 +512,7 @@
                                                                                                 ## FIXME
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
-                                                                                                ## FIXME
+                                                                                                ln --symbolic ${ resource-parameters.init.action } "$OUT/init/action"
                                                                                                 mkdir --parents "$OUT/release"
                                                                                             '' ;
                                                                                     }
