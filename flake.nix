@@ -509,7 +509,7 @@
                                                                                         text =
                                                                                             ''
                                                                                                 OUT="$1"
-                                                                                                ln --symbolic ${ builtins.toFile "resource-parameters.json" ( builtins.toJSON resource-parameters ) } "$OUT/resource-parameters.json"
+                                                                                                ## FIXME
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
                                                                                                 ## FIXME
