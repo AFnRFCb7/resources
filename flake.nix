@@ -322,6 +322,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        echo 1723258852938545 1369941427493491 5977929882474499 >&2
                                                                                                                                                         jq --raw-output '.arguments[]' /input > /private/jq
                                                                                                                                                         mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
                                                                                                                                                         cd /mount
