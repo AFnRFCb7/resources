@@ -534,6 +534,7 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
+                                                                                                                                "--ro-bind" "$OUTPUT_FILE" "/input"
                                                                                                                                 "--bind" gc-roots-directory "/gc-roots"
                                                                                                                                 "--bind" resources-directory "/resources"
                                                                                                                                 "--bind" "$TEMPORARY" "/temporary"
