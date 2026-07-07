@@ -204,9 +204,6 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        echo 1723258852938545 1369941427493491 2179871487263913 "$( which init )" >&2
-                                                                        echo 1723258852938545 1369941427493491 9557991424675937 "$OUTPUT_FILE" >&2
-                                                                        echo 1723258852938545 1369941427493491 7424844563628568 "$( cat "$OUTPUT_FILE" )" >&2
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
@@ -336,16 +333,11 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        echo 1723258852938545 1369941427493491 5977929882474499 >&2
                                                                                                                                                         jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                                                                        echo 1723258852938545 1369941427493491 5756945877915565 >&2
                                                                                                                                                         mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
-                                                                                                                                                        echo 1723258852938545 1369941427493491 3731363293144921 >&2
                                                                                                                                                         cd /mount
-                                                                                                                                                        echo 1723258852938545 1369941427493491 9664853194168353 >&2
                                                                                                                                                         if jq -e '.inputs | has("standard")' /input > /private/jq
                                                                                                                                                         then
-                                                                                                                                                            echo 1723258852938545 1369941427493491 9114166328879217 >&2
                                                                                                                                                             if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                             then
                                                                                                                                                                 STATUS="$?"
@@ -353,7 +345,6 @@
                                                                                                                                                                 STATUS="$?"
                                                                                                                                                             fi
                                                                                                                                                         else
-                                                                                                                                                            echo 1723258852938545 1369941427493491 3759431398286183 "$( which init )" "$( cat "$( which init )" )" >&2
                                                                                                                                                             if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                             then
                                                                                                                                                                 STATUS="$?"
@@ -361,16 +352,11 @@
                                                                                                                                                                 STATUS="$?"
                                                                                                                                                             fi
                                                                                                                                                         fi
-                                                                                                                                                        echo 1723258852938545 1369941427493491 5785613721669218 >&2
                                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
-                                                                                                                                                        echo 1723258852938545 1369941427493491 5785613721669218 >&2
                                                                                                                                                         OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                                        echo 1723258852938545 1369941427493491 1549248962316747 >&2
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
-                                                                                                                                                        echo 1723258852938545 1369941427493491 3932489833747468 >&2
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            echo 1723258852938545 1369941427493491 2722366415799286 >&2
                                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
                                                                                                                                                             ### FIXME
@@ -399,7 +385,6 @@
                                                                                                                                                                 }' \
                                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
-                                                                                                                                                            echo 1723258852938545 1369941427493491 2186993582966656 >&2
                                                                                                                                                             jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
@@ -429,7 +414,6 @@
                                                                                                                                                                 }' \
                                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         fi
-                                                                                                                                                        echo 1723258852938545 1369941427493491 4122227154617393 >&2
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
