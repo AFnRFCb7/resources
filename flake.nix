@@ -536,6 +536,7 @@
                                                                             sequential
                                                                         '' ;
                                                                 } ;
+                                                            } ;
                                                     in "${ resource }/bin/resource" ;
                                     } ;
                             root-parameters =
