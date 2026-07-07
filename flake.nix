@@ -584,7 +584,9 @@
                                                                                                                 rm "$PID_FILE"
                                                                                                             done
                                                                                                             mkdir --parents ${ gc-roots-directory }
-                                                                                                            is-releasable "$INDEX"
+                                                                                                            echo 1723258852938545 1369941427493491 5118666461773186 >&2
+                                                                                                            is-releasable
+                                                                                                            echo 1723258852938545 1369941427493491 1313163434893826 >&2
                                                                                                             CHANNEL="$( jq --raw-output ".channel" )" || exit 134
                                                                                                             export CHANNEL
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
