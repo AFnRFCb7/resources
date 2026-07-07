@@ -458,9 +458,14 @@
                                                                                                     name = "release" ;
                                                                                                     runtimeInputs =
                                                                                                         [
+                                                                                                            coreutils
+                                                                                                            flock
                                                                                                             (
                                                                                                                 buildFHSUserEnv
                                                                                                                     {
+                                                                                                                        extraBrwapArgs =
+                                                                                                                            [
+                                                                                                                            ] ;
                                                                                                                         name = "release" ;
                                                                                                                         runScript = "release" ;
                                                                                                                         targetPkgs =
@@ -499,6 +504,9 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
+                                                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                                                            exec 182> ${ resources-directory }/locks/clean
+                                                                                                            flock -s 182
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                             do
@@ -506,6 +514,7 @@
                                                                                                                 tail --follow /dev/null --pid "$PID"
                                                                                                                 rm "$PID_FILE"
                                                                                                             done
+                                                                                                            release
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
