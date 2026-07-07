@@ -298,6 +298,8 @@
                                                                                                     name = "init" ;
                                                                                                     runtimeInputs =
                                                                                                         [
+                                                                                                            coreutils
+                                                                                                            sequential
                                                                                                             (
                                                                                                                 buildFHSUserEnv
                                                                                                                     {
@@ -316,7 +318,6 @@
                                                                                                                         targetPkgs =
                                                                                                                             pkgs :
                                                                                                                                 [
-                                                                                                                                    pkgs.coreutils
                                                                                                                                     (
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
