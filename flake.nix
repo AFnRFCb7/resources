@@ -480,7 +480,13 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-
+                                                                                                                                                        if release
+                                                                                                                                                        then
+                                                                                                                                                            STATUS="$?"
+                                                                                                                                                        else
+                                                                                                                                                            STATUS="$?"
+                                                                                                                                                        fi
+                                                                                                                                                        echo "$STATUS"
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -496,6 +502,7 @@
                                                                                         targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
                                                                                     } ;
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
+                                                                        release = visitor { lambda = path : value : value null ; } release ;
                                                                         recovery = null ;
                                                                         valid-channel = root-parameters.valid-release-channel ;
                                                                     } ;
