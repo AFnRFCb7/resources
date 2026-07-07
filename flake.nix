@@ -304,10 +304,10 @@
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                                 "--bind" "${ resources-directory }/release/$INDEX" "/release"
+                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                 "--tmpfs" "/private"
                                                                                                                                 "--tmpfs" "/scratch"
                                                                                                                             ] ;
@@ -316,6 +316,7 @@
                                                                                                                         targetPkgs =
                                                                                                                             pkgs :
                                                                                                                                 [
+                                                                                                                                    pkgs.coreutils
                                                                                                                                     (
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
@@ -415,6 +416,11 @@
                                                                                                     text =
                                                                                                         ''
                                                                                                             : "${ builtins.concatStringsSep "$" [ "{" "INPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "INDEX:?must be exported" "}" ] }"
+                                                                                                            : "${ builtins.concatStringsSep "$" [ "{" "OUTPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            mkdir --parents "${ resources-directory }/release/$INDEX"
                                                                                                             init
                                                                                                         '' ;
                                                                                                 } ;
