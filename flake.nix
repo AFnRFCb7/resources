@@ -316,6 +316,7 @@
                                                                                                     touch "$INIT_RECOVERY"
                                                                                                     touch "$RELEASE"
                                                                                                     touch "$RELEASE_RECOVERY"
+                                                                                                    touch "$SEED"
                                                                                                     touch "$TARGETS"
                                                                                                     touch "$TEMPORARY"
 #                                                                                                    jq "." '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' > "$ERROR"
