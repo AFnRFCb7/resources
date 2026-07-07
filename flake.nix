@@ -316,10 +316,10 @@
                                                                                                     jq "." '${ builtins.toFile "seed.json" ( builtins.toJSON resource-parameters.seed ) }' > "$SEED"
                                                                                                     jq "." '${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) }' > "$TARGETS"
                                                                                                     jq "." '${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) }' > "$TEMPORARY"
-                                                                                                    export INIT
-                                                                                                    export INIT_RECOVERY
-                                                                                                    export RELEASE
-                                                                                                    export RELEASE_RECOVERY
+                                                                                                    touch "$INIT"
+                                                                                                    touch "$INIT_RECOVERY"
+                                                                                                    touch "$RELEASE"
+                                                                                                    touch "$RELEASE_RECOVERY"
                                                                                                 '' ;
                                                                                 }
                                                                         )
