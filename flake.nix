@@ -513,8 +513,8 @@
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         fi
                                                                                                                                                         jq \
-                                                                                                                                                            --arg STANDARD_ERROR private/standard-error \
-                                                                                                                                                            --arg STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                            --rawfile STANDARD_ERROR private/standard-error \
+                                                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                             --arg STATUS "$STATUS" \
                                                                                                                                                             '{
                                                                                                                                                                 "index" : .index ,
