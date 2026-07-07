@@ -498,7 +498,7 @@
                                                                                                                                                         echo 1723258852938545 1369941427493491 8811967523799557 "$( ${ pkgs.findutils }/bin/find / -maxdepth 1 | sort )" >&2
                                                                                                                                                         INDEX="$( jq --raw-output ".index" /input )" || exit 189
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                        find /gc-roots -type L | sort | while read -r LINK
+                                                                                                                                                        find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
                                                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
