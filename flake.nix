@@ -496,6 +496,7 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 176
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                                                         find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
