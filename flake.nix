@@ -359,7 +359,7 @@
                                                                                                                                                         then
                                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                                            ### FIXME
+                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } /release/action
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
@@ -444,7 +444,12 @@
                                                                     } ;
                                                                 release =
                                                                     {
-                                                                        action = null ;
+                                                                        action =
+                                                                            {
+                                                                                script = ./. ;
+                                                                                text = visitor { string = path : value : value ; } action.text ;
+                                                                                targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
+                                                                            } ;
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
                                                                         recovery = null ;
                                                                         valid-channel = root-parameters.valid-release-channel ;
