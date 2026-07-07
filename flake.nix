@@ -512,7 +512,7 @@
                                                                                                 ln --symbolic ${ builtins.toFile "resource-parameters.json" ( builtins.toJSON resource-parameters ) } "$OUT/resource-parameters.json"
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
-                                                                                                ln --symbolic ${ resource-parameters.init.action.script } > "$OUT/init/action" ;
+                                                                                                ## FIXME
                                                                                                 mkdir --parents "$OUT/release"
                                                                                             '' ;
                                                                                     }
