@@ -555,10 +555,12 @@
                                                                                                                                                         RESOURCE_CANDIDATES="$( find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" )" || exit 177
                                                                                                                                                         CANDIDATES="$GC_ROOT_DIR_CANDIDATES $RESOURCE_CANDIDATES"
                                                                                                                                                         tar --create --file /temporary/archive.tar.gz --xz "$CANDIDATES"
+                                                                                                                                                        echo 1723258852938545 1369941427493491 2549126527791212 >&2
                                                                                                                                                         rm --recursive --force "$CANDIDATES"
-                                                                                                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
+                                                                                                                                                        echo 1723258852938545 1369941427493491 3954644534147368 >&2
+                                                                                                                                                        CHANNEL="$( jq --raw-output ".channel" /ouput )" || exit 134
                                                                                                                                                         export CHANNEL
-                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /output )" || exit 148
                                                                                                                                                         if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -566,7 +568,7 @@
                                                                                                                                                                     "standard-output" : .["standard-output"] ,
                                                                                                                                                                     "status" : .status
                                                                                                                                                                 }' \
-                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                                /output | log
                                                                                                                                                         elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -574,7 +576,7 @@
                                                                                                                                                                     "standard-output" : .standard-output ,
                                                                                                                                                                     "status" : .status
                                                                                                                                                                 }' \
-                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                                /output | log
                                                                                                                                                         elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -582,7 +584,7 @@
                                                                                                                                                                     "standard-output" : .["standard-output"] ,
                                                                                                                                                                     "standard-error" : .["standard-error"]
                                                                                                                                                                 }' \
-                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                                /output | log
                                                                                                                                                         elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -591,7 +593,7 @@
                                                                                                                                                                     "standard-error" : .["standard-error"] ,
                                                                                                                                                                     "status" : .status
                                                                                                                                                                 }' \
-                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                                /output | log
                                                                                                                                                         fi
                                                                                                                                                     '' ;
                                                                                                                                             }
