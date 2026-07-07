@@ -530,7 +530,10 @@
                                                                                             ''
                                                                                                 OUT="$1"
                                                                                                 mkdir --parents "$OUT"
-                                                                                                jq '${ builtins.toJSON resource-parameters.error }' > "$OUT/error.json"
+                                                                                                jq '${ builtins.toJSON resource-parameters }' > "$OUT/resource-parameters.json"
+                                                                                                mkdir --parents "$OUT/init"
+                                                                                                ln --symbolic ${ resource-parameters.init.action } > "$OUT/init/action" ;
+                                                                                                mkdir --parents "$OUT/release"
                                                                                             '' ;
                                                                                     }
                                                                         )
