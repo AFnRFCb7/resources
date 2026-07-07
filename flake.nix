@@ -547,7 +547,7 @@
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "release" ;
-                                                                                                                                                runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz log ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         : "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }"
@@ -556,6 +556,43 @@
                                                                                                                                                         CANDIDATES="$GC_ROOT_DIR_CANDIDATES $RESOURCE_CANDIDATES"
                                                                                                                                                         tar --create --file /temporary/archive.tar.gz --xz "$CANDIDATES"
                                                                                                                                                         rm --recursive --force "$CANDIDATES"
+                                                                                                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
+                                                                                                                                                        export CHANNEL
+                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                                                                        if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                        then
+                                                                                                                                                            jq \
+                                                                                                                                                                '{
+                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                    "status" : .status
+                                                                                                                                                                }' \
+                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                        elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                        then
+                                                                                                                                                            jq \
+                                                                                                                                                                '{
+                                                                                                                                                                    "standard-output" : .standard-output ,
+                                                                                                                                                                    "status" : .status
+                                                                                                                                                                }' \
+                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                        elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                        then
+                                                                                                                                                            jq \
+                                                                                                                                                                '{
+                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                    "standard-error" : .["standard-error"]
+                                                                                                                                                                }' \
+                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                        elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                        then
+                                                                                                                                                            jq \
+                                                                                                                                                                '{
+                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                    "standard-error" : .["standard-error"] ,
+                                                                                                                                                                    "status" : .status
+                                                                                                                                                                }' \
+                                                                                                                                                                "$OUTPUT_FILE" | log
+                                                                                                                                                        fi
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -569,6 +606,12 @@
                                                                                                             exec 182> ${ resources-directory }/locks/clean
                                                                                                             flock -s 182
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
+                                                                                                            find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
+                                                                                                            do
+                                                                                                                PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                tail --follow /dev/null --pid "$PID"
+                                                                                                                rm "$PID_FILE"
+                                                                                                            done
                                                                                                             mkdir --parents ${ resources-directory }/temporary
                                                                                                             INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                             export INPUT_FILE
@@ -579,54 +622,20 @@
                                                                                                                 }' > "$INPUT_FILE"
                                                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                             export OUTPUT_FILE
-                                                                                                            find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
-                                                                                                            do
-                                                                                                                PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                tail --follow /dev/null --pid "$PID"
-                                                                                                                rm "$PID_FILE"
-                                                                                                            done
                                                                                                             mkdir --parents ${ gc-roots-directory }
                                                                                                             is-releasable
-                                                                                                            CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
-                                                                                                            export CHANNEL
-                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
-#                                                                                                            TEMPORARY="$( mktemp --directory )" || exit 180
-#                                                                                                            export TEMPORARY
-#                                                                                                            release
-                                                                                                            if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                            if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
-                                                                                                                jq \
-                                                                                                                    '{
-                                                                                                                        "standard-output" : .["standard-output"] ,
-                                                                                                                        "status" : .status
-                                                                                                                    }' \
-                                                                                                                    "$OUTPUT_FILE" | log
-                                                                                                            elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                                                            then
-                                                                                                                jq \
-                                                                                                                    '{
-                                                                                                                        "standard-output" : .standard-output ,
-                                                                                                                        "status" : .status
-                                                                                                                    }' \
-                                                                                                                    "$OUTPUT_FILE" | log
-                                                                                                            elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                            then
-                                                                                                                jq \
-                                                                                                                    '{
-                                                                                                                        "standard-output" : .["standard-output"] ,
-                                                                                                                        "standard-error" : .["standard-error"]
-                                                                                                                    }' \
-                                                                                                                    "$OUTPUT_FILE" | log
-                                                                                                            elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                            then
-                                                                                                                jq \
-                                                                                                                    '{
-                                                                                                                        "standard-output" : .["standard-output"] ,
-                                                                                                                        "standard-error" : .["standard-error"] ,
-                                                                                                                        "status" : .status
-                                                                                                                    }' \
-                                                                                                                    "$OUTPUT_FILE" | log
+                                                                                                                exec 186> "${ resources-directory }/locks/$INDEX.lock"
+                                                                                                                flock -x 186
+                                                                                                                TEMPORARY="$( mktemp --directory )" || exit 112
+                                                                                                                export TEMPORARY
+                                                                                                                release
+                                                                                                            else
+                                                                                                                flock -u 182
+                                                                                                                "$0"
                                                                                                             fi
                                                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                         '' ;
