@@ -449,7 +449,49 @@
                                                                                 action = visitor { lambda = path : value : value null ; } resource-parameters.release.release.action ;
                                                                                 in
                                                                                     {
-                                                                                        script = ./. ;
+                                                                                        script =
+                                                                                            writeShellApplication
+                                                                                                {
+                                                                                                    name = "release" ;
+                                                                                                    runtimeInputs =
+                                                                                                        [
+                                                                                                            (
+                                                                                                                buildFHSUserEnv
+                                                                                                                    {
+                                                                                                                        name = "release" ;
+                                                                                                                        runScript = "release" ;
+                                                                                                                        targetPkgs =
+                                                                                                                            pkgs :
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "release" ;
+                                                                                                                                                runtimeInputs =
+                                                                                                                                                    [
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "release" ;
+                                                                                                                                                                    runtimeInputs = release-parameters.release.action.targetPkgs pkgs ;
+                                                                                                                                                                    text = release-parameters.release.action.text ;
+                                                                                                                                                                }
+                                                                                                                                                        )
+                                                                                                                                                    ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                    }
+                                                                                                            )
+                                                                                                        ] ;
+                                                                                                    text =
+                                                                                                        ''
+                                                                                                        '' ;
+                                                                                                } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
                                                                                         targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
                                                                                     } ;
