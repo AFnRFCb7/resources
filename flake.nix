@@ -104,7 +104,7 @@
                                                     store =
                                                         mkDerivation
                                                             {
-                                                                installPhase = ''resource "$error" "$init" "$release" "$seed" "$targets" "$temporary"'' ;
+                                                                installPhase = ''resource "$error" "$init" $init-recovery" "$release" "release-recovery" "$seed" "$targets" "$temporary"'' ;
                                                                 name = "alpha" ;
                                                                 nativeBuildInputs =
                                                                     [
