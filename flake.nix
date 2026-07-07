@@ -527,6 +527,20 @@
                                                                                                                                 ] ;
                                                                                                                     }
                                                                                                             )
+                                                                                                            (
+                                                                                                                buildHSFUserEnv
+                                                                                                                    {
+                                                                                                                        extraBwrapArgs =
+                                                                                                                            [
+                                                                                                                            ] ;
+                                                                                                                        name = "release" ;
+                                                                                                                        runScript = "release" ;
+                                                                                                                        targetPkgs =
+                                                                                                                            pkgs :
+                                                                                                                                [
+                                                                                                                                ] ;
+                                                                                                                    }
+                                                                                                            )
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
@@ -535,14 +549,14 @@
                                                                                                             flock -s 182
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
                                                                                                             INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                            export "$INPUT_FILE"
+                                                                                                            export INPUT_FILE
                                                                                                             jq \
                                                                                                                 --null-input \
                                                                                                                 '{
                                                                                                                     "index" : $INDEX
                                                                                                                 }' > "$INPUT_FILE"
                                                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                            export "$OUTPUT_FILE"
+                                                                                                            export OUTPUT_FILE
                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                             do
                                                                                                                 PID="$( basename "$PID_FILE" )" || exit 169
