@@ -538,6 +538,16 @@
                                                                                                                         targetPkgs =
                                                                                                                             pkgs :
                                                                                                                                 [
+                                                                                                                                    (
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "release" ;
+                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
                                                                                                                                 ] ;
                                                                                                                     }
                                                                                                             )
