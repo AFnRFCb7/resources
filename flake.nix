@@ -509,7 +509,6 @@
                                                                                             ''
                                                                                                 OUT="$1"
                                                                                                 mkdir --parents "$OUT"
-                                                                                                jq '${ builtins.toJSON ( visitor { bool = stringify ; float = stringify ; int = stringify ; lambda = stringify ; list = stringify ; null = stringify ; path = stringify ; set = stringify ; string = stringify ; } resource-parameters ) }' > "$OUT/resource-parameters.json"
                                                                                                 mkdir --parents "$OUT/init"
                                                                                                 ln --symbolic ${ resource-parameters.init.action } > "$OUT/init/action" ;
                                                                                                 mkdir --parents "$OUT/release"
