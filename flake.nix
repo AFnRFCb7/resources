@@ -498,14 +498,17 @@
                                                                                                                                                         echo 1723258852938545 1369941427493491 8811967523799557 "$( ${ pkgs.findutils }/bin/find / -maxdepth 1 | sort )" >&2
                                                                                                                                                         INDEX="$( jq --raw-output ".index" /input )" || exit 189
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                        echo 1723258852938545 1369941427493491 1554195584964686 >&2
                                                                                                                                                         find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
                                                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                                                            echo 1723258852938545 1369941427493491 7195962725642531 "EXPECTED=$EXPECTED" "OBSERVED=$OBSERVED" >&2
                                                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                             then
                                                                                                                                                                 inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                                                             fi
                                                                                                                                                         done
+                                                                                                                                                        echo 1723258852938545 1369941427493491 6323192639153666 >&2
                                                                                                                                                         if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                         then
                                                                                                                                                             STATUS="$?"
