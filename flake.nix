@@ -128,7 +128,6 @@
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     JSON="$( cat )" || exit 129
                                                                                                                     redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
-                                                                                                                    echo "$JSON"
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
