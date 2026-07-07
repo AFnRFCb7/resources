@@ -342,7 +342,7 @@
                                                                                                                                                                 STATUS="$?"
                                                                                                                                                             fi
                                                                                                                                                         else
-                                                                                                                                                            echo 1723258852938545 1369941427493491 3759431398286183 >&2
+                                                                                                                                                            echo 1723258852938545 1369941427493491 3759431398286183 "$( which init )" >&2
                                                                                                                                                             if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                             then
                                                                                                                                                                 STATUS="$?"
