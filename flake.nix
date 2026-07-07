@@ -473,8 +473,8 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "release" ;
-                                                                                                                                                                    runtimeInputs = release-parameters.release.action.targetPkgs pkgs ;
-                                                                                                                                                                    text = release-parameters.release.action.text ;
+                                                                                                                                                                    runtimeInputs = resource-parameters.release.action.targetPkgs pkgs ;
+                                                                                                                                                                    text = resource-parameters.release.action.text ;
                                                                                                                                                                 }
                                                                                                                                                         )
                                                                                                                                                     ] ;
