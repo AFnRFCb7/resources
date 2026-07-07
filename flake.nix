@@ -273,7 +273,7 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         fi
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        exit "$EVALUTATION"
+                                                                        exit "$EVALUATION"
                                                                     '' ;
                                                             } ;
                                                         resource-parameters =
