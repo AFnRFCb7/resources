@@ -465,9 +465,13 @@
                                                                                                                     {
                                                                                                                         extraBrwapArgs =
                                                                                                                             [
+                                                                                                                                "--ro-bind" "$INPUt_FILE" "/output"
+                                                                                                                                "--ro-bind" gc-roots-directory "/gc-roots"
+                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
+                                                                                                                                "--tmps" "/private"
                                                                                                                             ] ;
-                                                                                                                        name = "release" ;
-                                                                                                                        runScript = "release" ;
+                                                                                                                        name = "is-releasable" ;
+                                                                                                                        runScript = "is-releasable" ;
                                                                                                                         targetPkgs =
                                                                                                                             pkgs :
                                                                                                                                 [
@@ -477,6 +481,9 @@
                                                                                                                                                 name = "release" ;
                                                                                                                                                 runtimeInputs =
                                                                                                                                                     [
+                                                                                                                                                        pkgs.findutils
+                                                                                                                                                        pkgs.inotify-tools
+                                                                                                                                                        pkgs.jq
                                                                                                                                                         (
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
@@ -488,13 +495,32 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if release
+                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 189
+                                                                                                                                                        EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                        find /gc-roots -type L | sort | while read -r LINK
+                                                                                                                                                        do
+                                                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                                                            then
+                                                                                                                                                                inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                            fi
+                                                                                                                                                        done
+                                                                                                                                                        if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                         then
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         else
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         fi
-                                                                                                                                                        echo "$STATUS"
+                                                                                                                                                        jq \
+                                                                                                                                                            --arg STANDARD_ERROR private/standard-error \
+                                                                                                                                                            --arg STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                            --arg STATUS "$STATUS" \
+                                                                                                                                                            '{
+                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                "status" : $STATUS
+                                                                                                                                                            }' > /output
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -508,13 +534,62 @@
                                                                                                             exec 182> ${ resources-directory }/locks/clean
                                                                                                             flock -s 182
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
+                                                                                                            INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                            export "$INPUT_FILE"
+                                                                                                            jq \
+                                                                                                                --null-input \
+                                                                                                                '{
+                                                                                                                    "index" : $INDEX
+                                                                                                                }' > "$INPUT_FILE"
+                                                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                            export "$OUTPUT_FILE"
                                                                                                             find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                             do
-                                                                                                                PID="$( cat "$PID_FILE" )" || exit 169
+                                                                                                                PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                 tail --follow /dev/null --pid "$PID"
                                                                                                                 rm "$PID_FILE"
                                                                                                             done
-                                                                                                            release
+                                                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                                                            is-releasable "$INDEX"
+                                                                                                            CHANNEL="$( jq --raw-output ".channel" )" || exit 1260
+                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                            STANDARD_OUTPUT="$( jq --raw-output '.["standard-output]' "$OUTPUT_FILE" )" || exit 150
+                                                                                                            STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
+                                                                                                            if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                            then
+                                                                                                                jq \
+                                                                                                                    '{
+                                                                                                                        "standard-output" : .standard-output ,
+                                                                                                                        "status" : .status
+                                                                                                                    }' \
+                                                                                                                    "$OUTPUT_FILE" | log
+                                                                                                            elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                            then
+                                                                                                                jq \
+                                                                                                                    '{
+                                                                                                                        "standard-output" : .standard-output ,
+                                                                                                                        "status" : .status
+                                                                                                                    }' \
+                                                                                                                    "$OUTPUT_FILE" | log
+                                                                                                            elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                            then
+                                                                                                                jq \
+                                                                                                                    '{
+                                                                                                                        "standard-output" : .standard-output ,
+                                                                                                                        "standard-error" : .standard-error
+                                                                                                                    }' \
+                                                                                                                    "$OUTPUT_FILE" | log
+                                                                                                            elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                            then
+                                                                                                                jq \
+                                                                                                                    '{
+                                                                                                                        "standard-output" : .standard-output ,
+                                                                                                                        "standard-error" : .standard-error ,
+                                                                                                                        "status" : .status
+                                                                                                                    }' \
+                                                                                                                    "$OUTPUT_FILE" | log
+                                                                                                            fi
+                                                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
