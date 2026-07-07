@@ -558,7 +558,7 @@
                                                                                                                                                         find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
                                                                                                                                                         CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
                                                                                                                                                         export CHANNEL
-                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /output )" || exit 148
+                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 148
                                                                                                                                                         if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
