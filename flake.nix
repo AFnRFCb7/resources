@@ -496,7 +496,8 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 189
+                                                                                                                                                        SEQUENCE="$( jq --raw-output ".index" /input )" || exit 189
+                                                                                                                                                        printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                                                         find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
