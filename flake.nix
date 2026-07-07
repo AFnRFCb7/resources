@@ -495,7 +495,7 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        echo 1723258852938545 1369941427493491 8811967523799557 >&2
+                                                                                                                                                        echo 1723258852938545 1369941427493491 8811967523799557 "$( ${ pkgs.findutils }/bin/find -maxdepth 1 / )" >&2
                                                                                                                                                         INDEX="$( jq --raw-output ".index" /input )" || exit 189
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                                                         find /gc-roots -type L | sort | while read -r LINK
