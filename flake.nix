@@ -463,7 +463,7 @@
                                                                                                             (
                                                                                                                 buildFHSUserEnv
                                                                                                                     {
-                                                                                                                        extraBrwapArgs =
+                                                                                                                        extraBwrapArgs =
                                                                                                                             [
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--ro-bind" gc-roots-directory "/gc-roots"
