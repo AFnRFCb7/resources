@@ -281,53 +281,53 @@
                                                                         rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                     '' ;
                                                             } ;
-                                                        sequential =
-                                                            writeShellApplication
-                                                                {
-                                                                    name = "sequential" ;
-                                                                    runtimeInputs =
-                                                                        [
-                                                                            coreutils
-                                                                            flock
-                                                                            (
-                                                                                buildFHSUserEnv
-                                                                                    {
-                                                                                        extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
-                                                                                        name = "sequential" ;
-                                                                                        runScript = "sequential" ;
-                                                                                        targetPkgs =
-                                                                                            pkgs :
-                                                                                                [
-                                                                                                    (
-                                                                                                        pkgs.writeShellApplication
-                                                                                                            {
-                                                                                                                name = "sequential" ;
-                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                text =
-                                                                                                                    ''
-                                                                                                                        CURRENT="$( cat /sequential )" || exit 166
-                                                                                                                        NEXT=$(( CURRENT + 1 ))
-                                                                                                                        echo "$NEXT" > /sequential
-                                                                                                                        echo "$CURRENT"
-                                                                                                                    '' ;
-                                                                                                            }
-                                                                                                    )
-                                                                                                ] ;
-                                                                                    }
-                                                                            )
-                                                                        ] ;
-                                                                    text =
-                                                                        ''
-                                                                            mkdir --parents ${ resources-directory }/locks
-                                                                            exec 113> ${ resources-directory }/locks/clean
-                                                                            flock -s 113
-                                                                            if [[ ! -f ${ resources-directory }/sequential ]]
-                                                                            then
-                                                                                echo 0 > ${ resources-directory }/sequential
-                                                                            fi
-                                                                            sequential
-                                                                        '' ;
-                                                                } ;
+                                                    sequential =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "sequential" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        coreutils
+                                                                        flock
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
+                                                                                    name = "sequential" ;
+                                                                                    runScript = "sequential" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "sequential" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    CURRENT="$( cat /sequential )" || exit 166
+                                                                                                                    NEXT=$(( CURRENT + 1 ))
+                                                                                                                    echo "$NEXT" > /sequential
+                                                                                                                    echo "$CURRENT"
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 113> ${ resources-directory }/locks/clean
+                                                                        flock -s 113
+                                                                        if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                        then
+                                                                            echo 0 > ${ resources-directory }/sequential
+                                                                        fi
+                                                                        sequential
+                                                                    '' ;
+                                                            } ;
                                                     store =
                                                         mkDerivation
                                                             {
@@ -536,6 +536,7 @@
                                                                         )
                                                                     ] ;
                                                                 src = ./. ;
+                                                            } ;
                                                     in "${ resource }/bin/resource" ;
                                     } ;
                             root-parameters =
