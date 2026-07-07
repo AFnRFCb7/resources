@@ -445,11 +445,14 @@
                                                                 release =
                                                                     {
                                                                         action =
-                                                                            {
-                                                                                script = ./. ;
-                                                                                text = visitor { string = path : value : value ; } action.text ;
-                                                                                targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
-                                                                            } ;
+                                                                            let
+                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.release.release.action ;
+                                                                                in
+                                                                                    {
+                                                                                        script = ./. ;
+                                                                                        text = visitor { string = path : value : value ; } action.text ;
+                                                                                        targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
+                                                                                    } ;
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
                                                                         recovery = null ;
                                                                         valid-channel = root-parameters.valid-release-channel ;
