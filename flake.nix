@@ -631,7 +631,6 @@
                                                                                                             is-releasable
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
-                                                                                                            echo 1723258852938545 1369941427493491 3913624127772333 "STATUS=$STATUS" "STANDARD_ERROR=$STANDARD_ERROR" >&2
                                                                                                             if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
                                                                                                                 exec 186> "${ resources-directory }/locks/$INDEX.lock"
