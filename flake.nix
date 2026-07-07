@@ -510,7 +510,7 @@
                                                                                                 OUT="$1"
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
-                                                                                                ln --symbolic ${ resource-parameters.init.action } > "$OUT/init/action" ;
+                                                                                                ln --symbolic ${ resource-parameters.init.action.script } > "$OUT/init/action" ;
                                                                                                 mkdir --parents "$OUT/release"
                                                                                             '' ;
                                                                                     }
