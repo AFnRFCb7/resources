@@ -312,7 +312,7 @@
                                                                                                                                 "--tmpfs" "/scratch"
                                                                                                                             ] ;
                                                                                                                         name = "init" ;
-                                                                                                                        runScript = "" ;
+                                                                                                                        runScript = "init" ;
                                                                                                                         targetPkgs =
                                                                                                                             pkgs :
                                                                                                                                 [
@@ -417,7 +417,7 @@
 
                                                                                                         '' ;
                                                                                                 } ;
-                                                                                        text = visitor { string = path : value : value ; } ( builtins.trace ( builtins.concatStringsSep "" ( builtins.attrNames action ) ) action.text ) ;
+                                                                                        text = visitor { string = path : value : value ; } action.text ;
                                                                                         targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
                                                                                     } ;
                                                                         init = visitor { lambda = path : value : value null ; } init ;
