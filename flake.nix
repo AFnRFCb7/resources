@@ -359,7 +359,8 @@
                                                                                                                                                         then
                                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } /release/action
+                                                                                                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w/release/action" ${ resource-parameters.release.action.script }/bin/release > /private/sed
+                                                                                                                                                            chmod 0500 /release/action
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
@@ -498,7 +499,6 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
-                                                                                                            " "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }
                                                                                                             rm "${ resources-directory }/flags/$INDEX"
                                                                                                         '' ;
                                                                                                 } ;
