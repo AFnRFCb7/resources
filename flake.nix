@@ -204,6 +204,7 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                        echo 1723258852938545 1369941427493491 2179871487263913 "$( which init )" >&2
                                                                         echo 1723258852938545 1369941427493491 9557991424675937 "$OUTPUT_FILE" >&2
                                                                         echo 1723258852938545 1369941427493491 7424844563628568 "$( cat "$OUTPUT_FILE" )" >&2
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
