@@ -112,7 +112,7 @@
                                                                             writeShellApplication
                                                                                 {
                                                                                     name = "resource" ;
-                                                                                    runtimeInputs = [ pkgs.jq ] ;
+                                                                                    runtimeInputs = [ jq ] ;
                                                                                     text =
                                                                                         let
                                                                                             resource-parameters =
