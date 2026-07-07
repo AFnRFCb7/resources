@@ -412,10 +412,7 @@
                                                                                                                     }
                                                                                                             )
                                                                                                         ] ;
-                                                                                                    text =
-                                                                                                        ''
-
-                                                                                                        '' ;
+                                                                                                    text = "init" ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
                                                                                         targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
