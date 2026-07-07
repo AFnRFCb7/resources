@@ -594,7 +594,7 @@
                                                                                                             echo 1723258852938545 1369941427493491 5118666461773186 "$( which is-releasable )" >&2
                                                                                                             is-releasable
                                                                                                             echo 1723258852938545 1369941427493491 1313163434893826 >&2
-                                                                                                            CHANNEL="$( jq --raw-output ".channel" )" || exit 134
+                                                                                                            CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
                                                                                                             export CHANNEL
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
