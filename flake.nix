@@ -491,31 +491,19 @@
                                                                                                 valid-channel = root-parameters.valid-release-channel ;
                                                                                             } ;
                                                                                         seed =
-                                                                                            let
-                                                                                                to-string =
-                                                                                                    path : value :
-                                                                                                        let
-                                                                                                            type = builtins.typeOf value ;
-                                                                                                            in
-                                                                                                                {
-                                                                                                                    path = path ;
-                                                                                                                    type = type ;
-                                                                                                                    value = if type == "lambda" then null else value ;
-                                                                                                                } ;
-                                                                                                in
-                                                                                                    visitor
-                                                                                                        {
-                                                                                                            bool = to-string ;
-                                                                                                            float = to-string ;
-                                                                                                            int = to-string ;
-                                                                                                            lambda = to-string ;
-                                                                                                            list = to-string ;
-                                                                                                            null = to-string ;
-                                                                                                            path = to-string ;
-                                                                                                            set = to-string ;
-                                                                                                            string = to-string ;
-                                                                                                        }
-                                                                                                seed ;
+                                                                                            visitor
+                                                                                                {
+                                                                                                    bool = stringify ;
+                                                                                                    float = stringify ;
+                                                                                                    int = stringify ;
+                                                                                                    lambda = stringify ;
+                                                                                                    list = stringify ;
+                                                                                                    null = stringify ;
+                                                                                                    path = stringify ;
+                                                                                                    set = stringify ;
+                                                                                                    string = stringify ;
+                                                                                                }
+                                                                                        seed ;
                                                                                         targets =
                                                                                             visitor
                                                                                                 {
@@ -560,6 +548,16 @@
                                             valid-init-channel = to-string valid-init-channel ;
                                             valid-release-channel = to-string valid-release-channel ;
                                         } ;
+                            stringify =
+                                path : value :
+                                    let
+                                        type = builtins.typeOf value ;
+                                        in
+                                            {
+                                                path = path ;
+                                                type = type ;
+                                                value = if type == "lambda" then null else value ;
+                                            } ;
                             in
                                 {
                                     check =
