@@ -496,27 +496,22 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        echo 1723258852938545 1369941427493491 8811967523799557 "$( ${ pkgs.findutils }/bin/find / -maxdepth 1 | sort )" >&2
                                                                                                                                                         INDEX="$( jq --raw-output ".index" /input )" || exit 189
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                        echo 1723258852938545 1369941427493491 1554195584964686 >&2
                                                                                                                                                         find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
                                                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                                                            echo 1723258852938545 1369941427493491 7195962725642531 "EXPECTED=$EXPECTED" "OBSERVED=$OBSERVED" >&2
                                                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                             then
                                                                                                                                                                 inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                                                             fi
                                                                                                                                                         done
-                                                                                                                                                        echo 1723258852938545 1369941427493491 6323192639153666 >&2
                                                                                                                                                         if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                         then
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         else
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         fi
-                                                                                                                                                        echo 1723258852938545 1369941427493491 2112826736879814 >&2
                                                                                                                                                         jq \
                                                                                                                                                             --arg STANDARD_ERROR private/standard-error \
                                                                                                                                                             --arg STANDARD_OUTPUT /private/standard-output \
@@ -528,7 +523,6 @@
                                                                                                                                                                 "status" : $STATUS
                                                                                                                                                             }' \
                                                                                                                                                             /input > /output
-                                                                                                                                                        echo 1723258852938545 1369941427493491 1657116512465682 >&2
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -592,15 +586,10 @@
                                                                                                                 rm "$PID_FILE"
                                                                                                             done
                                                                                                             mkdir --parents ${ gc-roots-directory }
-                                                                                                            echo 1723258852938545 1369941427493491 5118666461773186 "$( which is-releasable )" >&2
                                                                                                             is-releasable
-                                                                                                            echo 1723258852938545 1369941427493491 1313163434893826 >&2
                                                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 134
-                                                                                                            echo 1723258852938545 1369941427493491 6919472452776286 >&2
                                                                                                             export CHANNEL
-                                                                                                            echo 1723258852938545 1369941427493491 8182982595947341 >&2
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
-                                                                                                            echo 1723258852938545 1369941427493491 3777369614853585 >&2
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
 #                                                                                                            TEMPORARY="$( mktemp --directory )" || exit 180
 #                                                                                                            export TEMPORARY
