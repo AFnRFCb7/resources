@@ -332,7 +332,7 @@
                                                         mkDerivation
                                                             {
                                                                 installPhase = ''installPhase "$out"'' ;
-                                                                name = "store" ;
+                                                                name = "wtf" ;
                                                                 nativeBuildInputs =
                                                                     [
                                                                         (
