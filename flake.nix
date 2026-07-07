@@ -515,6 +515,7 @@
                                                                                                                                                         else
                                                                                                                                                             STATUS="$?"
                                                                                                                                                         fi
+                                                                                                                                                        echo 1723258852938545 1369941427493491 2112826736879814 >&2
                                                                                                                                                         jq \
                                                                                                                                                             --arg STANDARD_ERROR private/standard-error \
                                                                                                                                                             --arg STANDARD_OUTPUT /private/standard-output \
@@ -525,6 +526,7 @@
                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                 "status" : $STATUS
                                                                                                                                                             }' > /output
+                                                                                                                                                        echo 1723258852938545 1369941427493491 1657116512465682 >&2
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
