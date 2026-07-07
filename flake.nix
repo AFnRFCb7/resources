@@ -551,7 +551,8 @@
                                                                                                             done
                                                                                                             mkdir --parents ${ gc-roots-directory }
                                                                                                             is-releasable "$INDEX"
-                                                                                                            CHANNEL="$( jq --raw-output ".channel" )" || exit 1260
+                                                                                                            CHANNEL="$( jq --raw-output ".channel" )" || exit 134
+                                                                                                            export CHANNEL
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                             if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
