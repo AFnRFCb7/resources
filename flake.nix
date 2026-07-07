@@ -460,6 +460,7 @@
                                                                                                         [
                                                                                                             coreutils
                                                                                                             flock
+                                                                                                            log
                                                                                                             (
                                                                                                                 buildFHSUserEnv
                                                                                                                     {
