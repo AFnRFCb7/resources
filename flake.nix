@@ -532,7 +532,7 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
-                                                                                                                                "--bind" gc-root-directory "/gc-root"
+                                                                                                                                "--bind" gc-roots-directory "/gc-roots"
                                                                                                                                 "--bind" resources-directory "/resources"
                                                                                                                                 "--bind" "$TEMPORARY" "/temporary"
                                                                                                                             ] ;
