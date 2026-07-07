@@ -463,6 +463,7 @@
                                                                                                                                                                                             "text" : $TEXT
                                                                                                                                                                                         }' \
                                                                                                                                                                                         "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                                fi
                                                                                                                                                                             '' ;
                                                                                                                                                                     }
                                                                                                                                                             )
@@ -504,10 +505,11 @@
                                                                                 writeShellApplication
                                                                                     {
                                                                                         name = "install" ;
-                                                                                        runtimeInputs = [ coreutils jq ] ;
+                                                                                        runtimeInputs = [ coreutils ] ;
                                                                                         text =
                                                                                             ''
                                                                                                 OUT="$1"
+                                                                                                ln --symbolic ${ builtins.toFile "resource-parameters.json" ( builtins.toJSON resource-parameters.json ) } "$OUT/resource-parameters.json"
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
                                                                                                 ln --symbolic ${ resource-parameters.init.action.script } > "$OUT/init/action" ;
