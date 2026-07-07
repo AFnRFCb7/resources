@@ -576,7 +576,7 @@
                                                                                                                                                                     "status" : .status
                                                                                                                                                                 }' \
                                                                                                                                                                 /input | log
-                                                                                                                                                            exit ${ resource-parameters.exit }
+                                                                                                                                                            exit ${ resource-parameters.error }
                                                                                                                                                         elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -585,7 +585,7 @@
                                                                                                                                                                     "standard-error" : .["standard-error"]
                                                                                                                                                                 }' \
                                                                                                                                                                 /input | log
-                                                                                                                                                            exit ${ resource-parameters.exit }
+                                                                                                                                                            exit ${ resource-parameters.error }
                                                                                                                                                         elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                         then
                                                                                                                                                             jq \
@@ -595,7 +595,7 @@
                                                                                                                                                                     "status" : .status
                                                                                                                                                                 }' \
                                                                                                                                                                 /input | log
-                                                                                                                                                            exit ${ resource-parameters.exit }
+                                                                                                                                                            exit ${ resource-parameters.error }
                                                                                                                                                         fi
                                                                                                                                                     '' ;
                                                                                                                                             }
