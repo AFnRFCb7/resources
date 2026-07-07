@@ -229,7 +229,7 @@
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] , ,
+                                                                                    "originator-pid" : .["originator-pid"] ,
                                                                                     "seed" : .seed ,
                                                                                     "standard-output" : .["standard-output"] ,
                                                                                     "status" : .status ,
