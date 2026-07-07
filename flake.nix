@@ -322,7 +322,18 @@
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "init" ;
-                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                                                runtimeInputs =
+                                                                                                                                                    [
+                                                                                                                                                        pkgs.jq
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = init ;
+                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs pkgs ;
+                                                                                                                                                                    text = resource-parameters.init.action.text ;
+                                                                                                                                                                }
+                                                                                                                                                        )
+                                                                                                                                                    ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         echo 1723258852938545 1369941427493491 5977929882474499 >&2
