@@ -590,6 +590,7 @@
                                                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error]' "$OUTPUT_FILE" )" || exit 148
                                                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                             TEMPORARY="$( mktemp --directory )" || exit 180
+                                                                                                            export TEMPORARY
                                                                                                             release
                                                                                                             if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                             then
