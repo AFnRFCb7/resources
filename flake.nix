@@ -105,7 +105,7 @@
                                                         mkDerivation
                                                             {
                                                                 installPhase = ''resource "$error" "$init" "$init-recovery" "$release" "release-recovery" "$seed" "$targets" "$temporary"'' ;
-                                                                name = "alpha" ;
+                                                                name = "resource" ;
                                                                 nativeBuildInputs =
                                                                     [
                                                                         (
