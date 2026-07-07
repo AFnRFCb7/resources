@@ -151,7 +151,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils log "${ store }" ] ;
+                                                                runtimeInputs = [ coreutils findutils log "${ store }/init/action" ] ;
                                                                 text =
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
