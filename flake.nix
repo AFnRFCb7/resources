@@ -555,7 +555,8 @@
                                                                                                                                                         GC_ROOTS="$( find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" )" || exit 145
                                                                                                                                                         RESOURCES="$( find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" )" || exit 177
                                                                                                                                                         echo 1723258852938545 1369941427493491 4273455398925671 >&2
-                                                                                                                                                        tar --create --file /temporary/gc-roots.tar.xz --xz "$GC_ROOTS"
+                                                                                                                                                        # tar --create --file /temporary/gc-roots.tar.xz --xz "$GC_ROOTS"
+                                                                                                                                                        echo 1723258852938545 1369941427493491 6726741626663934 >&2
                                                                                                                                                         tar --create --file /temporary/resources.tar.xz --xz "$RESOURCES"
                                                                                                                                                         echo 1723258852938545 1369941427493491 6127117995866143 >&2
                                                                                                                                                         rm --recursive --force "$GC_ROOTS"
