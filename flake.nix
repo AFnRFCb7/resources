@@ -525,7 +525,8 @@
                                                                                                                                                                 "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                                 "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                 "status" : $STATUS
-                                                                                                                                                            }' > /output
+                                                                                                                                                            }' \
+                                                                                                                                                            /input > /output
                                                                                                                                                         echo 1723258852938545 1369941427493491 1657116512465682 >&2
                                                                                                                                                     '' ;
                                                                                                                                             }
