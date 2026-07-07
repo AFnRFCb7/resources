@@ -102,288 +102,213 @@
                                             } :
                                                 let
                                                     store =
-                                                        let
-                                                            resource-parameters =
-                                                                {
-                                                                    error =
-                                                                        visitor
-                                                                            {
-                                                                                int = path : value : builtins.toString value ;
-                                                                            }
-                                                                            error ;
-                                                                    init =
-                                                                        {
-                                                                            action =
-                                                                                let
-                                                                                    action = visitor { lambda = path : value : value null ; } resource-parameters.init.init ;
-                                                                                    in
-                                                                                        {
-                                                                                            script =
-                                                                                                writeShellApplication
-                                                                                                    {
-                                                                                                        name = "init" ;
-                                                                                                        runtimeInputs =
-                                                                                                            [
-                                                                                                                (
-                                                                                                                    buildFHSUserEnv
-                                                                                                                        {
-                                                                                                                            extraBwrapArgs =
-                                                                                                                                [
-                                                                                                                                    "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                    "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                                                    "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                                    "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
-                                                                                                                                    "--bind" "${ resources-directory }/release/$INDEX" "/release"
-                                                                                                                                    "--tmpfs" "/private"
-                                                                                                                                    "--tmpfs" "/scratch"
-                                                                                                                                ] ;
-                                                                                                                            name = "init" ;
-                                                                                                                            runScript = "" ;
-                                                                                                                            targetPkgs =
-                                                                                                                                pkgs :
-                                                                                                                                    [
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "init" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.jq ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                                                                            mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
-                                                                                                                                                            cd /mount
-                                                                                                                                                            if jq -e '.inputs | has("standard")' /input > /private/jq
-                                                                                                                                                            then
-                                                                                                                                                                if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                                                then
-                                                                                                                                                                    STATUS="$?"
-                                                                                                                                                                else
-                                                                                                                                                                    STATUS="$?"
-                                                                                                                                                                fi
-                                                                                                                                                            else
-                                                                                                                                                                if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                                                then
-                                                                                                                                                                    STATUS="$?"
-                                                                                                                                                                else
-                                                                                                                                                                    STATUS="$?"
-                                                                                                                                                                fi
-                                                                                                                                                            fi
-                                                                                                                                                            EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
-                                                                                                                                                            OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                                            ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
-                                                                                                                                                            if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
-                                                                                                                                                            then
-                                                                                                                                                                mkdir --parents "/pid/$INDEX"
-                                                                                                                                                                echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                                                ### FIXME
-                                                                                                                                                                jq \
-                                                                                                                                                                    --arg CHANNEL ${ resource-parameters.init.valid-channel } \
-                                                                                                                                                                    --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                                    --arg INDEX "$INDEX" \
-                                                                                                                                                                    --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                                    --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                    --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                    --argjson STATUS "$STATUS" \
-                                                                                                                                                                    --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
-                                                                                                                                                                    --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "arguments" : .arguments ,
-                                                                                                                                                                        "channel" : $CHANNEL ,
-                                                                                                                                                                        "evaluation" : 0 ,
-                                                                                                                                                                        "index" : $INDEX ,
-                                                                                                                                                                        "inputs" : .inputs ,
-                                                                                                                                                                        "seed" : $SEED ,
-                                                                                                                                                                        "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                        "status" : $STATUS ,
-                                                                                                                                                                        "targets" : $EXPECTED_TARGETS ,
-                                                                                                                                                                        "text" : $TEXT
-                                                                                                                                                                    }' \
-                                                                                                                                                                    "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                                            else
-                                                                                                                                                                jq \
-                                                                                                                                                                    --arg INDEX "$INDEX" \
-                                                                                                                                                                    --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
-                                                                                                                                                                    --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                                    --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                                                                                                    --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                                    --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                    --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                    --argjson STATUS "$STATUS" \
-                                                                                                                                                                    --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "arguments" : .arguments ,
-                                                                                                                                                                        "channel" : $CHANNEL
-                                                                                                                                                                        "evalutation" : ${ resource-parameters.error } ,
-                                                                                                                                                                        "index" : $INDEX ,
-                                                                                                                                                                        "inputs" : .inputs ,
-                                                                                                                                                                        "seed" : $SEED ,
-                                                                                                                                                                        "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                        "status" : $STATUS ,
-                                                                                                                                                                        "targets" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_TARGETS ,
-                                                                                                                                                                                "observed" : $OBSERVED_TARGETS
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "text" : $TEXT
-                                                                                                                                                                    }' \
-                                                                                                                                                                    "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                    ] ;
-                                                                                                                        }
-                                                                                                                )
-                                                                                                            ] ;
-                                                                                                        text =
-                                                                                                            ''
-
-                                                                                                            '' ;
-                                                                                                    } ;
-                                                                                            text = visitor { string = path : value : value ; } action.text ;
-                                                                                            targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
-                                                                                        } ;
-                                                                            init = visitor { lambda = path : value : value null ; } init ;
-                                                                            recovery = null ;
-                                                                        } ;
-                                                                    release =
-                                                                        {
-                                                                            action = null ;
-                                                                            recovery = null ;
-                                                                        } ;
-                                                                    seed =
-                                                                        let
-                                                                            to-string =
-                                                                                path : value :
-                                                                                    let
-                                                                                        type = builtins.typeOf value ;
-                                                                                        in
-                                                                                            {
-                                                                                                path = path ;
-                                                                                                type = type ;
-                                                                                                value = if type == "lambda" then null else value ;
-                                                                                            } ;
-                                                                            in
-                                                                                visitor
-                                                                                    {
-                                                                                        bool = to-string ;
-                                                                                        float = to-string ;
-                                                                                        int = to-string ;
-                                                                                        lambda = to-string ;
-                                                                                        list = to-string ;
-                                                                                        null = to-string ;
-                                                                                        path = to-string ;
-                                                                                        set = to-string ;
-                                                                                        string = to-string ;
-                                                                                    }
-                                                                            seed ;
-                                                                    targets =
-                                                                        visitor
-                                                                            {
-                                                                                list = path : value : builtins.sort builtins.lessThan value ;
-                                                                                string = path : value : value ;
-                                                                            }
-                                                                            targets ;
-                                                                    temporary = visitor { bool = path : value : value ; } temporary ;
-                                                                } ;
-                                                            in
                                                         mkDerivation
                                                             {
-                                                                installPhase = ''install "$out"'' ;
-                                                                name = "resource" ;
+                                                                installPhase = ''installPhase "$out"'' ;
+                                                                name = "store" ;
                                                                 nativeBuildInputs =
                                                                     [
                                                                         (
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "install" ;
-                                                                                    runtimeInputs = [ jq ] ;
-                                                                                    text =
-                                                                                        let
-                                                                                            resource-parameters =
+                                                                            let
+                                                                                resource-parameters =
+                                                                                    {
+                                                                                        error =
+                                                                                            visitor
                                                                                                 {
-                                                                                                    init =
-                                                                                                        {
-                                                                                                            init = visitor { lambda = path : value : value null ; } init ;
-                                                                                                            recovery = null ;
-                                                                                                        } ;
-                                                                                                    release = null ;
-                                                                                                    seed =
+                                                                                                    int = path : value : builtins.toString value ;
+                                                                                                }
+                                                                                                error ;
+                                                                                        init =
+                                                                                            {
+                                                                                                action =
+                                                                                                    let
+                                                                                                        action = visitor { lambda = path : value : value null ; } resource-parameters.init.init ;
+                                                                                                        in
+                                                                                                            {
+                                                                                                                script =
+                                                                                                                    writeShellApplication
+                                                                                                                        {
+                                                                                                                            name = "init" ;
+                                                                                                                            runtimeInputs =
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        buildFHSUserEnv
+                                                                                                                                            {
+                                                                                                                                                extraBwrapArgs =
+                                                                                                                                                    [
+                                                                                                                                                        "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                                                                                        "--bind" "$OUTPUT_FILE" "/output"
+                                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                                                        "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
+                                                                                                                                                        "--bind" "${ resources-directory }/release/$INDEX" "/release"
+                                                                                                                                                        "--tmpfs" "/private"
+                                                                                                                                                        "--tmpfs" "/scratch"
+                                                                                                                                                    ] ;
+                                                                                                                                                name = "init" ;
+                                                                                                                                                runScript = "" ;
+                                                                                                                                                targetPkgs =
+                                                                                                                                                    pkgs :
+                                                                                                                                                        [
+                                                                                                                                                            (
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "init" ;
+                                                                                                                                                                        runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                                                                        text =
+                                                                                                                                                                            ''
+                                                                                                                                                                                jq --raw-output '.arguments[]' /input > /private/jq
+                                                                                                                                                                                mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                                                                cd /mount
+                                                                                                                                                                                if jq -e '.inputs | has("standard")' /input > /private/jq
+                                                                                                                                                                                then
+                                                                                                                                                                                    if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                                    then
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                else
+                                                                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                                    then
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                fi
+                                                                                                                                                                                EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
+                                                                                                                                                                                OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
+                                                                                                                                                                                ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
+                                                                                                                                                                                if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    mkdir --parents "/pid/$INDEX"
+                                                                                                                                                                                    echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                                                                    ### FIXME
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --arg CHANNEL ${ resource-parameters.init.valid-channel } \
+                                                                                                                                                                                        --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                                                        --arg INDEX "$INDEX" \
+                                                                                                                                                                                        --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                                                        --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                                                        --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                                                        --argjson STATUS "$STATUS" \
+                                                                                                                                                                                        --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
+                                                                                                                                                                                        --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "arguments" : .arguments ,
+                                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                                            "evaluation" : 0 ,
+                                                                                                                                                                                            "index" : $INDEX ,
+                                                                                                                                                                                            "inputs" : .inputs ,
+                                                                                                                                                                                            "seed" : $SEED ,
+                                                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                                                            "targets" : $EXPECTED_TARGETS ,
+                                                                                                                                                                                            "text" : $TEXT
+                                                                                                                                                                                        }' \
+                                                                                                                                                                                        "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                                else
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --arg INDEX "$INDEX" \
+                                                                                                                                                                                        --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
+                                                                                                                                                                                        --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                                                        --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
+                                                                                                                                                                                        --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                                                        --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                                                        --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                                                        --argjson STATUS "$STATUS" \
+                                                                                                                                                                                        --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.text } \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "arguments" : .arguments ,
+                                                                                                                                                                                            "channel" : $CHANNEL
+                                                                                                                                                                                            "evalutation" : ${ resource-parameters.error } ,
+                                                                                                                                                                                            "index" : $INDEX ,
+                                                                                                                                                                                            "inputs" : .inputs ,
+                                                                                                                                                                                            "seed" : $SEED ,
+                                                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                                                            "targets" :
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    "expected" : $EXPECTED_TARGETS ,
+                                                                                                                                                                                                    "observed" : $OBSERVED_TARGETS
+                                                                                                                                                                                                } ,
+                                                                                                                                                                                            "text" : $TEXT
+                                                                                                                                                                                        }' \
+                                                                                                                                                                                        "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                            '' ;
+                                                                                                                                                                    }
+                                                                                                                                                            )
+                                                                                                                                                        ] ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                            text =
+                                                                                                                                ''
+
+                                                                                                                                '' ;
+                                                                                                                        } ;
+                                                                                                                text = visitor { string = path : value : value ; } action.text ;
+                                                                                                                targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
+                                                                                                            } ;
+                                                                                                init = visitor { lambda = path : value : value null ; } init ;
+                                                                                                recovery = null ;
+                                                                                            } ;
+                                                                                        release =
+                                                                                            {
+                                                                                                action = null ;
+                                                                                                recovery = null ;
+                                                                                            } ;
+                                                                                        seed =
+                                                                                            let
+                                                                                                to-string =
+                                                                                                    path : value :
                                                                                                         let
-                                                                                                            to-string =
-                                                                                                                path : value :
-                                                                                                                    let
-                                                                                                                        type = builtins.typeOf value ;
-                                                                                                                        in
-                                                                                                                            [
-                                                                                                                                {
-                                                                                                                                    path = path ;
-                                                                                                                                    type = type ;
-                                                                                                                                    value = if type == "lambda" then null else value ;
-                                                                                                                                }
-                                                                                                                            ] ;
+                                                                                                            type = builtins.typeOf value ;
                                                                                                             in
-                                                                                                                visitor
-                                                                                                                    {
-                                                                                                                        bool = to-string ;
-                                                                                                                        float = to-string ;
-                                                                                                                        int = to-string ;
-                                                                                                                        lambda = to-string ;
-                                                                                                                        list = path : value : builtins.concatLists value ;
-                                                                                                                        path = to-string ;
-                                                                                                                        set = path : value : builtins.concatLists ( builtins.attrValue value ) ;
-                                                                                                                        string = to-string ;
-                                                                                                                    }
-                                                                                                                    seed ;
-                                                                                                    targets =
-                                                                                                        visitor
-                                                                                                            {
-                                                                                                                list = path : value : builtins.sort builtins.lessThan value ;
-                                                                                                                string = path : value : value ;
-                                                                                                            }
-                                                                                                            targets ;
-                                                                                                    temporary =
-                                                                                                        visitor
-                                                                                                            {
-                                                                                                                bool = path : value : value ;
-                                                                                                            }
-                                                                                                            temporary ;
-                                                                                                } ;
-                                                                                            in
-                                                                                                ''
-                                                                                                    ERROR="$1"
-                                                                                                    INIT="$2"
-                                                                                                    INIT_RECOVERY="$3"
-                                                                                                    RELEASE="$4"
-                                                                                                    RELEASE_RECOVERY="$5"
-                                                                                                    SEED="$6"
-                                                                                                    TARGETS="$7"
-                                                                                                    TEMPORARY="$8"
-                                                                                                    mkdir --parents "$ERROR"
-                                                                                                    mkdir --parents "$INIT"
-                                                                                                    mkdir --parents "$INIT_RECOVERY"
-                                                                                                    mkdir --parents "$RELEASE"
-                                                                                                    mkdir --parents "$RELEASE_RECOVERY"
-                                                                                                    mkdir --parents "$SEED"
-                                                                                                    mkdir --parents "$TARGETS"
-                                                                                                    mkdir --parents "$TEMPORARY"
-#                                                                                                    jq "." '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' > "$ERROR"
-#                                                                                                    ### FIXME
-#                                                                                                    jq "." '${ builtins.toFile "seed.json" ( builtins.toJSON resource-parameters.seed ) }' > "$SEED"
-#                                                                                                    jq "." '${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) }' > "$TARGETS"
-#                                                                                                    jq "." '${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) }' > "$TEMPORARY"
-#                                                                                                    touch "$INIT"
-#                                                                                                    touch "$INIT_RECOVERY"
-#                                                                                                    touch "$RELEASE"
-#                                                                                                    touch "$RELEASE_RECOVERY"
-                                                                                                '' ;
-                                                                                }
+                                                                                                                {
+                                                                                                                    path = path ;
+                                                                                                                    type = type ;
+                                                                                                                    value = if type == "lambda" then null else value ;
+                                                                                                                } ;
+                                                                                                in
+                                                                                                    visitor
+                                                                                                        {
+                                                                                                            bool = to-string ;
+                                                                                                            float = to-string ;
+                                                                                                            int = to-string ;
+                                                                                                            lambda = to-string ;
+                                                                                                            list = to-string ;
+                                                                                                            null = to-string ;
+                                                                                                            path = to-string ;
+                                                                                                            set = to-string ;
+                                                                                                            string = to-string ;
+                                                                                                        }
+                                                                                                seed ;
+                                                                                        targets =
+                                                                                            visitor
+                                                                                                {
+                                                                                                    list = path : value : builtins.sort builtins.lessThan value ;
+                                                                                                    string = path : value : value ;
+                                                                                                }
+                                                                                                targets ;
+                                                                                        temporary = visitor { bool = path : value : value ; } temporary ;
+                                                                                    } ;
+                                                                            in
+                                                                                writeShellApplication
+                                                                                    {
+                                                                                        name = "install" ;
+                                                                                        runtimeInputs = [ coreutils jq ] ;
+                                                                                        text =
+                                                                                            ''
+                                                                                                OUT="$1"
+                                                                                                mkdir --parents "$OUT"
+                                                                                                jq '${ builtins.toJSON resource-parameters.error }' > "$OUT/error.json"
+                                                                                            '' ;
+                                                                                    }
                                                                         )
                                                                     ] ;
-                                                                outputs = [ "error" "init" "init_recovery" "release" "release_recovery" "seed" "targets" "temporary" ] ;
                                                                 src = ./. ;
-                                                            } ;
                                                     resource =
                                                         writeShellApplication
                                                             {
