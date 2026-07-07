@@ -550,7 +550,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz log ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "INDEX:?must be exported" "}" ] }"
+                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                         GC_ROOT_DIR_CANDIDATES="$( find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" )" || exit 145
                                                                                                                                                         RESOURCE_CANDIDATES="$( find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" )" || exit 177
                                                                                                                                                         CANDIDATES="$GC_ROOT_DIR_CANDIDATES $RESOURCE_CANDIDATES"
