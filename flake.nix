@@ -496,8 +496,6 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        SEQUENCE="$( jq --raw-output ".index" /input )" || exit 189
-                                                                                                                                                        printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                                                         find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                         do
@@ -623,8 +621,9 @@
                                                                                                             export INPUT_FILE
                                                                                                             jq \
                                                                                                                 --null-input \
+                                                                                                                --arg _INDEX "$INDEX"\
                                                                                                                 '{
-                                                                                                                    "index" : $INDEX
+                                                                                                                    "index" : $_INDEX
                                                                                                                 }' > "$INPUT_FILE"
                                                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                             export OUTPUT_FILE
