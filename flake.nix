@@ -448,7 +448,7 @@
                                                                                                                                                                                         '{
                                                                                                                                                                                             "arguments" : .arguments ,
                                                                                                                                                                                             "channel" : $CHANNEL
-                                                                                                                                                                                            "evalutation" : ${ resource-parameters.error } ,
+                                                                                                                                                                                            "evaluation" : ${ resource-parameters.error } ,
                                                                                                                                                                                             "index" : $INDEX ,
                                                                                                                                                                                             "inputs" : .inputs ,
                                                                                                                                                                                             "seed" : $SEED ,
@@ -509,7 +509,7 @@
                                                                                         text =
                                                                                             ''
                                                                                                 OUT="$1"
-                                                                                                ln --symbolic ${ builtins.toFile "resource-parameters.json" ( builtins.toJSON resource-parameters.json ) } "$OUT/resource-parameters.json"
+                                                                                                ln --symbolic ${ builtins.toFile "resource-parameters.json" ( builtins.toJSON resource-parameters ) } "$OUT/resource-parameters.json"
                                                                                                 mkdir --parents "$OUT"
                                                                                                 mkdir --parents "$OUT/init"
                                                                                                 ln --symbolic ${ resource-parameters.init.action.script } > "$OUT/init/action" ;
