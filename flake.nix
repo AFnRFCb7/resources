@@ -490,20 +490,7 @@
                                                                                                 recovery = null ;
                                                                                                 valid-channel = root-parameters.valid-release-channel ;
                                                                                             } ;
-                                                                                        seed =
-                                                                                            visitor
-                                                                                                {
-                                                                                                    bool = stringify ;
-                                                                                                    float = stringify ;
-                                                                                                    int = stringify ;
-                                                                                                    lambda = stringify ;
-                                                                                                    list = stringify ;
-                                                                                                    null = stringify ;
-                                                                                                    path = stringify ;
-                                                                                                    set = stringify ;
-                                                                                                    string = stringify ;
-                                                                                                }
-                                                                                        seed ;
+                                                                                        seed = seed ;
                                                                                         targets =
                                                                                             visitor
                                                                                                 {
