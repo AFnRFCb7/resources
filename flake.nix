@@ -126,19 +126,19 @@
                                                                                                                                     CHANNEL="$2"
                                                                                                                                     PAYLOAD="$3"
                                                                                                                                     TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE//\"/'' "}" ] }"
-                                                                                                                                    CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
-                                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
-                                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                    echo AAA
-                                                                                                                                    echo "$TYPE"
-                                                                                                                                    echo BBB
-                                                                                                                                    echo "$CHANNEL"
-                                                                                                                                    echo CCC
-                                                                                                                                    echo "$PAYLOAD"
-                                                                                                                                    echo DDD
-                                                                                                                                    INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                                     then
+                                                                                                                                        CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
+                                                                                                                                        PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
+                                                                                                                                        PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
+                                                                                                                                        echo AAA
+                                                                                                                                        echo "$TYPE"
+                                                                                                                                        echo BBB
+                                                                                                                                        echo "$CHANNEL"
+                                                                                                                                        echo CCC
+                                                                                                                                        echo "$PAYLOAD"
+                                                                                                                                        echo DDD
+                                                                                                                                        INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                         "${ resources-directory }/release/$INDEX/action"
                                                                                                                                     fi
                                                                                                                                 '' ;
