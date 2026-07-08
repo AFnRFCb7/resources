@@ -102,6 +102,7 @@
                                                                     (
                                                                         buildFHSUserEnv
                                                                             {
+                                                                                extraBwrapArgs = [ "--tmpfs" "/private" ] ;
                                                                                 name = "release" ;
                                                                                 runScript = "release" ;
                                                                                 targetPkgs =
@@ -111,13 +112,39 @@
                                                                                                 pkgs.writeShellApplication
                                                                                                     {
                                                                                                         name = "release" ;
-                                                                                                        runtimeInputs = [ ] ;
+                                                                                                        runtimeInputs =
+                                                                                                            [
+                                                                                                                pkgs.cli
+                                                                                                                (
+                                                                                                                    pkgs.writeShellApplication
+                                                                                                                        {
+                                                                                                                            name = "task" ;
+                                                                                                                            runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                            text =
+                                                                                                                                ''
+                                                                                                                                    TYPE="$1"
+                                                                                                                                    CHANNEL="$2"
+                                                                                                                                    PAYLOAD="$3"
+                                                                                                                                    TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE//\"/'' "}" ] }"
+                                                                                                                                    CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
+                                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
+                                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
+                                                                                                                                    INDEX="$( jq ".index" <<< $PAYLOAD )" || exit 134
+                                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-resources.valid-init-channel }" == "$CHANNEL" ]]
+                                                                                                                                    then
+                                                                                                                                        "${ resources-directory }/release/$INDEX/action"
+                                                                                                                                    fi
+                                                                                                                                '' ;
+                                                                                                                        }
+                                                                                                                )
+                                                                                                            ] ;
                                                                                                         text =
-                                                                                                            let
-                                                                                                                in
-                                                                                                                    ''
-
-                                                                                                                    '' ;
+                                                                                                            ''
+                                                                                                                redis-cli --csv SUBSCRIBE ${ root-resources.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
+                                                                                                                do
+                                                                                                                    nohup task "$TYPE" "$CHANNEL" "$PAYLOAD" >> /private/nohup &
+                                                                                                                done
+                                                                                                            '' ;
                                                                                                     }
                                                                                             )
                                                                                         ] ;
