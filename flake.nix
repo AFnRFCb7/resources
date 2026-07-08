@@ -129,7 +129,7 @@
                                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                    INDEX="$( jq ".index" <<< $PAYLOAD )" || exit 134
+                                                                                                                                    INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                                     then
                                                                                                                                         "${ resources-directory }/release/$INDEX/action"
