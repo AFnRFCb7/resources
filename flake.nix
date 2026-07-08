@@ -120,13 +120,11 @@
                                                                                                                     read -r TYPE || break
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
-                                                                                                                    echo BEGIN ITERATION 1 "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
-                                                                                                                        echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
+                                                                                                                        echo "${ resources-directory }/release/$INDEX/action"
                                                                                                                         "${ resources-directory }/release/$INDEX/action" &
-                                                                                                                        echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
