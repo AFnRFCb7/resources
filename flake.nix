@@ -143,7 +143,7 @@
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
                                                                                                                     echo AAA
-                                                                                                                    cat "$( which script )"
+                                                                                                                    cat "$( ${ pkgs.which }/bin/which script )"
                                                                                                                     echo BBB
                                                                                                                     echo "$TYPE"
                                                                                                                     echo CCC
