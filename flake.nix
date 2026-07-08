@@ -119,8 +119,8 @@
                                                                                                                 do
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
+                                                                                                                    echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
                                                                                                                     INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
-                                                                                                                    echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
                                                                                                                     "${ resources-directory }/release/$INDEX/action" &
                                                                                                                     echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
                                                                                                                 done
