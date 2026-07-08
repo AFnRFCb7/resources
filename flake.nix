@@ -102,7 +102,11 @@
                                                                     (
                                                                         buildFHSUserEnv
                                                                             {
-                                                                                extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                extraBwrapArgs =
+                                                                                    [
+                                                                                        "--tmpfs" "/private"
+                                                                                        "--ro-bind" "${ resources-directory }/release" "/release"
+                                                                                    ] ;
                                                                                 name = "release" ;
                                                                                 runScript = "release" ;
                                                                                 targetPkgs =
@@ -124,7 +128,7 @@
                                                                                                                     then
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                         echo "${ resources-directory }/release/$INDEX/action"
-                                                                                                                        "${ resources-directory }/release/$INDEX/action" &
+                                                                                                                        "/release/$INDEX/action" &
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
