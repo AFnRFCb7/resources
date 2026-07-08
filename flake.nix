@@ -127,7 +127,8 @@
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         echo ALPHA
-                                                                                                                        jq "." <<< "$PAYLOAD"
+                                                                                                                        printf '<%s>\n' "$PAYLOAD"
+                                                                                                                        printf '%q\n' "$PAYLOAD"
                                                                                                                         echo BEGIN ITERATION 2 "$PAYLOAD"
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                         "${ resources-directory }/release/$INDEX/action" &
