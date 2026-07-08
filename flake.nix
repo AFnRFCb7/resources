@@ -140,14 +140,15 @@
                                                                                                             ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo BEGIN SCRIPT
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
-                                                                                                                    echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
-                                                                                                                    task "$TYPE" "$CHANNEL" "$PAYLOAD"
-                                                                                                                    echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
+                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
+                                                                                                                    PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
+                                                                                                                    INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
+                                                                                                                    echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
+                                                                                                                    "${ resources-directory }/release/$INDEX/action" &
+                                                                                                                    echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX"
                                                                                                                 done
-                                                                                                                echo END SCRIPT
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
