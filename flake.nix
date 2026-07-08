@@ -129,7 +129,7 @@
                                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                    echo AAA
+                                                                                                                                    echo AAAA
                                                                                                                                     echo "$PAYLOAD"
                                                                                                                                     echo BBB
                                                                                                                                     cat "$0"
