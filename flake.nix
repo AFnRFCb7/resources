@@ -964,7 +964,7 @@
                                                                                                                                                                 echo "UUID=$UUID" >&2
                                                                                                                                                                 echo "YAML_FILE" >&2
                                                                                                                                                                 yq eval --prettyPrint "." "$YAML_FILE" >&2
-                                                                                                                                                                echo "9971733671754318 $HELP_ME OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                echo "9971733671754318 OBSERVED_HASH=$OBSERVED_HASH" >&2
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
@@ -1019,6 +1019,11 @@
                                                                                                                                     ''
                                                                                                                                         seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
                                                                                                                                         do
+                                                                                                                                            if [[ -f "$COMMANDS/FAILURE" ]]
+                                                                                                                                            then
+                                                                                                                                                EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 119
+                                                                                                                                                exit "$EXIT_CODE"
+                                                                                                                                            fi
                                                                                                                                             while [[ -f "$COMMANDS/$INDEX" ]]
                                                                                                                                             do
                                                                                                                                                 sleep 1
@@ -1049,13 +1054,13 @@
                                                                                                                                         if [[ -n "$OBSERVED_STANDARD_ERROR" ]]
                                                                                                                                         then
                                                                                                                                             echo "OBSERVED_STANDARD_ERROR=$OBSERVED_STANDARD_ERROR" >&2
-                                                                                                                                            exit 188
+                                                                                                                                            echo 188 > "$COMMANDS/FAILURE"
                                                                                                                                         fi
                                                                                                                                         OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
                                                                                                                                         if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
                                                                                                                                         then
                                                                                                                                             echo "OBSERVED_STANDARD_OUTPUT=$OBSERVED_STANDARD_OUTPUT" >&2
-                                                                                                                                            exit 178
+                                                                                                                                            echo 178 > "$COMMANDS/FAILURE"
                                                                                                                                         fi
                                                                                                                                         if [[ "$OBSERVED_STATUS" == 124 ]]
                                                                                                                                         then
@@ -1064,12 +1069,12 @@
                                                                                                                                             cat ${ builtins.toString action.text } >&2
                                                                                                                                             echo "RESOURCES=$RESOURCES" >&2
                                                                                                                                             cat "$RESOURCES/[\"checks\",\"true\",\"true\"]/resource" >&2
-                                                                                                                                            exit 183
+                                                                                                                                            echo 183 > "$COMMANDS/FAILURE"
                                                                                                                                         fi
                                                                                                                                         if [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
                                                                                                                                         then
                                                                                                                                             echo "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
-                                                                                                                                            exit 132
+                                                                                                                                            echo 132 > "$COMMANDS/FAILURE"
                                                                                                                                         fi
                                                                                                                                     '' ;
                                                                                                                             } ;
@@ -1086,7 +1091,6 @@
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
-                                                                                                                        export HELP_ME="$0"
                                                                                                                         true ${ name }
                                                                                                                         ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
                                                                                                                     ) &
