@@ -1112,6 +1112,11 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
+                                                                                                if [[ -f "$COMMANDS/FAILURE ]]
+                                                                                                then
+                                                                                                    EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 123
+                                                                                                    exit "$EXIT_CODE"
+                                                                                                fi
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
