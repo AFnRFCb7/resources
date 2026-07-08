@@ -123,7 +123,7 @@
                                                                                                                     echo BEGIN ITERATION 1 "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
                                                                                                                     if [[ "$CHANNEL" == "message" ]]
                                                                                                                     then
-                                                                                                                        echo BEGIN ITERATION 2 "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
+                                                                                                                        echo BEGIN ITERATION 2 "$PAYLOAD"
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                         "${ resources-directory }/release/$INDEX/action" &
                                                                                                                         echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
