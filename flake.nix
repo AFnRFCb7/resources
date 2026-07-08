@@ -147,6 +147,9 @@
                                                                                                             ''
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
+                                                                                                                    echo DDD
+                                                                                                                    echo "$PAYLOAD"
+                                                                                                                    echo EEE
                                                                                                                     nohup task "$TYPE" "$CHANNEL" "$PAYLOAD" > /private/nohup &
                                                                                                                 done
                                                                                                             '' ;
