@@ -143,9 +143,11 @@
                                                                                                                 echo BEGIN SCRIPT
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
-                                                                                                                    BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
+                                                                                                                    echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
                                                                                                                     task "$TYPE" "$CHANNEL" "$PAYLOAD"
+                                                                                                                    echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
                                                                                                                 done
+                                                                                                                echo END SCRIPT
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
