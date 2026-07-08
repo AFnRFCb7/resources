@@ -129,6 +129,11 @@
                                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
+                                                                                                                                    echo AAA
+                                                                                                                                    echo "$PAYLOAD"
+                                                                                                                                    echo BBB
+                                                                                                                                    cat "$0"
+                                                                                                                                    echo CCC
                                                                                                                                     INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                                     then
