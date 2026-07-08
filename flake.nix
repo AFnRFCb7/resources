@@ -1076,6 +1076,11 @@
                                                                                                                                             echo "OBSERVED_STATUS=$OBSERVED_STATUS" >&2
                                                                                                                                             echo 132 > "$COMMANDS/FAILURE"
                                                                                                                                         fi
+                                                                                                                                        if [[ -f "$COMMANDS/FAILURE" ]]
+                                                                                                                                        then
+                                                                                                                                            EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 119
+                                                                                                                                            exit "$EXIT_CODE"
+                                                                                                                                        fi
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
