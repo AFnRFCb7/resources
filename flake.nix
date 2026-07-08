@@ -118,11 +118,13 @@
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
                                                                                                                     TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE#\"'' "}" ] }"
+                                                                                                                    TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE%\"'' "}" ] }"
                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL#\"'' "}" ] }"
+                                                                                                                    CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL%\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
                                                                                                                     echo BEGIN ITERATION 1 "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
-                                                                                                                    if [[ "$TYPE" == "message" ]]
+                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         echo BEGIN ITERATION 2 "$PAYLOAD"
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
