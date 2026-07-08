@@ -129,11 +129,6 @@
                                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                    echo AAAA
-                                                                                                                                    echo "$PAYLOAD"
-                                                                                                                                    echo BBB
-                                                                                                                                    cat "$0"
-                                                                                                                                    echo CCC
                                                                                                                                     INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                                     then
@@ -147,6 +142,12 @@
                                                                                                             ''
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
+                                                                                                                    echo AAA
+                                                                                                                    cat "$( which script )"
+                                                                                                                    echo BBB
+                                                                                                                    echo "$TYPE"
+                                                                                                                    echo CCC
+                                                                                                                    echo "$CHANNEL"
                                                                                                                     echo DDD
                                                                                                                     echo "$PAYLOAD"
                                                                                                                     echo EEE
