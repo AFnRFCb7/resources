@@ -121,7 +121,7 @@
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
                                                                                                                     echo BEGIN ITERATION 1 "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD"
-                                                                                                                    if [[ "$CHANNEL" == "message" ]]
+                                                                                                                    if [[ "$TYPE" == "message" ]]
                                                                                                                     then
                                                                                                                         echo BEGIN ITERATION 2 "$PAYLOAD"
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
