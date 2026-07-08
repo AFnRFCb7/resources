@@ -147,7 +147,7 @@
                                                                                                                     INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                     echo BEGIN ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
                                                                                                                     "${ resources-directory }/release/$INDEX/action" &
-                                                                                                                    echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX"
+                                                                                                                    echo END ITERATION "TYPE=$TYPE" "CHANNEL=$CHANNEL" "PAYLOAD=$PAYLOAD" "INDEX=$INDEX" "${ resources-directory }/release/$INDEX/action"
                                                                                                                 done
                                                                                                             '' ;
                                                                                                     }
