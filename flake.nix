@@ -140,6 +140,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
                                                         } ;
