@@ -1086,7 +1086,7 @@
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
-                                                                                                                        export HELPME="$0"
+                                                                                                                        export HELP_ME="$0"
                                                                                                                         true ${ name }
                                                                                                                         ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
                                                                                                                     ) &
