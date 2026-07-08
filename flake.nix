@@ -156,7 +156,7 @@
                                                                     release
                                                                 '' ;
                                                         } ;
-                                                in "${ application }/bin/release"
+                                                in "${ application }/bin/release" ;
                                         resource =
                                             {
                                                 error ,
