@@ -114,7 +114,7 @@
                                                                                                         name = "release" ;
                                                                                                         runtimeInputs =
                                                                                                             [
-                                                                                                                pkgs.cli
+                                                                                                                pkgs.redis
                                                                                                                 (
                                                                                                                     pkgs.writeShellApplication
                                                                                                                         {
@@ -142,7 +142,7 @@
                                                                                                             ''
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
-                                                                                                                    nohup task "$TYPE" "$CHANNEL" "$PAYLOAD" >> /private/nohup &
+                                                                                                                    nohup task "$TYPE" "$CHANNEL" "$PAYLOAD" > /private/nohup &
                                                                                                                 done
                                                                                                             '' ;
                                                                                                     }
