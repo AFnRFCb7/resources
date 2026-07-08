@@ -1019,7 +1019,7 @@
                                                                                                                                     ''
                                                                                                                                         seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
                                                                                                                                         do
-                                                                                                                                            sleep 1m
+                                                                                                                                            sleep 10s
                                                                                                                                             if [[ -f "$COMMANDS/FAILURE" ]]
                                                                                                                                             then
                                                                                                                                                 EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 119
