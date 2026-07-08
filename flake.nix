@@ -130,7 +130,7 @@
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
                                                                                                                                     echo AAA
-                                                                                                                                    cat "$( ${ pkgs.which }/bin/which "$0" )" )"
+                                                                                                                                    cat "$( ${ pkgs.which }/bin/which "$0" )"
                                                                                                                                     echo BBB
                                                                                                                                     echo "$PAYLOAD"
                                                                                                                                     echo CCC
