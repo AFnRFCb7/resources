@@ -112,32 +112,7 @@
                                                                                                 pkgs.writeShellApplication
                                                                                                     {
                                                                                                         name = "release" ;
-                                                                                                        runtimeInputs =
-                                                                                                            [
-                                                                                                                pkgs.redis
-                                                                                                                (
-                                                                                                                    pkgs.writeShellApplication
-                                                                                                                        {
-                                                                                                                            name = "task" ;
-                                                                                                                            runtimeInputs = [ pkgs.jq ] ;
-                                                                                                                            text =
-                                                                                                                                ''
-                                                                                                                                    TYPE="$1"
-                                                                                                                                    CHANNEL="$2"
-                                                                                                                                    PAYLOAD="$3"
-                                                                                                                                    TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE//\"/'' "}" ] }"
-                                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-                                                                                                                                    then
-                                                                                                                                        CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
-                                                                                                                                        PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
-                                                                                                                                        PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                        INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
-                                                                                                                                        "${ resources-directory }/release/$INDEX/action" &
-                                                                                                                                    fi
-                                                                                                                                '' ;
-                                                                                                                        }
-                                                                                                                )
-                                                                                                            ] ;
+                                                                                                        runtimeInputs = [ pkgs.jq ] ;
                                                                                                         text =
                                                                                                             ''
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
