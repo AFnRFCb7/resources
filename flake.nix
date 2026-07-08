@@ -127,7 +127,8 @@
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
-                                                                                                                        echo "${ resources-directory }/release/$INDEX/action"
+                                                                                                                        echo "/release/$INDEX/action"
+                                                                                                                        ${ pkgs.findutils }/bin/find /release
                                                                                                                         "/release/$INDEX/action" &
                                                                                                                     fi
                                                                                                                 done
