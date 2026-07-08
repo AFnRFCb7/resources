@@ -117,6 +117,7 @@
                                                                                                             ''
                                                                                                                 redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
+                                                                                                                    TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE#\"'' "}" ] }"
                                                                                                                     CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL#\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
