@@ -126,7 +126,7 @@
                                                                                                                     read -r PAYLOAD || break
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
-                                                                                                                        INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
+                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                         echo "/release/$INDEX/action"
                                                                                                                         ${ pkgs.findutils }/bin/find /release
                                                                                                                         "/release/$INDEX/action" &
