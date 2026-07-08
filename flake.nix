@@ -130,10 +130,12 @@
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                     PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
                                                                                                                                     echo AAA
-                                                                                                                                    # cat "$( ${ pkgs.which }/bin/which "$0" )"
+                                                                                                                                    echo "$TYPE"
                                                                                                                                     echo BBB
-                                                                                                                                    echo "$PAYLOAD"
+                                                                                                                                    echo "$CHANNEL"
                                                                                                                                     echo CCC
+                                                                                                                                    echo "$PAYLOAD"
+                                                                                                                                    echo DDD
                                                                                                                                     INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                                     then
