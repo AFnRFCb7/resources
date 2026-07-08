@@ -115,7 +115,7 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                redis-cli --csv SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
+                                                                                                                redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while IFS=, read -r TYPE CHANNEL PAYLOAD
                                                                                                                 do
                                                                                                                     TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE#\"'' "}" ] }"
                                                                                                                     TYPE="${ builtins.concatStringsSep "" [ "$" "{" ''TYPE%\"'' "}" ] }"
@@ -178,7 +178,7 @@
                                                                                                     pkgs.writeShellApplication
                                                                                                         {
                                                                                                             name = "log" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
