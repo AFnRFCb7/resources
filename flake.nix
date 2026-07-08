@@ -94,7 +94,7 @@
                                         release =
                                             let
                                                 application =
-                                                    builtins.writeShellApplication
+                                                    writeShellApplication
                                                         {
                                                             name = "release" ;
                                                             runtimeInputs =
