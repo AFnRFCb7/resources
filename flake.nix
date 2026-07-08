@@ -91,6 +91,45 @@
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/clean" ;
+                                        release =
+                                            let
+                                                application =
+                                                    builtins.writeShellApplication
+                                                        {
+                                                            name = "release" ;
+                                                            runtimeInputs =
+                                                                [
+                                                                    (
+                                                                        buildFHSUserEnv
+                                                                            {
+                                                                                name = "release" ;
+                                                                                runScript = "release" ;
+                                                                                targetPkgs =
+                                                                                    pkgs :
+                                                                                        [
+                                                                                            (
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "release" ;
+                                                                                                        runtimeInputs = [ ] ;
+                                                                                                        text =
+                                                                                                            let
+                                                                                                                in
+                                                                                                                    ''
+
+                                                                                                                    '' ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                            }
+                                                                    )
+                                                                ] ;
+                                                            text =
+                                                                ''
+                                                                    release
+                                                                '' ;
+                                                        } ;
+                                                in "${ application }/bin/release"
                                         resource =
                                             {
                                                 error ,
