@@ -139,7 +139,7 @@
                                                                                                                                         echo "$PAYLOAD"
                                                                                                                                         echo DDD
                                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
-                                                                                                                                        "${ resources-directory }/release/$INDEX/action"
+                                                                                                                                        "${ resources-directory }/release/$INDEX/action" &
                                                                                                                                     fi
                                                                                                                                 '' ;
                                                                                                                         }
