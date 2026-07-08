@@ -131,13 +131,6 @@
                                                                                                                                         CHANNEL="${ builtins.concatStringsSep "" [ "$" "{" ''CHANNEL//\"/'' "}" ] }"
                                                                                                                                         PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD#\"'' "}" ] }"
                                                                                                                                         PAYLOAD="${ builtins.concatStringsSep "" [ "$" "{" ''PAYLOAD%\"'' "}" ] }"
-                                                                                                                                        echo AAA
-                                                                                                                                        echo "$TYPE"
-                                                                                                                                        echo BBB
-                                                                                                                                        echo "$CHANNEL"
-                                                                                                                                        echo CCC
-                                                                                                                                        echo "$PAYLOAD"
-                                                                                                                                        echo DDD
                                                                                                                                         INDEX="$( jq ".index" <<< "$PAYLOAD" )" || exit 134
                                                                                                                                         "${ resources-directory }/release/$INDEX/action" &
                                                                                                                                     fi
