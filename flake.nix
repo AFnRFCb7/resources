@@ -1155,6 +1155,8 @@
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
                                                                                                 sleep 1m
+                                                                                                ${ pkgs.findutils }/bin/find "$COMMANDS" >&2
+                                                                                                sleep 1m
 #                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
 #                                                                                                do
 #                                                                                                    sleep 1
