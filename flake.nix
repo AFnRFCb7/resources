@@ -1076,6 +1076,7 @@
                                                                                                                                             --argjson FLAG "$FLAG" \
                                                                                                                                             --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
                                                                                                                                             --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
+                                                                                                                                            --argjson FLAG_STATUS "$FLAG_STATUS" \
                                                                                                                                             --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
                                                                                                                                             --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
                                                                                                                                             --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
