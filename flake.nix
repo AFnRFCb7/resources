@@ -1154,13 +1154,15 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
-                                                                                                sleep 1m
-                                                                                                if [[ -f "$COMMANDS/FAILURE" ]]
+                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
+                                                                                                do
+                                                                                                    sleep 1
+                                                                                                done
+                                                                                                FLAG="$( jq --raw-output ".flag" "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" )" || exit 175
+                                                                                                if "$FLAG"
                                                                                                 then
-                                                                                                    EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 123
-                                                                                                    exit "$EXIT_CODE"
+                                                                                                    exit 114
                                                                                                 fi
-                                                                                                exit 190
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
