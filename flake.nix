@@ -1039,7 +1039,7 @@
                                                                                                                                             if "$FLAG"
                                                                                                                                             then
                                                                                                                                                 jq "." "$COMMANDS/$INDEX.json"
-                                                                                                                                                exit "$FLAG"
+                                                                                                                                                exit 105
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         BEFORE="$( date )" || exit 106
