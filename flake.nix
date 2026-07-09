@@ -1112,7 +1112,7 @@
                                                                                                                                                         "observed" : $OBSERVED
                                                                                                                                                     } ,
                                                                                                                                                 "timeout" : $TIMEOUT
-                                                                                                                                            }'
+                                                                                                                                            }' > "$COMMANDS/$INDEX.json"
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
