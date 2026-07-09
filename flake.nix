@@ -978,6 +978,7 @@
                                                                                                                                                                 echo "9971733671754318 OBSERVED_HASH=$OBSERVED_HASH" >&2
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
+                                                                                                                                                            exit 190
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
