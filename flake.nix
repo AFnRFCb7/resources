@@ -1154,7 +1154,7 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
-                                                                                                sleep 2m
+                                                                                                sleep 1m
 #                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
 #                                                                                                do
 #                                                                                                    sleep 1
