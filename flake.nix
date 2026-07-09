@@ -1073,11 +1073,10 @@
                                                                                                                                             --arg EXPECTED_STANDARD_ERROR "" \
                                                                                                                                             --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
                                                                                                                                             --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
-                                                                                                                                            --argjson FLAG "$FLAG" \
+                                                                                                                                            --arg FLAG "$FLAG" \
                                                                                                                                             --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
                                                                                                                                             --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
                                                                                                                                             --argjson FLAG_STATUS "$FLAG_STATUS" \
-                                                                                                                                            --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
                                                                                                                                             --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
                                                                                                                                             --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
                                                                                                                                             --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
@@ -1086,12 +1085,11 @@
                                                                                                                                             --argjson TIMEOUT ${ builtins.toString action.timeout } \
                                                                                                                                             '{
                                                                                                                                                 "flag" : $FLAG ,
-                                                                                                                                                "observed-status" : $OBSERVED_STATUS ,
                                                                                                                                                 "process" : $PROCESS ,
                                                                                                                                                 "stamps" :
                                                                                                                                                     {
-                                                                                                                                                        "after" : $BEFORE ,
-                                                                                                                                                        "before" : $AFTER ,
+                                                                                                                                                        "after" : $AFTER ,
+                                                                                                                                                        "before" : $BEFORE
                                                                                                                                                     } ,
                                                                                                                                                 "standard-error" :
                                                                                                                                                     {
@@ -1101,7 +1099,7 @@
                                                                                                                                                     } ,
                                                                                                                                                 "standard-output" :
                                                                                                                                                     {
-                                                                                                                                                        "expected" : $EXPECTED_STANDARD_ERROR ,
+                                                                                                                                                        "expected" : $EXPECTED_STANDARD_OUTPUT ,
                                                                                                                                                         "flag" : $FLAG_STANDARD_OUTPUT ,
                                                                                                                                                         "observed" : $OBSERVED_STANDARD_OUTPUT ,
                                                                                                                                                     } ,
@@ -1109,7 +1107,7 @@
                                                                                                                                                     {
                                                                                                                                                         "expected" : $EXPECTED_STATUS ,
                                                                                                                                                         "flag" : $FLAG_STATUS ,
-                                                                                                                                                        "observed" : $OBSERVED
+                                                                                                                                                        "observed" : $OBSERVED_STATUS
                                                                                                                                                     } ,
                                                                                                                                                 "timeout" : $TIMEOUT
                                                                                                                                             }' > "$COMMANDS/${ builtins.toString index }.json"
