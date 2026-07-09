@@ -1056,7 +1056,6 @@
                                                                                                                                                             "flag" : $FLAG_RECURSION
                                                                                                                                                         } ,
                                                                                                                                                  }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                        then
                                                                                                                                         else
                                                                                                                                             BEFORE="$( date )" || exit 106
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
