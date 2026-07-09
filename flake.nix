@@ -1160,6 +1160,7 @@
                                                                                                     EXIT_CODE="$( cat "$COMMANDS/FAILURE" )" || exit 123
                                                                                                     exit "$EXIT_CODE"
                                                                                                 fi
+                                                                                                exit 190
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
