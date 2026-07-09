@@ -1041,7 +1041,6 @@
                                                                                                                                                 jq "." "$COMMANDS/$INDEX.json"
                                                                                                                                                 exit 105
                                                                                                                                             fi
-                                                                                                                                            exit 190
                                                                                                                                         done
                                                                                                                                         BEFORE="$( date )" || exit 106
                                                                                                                                         STANDARD_ERROR_FILE="$( mktemp )" || exit 154
