@@ -1155,9 +1155,10 @@
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
                                                                                                 sleep 3m
-                                                                                                echo dsafds >&2
+                                                                                                echo 1723258852938545 1369941427493491 2554871466992742 >&2
+                                                                                                ${ pkgs.findutils }/bin/find "$COMMANDS" >&2
+                                                                                                echo 1723258852938545 1369941427493491 5179252867477925 >&2
                                                                                                 echo "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" >&2
-                                                                                                ${ pkgs.findutils }/bin/find "$COMMANDS"
 #                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" ]]
 #                                                                                                do
 #                                                                                                    sleep 1
