@@ -1154,14 +1154,11 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
-                                                                                                sleep 1m
-                                                                                                ${ pkgs.findutils }/bin/find "$COMMANDS" >&2
-                                                                                                sleep 1m
-#                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
-#                                                                                                do
-#                                                                                                    sleep 1
-#                                                                                                done
-                                                                                                FLAG="$( jq --raw-output ".flag" "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" )" || exit 175
+                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" ]]
+                                                                                                do
+                                                                                                    sleep 1
+                                                                                                done
+                                                                                                FLAG="$( jq --raw-output ".flag" "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" )" || exit 175
                                                                                                 if "$FLAG"
                                                                                                 then
                                                                                                     exit 114
