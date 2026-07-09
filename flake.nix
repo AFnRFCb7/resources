@@ -1035,7 +1035,7 @@
                                                                                                                                             do
                                                                                                                                                 sleep 1
                                                                                                                                             done
-                                                                                                                                            FLAG="$( jq --raw-output ".evaluation" "$COMMANDS/$INDEX.json" )" || exit 182
+                                                                                                                                            FLAG="$( jq --raw-output ".flag" "$COMMANDS/$INDEX.json" )" || exit 182
                                                                                                                                             if "$FLAG"
                                                                                                                                             then
                                                                                                                                                 jq "." "$COMMANDS/$INDEX.json"
