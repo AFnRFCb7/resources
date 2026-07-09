@@ -1029,7 +1029,6 @@
                                                                                                                                     ] ;
                                                                                                                                 text =
                                                                                                                                     ''
-                                                                                                                                        FLAG_RECURSION=false
                                                                                                                                         seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
                                                                                                                                         do
                                                                                                                                             while [[ ! -f "$COMMANDS/$INDEX.json" ]]
@@ -1037,26 +1036,13 @@
                                                                                                                                                 sleep 1
                                                                                                                                             done
                                                                                                                                             FLAG="$( jq --raw-output ".flag" "$COMMANDS/$INDEX.json" )" || exit 182
-                                                                                                                                            if "$FLAG_RECURSION" || "$FLAG"
+                                                                                                                                            if "$FLAG"
                                                                                                                                             then
-                                                                                                                                                jq "." "$COMMANDS/$INDEX.json"
-                                                                                                                                                FLAG_RECURSION=true
+                                                                                                                                                jq "." "$COMMANDS/$INDEX.json" >&2
                                                                                                                                             fi
                                                                                                                                         done
-                                                                                                                                        if "$FLAG_RECURSION"
+                                                                                                                                        if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
-                                                                                                                                            jq \
-                                                                                                                                                --null-input \
-                                                                                                                                                --argjson FLAG "$FLAG" \
-                                                                                                                                                --argjson FLAG_RECURSION "$FLAG_RECURSION" \
-                                                                                                                                                '{
-                                                                                                                                                    "flag" : $FLAG ,
-                                                                                                                                                    "recursion" :
-                                                                                                                                                        {
-                                                                                                                                                            "flag" : $FLAG_RECURSION
-                                                                                                                                                        } ,
-                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                        else
                                                                                                                                             BEFORE="$( date )" || exit 106
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
@@ -1092,6 +1078,10 @@
                                                                                                                                                 FLAG_STATUS=true
                                                                                                                                             fi
                                                                                                                                             AFTER="$( date )" || exit 114
+                                                                                                                                            if "$FLAG"
+                                                                                                                                            then
+                                                                                                                                                touch "$COMMANDS/FLAG"
+                                                                                                                                            fi
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
                                                                                                                                                 --arg AFTER "$AFTER" \
@@ -1137,7 +1127,14 @@
                                                                                                                                                         } ,
                                                                                                                                                     "timeout" : $TIMEOUT
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                            fi
+                                                                                                                                        else
+                                                                                                                                            jq \
+                                                                                                                                                --null-input \
+                                                                                                                                                --argjson FLAG false \
+                                                                                                                                                '{
+                                                                                                                                                    "flag" : "$FLAG"
+                                                                                                                                                }' > "$COMMANDS/${ builtins.toString index }.json"
+                                                                                                                                        fi
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
