@@ -1044,6 +1044,7 @@
                                                                                                                                             fi
                                                                                                                                         done
                                                                                                                                         if "$FLAG_RECURSION"
+                                                                                                                                        then
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
                                                                                                                                                 --argjson FLAG "$FLAG" \
