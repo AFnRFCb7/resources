@@ -1029,6 +1029,7 @@
                                                                                                                                     ] ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        FLAG_RECURSION=false
                                                                                                                                         seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
                                                                                                                                         do
                                                                                                                                             while [[ ! -f "$COMMANDS/$INDEX.json" ]]
@@ -1036,92 +1037,107 @@
                                                                                                                                                 sleep 1
                                                                                                                                             done
                                                                                                                                             FLAG="$( jq --raw-output ".flag" "$COMMANDS/$INDEX.json" )" || exit 182
-                                                                                                                                            if "$FLAG"
+                                                                                                                                            if "$FLAG_RECURSION" || "$FLAG"
                                                                                                                                             then
                                                                                                                                                 jq "." "$COMMANDS/$INDEX.json"
-                                                                                                                                                exit 105
+                                                                                                                                                FLAG_RECURSION=true
                                                                                                                                             fi
                                                                                                                                         done
-                                                                                                                                        BEFORE="$( date )" || exit 106
-                                                                                                                                        STANDARD_ERROR_FILE="$( mktemp )" || exit 154
-                                                                                                                                        STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
-                                                                                                                                        if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                        if "$FLAG_RECURSION"
+                                                                                                                                            jq \
+                                                                                                                                                --null-input \
+                                                                                                                                                --argjson FLAG "$FLAG" \
+                                                                                                                                                --argjson FLAG_RECURSION "$FLAG_RECURSION" \
+                                                                                                                                                '{
+                                                                                                                                                    "flag" : $FLAG ,
+                                                                                                                                                    "recursion" :
+                                                                                                                                                        {
+                                                                                                                                                            "flag" : $FLAG_RECURSION
+                                                                                                                                                        } ,
+                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
                                                                                                                                         then
-                                                                                                                                            OBSERVED_STATUS="$?"
                                                                                                                                         else
-                                                                                                                                            OBSERVED_STATUS="$?"
-                                                                                                                                        fi
-                                                                                                                                        rm "$COMMANDS/${ builtins.toString index }"
-                                                                                                                                        FLAG=false
-                                                                                                                                        FLAG_STANDARD_ERROR=false
-                                                                                                                                        if [[ -s "$STANDARD_ERROR_FILE" ]]
-                                                                                                                                        then
-                                                                                                                                            FLAG=true
-                                                                                                                                            FLAG_STANDARD_ERROR=true
-                                                                                                                                        fi
-                                                                                                                                        FLAG_STANDARD_OUTPUT=false
-                                                                                                                                        OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
-                                                                                                                                        if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
-                                                                                                                                        then
-                                                                                                                                            FLAG=true
-                                                                                                                                            FLAG_STANDARD_OUTPUT=true
-                                                                                                                                        fi
-                                                                                                                                        FLAG_STATUS=false
-                                                                                                                                        if [[ "$OBSERVED_STATUS" == 124 ]]
-                                                                                                                                        then
-                                                                                                                                            FLAG=true
-                                                                                                                                            FLAG_STATUS=true
-                                                                                                                                        elif [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
-                                                                                                                                        then
-                                                                                                                                            FLAG=true
-                                                                                                                                            FLAG_STATUS=true
-                                                                                                                                        fi
-                                                                                                                                        AFTER="$( date )" || exit 114
-                                                                                                                                        jq \
-                                                                                                                                            --null-input \
-                                                                                                                                            --arg AFTER "$AFTER" \
-                                                                                                                                            --arg BEFORE "$BEFORE" \
-                                                                                                                                            --arg EXPECTED_STANDARD_ERROR "" \
-                                                                                                                                            --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
-                                                                                                                                            --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
-                                                                                                                                            --arg FLAG "$FLAG" \
-                                                                                                                                            --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
-                                                                                                                                            --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
-                                                                                                                                            --argjson FLAG_STATUS "$FLAG_STATUS" \
-                                                                                                                                            --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
-                                                                                                                                            --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
-                                                                                                                                            --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
-                                                                                                                                            --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
-                                                                                                                                            --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
-                                                                                                                                            --argjson TIMEOUT ${ builtins.toString action.timeout } \
-                                                                                                                                            '{
-                                                                                                                                                "flag" : $FLAG ,
-                                                                                                                                                "process" : $PROCESS ,
-                                                                                                                                                "stamps" :
-                                                                                                                                                    {
-                                                                                                                                                        "after" : $AFTER ,
-                                                                                                                                                        "before" : $BEFORE
-                                                                                                                                                    } ,
-                                                                                                                                                "standard-error" :
-                                                                                                                                                    {
-                                                                                                                                                        "expected" : $EXPECTED_STANDARD_ERROR ,
-                                                                                                                                                        "flag": $FLAG_STANDARD_ERROR ,
-                                                                                                                                                        "observed" : $OBSERVED_STANDARD_ERROR ,
-                                                                                                                                                    } ,
-                                                                                                                                                "standard-output" :
-                                                                                                                                                    {
-                                                                                                                                                        "expected" : $EXPECTED_STANDARD_OUTPUT ,
-                                                                                                                                                        "flag" : $FLAG_STANDARD_OUTPUT ,
-                                                                                                                                                        "observed" : $OBSERVED_STANDARD_OUTPUT ,
-                                                                                                                                                    } ,
-                                                                                                                                                "status" :
-                                                                                                                                                    {
-                                                                                                                                                        "expected" : $EXPECTED_STATUS ,
-                                                                                                                                                        "flag" : $FLAG_STATUS ,
-                                                                                                                                                        "observed" : $OBSERVED_STATUS
-                                                                                                                                                    } ,
-                                                                                                                                                "timeout" : $TIMEOUT
-                                                                                                                                            }' > "$COMMANDS/${ builtins.toString index }.json"
+                                                                                                                                            BEFORE="$( date )" || exit 106
+                                                                                                                                            STANDARD_ERROR_FILE="$( mktemp )" || exit 154
+                                                                                                                                            STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
+                                                                                                                                            if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                            then
+                                                                                                                                                OBSERVED_STATUS="$?"
+                                                                                                                                            else
+                                                                                                                                                OBSERVED_STATUS="$?"
+                                                                                                                                            fi
+                                                                                                                                            rm "$COMMANDS/${ builtins.toString index }"
+                                                                                                                                            FLAG=false
+                                                                                                                                            FLAG_STANDARD_ERROR=false
+                                                                                                                                            if [[ -s "$STANDARD_ERROR_FILE" ]]
+                                                                                                                                            then
+                                                                                                                                                FLAG=true
+                                                                                                                                                FLAG_STANDARD_ERROR=true
+                                                                                                                                            fi
+                                                                                                                                            FLAG_STANDARD_OUTPUT=false
+                                                                                                                                            OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
+                                                                                                                                            if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
+                                                                                                                                            then
+                                                                                                                                                FLAG=true
+                                                                                                                                                FLAG_STANDARD_OUTPUT=true
+                                                                                                                                            fi
+                                                                                                                                            FLAG_STATUS=false
+                                                                                                                                            if [[ "$OBSERVED_STATUS" == 124 ]]
+                                                                                                                                            then
+                                                                                                                                                FLAG=true
+                                                                                                                                                FLAG_STATUS=true
+                                                                                                                                            elif [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
+                                                                                                                                            then
+                                                                                                                                                FLAG=true
+                                                                                                                                                FLAG_STATUS=true
+                                                                                                                                            fi
+                                                                                                                                            AFTER="$( date )" || exit 114
+                                                                                                                                            jq \
+                                                                                                                                                --null-input \
+                                                                                                                                                --arg AFTER "$AFTER" \
+                                                                                                                                                --arg BEFORE "$BEFORE" \
+                                                                                                                                                --arg EXPECTED_STANDARD_ERROR "" \
+                                                                                                                                                --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
+                                                                                                                                                --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
+                                                                                                                                                --arg FLAG "$FLAG" \
+                                                                                                                                                --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
+                                                                                                                                                --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
+                                                                                                                                                --argjson FLAG_STATUS "$FLAG_STATUS" \
+                                                                                                                                                --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
+                                                                                                                                                --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                                --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
+                                                                                                                                                --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
+                                                                                                                                                --argjson TIMEOUT ${ builtins.toString action.timeout } \
+                                                                                                                                                '{
+                                                                                                                                                    "flag" : $FLAG ,
+                                                                                                                                                    "process" : $PROCESS ,
+                                                                                                                                                    "stamps" :
+                                                                                                                                                        {
+                                                                                                                                                            "after" : $AFTER ,
+                                                                                                                                                            "before" : $BEFORE
+                                                                                                                                                        } ,
+                                                                                                                                                    "standard-error" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STANDARD_ERROR ,
+                                                                                                                                                            "flag": $FLAG_STANDARD_ERROR ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR ,
+                                                                                                                                                        } ,
+                                                                                                                                                    "standard-output" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STANDARD_OUTPUT ,
+                                                                                                                                                            "flag" : $FLAG_STANDARD_OUTPUT ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT ,
+                                                                                                                                                        } ,
+                                                                                                                                                    "status" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STATUS ,
+                                                                                                                                                            "flag" : $FLAG_STATUS ,
+                                                                                                                                                            "observed" : $OBSERVED_STATUS
+                                                                                                                                                        } ,
+                                                                                                                                                    "timeout" : $TIMEOUT
+                                                                                                                                                }' > "$COMMANDS/${ builtins.toString index }.json"
+                                                                                                                                            fi
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
