@@ -1071,7 +1071,7 @@
                                                                                                                                             --arg AFTER "$AFTER" \
                                                                                                                                             --arg BEFORE "$BEFORE" \
                                                                                                                                             --arg EXPECTED_STANDARD_ERROR "" \
-                                                                                                                                            --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toString action.expected-standard-output }' \
+                                                                                                                                            --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
                                                                                                                                             --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
                                                                                                                                             --argjson FLAG "$FLAG" \
                                                                                                                                             --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
