@@ -1043,7 +1043,7 @@
                                                                                                                                         rm "$COMMANDS/${ builtins.toString index }"
                                                                                                                                         FLAG=false
                                                                                                                                         FLAG_STANDARD_ERROR=false
-                                                                                                                                        if [[ -s "$OBSERVED_STANDARD_ERROR_FILE" ]]
+                                                                                                                                        if [[ -s "$STANDARD_ERROR_FILE" ]]
                                                                                                                                         then
                                                                                                                                             FLAG=true
                                                                                                                                             FLAG_STANDARD_ERROR=true
