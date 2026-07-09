@@ -938,6 +938,16 @@
                                                                                                                                         (
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
+                                                                                                                                                    name = "check-redis-valid-init" ;
+                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                        '' ;
+                                                                                                                                                }
+                                                                                                                                        )
+                                                                                                                                        (
+                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                {
                                                                                                                                                     name = "check-file-integrity" ;
                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                     text =
