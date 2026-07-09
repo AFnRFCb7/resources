@@ -1154,10 +1154,11 @@
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
                                                                                                 ${ builtins.concatStringsSep "\n" processes }
-                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
-                                                                                                do
-                                                                                                    sleep 1
-                                                                                                done
+                                                                                                sleep 2m
+#                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" ]]
+#                                                                                                do
+#                                                                                                    sleep 1
+#                                                                                                done
                                                                                                 FLAG="$( jq --raw-output ".flag" "$COMMANDS/${ builtins.toString ( builtins.length _actions ) }.json" )" || exit 175
                                                                                                 if "$FLAG"
                                                                                                 then
