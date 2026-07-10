@@ -959,7 +959,7 @@
                                                                                                                                                             done
                                                                                                                                                             read -r TYPE -u 189
                                                                                                                                                             read -r CHANNEL -u 189
-                                                                                                                                                            read -r PAYLOAD -u 189
+                                                                                                                                                            read -r OBSERVED_PAYLOAD -u 189
                                                                                                                                                             if [[ "message" != "$TYPE" ]]
                                                                                                                                                             then
                                                                                                                                                                 exit 102
