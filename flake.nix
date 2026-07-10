@@ -972,11 +972,21 @@
                                                                                                                                                             OBSERVED_HASH="$( sha512sum "$YAML_FILE" | cut --characters 1-128 )" || exit 176
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
-                                                                                                                                                                echo "UUID=$UUID" >&2
-                                                                                                                                                                echo "YAML_FILE" >&2
-                                                                                                                                                                yq eval --prettyPrint "." "$YAML_FILE" >&2
-                                                                                                                                                                echo "EXPECTED_HASH=$EXPECTED_HASH" >&2
-                                                                                                                                                                echo "OBSERVED_HASH=$OBSERVED_HASH" >&2
+                                                                                                                                                                jq \
+                                                                                                                                                                    --null-input \
+                                                                                                                                                                    --arg EXPECTED_HASH "$EXPECTED_HASH" \
+                                                                                                                                                                    --arg OBSERVED_HASH "$OBSERVED_HASH" \
+                                                                                                                                                                    --arg UUID "$UUID" \
+                                                                                                                                                                    --rawfile YAML "$YAML_FILE" \
+                                                                                                                                                                    '{
+                                                                                                                                                                        "hash" :
+                                                                                                                                                                            {
+                                                                                                                                                                                "expected" : $EXPECTED_HASH ,
+                                                                                                                                                                                "observed" : $OBSERVED_HASH
+                                                                                                                                                                            } ,
+                                                                                                                                                                        "uuid" : $UUID ,
+                                                                                                                                                                        "yaml" : $YAML_FILE
+                                                                                                                                                                    }'
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
