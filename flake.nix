@@ -901,6 +901,7 @@
                                                                                                         let
                                                                                                             defaults =
                                                                                                                 {
+                                                                                                                    accepts-redirect = false ;
                                                                                                                     expected-standard-output = "" ;
                                                                                                                     expected-status = 0 ;
                                                                                                                     index = index ;
@@ -1064,13 +1065,24 @@
                                                                                                                                         if [[ ! -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
                                                                                                                                             BEFORE="$( date )" || exit 106
+                                                                                                                                            ACCEPTS_REDIRECT="${ builtins.toJSON action.accepts-redirect }
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
-                                                                                                                                            if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                            if "$ACCEPTS_REDIRECT"
                                                                                                                                             then
-                                                                                                                                                OBSERVED_STATUS="$?"
+                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                                then
+                                                                                                                                                    OBSERVED_STATUS="$?"
+                                                                                                                                                else
+                                                                                                                                                    OBSERVED_STATUS="$?"
+                                                                                                                                                fi
                                                                                                                                             else
-                                                                                                                                                OBSERVED_STATUS="$?"
+                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                                                                                then
+                                                                                                                                                    OBSERVED_STATUS="$?"
+                                                                                                                                                else
+                                                                                                                                                    OBSERVED_STATUS="$?"
+                                                                                                                                                fi
                                                                                                                                             fi
                                                                                                                                             rm "$COMMANDS/${ builtins.toString index }"
                                                                                                                                             FLAG=false
@@ -1104,6 +1116,7 @@
                                                                                                                                             fi
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
+                                                                                                                                                --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
                                                                                                                                                 --arg AFTER "$AFTER" \
                                                                                                                                                 --arg BEFORE "$BEFORE" \
                                                                                                                                                 --arg EXPECTED_STANDARD_ERROR "" \
@@ -1120,6 +1133,7 @@
                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
                                                                                                                                                 --argjson TIMEOUT ${ builtins.toString action.timeout } \
                                                                                                                                                 '{
+                                                                                                                                                    "accepts-redirect" : $ACCEPTS_REDIRECT ,
                                                                                                                                                     "flag" : $FLAG ,
                                                                                                                                                     "process" : $PROCESS ,
                                                                                                                                                     "stamps" :
