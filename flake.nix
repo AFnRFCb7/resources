@@ -1078,7 +1078,7 @@
                                                                                                                                                 FLAG_STATUS=true
                                                                                                                                             fi
                                                                                                                                             AFTER="$( date )" || exit 114
-                                                                                                                                            if "$FLAG"
+                                                                                                                                            if [[ "$FLAG" == "false" ]]
                                                                                                                                             then
                                                                                                                                                 touch "$COMMANDS/FLAG"
                                                                                                                                             fi
@@ -1174,7 +1174,9 @@
                                                                                                 then
                                                                                                     exit 114
                                                                                                 fi
+                                                                                                echo 1723258852938545 1369941427493491 7548458231217934 >&2
                                                                                                 ${ pkgs.findutils }/bin/find "$COMMANDS" | sort >&2
+                                                                                                echo 1723258852938545 1369941427493491 9334419664233815 >&2
                                                                                                 exit 190
                                                                                             '' ;
                                                                             } ;
