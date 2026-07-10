@@ -985,7 +985,7 @@
                                                                                                                                                                                 "observed" : $OBSERVED_HASH
                                                                                                                                                                             } ,
                                                                                                                                                                         "uuid" : $UUID ,
-                                                                                                                                                                        "yaml" : $YAML_FILE
+                                                                                                                                                                        "yaml" : $YAML
                                                                                                                                                                     }'
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
