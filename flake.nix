@@ -1158,7 +1158,7 @@
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
                                                                                             ''
-                                                                                                COMMANDS="$( mktemp --directory )" || exit 119
+                                                                                                COMMANDS="$( mktemp --directory )" || exit 188
                                                                                                 export COMMANDS
                                                                                                 exec 189< <( redis-cli SUBSCRIBE valid-init valid-release invalid-init invalid-release )
                                                                                                 is-subscribed valid-init 1 <&189
@@ -1183,7 +1183,7 @@
                                                                                                     echo 1723258852938545 1369941427493491 2835434688982265 >&2
                                                                                                     jq "." "$COMMANDS/3.json" >&2
                                                                                                     echo 1723258852938545 1369941427493491 4547578443474862 >&2
-                                                                                                    exit 119
+                                                                                                    exit 166
                                                                                                 fi
                                                                                             '' ;
                                                                             } ;
