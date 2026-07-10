@@ -1174,6 +1174,7 @@
                                                                                                 then
                                                                                                     exit 114
                                                                                                 fi
+                                                                                                exit 190
                                                                                             '' ;
                                                                             } ;
                                                                         in "${ application }/bin/test" ;
