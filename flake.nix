@@ -1175,7 +1175,7 @@
                                                                                                     do
                                                                                                         echo >&2
                                                                                                         echo "$FILE" >&2
-                                                                                                        jq "." "$FILE"
+                                                                                                        jq "." "$FILE" >&2
                                                                                                     done
                                                                                                     exit 166
                                                                                                 fi
