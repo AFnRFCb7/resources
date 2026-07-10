@@ -1078,7 +1078,7 @@
                                                                                                                                                 FLAG=true
                                                                                                                                                 FLAG_STATUS=true
                                                                                                                                             fi
-                                                                                                                                            AFTER="$( date )" || exit 114
+                                                                                                                                            AFTER="$( date )" || exit 110
                                                                                                                                             if [[ "$FLAG" == "false" ]]
                                                                                                                                             then
                                                                                                                                                 touch "$COMMANDS/FLAG"
@@ -1173,7 +1173,7 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
-                                                                                                    exit 114
+                                                                                                    exit 119
                                                                                                 fi
                                                                                                 echo 1723258852938545 1369941427493491 7548458231217934 >&2
                                                                                                 ${ pkgs.findutils }/bin/find "$COMMANDS" | sort >&2
