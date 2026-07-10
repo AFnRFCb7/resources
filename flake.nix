@@ -1181,7 +1181,7 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            mapper = { acccepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
+                                                                                                            mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
