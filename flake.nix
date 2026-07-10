@@ -901,7 +901,7 @@
                                                                                                         let
                                                                                                             defaults =
                                                                                                                 {
-                                                                                                                    accepts-redirect = false ;
+                                                                                                                    accepts-redirect = true ;
                                                                                                                     expected-standard-output = "" ;
                                                                                                                     expected-status = 0 ;
                                                                                                                     index = index ;
