@@ -87,6 +87,7 @@
                                                                     export TEMPORARY
                                                                     clean
                                                                     STATUS="$( cat "$TEMPORARY/status" )" || exit 158
+                                                                    rm ${ resources-directory }/locks/clean
                                                                     exit "$STATUS"
                                                                 '' ;
                                                         } ;
