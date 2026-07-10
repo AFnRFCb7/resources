@@ -1173,6 +1173,7 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
+                                                                                                    ${ pkgs.findutils }/bin/find "$COMMANDS" >&2
                                                                                                     exit 119
                                                                                                 fi
                                                                                                 echo 1723258852938545 1369941427493491 7548458231217934 >&2
