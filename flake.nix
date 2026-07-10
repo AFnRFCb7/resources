@@ -1079,7 +1079,7 @@
                                                                                                                                                 FLAG_STATUS=true
                                                                                                                                             fi
                                                                                                                                             AFTER="$( date )" || exit 110
-                                                                                                                                            if [[ "$FLAG" == "false" ]]
+                                                                                                                                            if [[ "$FLAG" == "true" ]]
                                                                                                                                             then
                                                                                                                                                 touch "$COMMANDS/FLAG"
                                                                                                                                             fi
@@ -1131,7 +1131,7 @@
                                                                                                                                         else
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
-                                                                                                                                                --argjson FLAG false \
+                                                                                                                                                --argjson FLAG true \
                                                                                                                                                 '{
                                                                                                                                                     "flag" : $FLAG
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
