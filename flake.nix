@@ -988,7 +988,7 @@
                                                                                                                                                                             } ,
                                                                                                                                                                         "uuid" : $UUID ,
                                                                                                                                                                         "yaml" : $YAML
-                                                                                                                                                                    }' | yq eval --prettyPrint
+                                                                                                                                                                    }' | yq eval --prettyPrint >&2
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
