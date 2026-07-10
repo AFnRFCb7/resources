@@ -1065,7 +1065,7 @@
                                                                                                                                         if [[ ! -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
                                                                                                                                             BEFORE="$( date )" || exit 106
-                                                                                                                                            ACCEPTS_REDIRECT="${ builtins.toJSON action.accepts-redirect }
+                                                                                                                                            ACCEPTS_REDIRECT="${ builtins.toJSON action.accepts-redirect }"
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
                                                                                                                                             if "$ACCEPTS_REDIRECT"
