@@ -1145,6 +1145,7 @@
                                                                                                                                                             "flag" : $FLAG_STATUS ,
                                                                                                                                                             "observed" : $OBSERVED_STATUS
                                                                                                                                                         } ,
+                                                                                                                                                    "text" : $TEXT ,
                                                                                                                                                     "timeout" : $TIMEOUT
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
                                                                                                                                         else
