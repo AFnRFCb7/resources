@@ -1171,7 +1171,7 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
-                                                                                                    find "$COMMANDS -type f -name "*.json" | sort | while read -r FILE
+                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
                                                                                                     do
                                                                                                         echo >&2
                                                                                                         echo "$FILE" >&2
