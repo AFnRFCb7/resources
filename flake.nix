@@ -1131,13 +1131,13 @@
                                                                                                                                                         {
                                                                                                                                                             "expected" : $EXPECTED_STANDARD_ERROR ,
                                                                                                                                                             "flag": $FLAG_STANDARD_ERROR ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR
                                                                                                                                                         } ,
                                                                                                                                                     "standard-output" :
                                                                                                                                                         {
                                                                                                                                                             "expected" : $EXPECTED_STANDARD_OUTPUT ,
                                                                                                                                                             "flag" : $FLAG_STANDARD_OUTPUT ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT
                                                                                                                                                         } ,
                                                                                                                                                     "status" :
                                                                                                                                                         {
