@@ -1132,7 +1132,7 @@
                                                                                                                                                 --null-input \
                                                                                                                                                 --argjson FLAG false \
                                                                                                                                                 '{
-                                                                                                                                                    "flag" : "$FLAG"
+                                                                                                                                                    "flag" : $FLAG
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
                                                                                                                                         fi
                                                                                                                                     '' ;
