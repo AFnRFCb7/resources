@@ -1043,6 +1043,7 @@
                                                                                                                                         done
                                                                                                                                         if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
+                                                                                                                                            echo 1723258852938545 1369941427493491 4753473864936128 >&2
                                                                                                                                             BEFORE="$( date )" || exit 106
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
