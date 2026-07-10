@@ -1042,7 +1042,6 @@
                                                                                                                                         done
                                                                                                                                         if [[ ! -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
-                                                                                                                                            echo 1723258852938545 1369941427493491 4753473864936128 >&2
                                                                                                                                             BEFORE="$( date )" || exit 106
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
@@ -1172,16 +1171,12 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
-                                                                                                    ${ pkgs.findutils }/bin/find "$COMMANDS" | sort >&2
-                                                                                                    echo 1723258852938545 1369941427493491 1673123533175983 >&2
-                                                                                                    jq "." "$COMMANDS/0.json" >&2
-                                                                                                    echo 1723258852938545 1369941427493491 8993791973279335 >&2
-                                                                                                    jq "." "$COMMANDS/1.json" >&2
-                                                                                                    echo 1723258852938545 1369941427493491 4286731341917696 >&2
-                                                                                                    jq "." "$COMMANDS/2.json" >&2
-                                                                                                    echo 1723258852938545 1369941427493491 2835434688982265 >&2
-                                                                                                    jq "." "$COMMANDS/3.json" >&2
-                                                                                                    echo 1723258852938545 1369941427493491 4547578443474862 >&2
+                                                                                                    find "$COMMANDS -type f -name "*.json" | sort | while read -r FILE
+                                                                                                    do
+                                                                                                        echo >&2
+                                                                                                        echo "$FILE" >&2
+                                                                                                        jq "." "$FILE"
+                                                                                                    done
                                                                                                     exit 166
                                                                                                 fi
                                                                                             '' ;
