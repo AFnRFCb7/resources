@@ -957,9 +957,9 @@
                                                                                                                                                                         ;;
                                                                                                                                                                 esac
                                                                                                                                                             done
-                                                                                                                                                            read -r TYPE -u 189
-                                                                                                                                                            read -r CHANNEL -u 189
-                                                                                                                                                            read -r OBSERVED_PAYLOAD -u 189
+                                                                                                                                                            read -r -u 189 TYPE
+                                                                                                                                                            read -r -u 189 CHANNEL
+                                                                                                                                                            read -r -u 189 OBSERVED_PAYLOAD
                                                                                                                                                             if [[ "message" != "$TYPE" ]]
                                                                                                                                                             then
                                                                                                                                                                 exit 102
