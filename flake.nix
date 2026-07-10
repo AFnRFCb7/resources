@@ -946,6 +946,34 @@
                                                                                                                                                     runtimeInputs = [ ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                            do
+                                                                                                                                                                case "$1" in
+                                                                                                                                                                    --uuid)
+                                                                                                                                                                        shift 2
+                                                                                                                                                                        ;;
+                                                                                                                                                                    *)
+                                                                                                                                                                        exit 129
+                                                                                                                                                                        ;;
+                                                                                                                                                                esac
+                                                                                                                                                            done
+                                                                                                                                                            read -r TYPE -u 189
+                                                                                                                                                            read -r CHANNEL -u 189
+                                                                                                                                                            read -r PAYLOAD -u 189
+                                                                                                                                                            if [[ "message" != "$TYPE" ]]
+                                                                                                                                                            then
+                                                                                                                                                                exit 102
+                                                                                                                                                            fi
+                                                                                                                                                            if [[ "redis-init" != "$CHANNEL" ]]
+                                                                                                                                                            then
+                                                                                                                                                                exit 173
+                                                                                                                                                            fi
+                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --null-input '{ }' )" || exit 160
+                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                                            then
+                                                                                                                                                                yq eval --prettyPrint "[.]" >> "$COMMANDS/FLAG"
+                                                                                                                                                                exit 139
+                                                                                                                                                            fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
