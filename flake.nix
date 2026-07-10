@@ -1170,8 +1170,7 @@
                                                                                                 do
                                                                                                     sleep 1
                                                                                                 done
-                                                                                                FLAG="$( jq --raw-output ".flag" "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" )" || exit 175
-                                                                                                if "$FLAG"
+                                                                                                if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
                                                                                                     exit 114
                                                                                                 fi
