@@ -988,7 +988,7 @@
                                                                                                                                                                             } ,
                                                                                                                                                                         "uuid" : $UUID ,
                                                                                                                                                                         "yaml" : $YAML
-                                                                                                                                                                    }' | yq eval --prettyPrint >&2
+                                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> "$COMMANDS/FLAG"
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
@@ -1190,6 +1190,7 @@
                                                                                                         echo "$FILE" >&2
                                                                                                         jq "." "$FILE" >&2 | yq eval --prettyPrint
                                                                                                     done
+                                                                                                    yq eval --prettyPrint "." "$COMMANDS/FLAG"
                                                                                                     exit 166
                                                                                                 fi
                                                                                             '' ;
