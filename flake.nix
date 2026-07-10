@@ -964,7 +964,7 @@
                                                                                                                                                             then
                                                                                                                                                                 exit 102
                                                                                                                                                             fi
-                                                                                                                                                            if [[ "redis-init" != "$CHANNEL" ]]
+                                                                                                                                                            if [[ "valid-init" != "$CHANNEL" ]]
                                                                                                                                                             then
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
