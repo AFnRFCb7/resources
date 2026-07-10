@@ -1174,6 +1174,7 @@
                                                                                                 then
                                                                                                     exit 114
                                                                                                 fi
+                                                                                                ${ pkgs.findutils }/bin/find "$COMMANDS" | sort >&2
                                                                                                 exit 190
                                                                                             '' ;
                                                                             } ;
