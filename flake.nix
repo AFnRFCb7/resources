@@ -887,7 +887,9 @@
                                                                                                 }
                                                                                         )
                                                                                         pkgs.coreutils
+                                                                                        pkgs.jq
                                                                                         pkgs.redis
+                                                                                        pkgs.yq-go
                                                                                     ] ;
                                                                                 text =
                                                                                     let
@@ -986,7 +988,7 @@
                                                                                                                                                                             } ,
                                                                                                                                                                         "uuid" : $UUID ,
                                                                                                                                                                         "yaml" : $YAML
-                                                                                                                                                                    }'
+                                                                                                                                                                    }' | yq eval --prettyPrint
                                                                                                                                                                 exit 101
                                                                                                                                                             fi
                                                                                                                                                         '' ;
@@ -1186,7 +1188,7 @@
                                                                                                     do
                                                                                                         echo >&2
                                                                                                         echo "$FILE" >&2
-                                                                                                        jq "." "$FILE" >&2
+                                                                                                        jq "." "$FILE" >&2 | yq eval --prettyPrint
                                                                                                     done
                                                                                                     exit 166
                                                                                                 fi
