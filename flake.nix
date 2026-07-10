@@ -1041,7 +1041,7 @@
                                                                                                                                                 jq "." "$COMMANDS/$INDEX.json" >&2
                                                                                                                                             fi
                                                                                                                                         done
-                                                                                                                                        if [[ -f "$COMMANDS/FLAG" ]]
+                                                                                                                                        if [[ ! -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
                                                                                                                                             echo 1723258852938545 1369941427493491 4753473864936128 >&2
                                                                                                                                             BEFORE="$( date )" || exit 106
