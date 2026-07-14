@@ -973,7 +973,6 @@
                                                                                                                                                             then
                                                                                                                                                                 echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
                                                                                                                                                                 # yq eval --prettyPrint "[.]" <<< "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
-                                                                                                                                                                exit 139
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
