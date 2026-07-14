@@ -972,7 +972,7 @@
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 echo 154 >> "$COMMANDS/FLAG"
-                                                                                                                                                                echo "$OBSERVED_PAYLOAD"
+                                                                                                                                                                yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
                                                                                                                                                                 exit 139
                                                                                                                                                             fi
                                                                                                                                                         '' ;
