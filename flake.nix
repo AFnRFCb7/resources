@@ -971,8 +971,9 @@
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq --null-input '{ }' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
-                                                                                                                                                                echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
+                                                                                                                                                                echo 194 "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
                                                                                                                                                                 # yq eval --prettyPrint "[.]" <<< "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
+                                                                                                                                                                exit 139
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
