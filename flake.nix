@@ -64,7 +64,7 @@
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
                                                                                                                 mkdir --parents /resources/invalid-release
-                                                                                                                PROBLEMS="$( find /resources/release /resources/invalid-init /resources/invalid-release )" || exit 127
+                                                                                                                PROBLEMS="$( find /resources/release /resources/invalid-init /resources/invalid-release )" || exit 164
                                                                                                                 if [[ -z "$PROBLEMS" ]]
                                                                                                                 then
                                                                                                                     tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources
@@ -215,7 +215,7 @@
                                                                         export INPUT_FILE
                                                                         if [[ -t 0 ]]
                                                                         then
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 127
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
