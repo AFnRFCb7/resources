@@ -219,7 +219,7 @@
                                                                             jq \
                                                                                 --null-input \
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --args \
+                                                                                --args \g
                                                                                 '{
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
