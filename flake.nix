@@ -1098,7 +1098,7 @@
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
                                                                                                                                             if "$ACCEPTS_REDIRECT"
                                                                                                                                             then
-                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE" <&189
+                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ builtins.toString action.text } > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                                                                                 then
                                                                                                                                                     OBSERVED_STATUS="$?"
                                                                                                                                                 else
