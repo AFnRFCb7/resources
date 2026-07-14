@@ -973,7 +973,7 @@
                                                                                                                                                             then
                                                                                                                                                                 echo 154 >> "$COMMANDS/FLAG"
                                                                                                                                                                 echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
-                                                                                                                                                                echo 198 >> "$COMMAND/FLAG"
+                                                                                                                                                                echo 198 >> "$COMMANDS/FLAG"
                                                                                                                                                                 exit 139
                                                                                                                                                             fi
                                                                                                                                                         '' ;
