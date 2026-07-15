@@ -236,6 +236,7 @@
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --args \
                                                                                 '{
+                                                                                    "WTF" : "2128979479613286" ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" :
                                                                                         {
