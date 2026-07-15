@@ -221,7 +221,7 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --args \
                                                                                 '{
-                                                                                    "wtf" : "8283649511726411" ,
+                                                                                    "WTF" : "8283649511726411" ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
                                                                                     "originator-pid" : $ORIGINATOR_PID
@@ -428,7 +428,7 @@
                                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                 --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
                                                                                                                                                                 '{
-                                                                                                                                                                    "WTF" : "3976811985457463" ,
+                                                                                                                                                                    "WTF" : .WTF ,
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : 0 ,
