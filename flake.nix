@@ -971,6 +971,7 @@
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq '.' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
+                                                                                                                                                                diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG"
                                                                                                                                                                 echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
                                                                                                                                                                 echo 198 >> "$COMMANDS/FLAG"
                                                                                                                                                                 exit 172
