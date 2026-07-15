@@ -1250,6 +1250,8 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
+                                                                                                    echo FLAG >&2
+                                                                                                    cat "$COMMANDS/FLAG" >&2
                                                                                                     find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
                                                                                                     do
                                                                                                         echo >&2
