@@ -263,7 +263,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
-                                                                                    "WTF" : "8845937673131321" ,
+                                                                                    "WTF" : .WTF ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
@@ -428,6 +428,7 @@
                                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                 --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
                                                                                                                                                                 '{
+                                                                                                                                                                    "WTF" : "3976811985457463" ,
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : 0 ,
