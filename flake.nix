@@ -943,7 +943,7 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "check-redis-valid-init" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.diffutils pkgs.jq ] ;
+                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.jq ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             while [[ "$#" -gt 0 ]]
@@ -971,7 +971,7 @@
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq '.' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
-                                                                                                                                                                diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG"
+                                                                                                                                                                diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG" || true
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
                                                                                                                                                         '' ;
