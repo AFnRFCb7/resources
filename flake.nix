@@ -972,13 +972,6 @@
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG" || true
-                                                                                                                                                                cat >&2 <<EOF
-                                                                                                                                                                EXPECTED:
-                                                                                                                                                                $EXPECTED_PAYLOAD
-
-                                                                                                                                                                OBSERVED:
-                                                                                                                                                                $OBSERVED_PAYLOAD
-                                                                                                                                                            EOF
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
                                                                                                                                                                 EXPECTED:
                                                                                                                                                                 $EXPECTED_PAYLOAD
