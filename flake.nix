@@ -213,21 +213,8 @@
                                                                         flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
-                                                                        if [[ -t 0 ]]
+                                                                        if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "WTF" : "8283649511726411" ,
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" : { } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        else
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
@@ -243,6 +230,19 @@
                                                                                         {
                                                                                             "standard" : $STANDARD_INPUT
                                                                                         } ,
+                                                                                    "originator-pid" : $ORIGINATOR_PID
+                                                                                }' \
+                                                                                -- "$@" > "$INPUT_FILE"
+                                                                        else
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
+                                                                            jq \
+                                                                                --null-input \
+                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --args \
+                                                                                '{
+                                                                                    "WTF" : "8283649511726411" ,
+                                                                                    "arguments" : $ARGS.positional ,
+                                                                                    "inputs" : { } ,
                                                                                     "originator-pid" : $ORIGINATOR_PID
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
