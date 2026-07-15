@@ -1254,7 +1254,7 @@
                                                                                                     do
                                                                                                         echo >&2
                                                                                                         echo "$FILE" >&2
-                                                                                                        cat "$FILE >&2
+                                                                                                        cat "$FILE" >&2
                                                                                                         # jq "." "$FILE" >&2 | yq eval --prettyPrint
                                                                                                     done
                                                                                                     # yq eval --prettyPrint "." "$COMMANDS/FLAG"
