@@ -1258,7 +1258,7 @@
 #                                                                                                        # echo "FLAG:  $FILE" >&2
 #                                                                                                        # cat "$FILE" >&2
 #                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
-                                                                                                    done
+#                                                                                                    done
                                                                                                     # yq eval --prettyPrint "." "$COMMANDS/FLAG"
                                                                                                     exit 166
                                                                                                 fi
