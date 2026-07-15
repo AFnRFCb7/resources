@@ -943,7 +943,7 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "check-redis-valid-init" ;
-                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                    runtimeInputs = [ pkgs.diffutils pkgs.jq ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             while [[ "$#" -gt 0 ]]
