@@ -1099,14 +1099,14 @@
                                                                                                                                             STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
                                                                                                                                             if "$ACCEPTS_REDIRECT"
                                                                                                                                             then
-                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; } }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                                                                                 then
                                                                                                                                                     OBSERVED_STATUS="$?"
                                                                                                                                                 else
                                                                                                                                                     OBSERVED_STATUS="$?"
                                                                                                                                                 fi
                                                                                                                                             else
-                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
+                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; } }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
                                                                                                                                                 then
                                                                                                                                                     OBSERVED_STATUS="$?"
                                                                                                                                                 else
