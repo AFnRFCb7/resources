@@ -973,7 +973,7 @@
                                                                                                                                                             then
                                                                                                                                                                 echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
                                                                                                                                                                 echo 198 >> "$COMMANDS/FLAG"
-                                                                                                                                                                exit 139
+                                                                                                                                                                exit 106
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
@@ -996,7 +996,7 @@
                                                                                                                                                             then
                                                                                                                                                                 cp --recursive ${ gc-roots-directory } "$ROOT/roots"
                                                                                                                                                             fi
-                                                                                                                                                            YAML_FILE="$( mktemp )" || exit 139
+                                                                                                                                                            YAML_FILE="$( mktemp )" || exit 167
                                                                                                                                                             cd "$ROOT"
                                                                                                                                                             find . \( -path './resources/pids' -o -path './resources/temporary' \) -prune -o -type f -print | sort | while IFS= read -r FILE
                                                                                                                                                             do
