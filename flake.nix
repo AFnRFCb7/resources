@@ -972,6 +972,13 @@
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG" || true
+                                                                                                                                                                cat >&2 <<EOF
+                                                                                                                                                                EXPECTED:
+                                                                                                                                                                $EXPECTED_PAYLOAD
+
+                                                                                                                                                                OBSERVED:
+                                                                                                                                                                $OBSERVED_PAYLOAD
+                                                                                                                                                                EOF
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >&2 || true
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
