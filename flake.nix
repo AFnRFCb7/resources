@@ -221,6 +221,7 @@
                                                                                 --arg ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --args \
                                                                                 '{
+                                                                                    "wtf" : "8283649511726411" ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
                                                                                     "originator-pid" : $ORIGINATOR_PID
@@ -262,6 +263,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
+                                                                                    "WTF" : "8845937673131321" ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
