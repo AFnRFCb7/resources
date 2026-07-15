@@ -977,7 +977,7 @@
                                                                                                                                                                 $EXPECTED_PAYLOAD
 
                                                                                                                                                                 OBSERVED:
-                                                                                                                                                                $OBSERVED_PAYLOAD
+                                                                                                                                                                $( yq eval --prettyPrint <<< "$OBSERVED_PAYLOAD" )
                                                                                                                                                             EOF
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >&2 || true
                                                                                                                                                                 exit 172
