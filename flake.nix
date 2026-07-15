@@ -968,7 +968,7 @@
                                                                                                                                                             then
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq '{ }' )" || exit 160
+                                                                                                                                                            EXPECTED_PAYLOAD="$( jq '.' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 echo "$OBSERVED_PAYLOAD" >> "$COMMANDS/FLAG"
