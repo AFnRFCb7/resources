@@ -1240,9 +1240,9 @@
                                                                                                     do
                                                                                                         echo >&2
                                                                                                         echo "$FILE" >&2
-                                                                                                        jq "." "$FILE" >&2 | yq eval --prettyPrint
+                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
                                                                                                     done
-                                                                                                    yq eval --prettyPrint "." "$COMMANDS/FLAG"
+                                                                                                    # yq eval --prettyPrint "." "$COMMANDS/FLAG"
                                                                                                     exit 166
                                                                                                 fi
                                                                                             '' ;
