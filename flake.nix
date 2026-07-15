@@ -978,7 +978,7 @@
 
                                                                                                                                                                 OBSERVED:
                                                                                                                                                                 $OBSERVED_PAYLOAD
-                                                                                                                                                                EOF
+                                                                                                                                                            EOF
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >&2 || true
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
