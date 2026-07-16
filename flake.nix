@@ -1236,9 +1236,7 @@
                                                                                                                     (
                                                                                                                         true ${ name }
                                                                                                                         # shellcheck disable=SC2030,SC2031
-                                                                                                                        export P_PID="$$"
-                                                                                                                        export PP_PPID="$PID"
-                                                                                                                        export PROCESS_PID="$P_PID"
+                                                                                                                        export PROCESS_PID="$PROCESS_PID"
                                                                                                                         ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
                                                                                                                     ) &
                                                                                                                 '' ;
