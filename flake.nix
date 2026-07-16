@@ -268,7 +268,6 @@
                                                                         then
                                                                             jq \
                                                                                 '{
-                                                                                    "WTF" : .WTF ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
@@ -982,15 +981,16 @@
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq '.' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
-                                                                                                                                                                diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG" || true
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
+                                                                                                                                                                DIFF
+                                                                                                                                                                $( diff --unified <( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" ) <( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" ) || true )
+
                                                                                                                                                                 EXPECTED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" )
 
                                                                                                                                                                 OBSERVED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" )
                                                                                                                                                             EOF
-                                                                                                                                                                diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >&2 || true
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
                                                                                                                                                         '' ;
