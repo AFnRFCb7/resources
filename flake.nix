@@ -436,7 +436,7 @@
                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : 0 ,
                                                                                                                                                                     "index" : $INDEX ,
-                                                                                                                                                                    "inputs" : .inputs ,'
+                                                                                                                                                                    "inputs" : .inputs ,
                                                                                                                                                                     "originator-pid" : .["originator-pid"] ,
                                                                                                                                                                     "seed" : $SEED ,
                                                                                                                                                                     "standard-error" : $STANDARD_ERROR ,
