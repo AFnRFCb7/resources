@@ -266,7 +266,7 @@
                                                                                 '{
                                                                                     "WTF" : "2929871357793313" ,
                                                                                     "WTF2" : .WTF ,
-                                                                                    "WTF3" : .WTF3 ,
+                                                                                    "WTF3" : . ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
