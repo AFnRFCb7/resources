@@ -991,11 +991,14 @@
                                                                                                                                                                 EXPECTED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" )
 
-                                                                                                                                                                $( echo "$EXPECTED_PAYLOAD" )
+                                                                                                                                                                $EXPECTED_PAYLOAD
 
 
                                                                                                                                                                 OBSERVED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" )
+
+
+                                                                                                                                                                $OBSERVED_PAYLOAD
                                                                                                                                                             EOF
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
