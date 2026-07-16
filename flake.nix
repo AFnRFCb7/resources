@@ -1099,6 +1099,7 @@
                                                                                                                                     ] ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        export COMMAND_PID="$$"
                                                                                                                                         seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
                                                                                                                                         do
                                                                                                                                             while [[ ! -f "$COMMANDS/$INDEX.json" ]]
