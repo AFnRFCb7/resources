@@ -445,7 +445,8 @@
                                                                                                                                                                     "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                     "status" : $STATUS ,
                                                                                                                                                                     "targets" : $EXPECTED_TARGETS ,
-                                                                                                                                                                    "text" : $TEXT
+                                                                                                                                                                    "text" : $TEXT ,
+                                                                                                                                                                    "temporary" : .temporary
                                                                                                                                                                 }' \
                                                                                                                                                                 "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
