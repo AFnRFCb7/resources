@@ -241,6 +241,7 @@
                                                                                 --args \
                                                                                 '{
                                                                                     "WTF" : "8283649511726411" ,
+                                                                                    "WTF3" : $ORIGINATOR_PID ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
                                                                                     "originator-pid" : $ORIGINATOR_PID
@@ -265,6 +266,7 @@
                                                                                 '{
                                                                                     "WTF" : "2929871357793313" ,
                                                                                     "WTF2" : .WTF ,
+                                                                                    "WTF3" : .WTF3 ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
