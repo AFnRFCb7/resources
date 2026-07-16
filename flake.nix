@@ -1236,6 +1236,7 @@
                                                                                                             in
                                                                                                                 ''
                                                                                                                     (
+                                                                                                                        export PROCESS_PID="$?"
                                                                                                                         true ${ name }
                                                                                                                         ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
                                                                                                                     ) &
