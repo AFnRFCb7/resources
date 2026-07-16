@@ -220,7 +220,7 @@
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
                                                                             jq \
                                                                                 --null-input \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --args \
                                                                                 '{
@@ -237,10 +237,10 @@
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
                                                                             jq \
                                                                                 --null-input \
-                                                                                --arg ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --args \
                                                                                 '{
-                                                                                    "WTF" : "8283649511726411-$ORIGINATOR_PID" ,
+                                                                                    "WTF" : "8283649511726411" ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
                                                                                     "originator-pid" : $ORIGINATOR_PID
