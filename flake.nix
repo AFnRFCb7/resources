@@ -213,6 +213,7 @@
                                                                         flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
+                                                                        export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
@@ -222,6 +223,7 @@
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
                                                                                 '{
                                                                                     "WTF" : "2128979479613286" ,
@@ -230,7 +232,8 @@
                                                                                         {
                                                                                             "standard" : $STANDARD_INPUT
                                                                                         } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
@@ -238,12 +241,14 @@
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
                                                                                 '{
                                                                                     "WTF" : "5482197652155478" ,
                                                                                     "arguments" : $ARGS.positional ,
                                                                                     "inputs" : { } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID
+                                                                                    "originator-pid" : $ORIGINATOR_PID ,
+                                                                                    "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         fi
