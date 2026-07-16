@@ -263,7 +263,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
-                                                                                    "WTF" : "2929871357793313" ,
+                                                                                    "WTF" : .WTF ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
