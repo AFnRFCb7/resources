@@ -982,8 +982,6 @@
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
-
-
                                                                                                                                                                 DIFF:
                                                                                                                                                                 $( diff --unified <( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" ) <( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" ) || true )
 
@@ -991,14 +989,9 @@
                                                                                                                                                                 EXPECTED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" )
 
-                                                                                                                                                                $EXPECTED_PAYLOAD
-
 
                                                                                                                                                                 OBSERVED:
                                                                                                                                                                 $( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" )
-
-
-                                                                                                                                                                $OBSERVED_PAYLOAD
                                                                                                                                                             EOF
                                                                                                                                                                 exit 172
                                                                                                                                                             fi
