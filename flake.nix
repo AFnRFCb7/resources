@@ -978,7 +978,7 @@
                                                                                                                                                             then
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq '.' )" || exit 160
+                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 160
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
