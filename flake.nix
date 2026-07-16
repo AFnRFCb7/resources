@@ -264,7 +264,7 @@
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "2929871357793313" ,
-                                                                                    "WTF2" : .wtf ,
+                                                                                    "WTF2" : .WTF ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
