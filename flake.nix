@@ -979,10 +979,10 @@
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >> "$COMMANDS/FLAG" || true
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
                                                                                                                                                                 EXPECTED:
-                                                                                                                                                                $( yq eval --prettyPrint <<< "$EXPECTED_PAYLOAD" )
+                                                                                                                                                                $( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" )
 
                                                                                                                                                                 OBSERVED:
-                                                                                                                                                                $( yq eval --prettyPrint <<< "$OBSERVED_PAYLOAD" )
+                                                                                                                                                                $( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" )
                                                                                                                                                             EOF
                                                                                                                                                                 diff --unified <( printf '%s\n' "$EXPECTED_PAYLOAD" ) <( printf '%s\n' "$OBSERVED_PAYLOAD" ) >&2 || true
                                                                                                                                                                 exit 172
