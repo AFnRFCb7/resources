@@ -969,7 +969,7 @@
                                                                                                                                                             done
                                                                                                                                                             read -r -u 189 TYPE
                                                                                                                                                             read -r -u 189 CHANNEL
-                                                                                                                                                            read -r -u 189 OBSERVED_PAYLOAD
+                                                                                                                                                            read -r -u 189 PAYLOAD
                                                                                                                                                             if [[ "message" != "$TYPE" ]]
                                                                                                                                                             then
                                                                                                                                                                 exit 102
@@ -979,6 +979,7 @@
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 160
+                                                                                                                                                            OBSERVED_PAYLOAD="$( jq --compact-output 'del(.metadata["originator-pid"])' <<< "$PAYLOAD" )" || exit 127
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
