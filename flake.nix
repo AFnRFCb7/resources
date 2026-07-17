@@ -122,15 +122,23 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
+                                                                                                                echo 1723258852938545 1369941427493491 4764772821548914 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
+                                                                                                                    echo 1723258852938545 1369941427493491 1919939531145867 >&2
                                                                                                                     read -r TYPE || break
+                                                                                                                    echo 1723258852938545 1369941427493491 5857879952124481 >&2
                                                                                                                     read -r CHANNEL || break
+                                                                                                                    echo 1723258852938545 1369941427493491 5616978641939895 >&2
                                                                                                                     read -r PAYLOAD || break
+                                                                                                                    echo 1723258852938545 1369941427493491 7535487471992686 >&2
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
+                                                                                                                        echo 1723258852938545 1369941427493491 4712959411172394 >&2
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        echo 1723258852938545 1369941427493491 5812328954671522 >&2
                                                                                                                         "/release/$INDEX" &
+                                                                                                                        echo 1723258852938545 1369941427493491 5515746918762734 >&2
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
@@ -142,8 +150,11 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    echo 1723258852938545 1369941427493491 3411322493624553 >&2
                                                                     mkdir --parents ${ resources-directory }/release
+                                                                    echo 1723258852938545 1369941427493491 6935487545584317 >&2
                                                                     release
+                                                                    echo 1723258852938545 1369941427493491 8353684223168542 >&2
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/release" ;
