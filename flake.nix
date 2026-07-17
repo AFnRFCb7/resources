@@ -130,7 +130,7 @@
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        "/release/$INDEX/action" &
+                                                                                                                        "/release/$INDEX" &
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
