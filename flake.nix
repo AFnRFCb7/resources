@@ -94,7 +94,7 @@
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/clean" ;
-                                        release__ =
+                                        release =
                                             let
                                                 application =
                                                     writeShellApplication
@@ -512,7 +512,7 @@
                                                                         recovery = null ;
                                                                         valid-channel = root-parameters.valid-init-channel ;
                                                                     } ;
-                                                                release =
+                                                                release__ =
                                                                     {
                                                                         action =
                                                                             let
