@@ -423,8 +423,7 @@
                                                                                                                                                         then
                                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w/release/action" ${ resource-parameters.release.action.script } > /private/sed
-                                                                                                                                                            chmod 0500 /release/action
+                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } /release/$INDEX"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
