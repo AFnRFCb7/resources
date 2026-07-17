@@ -502,17 +502,29 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
+                                                                                                            echo 1723258852938545 1369941427493491 6487197527712389 >&2
                                                                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "INPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            echo 1723258852938545 1369941427493491 2911291163919853 >&2
                                                                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "OUTPUT_FILE:?must be exported" "}" ] }"
+                                                                                                            echo 1723258852938545 1369941427493491 7312455476654393 >&2
                                                                                                             SEQUENCE="$( sequential )" || exit 137
+                                                                                                            echo 1723258852938545 1369941427493491 3855152942465395 >&2
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
+                                                                                                            echo 1723258852938545 1369941427493491 7168772384382643 >&2
                                                                                                             export INDEX
+                                                                                                            echo 1723258852938545 1369941427493491 6769155985295256 >&2
                                                                                                             mkdir --parents ${ resources-directory }/flags
+                                                                                                            echo 1723258852938545 1369941427493491 7576544763775382 >&2
                                                                                                             touch "${ resources-directory }/flags/$INDEX"
+                                                                                                            echo 1723258852938545 1369941427493491 2897657541821172 >&2
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                            echo 1723258852938545 1369941427493491 9641474891742759 >&2
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            echo 1723258852938545 1369941427493491 7861267229536536 >&2
                                                                                                             mkdir --parents ${ resources-directory }/release
+                                                                                                            echo 1723258852938545 1369941427493491 9327812774271185 >&2
                                                                                                             init
+                                                                                                            echo 1723258852938545 1369941427493491 9482975722539436 >&2
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
