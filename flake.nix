@@ -930,8 +930,8 @@
                                                                                                             actions
                                                                                                             [
                                                                                                                 { text = "check-is-blocked 1 5572814436683922" ; }
-                                                                    { text = "echo WTF 2324537578137585" ; }
                                                                                                                 { text = "check-file-integrity 8592338626733518 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ; }
+                                                                    { text = "echo WTF 7877647357583398" ; }
                                                                                                             ]
                                                                                                         ] ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
