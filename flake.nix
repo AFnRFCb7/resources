@@ -70,6 +70,7 @@
                                                                                                                     exit 164
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
+                                                                                                                find /resources
                                                                                                                 rm --recursive --force /resources/*
                                                                                                             '' ;
                                                                                                     }
