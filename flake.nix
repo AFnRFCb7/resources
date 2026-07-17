@@ -142,7 +142,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    mkdir --parents ${ resource-directory }/release
+                                                                    mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
                                                         } ;
