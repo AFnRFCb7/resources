@@ -369,7 +369,7 @@
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
-                                                                                                                                "--bind" "${ resources-directory }/release/$INDEX" "/release"
+                                                                                                                                "--bind" "${ resources-directory }/release" "/release"
                                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                 "--tmpfs" "/private"
                                                                                                                                 "--tmpfs" "/scratch"
@@ -499,7 +499,7 @@
                                                                                                             touch "${ resources-directory }/flags/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                            mkdir --parents "${ resources-directory }/release/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }/release
                                                                                                             init
                                                                                                         '' ;
                                                                                                 } ;
