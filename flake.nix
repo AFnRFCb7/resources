@@ -102,47 +102,48 @@
                                                             name = "release" ;
                                                             runtimeInputs =
                                                                 [
-#                                                                    (
-#                                                                        buildFHSUserEnv
-#                                                                            {
-#                                                                                extraBwrapArgs =
-#                                                                                    [
-#                                                                                        "--tmpfs" "/private"
-#                                                                                        "--ro-bind" "${ resources-directory }/release" "/release"
-#                                                                                    ] ;
-#                                                                                name = "release" ;
-#                                                                                runScript = "release" ;
-#                                                                                targetPkgs =
-#                                                                                    pkgs :
-#                                                                                        [
-#                                                                                            (
-#                                                                                                pkgs.writeShellApplication
-#                                                                                                    {
-#                                                                                                        name = "release" ;
-#                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
-#                                                                                                        text =
-#                                                                                                            ''
-#                                                                                                                redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-#                                                                                                                do
-#                                                                                                                    read -r TYPE || break
-#                                                                                                                    read -r CHANNEL || break
-#                                                                                                                    read -r PAYLOAD || break
-#                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-#                                                                                                                    then
-#                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-#                                                                                                                        "/release/$INDEX/action" &
-#                                                                                                                    fi
-#                                                                                                                done
-#                                                                                                            '' ;
-#                                                                                                    }
-#                                                                                            )
-#                                                                                        ] ;
-#                                                                            }
-#                                                                    )
+                                                                    (
+                                                                        buildFHSUserEnv
+                                                                            {
+                                                                                extraBwrapArgs =
+                                                                                    [
+                                                                                        "--tmpfs" "/private"
+                                                                                        "--ro-bind" "${ resources-directory }/release" "/release"
+                                                                                    ] ;
+                                                                                name = "release" ;
+                                                                                runScript = "release" ;
+                                                                                targetPkgs =
+                                                                                    pkgs :
+                                                                                        [
+                                                                                            (
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "release" ;
+                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                                redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+                                                                                                                do
+                                                                                                                    read -r TYPE || break
+                                                                                                                    read -r CHANNEL || break
+                                                                                                                    read -r PAYLOAD || break
+                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                                                                    then
+                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        "/release/$INDEX/action" &
+                                                                                                                    fi
+                                                                                                                done
+                                                                                                            '' ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                            }
+                                                                    )
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    export INDEX="$INDEX"
+                                                                    mkdir --parents ${ resource-directory }/release
+                                                                    release
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/release" ;
