@@ -807,7 +807,7 @@
                                                                                             OUT="$1"
                                                                                             mkdir --parents "$OUT"
                                                                                             mkdir --parents "$OUT/init"
-                                                                                            ln --symbolic ${ resource-parameters.init.action } "$OUT/init/action"
+                                                                                            ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
                                                                                             mkdir --parents "$OUT/release"
                                                                                             ln --symbolic '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' "$OUT/error.json"
                                                                                             ln --symbolic '${ builtins.toFile "seed.json" ( builtins.toJSON ( visitor { bool = stringify ; float = stringify ; int = stringify ; lambda = stringify ; list = stringify ; null = stringify ; path = stringify ; set = stringify ; string = stringify ; } resource-parameters seed ) ) }' "$OUT/seed.json"
