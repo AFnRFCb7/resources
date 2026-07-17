@@ -270,7 +270,7 @@
                                                                             # FINDME SUCCESS
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             touch ${ resources-directory }/release/FLAG
-                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w${ resources-directory }/release/$INDEX" ${ release }
+                                                                            ln --symbolic ${ release } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
