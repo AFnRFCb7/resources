@@ -423,7 +423,7 @@
                                                                                                                                                         then
                                                                                                                                                             mkdir --parents "/pid/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
-                                                                                                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w/release/action" ${ resource-parameters.release.action.script }/bin/release > /private/sed
+                                                                                                                                                            sed -e "s#\$INDEX#$INDEX#" -e "w/release/action" ${ resource-parameters.release.action.script } > /private/sed
                                                                                                                                                             chmod 0500 /release/action
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
