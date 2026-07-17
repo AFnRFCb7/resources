@@ -674,7 +674,6 @@
                                                                                                                 ''
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     echo "$INDEX"
-                                                                                                                    if true ; then exit 0 ; fi
                                                                                                                     mkdir --parents ${ resources-directory }/locks
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
                                                                                                                     flock -s 182
