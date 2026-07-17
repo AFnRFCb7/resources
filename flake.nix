@@ -64,12 +64,12 @@
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
                                                                                                                 mkdir --parents /resources/invalid-release
-                                                                                                                PROBLEMS="$( find /resources/release /resources/invalid-init /resources/invalid-release )" || exit 164
-                                                                                                                if [[ -z "$PROBLEMS" ]]
+                                                                                                                if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f )" | grep --quiet
                                                                                                                 then
-                                                                                                                    tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources
-                                                                                                                    rm --recursive --force /gc-roots /resources
+                                                                                                                    exit 164
                                                                                                                 fi
+                                                                                                                tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources
+                                                                                                                rm --recursive --force /gc-roots /resources
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
