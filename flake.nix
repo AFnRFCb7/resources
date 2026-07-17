@@ -70,7 +70,7 @@
                                                                                                                     exit 164
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
-                                                                                                                find /resources -mindepth 1 -type f -delete
+                                                                                                                # find /resources -mindepth 1 -type f -delete
                                                                                                                 # find /resources /gc-roots -mindepth 1 -exec rm --recursive --force {} +
                                                                                                             '' ;
                                                                                                     }
