@@ -122,6 +122,7 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
+                                                                                                                exec 133< <( redis-cli SUBSCRIBE valid-init )
                                                                                                                 echo 1723258852938545 1369941427493491 4764772821548914 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
@@ -153,11 +154,10 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    exec 133< <( redis-cli SUBSCRIBE valid-init )
                                                                     echo 1723258852938545 1369941427493491 3411322493624553 >&2
                                                                     mkdir --parents ${ resources-directory }/release
                                                                     echo 1723258852938545 1369941427493491 6935487545584317 >&2
-                                                                    release <&133
+                                                                    release
                                                                     echo 1723258852938545 1369941427493491 8353684223168542 >&2
                                                                 '' ;
                                                         } ;
