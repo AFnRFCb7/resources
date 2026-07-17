@@ -67,6 +67,7 @@
                                                                                                                 mkdir --parents /resources/invalid-release
                                                                                                                 if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f | grep --quiet "."
                                                                                                                 then
+                                                                                                                    find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f >&2
                                                                                                                     exit 164
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
