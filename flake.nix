@@ -420,8 +420,7 @@
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            mkdir --parents "/pid/$INDEX"
-                                                                                                                                                            echo "$ORIGINATOR_PID" > "/pid/$INDEX/$ORIGINATOR_PID"
+                                                                                                                                                            echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
