@@ -126,11 +126,11 @@
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     echo 1723258852938545 1369941427493491 6883187443169535 >&2
-                                                                                                                    read -r TYPE -u 189 || break
+                                                                                                                    read -r -u 189 TYPE || break
                                                                                                                     echo 1723258852938545 1369941427493491 5857879952124481 >&2
-                                                                                                                    read -r CHANNEL -u 189 || break
+                                                                                                                    read -r -u 189 CHANNEL || break
                                                                                                                     echo 1723258852938545 1369941427493491 5616978641939895 >&2
-                                                                                                                    read -r PAYLOAD -u 189 || break
+                                                                                                                    read -r -u 189 PAYLOAD || break
                                                                                                                     echo 1723258852938545 1369941427493491 7535487471992686 >&2
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
