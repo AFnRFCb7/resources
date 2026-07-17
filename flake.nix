@@ -153,7 +153,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    exec 133 <( redis-cli SUBSCRIBE valid-init )
+                                                                    exec 133< <( redis-cli SUBSCRIBE valid-init )
                                                                     echo 1723258852938545 1369941427493491 3411322493624553 >&2
                                                                     mkdir --parents ${ resources-directory }/release
                                                                     echo 1723258852938545 1369941427493491 6935487545584317 >&2
