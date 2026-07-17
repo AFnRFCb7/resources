@@ -588,22 +588,34 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 1723258852938545 1369941427493491 4545654174911269 >&2
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
+                                                                                                                                                                echo 1723258852938545 1369941427493491 2914591754675211 >&2
                                                                                                                                                                 EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                echo 1723258852938545 1369941427493491 4662997554357758 >&2
                                                                                                                                                                 find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                                 do
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 6324597133489737 >&2
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 8882897357967852 >&2
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
+                                                                                                                                                                        echo 1723258852938545 1369941427493491 7738627861529357 >&2
                                                                                                                                                                         inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                                        echo 1723258852938545 1369941427493491 2861326588116477 >&2
                                                                                                                                                                     fi
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 8973117632192775 >&2
                                                                                                                                                                 done
+                                                                                                                                                                echo 1723258852938545 1369941427493491 3596312743438741 >&2
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 6778551199396338 >&2
                                                                                                                                                                 else
                                                                                                                                                                     STATUS="$?"
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 3735771491169237 >&2
                                                                                                                                                                 fi
+                                                                                                                                                                echo 1723258852938545 1369941427493491 2669432765545893 >&2
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
@@ -615,6 +627,7 @@
                                                                                                                                                                         "status" : $STATUS
                                                                                                                                                                     }' \
                                                                                                                                                                     /input > /output
+                                                                                                                                                                echo 1723258852938545 1369941427493491 7513857898863325 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
