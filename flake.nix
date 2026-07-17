@@ -262,14 +262,12 @@
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
+                                                                        STANDARD_ERROR="$( jq --raw-outputFINDME '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            # FINDME SUCCESS
-                                                                            mkdir --parents ${ resources-directory }/release
-                                                                            ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/2$INDEX"
+                                                                            # FINDME SUCCESS 2
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
