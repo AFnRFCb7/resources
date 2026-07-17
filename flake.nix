@@ -70,8 +70,7 @@
                                                                                                                     exit 164
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
-                                                                                                                find /resources
-                                                                                                                rm --recursive --force /resources/*
+                                                                                                                rm --recursive --force /gc-locks/* /resources/*
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
@@ -89,7 +88,6 @@
                                                                     export TEMPORARY
                                                                     clean
                                                                     STATUS="$( cat "$TEMPORARY/status" )" || exit 158
-                                                                    rm ${ resources-directory }/locks/clean
                                                                     exit "$STATUS"
                                                                 '' ;
                                                         } ;
