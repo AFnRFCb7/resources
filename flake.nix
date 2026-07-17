@@ -10,6 +10,7 @@
 		                coreutils ,
 		                findutils ,
 		                flock ,
+		                gnused ,
 		                invalid-init-channel ,
 		                invalid-release-channel ,
 		                jq ,
