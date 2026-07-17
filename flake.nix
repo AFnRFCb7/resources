@@ -269,7 +269,7 @@
                                                                         then
                                                                             # FINDME SUCCESS
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            ln --symbolic ${ resource-parameters.release.action } "${ resources-directory }/release/$INDEX"
+                                                                            ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
