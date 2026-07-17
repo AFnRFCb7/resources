@@ -94,7 +94,7 @@
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/clean" ;
-                                        release =
+                                        release__ =
                                             let
                                                 application =
                                                     writeShellApplication
@@ -269,8 +269,7 @@
                                                                         then
                                                                             # FINDME SUCCESS
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            touch ${ resources-directory }/release/FLAG
-                                                                            ln --symbolic ${ release } "${ resources-directory }/release/$INDEX"
+                                                                            ln --symbolic ${ release__ } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
