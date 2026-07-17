@@ -69,7 +69,7 @@
                                                                                                                 then
                                                                                                                     exit 164
                                                                                                                 fi
-                                                                                                                tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources >&2 /private/tar
+                                                                                                                tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
                                                                                                                 # find /resources /gc-roots -mindepth 1 -exec rm --recursive --force {} +
                                                                                                             '' ;
                                                                                                     }
