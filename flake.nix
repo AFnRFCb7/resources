@@ -269,7 +269,7 @@
                                                                         then
                                                                             # FINDME SUCCESS
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            ln --symbolic ${ release__ } "${ resources-directory }/release/$INDEX"
+                                                                            ln --symbolic ${ resource-parameters.release } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
@@ -512,7 +512,7 @@
                                                                         recovery = null ;
                                                                         valid-channel = root-parameters.valid-init-channel ;
                                                                     } ;
-                                                                release__ =
+                                                                release =
                                                                     {
                                                                         action =
                                                                             let
