@@ -233,7 +233,7 @@
                                                                         if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
                                                                             STANDARD_INPUT="$( cat )" || exit 103
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
