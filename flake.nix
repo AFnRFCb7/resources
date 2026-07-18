@@ -125,7 +125,7 @@
                                                                                                                 echo 1723258852938545 1369941427493491 4764772821548914 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 1369941427493491 5925664855951242 >&2
+                                                                                                                    echo 1723258852938545 1369941427493491 1853879985898869 >&2
                                                                                                                     read -r TYPE || break
                                                                                                                     echo 1723258852938545 1369941427493491 5857879952124481 >&2
                                                                                                                     read -r CHANNEL || break
