@@ -130,7 +130,9 @@
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        echo 1723258852938545 1369941427493491 6674936157267243 >&2
                                                                                                                         "/release/$INDEX" &
+                                                                                                                        echo 1723258852938545 1369941427493491 9847268394428591 >&2
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
