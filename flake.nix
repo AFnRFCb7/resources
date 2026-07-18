@@ -122,27 +122,17 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 1369941427493491 9832784369633235 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 1369941427493491 1853879985898869 >&2
                                                                                                                     read -r TYPE || break
-                                                                                                                    echo 1723258852938545 1369941427493491 5857879952124481 >&2
                                                                                                                     read -r CHANNEL || break
-                                                                                                                    echo 1723258852938545 1369941427493491 8317474124353694 >&2
                                                                                                                     read -r PAYLOAD || break
-                                                                                                                    echo 1723258852938545 1369941427493491 7535487471992686 >&2
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
-                                                                                                                        echo 1723258852938545 1369941427493491 4712959411172394 "$TYPE" "$CHANNEL" "$PAYLOAD" >&2
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        echo 1723258852938545 1369941427493491 5812328954671522 "$INDEX" >&2
                                                                                                                         "/release/$INDEX" &
-                                                                                                                        echo 1723258852938545 1369941427493491 4419954717812747 >&2
                                                                                                                     else
-                                                                                                                        echo 1723258852938545 1369941427493491 9726327212727737 "$TYPE" "$CHANNEL" "$PAYLOAD" >&2
                                                                                                                     fi
-                                                                                                                    echo 1723258852938545 1369941427493491 3331779294585739 >&2
                                                                                                                 done
                                                                                                             '' ;
                                                                                                     }
@@ -153,11 +143,8 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1369941427493491 3411322493624553 >&2
                                                                     mkdir --parents ${ resources-directory }/release
-                                                                    echo 1723258852938545 1369941427493491 6935487545584317 >&2
                                                                     release
-                                                                    echo 1723258852938545 1369941427493491 8353684223168542 >&2
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/release" ;
@@ -501,29 +488,17 @@
                                                                                                         ] ;
                                                                                                     text =
                                                                                                         ''
-                                                                                                            echo 1723258852938545 1369941427493491 6487197527712389 >&2
                                                                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "INPUT_FILE:?must be exported" "}" ] }"
-                                                                                                            echo 1723258852938545 1369941427493491 2911291163919853 >&2
                                                                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "OUTPUT_FILE:?must be exported" "}" ] }"
-                                                                                                            echo 1723258852938545 1369941427493491 7312455476654393 >&2
                                                                                                             SEQUENCE="$( sequential )" || exit 137
-                                                                                                            echo 1723258852938545 1369941427493491 3855152942465395 >&2
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
-                                                                                                            echo 1723258852938545 1369941427493491 7168772384382643 >&2
                                                                                                             export INDEX
-                                                                                                            echo 1723258852938545 1369941427493491 6769155985295256 >&2
                                                                                                             mkdir --parents ${ resources-directory }/flags
-                                                                                                            echo 1723258852938545 1369941427493491 7576544763775382 >&2
                                                                                                             touch "${ resources-directory }/flags/$INDEX"
-                                                                                                            echo 1723258852938545 1369941427493491 2897657541821172 >&2
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                            echo 1723258852938545 1369941427493491 9641474891742759 >&2
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                            echo 1723258852938545 1369941427493491 7861267229536536 >&2
                                                                                                             mkdir --parents ${ resources-directory }/release
-                                                                                                            echo 1723258852938545 1369941427493491 9327812774271185 >&2
                                                                                                             init
-                                                                                                            echo 1723258852938545 1369941427493491 9482975722539436 >&2
                                                                                                         '' ;
                                                                                                 } ;
                                                                                         text = visitor { string = path : value : value ; } action.text ;
@@ -587,34 +562,22 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                echo 1723258852938545 1369941427493491 4545654174911269 >&2
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
-                                                                                                                                                                echo 1723258852938545 1369941427493491 2914591754675211 >&2
                                                                                                                                                                 EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                echo 1723258852938545 1369941427493491 4662997554357758 >&2
                                                                                                                                                                 find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                                 do
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 6324597133489737 >&2
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 8882897357967852 >&2
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        echo 1723258852938545 1369941427493491 7738627861529357 >&2
                                                                                                                                                                         inotifywait --event delete_self "$LINK" > /private/inotifywait
-                                                                                                                                                                        echo 1723258852938545 1369941427493491 2861326588116477 >&2
                                                                                                                                                                     fi
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 8973117632192775 >&2
                                                                                                                                                                 done
-                                                                                                                                                                echo 1723258852938545 1369941427493491 3596312743438741 >&2
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 6778551199396338 >&2
                                                                                                                                                                 else
                                                                                                                                                                     STATUS="$?"
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 3735771491169237 >&2
                                                                                                                                                                 fi
-                                                                                                                                                                echo 1723258852938545 1369941427493491 2669432765545893 >&2
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
@@ -626,7 +589,6 @@
                                                                                                                                                                         "status" : $STATUS
                                                                                                                                                                     }' \
                                                                                                                                                                     /input > /output
-                                                                                                                                                                echo 1723258852938545 1369941427493491 7513857898863325 >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
@@ -710,35 +672,20 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    echo 1723258852938545 1369941427493491 1269746376139515 >&2
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    echo 1723258852938545 1369941427493491 5563788512489688 >&2
-                                                                                                                    echo 1723258852938545 1369941427493491 7972899765878626 >&2
                                                                                                                     mkdir --parents ${ resources-directory }/locks
-                                                                                                                    echo 1723258852938545 1369941427493491 9412489831718138 >&2
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
-                                                                                                                    echo 1723258852938545 1369941427493491 7743967316131211 >&2
                                                                                                                     flock -s 182
-                                                                                                                    echo 1723258852938545 1369941427493491 4791893131553636 >&2
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 1369941427493491 6518224787887648 >&2
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
-                                                                                                                        echo 1723258852938545 1369941427493491 7724623566952423 >&2
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 1369941427493491 3484594836459597 PID="$PID" >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                        echo 1723258852938545 1369941427493491 8911938588483995 >&2
                                                                                                                         rm "$PID_FILE"
-                                                                                                                        echo 1723258852938545 1369941427493491 5926158228383241 >&2
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 1369941427493491 3233799276454964 >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
-                                                                                                                    echo 1723258852938545 1369941427493491 6149617135988511 >&2
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    echo 1723258852938545 1369941427493491 8512166663436466 >&2
                                                                                                                     export INPUT_FILE
-                                                                                                                    echo 1723258852938545 1369941427493491 7268651464651723 >&2
                                                                                                                     jq \
                                                                                                                         --null-input \
                                                                                                                         --arg _INDEX "$INDEX"\
@@ -746,40 +693,23 @@
                                                                                                                             "index" : $_INDEX
                                                                                                                         }' > "$INPUT_FILE"
                                                                                                                     OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    echo 1723258852938545 1369941427493491 8261689634844549 >&2
                                                                                                                     export OUTPUT_FILE
-                                                                                                                    echo 1723258852938545 1369941427493491 8514216522727758 >&2
                                                                                                                     mkdir --parents ${ gc-roots-directory }
-                                                                                                                    echo 1723258852938545 1369941427493491 1133225159777728 >&2
                                                                                                                     is-releasable
-                                                                                                                    echo 1723258852938545 1369941427493491 6539349198956415 >&2
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
-                                                                                                                    echo 1723258852938545 1369941427493491 1813266795917316 >&2
                                                                                                                     STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
-                                                                                                                    echo 1723258852938545 1369941427493491 4132682773451723 >&2
                                                                                                                     if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                     then
-                                                                                                                        echo 1723258852938545 1369941427493491 1898526118229529 >&2
                                                                                                                         exec 186> "${ resources-directory }/locks/$INDEX.lock"
-                                                                                                                        echo 1723258852938545 1369941427493491 8312925954975832 >&2
                                                                                                                         flock -x 186
-                                                                                                                        echo 1723258852938545 1369941427493491 7225376679153574 >&2
                                                                                                                         TEMPORARY="$( mktemp --directory )" || exit 112
-                                                                                                                        echo 1723258852938545 1369941427493491 2837738845664526 >&2
                                                                                                                         export TEMPORARY
-                                                                                                                        echo 1723258852938545 1369941427493491 8217255587952497 >&2
                                                                                                                         release
-                                                                                                                        echo 1723258852938545 1369941427493491 9395942434463488 >&2
                                                                                                                     else
-                                                                                                                        echo 1723258852938545 1369941427493491 8321467482343976 >&2
                                                                                                                         flock -u 182
-                                                                                                                        echo 1723258852938545 1369941427493491 7897341431824782 >&2
                                                                                                                         "$0"
-                                                                                                                        echo 1723258852938545 1369941427493491 7978868264497159 >&2
                                                                                                                     fi
-                                                                                                                    echo 1723258852938545 1369941427493491 1963828368681134 >&2
                                                                                                                     rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                                                                    echo 1723258852938545 1369941427493491 1477346821462773 >&2
                                                                                                                 '' ;
                                                                                                         } ;
                                                                                                 in "${ application }/bin/release" ;
