@@ -711,21 +711,36 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
+                                                                                                                    echo 1723258852938545 1369941427493491 3194459625317285 >&2
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
+                                                                                                                    echo 1723258852938545 1369941427493491 5563788512489688 >&2
                                                                                                                     echo "$INDEX"
+                                                                                                                    echo 1723258852938545 1369941427493491 7972899765878626 >&2
                                                                                                                     mkdir --parents ${ resources-directory }/locks
+                                                                                                                    echo 1723258852938545 1369941427493491 9412489831718138 >&2
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
+                                                                                                                    echo 1723258852938545 1369941427493491 7743967316131211 >&2
                                                                                                                     flock -s 182
+                                                                                                                    echo 1723258852938545 1369941427493491 4791893131553636 >&2
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                    echo 1723258852938545 1369941427493491 6518224787887648 >&2
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
+                                                                                                                        echo 1723258852938545 1369941427493491 7724623566952423 >&2
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                        echo 1723258852938545 1369941427493491 3484594836459597 >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
+                                                                                                                        echo 1723258852938545 1369941427493491 8911938588483995 >&2
                                                                                                                         rm "$PID_FILE"
+                                                                                                                        echo 1723258852938545 1369941427493491 5926158228383241 >&2
                                                                                                                     done
+                                                                                                                    echo 1723258852938545 1369941427493491 3233799276454964 >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
+                                                                                                                    echo 1723258852938545 1369941427493491 6149617135988511 >&2
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                                    echo 1723258852938545 1369941427493491 8512166663436466 >&2
                                                                                                                     export INPUT_FILE
+                                                                                                                    echo 1723258852938545 1369941427493491 7268651464651723 >&2
                                                                                                                     jq \
                                                                                                                         --null-input \
                                                                                                                         --arg _INDEX "$INDEX"\
@@ -733,23 +748,40 @@
                                                                                                                             "index" : $_INDEX
                                                                                                                         }' > "$INPUT_FILE"
                                                                                                                     OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                                    echo 1723258852938545 1369941427493491 8261689634844549 >&2
                                                                                                                     export OUTPUT_FILE
+                                                                                                                    echo 1723258852938545 1369941427493491 8514216522727758 >&2
                                                                                                                     mkdir --parents ${ gc-roots-directory }
+                                                                                                                    echo 1723258852938545 1369941427493491 1133225159777728 >&2
                                                                                                                     is-releasable
+                                                                                                                    echo 1723258852938545 1369941427493491 6539349198956415 >&2
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
+                                                                                                                    echo 1723258852938545 1369941427493491 1813266795917316 >&2
                                                                                                                     STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                                    echo 1723258852938545 1369941427493491 4132682773451723 >&2
                                                                                                                     if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                     then
+                                                                                                                        echo 1723258852938545 1369941427493491 1898526118229529 >&2
                                                                                                                         exec 186> "${ resources-directory }/locks/$INDEX.lock"
+                                                                                                                        echo 1723258852938545 1369941427493491 8312925954975832 >&2
                                                                                                                         flock -x 186
+                                                                                                                        echo 1723258852938545 1369941427493491 7225376679153574 >&2
                                                                                                                         TEMPORARY="$( mktemp --directory )" || exit 112
+                                                                                                                        echo 1723258852938545 1369941427493491 2837738845664526 >&2
                                                                                                                         export TEMPORARY
+                                                                                                                        echo 1723258852938545 1369941427493491 8217255587952497 >&2
                                                                                                                         release
+                                                                                                                        echo 1723258852938545 1369941427493491 9395942434463488 >&2
                                                                                                                     else
+                                                                                                                        echo 1723258852938545 1369941427493491 8321467482343976 >&2
                                                                                                                         flock -u 182
+                                                                                                                        echo 1723258852938545 1369941427493491 7897341431824782 >&2
                                                                                                                         "$0"
+                                                                                                                        echo 1723258852938545 1369941427493491 7978868264497159 >&2
                                                                                                                     fi
+                                                                                                                    echo 1723258852938545 1369941427493491 1963828368681134 >&2
                                                                                                                     rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                                    echo 1723258852938545 1369941427493491 1477346821462773 >&2
                                                                                                                 '' ;
                                                                                                         } ;
                                                                                                 in "${ application }/bin/release" ;
