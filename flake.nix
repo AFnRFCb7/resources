@@ -274,7 +274,7 @@
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
+                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
@@ -993,7 +993,7 @@
                                                                                                                                                             then
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 179
+                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 186
                                                                                                                                                             OBSERVED_PAYLOAD="$( jq --compact-output 'del(.["originator-pid"])' <<< "$PAYLOAD" )" || exit 127
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
