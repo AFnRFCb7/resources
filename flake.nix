@@ -422,9 +422,7 @@
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
-                                                                                                                                                            echo 1723258852938545 1369941427493491 4913926588232741 >&2
                                                                                                                                                             ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
-                                                                                                                                                            echo 1723258852938545 1369941427493491 6621652847325686 >&2
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
