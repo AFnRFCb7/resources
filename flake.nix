@@ -26,6 +26,53 @@
                                     gc-roots-directory ,
                                     resources-directory
                                 } :
+                                    let
+                                                    log =
+                                                        writeShellApplication
+                                                            {
+                                                                name = "log" ;
+                                                                runtimeInputs =
+                                                                    [
+                                                                        coreutils
+                                                                        (
+                                                                            buildFHSUserEnv
+                                                                                {
+                                                                                    extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                    name = "log" ;
+                                                                                    runScript = "log" ;
+                                                                                    targetPkgs =
+                                                                                        pkgs :
+                                                                                            [
+                                                                                                (
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "log" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
+                                                                                                            text =
+                                                                                                                ''
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                    JSON="$( jq --compact-output )" || exit 129
+                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                                '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                }
+                                                                        )
+                                                                    ] ;
+                                                                text =
+                                                                    ''
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 174> ${ resources-directory }/locks/clean
+                                                                        flock -s 174
+                                                                        exec 143> ${ resources-directory }/locks/log
+                                                                        flock -x 143
+                                                                        mkdir --parents ${ resources-directory }/log.yaml
+                                                                        log
+                                                                    '' ;
+                                                            } ;
+                                        in
                                     {
                                         clean =
                                             let
@@ -166,51 +213,6 @@
                                                 temporary
                                             } :
                                                 let
-                                                    log =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "log" ;
-                                                                runtimeInputs =
-                                                                    [
-                                                                        coreutils
-                                                                        (
-                                                                            buildFHSUserEnv
-                                                                                {
-                                                                                    extraBwrapArgs = [ "--tmpfs" "/private" ] ;
-                                                                                    name = "log" ;
-                                                                                    runScript = "log" ;
-                                                                                    targetPkgs =
-                                                                                        pkgs :
-                                                                                            [
-                                                                                                (
-                                                                                                    pkgs.writeShellApplication
-                                                                                                        {
-                                                                                                            name = "log" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
-                                                                                                            text =
-                                                                                                                ''
-                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    JSON="$( jq --compact-output )" || exit 129
-                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
-                                                                                                                '' ;
-                                                                                                        }
-                                                                                                )
-                                                                                            ] ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 174> ${ resources-directory }/locks/clean
-                                                                        flock -s 174
-                                                                        exec 143> ${ resources-directory }/locks/log
-                                                                        flock -x 143
-                                                                        mkdir --parents ${ resources-directory }/log.yaml
-                                                                        log
-                                                                    '' ;
-                                                            } ;
                                                     resource =
                                                         writeShellApplication
                                                             {
