@@ -993,6 +993,7 @@
                                                                                                                                                             OBSERVED_PAYLOAD="$( jq --compact-output 'del(.["originator-pid"])' <<< "$PAYLOAD" )" || exit 127
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
+                                                                                                                                                                echo 1723258852938545 1369941427493491 5727149257139719 >&2
                                                                                                                                                                 cat >> "$COMMANDS/FLAG" <<EOF
                                                                                                                                                                 DIFF:
                                                                                                                                                                 $( diff --unified <( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" ) <( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" ) || true )
@@ -1044,6 +1045,7 @@
                                                                                                                                                             OBSERVED_HASH="$( sha512sum "$YAML_FILE" | cut --characters 1-128 )" || exit 176
                                                                                                                                                             if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
                                                                                                                                                             then
+                                                                                                                                                                echo 1723258852938545 1369941427493491 6683391678778234 >&2
                                                                                                                                                                 jq \
                                                                                                                                                                     --null-input \
                                                                                                                                                                     --arg EXPECTED_HASH "$EXPECTED_HASH" \
@@ -1126,6 +1128,7 @@
                                                                                                                                         done
                                                                                                                                         if [[ ! -f "$COMMANDS/FLAG" ]]
                                                                                                                                         then
+                                                                                                                                            echo 1723258852938545 1369941427493491 5773551794449889 >&2
                                                                                                                                             BEFORE="$( date )" || exit 137
                                                                                                                                             ACCEPTS_REDIRECT="${ builtins.toJSON action.accepts-redirect }"
                                                                                                                                             STANDARD_ERROR_FILE="$( mktemp )" || exit 154
@@ -1174,6 +1177,7 @@
                                                                                                                                             AFTER="$( date )" || exit 110
                                                                                                                                             if [[ "$FLAG" == "true" ]]
                                                                                                                                             then
+                                                                                                                                                echo 1723258852938545 1369941427493491 8548612841485853 >&2
                                                                                                                                                 touch "$COMMANDS/FLAG"
                                                                                                                                             fi
                                                                                                                                             jq \
