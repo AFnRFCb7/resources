@@ -1077,9 +1077,14 @@
                                                                                                                                                         ''
                                                                                                                                                             TIMEOUT="$1"
                                                                                                                                                             UUID="$2"
-                                                                                                                                                            if read -t "$TIMEOUT" -r VALUE <&189
+                                                                                                                                                            if read -t "$TIMEOUT" -r TYPE <&189
                                                                                                                                                             then
-                                                                                                                                                                echo "$UUID $VALUE" >&2
+                                                                                                                                                                read -t "$TIMEOUT" -r CHANNEL <&189
+                                                                                                                                                                read -t "$TIMEOUT" -r PAYLOAD <&189
+                                                                                                                                                                echo "$UUID" >&2
+                                                                                                                                                                echo "$TYPE" >&2
+                                                                                                                                                                echo "$CHANNEL" >&2
+                                                                                                                                                                echo "$PAYLOAD" >&2
                                                                                                                                                                 exit 179
                                                                                                                                                             fi
                                                                                                                                                         '' ;
