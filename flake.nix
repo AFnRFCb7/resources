@@ -26,650 +26,468 @@
                                     gc-roots-directory ,
                                     resources-directory
                                 } :
-                                    {
-                                        clean =
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "clean" ;
-                                                            runtimeInputs =
-                                                                [
-                                                                    (
-                                                                        buildFHSUserEnv
-                                                                            {
-                                                                                extraBwrapArgs =
-                                                                                    [
-                                                                                        "--bind" gc-roots-directory "/gc-roots"
-                                                                                        "--bind" resources-directory "/resources"
-                                                                                        "--tmpfs" "/private"
-                                                                                        "--bind" "$TEMPORARY" "/temporary"
-                                                                                    ] ;
-                                                                                name = "clean" ;
-                                                                                runScript = "clean" ;
-                                                                                targetPkgs =
-                                                                                    pkgs :
-                                                                                        [
-                                                                                            (
-                                                                                                pkgs.writeShellApplication
-                                                                                                    {
-                                                                                                        name = "clean" ;
-                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
-                                                                                                        text =
-                                                                                                            ''
-                                                                                                                cleanup ( ) {
-                                                                                                                    echo "$?" > /temporary/status
-                                                                                                                }
-                                                                                                                trap cleanup EXIT
-                                                                                                                mkdir --parents /resources/release
-                                                                                                                find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
-                                                                                                                mkdir --parents /resources/release
-                                                                                                                mkdir --parents /resources/invalid-init
-                                                                                                                mkdir --parents /resources/invalid-release
-                                                                                                                if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f | grep --quiet "."
-                                                                                                                then
-                                                                                                                    find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f >&2
-                                                                                                                    exit 164
-                                                                                                                fi
-                                                                                                                tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
-                                                                                                                rm --recursive --force /gc-locks/* /resources/*
-                                                                                                                export CHANNEL=${ root-parameters.release.valid-channel }
-                                                                                                                jq \
-                                                                                                                    --null-input \
-                                                                                                                    '{
-                                                                                                                        "wtf" : "6894572647299611"
-                                                                                                                    }' | log
-                                                                                                            '' ;
-                                                                                                    }
-                                                                                            )
-                                                                                        ] ;
-                                                                            }
-                                                                    )
-                                                                ] ;
-                                                            text =
-                                                                ''
-                                                                    mkdir --parents ${ gc-roots-directory }
-                                                                    mkdir --parents ${ resources-directory }/locks
-                                                                    exec 149> ${ resources-directory }/locks/clean
-                                                                    flock -x 149
-                                                                    TEMPORARY="$( mktemp --directory )" || exit 113
-                                                                    export TEMPORARY
-                                                                    clean
-                                                                    STATUS="$( cat "$TEMPORARY/status" )" || exit 158
-                                                                    exit "$STATUS"
-                                                                '' ;
-                                                        } ;
-                                                in "${ application }/bin/clean" ;
-                                        release =
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "release" ;
-                                                            runtimeInputs =
-                                                                [
-                                                                    (
-                                                                        buildFHSUserEnv
-                                                                            {
-                                                                                extraBwrapArgs =
-                                                                                    [
-                                                                                        "--tmpfs" "/private"
-                                                                                        "--ro-bind" "${ resources-directory }/release" "/release"
-                                                                                    ] ;
-                                                                                name = "release" ;
-                                                                                runScript = "release" ;
-                                                                                targetPkgs =
-                                                                                    pkgs :
-                                                                                        [
-                                                                                            (
-                                                                                                pkgs.writeShellApplication
-                                                                                                    {
-                                                                                                        name = "release" ;
-                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
-                                                                                                        text =
-                                                                                                            ''
-                                                                                                                redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-                                                                                                                do
-                                                                                                                    read -r TYPE || break
-                                                                                                                    read -r CHANNEL || break
-                                                                                                                    read -r PAYLOAD || break
-                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-                                                                                                                    then
-                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        if [[ -L "/release/$INDEX" ]]
-                                                                                                                        then
-                                                                                                                            "/release/$INDEX" &
-                                                                                                                        fi
-                                                                                                                    fi
-                                                                                                                done
-                                                                                                            '' ;
-                                                                                                    }
-                                                                                            )
-                                                                                        ] ;
-                                                                            }
-                                                                    )
-                                                                ] ;
-                                                            text =
-                                                                ''
-                                                                    mkdir --parents ${ resources-directory }/release
-                                                                    release
-                                                                '' ;
-                                                        } ;
-                                                in "${ application }/bin/release" ;
-                                        resource =
+                                    let
+                                        log =
+                                            writeShellApplication
+                                                {
+                                                    name = "log" ;
+                                                    runtimeInputs =
+                                                        [
+                                                            coreutils
+                                                            (
+                                                                buildFHSUserEnv
+                                                                    {
+                                                                        extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                        name = "log" ;
+                                                                        runScript = "log" ;
+                                                                        targetPkgs =
+                                                                            pkgs :
+                                                                                [
+                                                                                    (
+                                                                                        pkgs.writeShellApplication
+                                                                                            {
+                                                                                                name = "log" ;
+                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
+                                                                                                text =
+                                                                                                    ''
+                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                        : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                        JSON="$( jq --compact-output )" || exit 129
+                                                                                                        redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                    '' ;
+                                                                                            }
+                                                                                    )
+                                                                                ] ;
+                                                                    }
+                                                            )
+                                                        ] ;
+                                                    text =
+                                                        ''
+                                                            mkdir --parents ${ resources-directory }/locks
+                                                            exec 174> ${ resources-directory }/locks/clean
+                                                            flock -s 174
+                                                            exec 143> ${ resources-directory }/locks/log
+                                                            flock -x 143
+                                                            mkdir --parents ${ resources-directory }/log.yaml
+                                                            log
+                                                        '' ;
+                                                } ;
+                                        in
                                             {
-                                                error ,
-                                                init ,
-                                                release ,
-                                                seed ,
-                                                targets ,
-                                                temporary
-                                            } :
-                                                let
-                                                    log =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "log" ;
-                                                                runtimeInputs =
-                                                                    [
-                                                                        coreutils
-                                                                        (
-                                                                            buildFHSUserEnv
-                                                                                {
-                                                                                    extraBwrapArgs = [ "--tmpfs" "/private" ] ;
-                                                                                    name = "log" ;
-                                                                                    runScript = "log" ;
-                                                                                    targetPkgs =
-                                                                                        pkgs :
+                                                clean =
+                                                    let
+                                                        application =
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "clean" ;
+                                                                    runtimeInputs =
+                                                                        [
+                                                                            (
+                                                                                buildFHSUserEnv
+                                                                                    {
+                                                                                        extraBwrapArgs =
                                                                                             [
-                                                                                                (
-                                                                                                    pkgs.writeShellApplication
-                                                                                                        {
-                                                                                                            name = "log" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
-                                                                                                            text =
-                                                                                                                ''
-                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    JSON="$( jq --compact-output )" || exit 129
-                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
-                                                                                                                '' ;
-                                                                                                        }
-                                                                                                )
+                                                                                                "--bind" gc-roots-directory "/gc-roots"
+                                                                                                "--bind" resources-directory "/resources"
+                                                                                                "--tmpfs" "/private"
+                                                                                                "--bind" "$TEMPORARY" "/temporary"
                                                                                             ] ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 174> ${ resources-directory }/locks/clean
-                                                                        flock -s 174
-                                                                        exec 143> ${ resources-directory }/locks/log
-                                                                        flock -x 143
-                                                                        mkdir --parents ${ resources-directory }/log.yaml
-                                                                        log
-                                                                    '' ;
-                                                            } ;
-                                                    resource =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 157> ${ resources-directory }/locks/clean
-                                                                        flock -s 157
-                                                                        INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
-                                                                        export INPUT_FILE
-                                                                        export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
-                                                                        if [[ -p /dev/stdin || -f /dev/stdin ]]
-                                                                        then
-                                                                            STANDARD_INPUT="$( cat )" || exit 103
-                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                --argjson TEMPORARY "$TEMPORARY" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "WTF" : "2128979479613286" ,
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" :
-                                                                                        {
-                                                                                            "standard" : $STANDARD_INPUT
-                                                                                        } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "temporary" : $TEMPORARY
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        else
-                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                --argjson TEMPORARY "$TEMPORARY" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "WTF" : "5482197652155478" ,
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" : { } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "temporary" : $TEMPORARY
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        fi
-                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                        export OUTPUT_FILE
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }
-                                                                        init
-                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
-                                                                        export CHANNEL
-                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
-                                                                        echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            # FINDME SUCCESS 2
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-error"] ,
-                                                                                    "status" : ./status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-ouput"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        fi
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        exit "$EVALUATION"
-                                                                    '' ;
-                                                            } ;
-                                                        resource-parameters =
-                                                            {
-                                                                error =
-                                                                    visitor
-                                                                        {
-                                                                            int = path : value : builtins.toString value ;
-                                                                        }
-                                                                        error ;
-                                                                init =
-                                                                    {
-                                                                        action =
-                                                                            let
-                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.action ;
-                                                                                in
+                                                                                        name = "clean" ;
+                                                                                        runScript = "clean" ;
+                                                                                        targetPkgs =
+                                                                                            pkgs :
+                                                                                                [
+                                                                                                    (
+                                                                                                        pkgs.writeShellApplication
+                                                                                                            {
+                                                                                                                name = "clean" ;
+                                                                                                                runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
+                                                                                                                text =
+                                                                                                                    ''
+                                                                                                                        cleanup ( ) {
+                                                                                                                            echo "$?" > /temporary/status
+                                                                                                                        }
+                                                                                                                        trap cleanup EXIT
+                                                                                                                        mkdir --parents /resources/release
+                                                                                                                        find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
+                                                                                                                        mkdir --parents /resources/release
+                                                                                                                        mkdir --parents /resources/invalid-init
+                                                                                                                        mkdir --parents /resources/invalid-release
+                                                                                                                        if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f | grep --quiet "."
+                                                                                                                        then
+                                                                                                                            find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f >&2
+                                                                                                                            exit 164
+                                                                                                                        fi
+                                                                                                                        tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
+                                                                                                                        rm --recursive --force /gc-locks/* /resources/*
+                                                                                                                        export CHANNEL=${ root-parameters.release.valid-channel }
+                                                                                                                        jq \
+                                                                                                                            --null-input \
+                                                                                                                            '{
+                                                                                                                                "wtf" : "6894572647299611"
+                                                                                                                            }' | log
+                                                                                                                    '' ;
+                                                                                                            }
+                                                                                                    )
+                                                                                                ] ;
+                                                                                    }
+                                                                            )
+                                                                        ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                            exec 149> ${ resources-directory }/locks/clean
+                                                                            flock -x 149
+                                                                            TEMPORARY="$( mktemp --directory )" || exit 113
+                                                                            export TEMPORARY
+                                                                            clean
+                                                                            STATUS="$( cat "$TEMPORARY/status" )" || exit 158
+                                                                            exit "$STATUS"
+                                                                        '' ;
+                                                                } ;
+                                                        in "${ application }/bin/clean" ;
+                                                release =
+                                                    let
+                                                        application =
+                                                            writeShellApplication
+                                                                {
+                                                                    name = "release" ;
+                                                                    runtimeInputs =
+                                                                        [
+                                                                            (
+                                                                                buildFHSUserEnv
                                                                                     {
-                                                                                        script =
-                                                                                            writeShellApplication
+                                                                                        extraBwrapArgs =
+                                                                                            [
+                                                                                                "--tmpfs" "/private"
+                                                                                                "--ro-bind" "${ resources-directory }/release" "/release"
+                                                                                            ] ;
+                                                                                        name = "release" ;
+                                                                                        runScript = "release" ;
+                                                                                        targetPkgs =
+                                                                                            pkgs :
+                                                                                                [
+                                                                                                    (
+                                                                                                        pkgs.writeShellApplication
+                                                                                                            {
+                                                                                                                name = "release" ;
+                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
+                                                                                                                text =
+                                                                                                                    ''
+                                                                                                                        redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+                                                                                                                        do
+                                                                                                                            read -r TYPE || break
+                                                                                                                            read -r CHANNEL || break
+                                                                                                                            read -r PAYLOAD || break
+                                                                                                                            if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                                                                            then
+                                                                                                                                INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                                if [[ -L "/release/$INDEX" ]]
+                                                                                                                                then
+                                                                                                                                    "/release/$INDEX" &
+                                                                                                                                fi
+                                                                                                                            fi
+                                                                                                                        done
+                                                                                                                    '' ;
+                                                                                                            }
+                                                                                                    )
+                                                                                                ] ;
+                                                                                    }
+                                                                            )
+                                                                        ] ;
+                                                                    text =
+                                                                        ''
+                                                                            mkdir --parents ${ resources-directory }/release
+                                                                            release
+                                                                        '' ;
+                                                                } ;
+                                                        in "${ application }/bin/release" ;
+                                                resource =
+                                                    {
+                                                        error ,
+                                                        init ,
+                                                        release ,
+                                                        seed ,
+                                                        targets ,
+                                                        temporary
+                                                    } :
+                                                        let
+                                                            resource =
+                                                                writeShellApplication
+                                                                    {
+                                                                        name = "resource" ;
+                                                                        runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
+                                                                        text =
+                                                                            ''
+                                                                                mkdir --parents ${ gc-roots-directory }
+                                                                                mkdir --parents ${ resources-directory }/locks
+                                                                                exec 157> ${ resources-directory }/locks/clean
+                                                                                flock -s 157
+                                                                                INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
+                                                                                export INPUT_FILE
+                                                                                export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
+                                                                                if [[ -p /dev/stdin || -f /dev/stdin ]]
+                                                                                then
+                                                                                    STANDARD_INPUT="$( cat )" || exit 103
+                                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                        --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                        --argjson TEMPORARY "$TEMPORARY" \
+                                                                                        --args \
+                                                                                        '{
+                                                                                            "WTF" : "2128979479613286" ,
+                                                                                            "arguments" : $ARGS.positional ,
+                                                                                            "inputs" :
                                                                                                 {
-                                                                                                    name = "init" ;
-                                                                                                    runtimeInputs =
-                                                                                                        [
-                                                                                                            coreutils
-                                                                                                            sequential
-                                                                                                            (
-                                                                                                                buildFHSUserEnv
-                                                                                                                    {
-                                                                                                                        extraBwrapArgs =
-                                                                                                                            [
-                                                                                                                                "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                                "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
-                                                                                                                                "--bind" "${ resources-directory }/release" "/release"
-                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
-                                                                                                                                "--tmpfs" "/private"
-                                                                                                                                "--tmpfs" "/scratch"
-                                                                                                                            ] ;
-                                                                                                                        name = "init" ;
-                                                                                                                        runScript = "init" ;
-                                                                                                                        targetPkgs =
-                                                                                                                            pkgs :
-                                                                                                                                [
-                                                                                                                                    (
-                                                                                                                                        pkgs.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "init" ;
-                                                                                                                                                runtimeInputs =
-                                                                                                                                                    [
-                                                                                                                                                        pkgs.jq
-                                                                                                                                                        (
-                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                {
-                                                                                                                                                                    name = "init" ;
-                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs pkgs ;
-                                                                                                                                                                    text = resource-parameters.init.action.text ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                    ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
-                                                                                                                                                        cd /mount
-                                                                                                                                                        if jq -e '.inputs | has("standard")' /input > /private/jq
-                                                                                                                                                        then
-                                                                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                                            then
-                                                                                                                                                                STATUS="$?"
-                                                                                                                                                            else
-                                                                                                                                                                STATUS="$?"
-                                                                                                                                                            fi
-                                                                                                                                                        else
-                                                                                                                                                            if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
-                                                                                                                                                            then
-                                                                                                                                                                STATUS="$?"
-                                                                                                                                                            else
-                                                                                                                                                                STATUS="$?"
-                                                                                                                                                            fi
-                                                                                                                                                        fi
-                                                                                                                                                        EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
-                                                                                                                                                        OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                                        ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
-                                                                                                                                                        if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
-                                                                                                                                                        then
-                                                                                                                                                            echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
-                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
-                                                                                                                                                            jq \
-                                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.valid-channel } \
-                                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                                --arg INDEX "$INDEX" \
-                                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                --argjson STATUS "$STATUS" \
-                                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
-                                                                                                                                                                --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
-                                                                                                                                                                '{
-                                                                                                                                                                    "WTF" : .WTF ,
-                                                                                                                                                                    "arguments" : .arguments ,
-                                                                                                                                                                    "channel" : $CHANNEL ,
-                                                                                                                                                                    "evaluation" : 0 ,
-                                                                                                                                                                    "index" : $INDEX ,
-                                                                                                                                                                    "inputs" : .inputs ,
-                                                                                                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                                                                                                    "seed" : $SEED ,
-                                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                    "status" : $STATUS ,
-                                                                                                                                                                    "targets" : $EXPECTED_TARGETS ,
-                                                                                                                                                                    "text" : $TEXT ,
-                                                                                                                                                                    "temporary" : .temporary
-                                                                                                                                                                }' \
-                                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                                        else
-                                                                                                                                                            jq \
-                                                                                                                                                                --arg INDEX "$INDEX" \
-                                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
-                                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                --argjson STATUS "$STATUS" \
-                                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
-                                                                                                                                                                '{
-                                                                                                                                                                    "arguments" : .arguments ,
-                                                                                                                                                                    "channel" : $CHANNEL
-                                                                                                                                                                    "evaluation" : ${ resource-parameters.error } ,
-                                                                                                                                                                    "index" : $INDEX ,
-                                                                                                                                                                    "inputs" : .inputs ,
-                                                                                                                                                                    "seed" : $SEED ,
-                                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                    "status" : $STATUS ,
-                                                                                                                                                                    "targets" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_TARGETS ,
-                                                                                                                                                                            "observed" : $OBSERVED_TARGETS
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "text" : $TEXT
-                                                                                                                                                                }' \
-                                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
-                                                                                                                                                        fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                ] ;
-                                                                                                                    }
-                                                                                                            )
-                                                                                                        ] ;
-                                                                                                    text =
-                                                                                                        ''
-                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "INPUT_FILE:?must be exported" "}" ] }"
-                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "OUTPUT_FILE:?must be exported" "}" ] }"
-                                                                                                            SEQUENCE="$( sequential )" || exit 137
-                                                                                                            printf -v INDEX "%016d" "$SEQUENCE"
-                                                                                                            export INDEX
-                                                                                                            mkdir --parents ${ resources-directory }/flags
-                                                                                                            touch "${ resources-directory }/flags/$INDEX"
-                                                                                                            mkdir --parents "${ resources-directory }/mounts/$INDEX"
-                                                                                                            mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                            mkdir --parents ${ resources-directory }/release
-                                                                                                            init
-                                                                                                        '' ;
-                                                                                                } ;
-                                                                                        text = visitor { string = path : value : value ; } action.text ;
-                                                                                        targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
-                                                                                    } ;
-                                                                        init = visitor { lambda = path : value : value null ; } init ;
-                                                                        invalid-channel = root-parameters.invalid-init-channel ;
-                                                                        recovery = null ;
-                                                                        valid-channel = root-parameters.valid-init-channel ;
+                                                                                                    "standard" : $STANDARD_INPUT
+                                                                                                } ,
+                                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                                            "temporary" : $TEMPORARY
+                                                                                        }' \
+                                                                                        -- "$@" > "$INPUT_FILE"
+                                                                                else
+                                                                                    ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
+                                                                                    jq \
+                                                                                        --null-input \
+                                                                                        --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                        --argjson TEMPORARY "$TEMPORARY" \
+                                                                                        --args \
+                                                                                        '{
+                                                                                            "WTF" : "5482197652155478" ,
+                                                                                            "arguments" : $ARGS.positional ,
+                                                                                            "inputs" : { } ,
+                                                                                            "originator-pid" : $ORIGINATOR_PID ,
+                                                                                            "temporary" : $TEMPORARY
+                                                                                        }' \
+                                                                                        -- "$@" > "$INPUT_FILE"
+                                                                                fi
+                                                                                OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                                export OUTPUT_FILE
+                                                                                mkdir --parents ${ gc-roots-directory }
+                                                                                mkdir --parents ${ resources-directory }
+                                                                                init
+                                                                                CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                                export CHANNEL
+                                                                                INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                                EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
+                                                                                STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
+                                                                                STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 179
+                                                                                echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                                if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                then
+                                                                                    # FINDME SUCCESS 2
+                                                                                    jq \
+                                                                                        '{
+                                                                                            "arguments" : .arguments ,
+                                                                                            "index" : .index ,
+                                                                                            "inputs" : .inputs ,
+                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                            "seed" : .seed ,
+                                                                                            "standard-output" : .["standard-output"] ,
+                                                                                            "targets" : .targets ,
+                                                                                            "text" : .text ,
+                                                                                            "temporary" : .temporary
+                                                                                        }' \
+                                                                                        "$OUTPUT_FILE" | log
+                                                                                elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                then
+                                                                                    jq \
+                                                                                        '{
+                                                                                            "arguments" : .arguments ,
+                                                                                            "index" : .index ,
+                                                                                            "inputs" : .inputs ,
+                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                            "seed" : .seed ,
+                                                                                            "standard-output" : .["standard-output"] ,
+                                                                                            "status" : .status ,
+                                                                                            "targets" : .targets ,
+                                                                                            "text" : .text ,
+                                                                                            "temporary" : .temporary
+                                                                                        }' \
+                                                                                        "$OUTPUT_FILE" | log
+                                                                                elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                then
+                                                                                    jq \
+                                                                                        '{
+                                                                                            "arguments" : .arguments ,
+                                                                                            "index" : .index ,
+                                                                                            "inputs" : .inputs ,
+                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                            "seed" : .seed ,
+                                                                                            "standard-error" : .["standard-error"] ,
+                                                                                            "standard-output" : .["standard-error"] ,
+                                                                                            "status" : ./status ,
+                                                                                            "targets" : .targets ,
+                                                                                            "text" : .text ,
+                                                                                            "temporary" : .temporary
+                                                                                        }' \
+                                                                                        "$OUTPUT_FILE" | log
+                                                                                elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                then
+                                                                                    jq \
+                                                                                        '{
+                                                                                            "arguments" : .arguments ,
+                                                                                            "index" : .index ,
+                                                                                            "inputs" : .inputs ,
+                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                            "seed" : .seed ,
+                                                                                            "standard-error" : .["standard-error"] ,
+                                                                                            "standard-output" : .["standard-ouput"] ,
+                                                                                            "status" : .status ,
+                                                                                            "targets" : .targets ,
+                                                                                            "text" : .text ,
+                                                                                            "temporary" : .temporary
+                                                                                        }' \
+                                                                                        "$OUTPUT_FILE" | log
+                                                                                fi
+                                                                                rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                exit "$EVALUATION"
+                                                                            '' ;
                                                                     } ;
-                                                                release =
+                                                                resource-parameters =
                                                                     {
-                                                                        action =
-                                                                            let
-                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.release.release.action ;
-                                                                                in
-                                                                                    {
-                                                                                        script =
-                                                                                            let
-                                                                                                application =
+                                                                        error =
+                                                                            visitor
+                                                                                {
+                                                                                    int = path : value : builtins.toString value ;
+                                                                                }
+                                                                                error ;
+                                                                        init =
+                                                                            {
+                                                                                action =
+                                                                                    let
+                                                                                        action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.action ;
+                                                                                        in
+                                                                                            {
+                                                                                                script =
                                                                                                     writeShellApplication
                                                                                                         {
-                                                                                                            name = "release" ;
+                                                                                                            name = "init" ;
                                                                                                             runtimeInputs =
                                                                                                                 [
                                                                                                                     coreutils
-                                                                                                                    flock
-                                                                                                                    log
+                                                                                                                    sequential
                                                                                                                     (
                                                                                                                         buildFHSUserEnv
                                                                                                                             {
                                                                                                                                 extraBwrapArgs =
                                                                                                                                     [
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                        "--ro-bind" gc-roots-directory "/gc-roots"
+                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
+                                                                                                                                        "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
+                                                                                                                                        "--bind" "${ resources-directory }/release" "/release"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                         "--tmpfs" "/private"
+                                                                                                                                        "--tmpfs" "/scratch"
                                                                                                                                     ] ;
-                                                                                                                                name = "is-releasable" ;
-                                                                                                                                runScript = "is-releasable" ;
+                                                                                                                                name = "init" ;
+                                                                                                                                runScript = "init" ;
                                                                                                                                 targetPkgs =
                                                                                                                                     pkgs :
                                                                                                                                         [
                                                                                                                                             (
                                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                                     {
-                                                                                                                                                        name = "is-releasable" ;
+                                                                                                                                                        name = "init" ;
                                                                                                                                                         runtimeInputs =
                                                                                                                                                             [
-                                                                                                                                                                pkgs.findutils
-                                                                                                                                                                pkgs.inotify-tools
                                                                                                                                                                 pkgs.jq
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
-                                                                                                                                                                            name = "release" ;
-                                                                                                                                                                            runtimeInputs = resource-parameters.release.action.targetPkgs pkgs ;
-                                                                                                                                                                            text = resource-parameters.release.action.text ;
+                                                                                                                                                                            name = "init" ;
+                                                                                                                                                                            runtimeInputs = resource-parameters.init.action.targetPkgs pkgs ;
+                                                                                                                                                                            text = resource-parameters.init.action.text ;
                                                                                                                                                                         }
                                                                                                                                                                 )
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                INDEX="$( jq --raw-output ".index" /input )" || exit 176
-                                                                                                                                                                EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                find /gc-roots -type l | sort | while read -r LINK
-                                                                                                                                                                do
-                                                                                                                                                                    OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                                                                    if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                                                                jq --raw-output '.arguments[]' /input > /private/jq
+                                                                                                                                                                mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                                                cd /mount
+                                                                                                                                                                if jq -e '.inputs | has("standard")' /input > /private/jq
+                                                                                                                                                                then
+                                                                                                                                                                    if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                     then
-                                                                                                                                                                        inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                    else
+                                                                                                                                                                        STATUS="$?"
                                                                                                                                                                     fi
-                                                                                                                                                                done
-                                                                                                                                                                if release "$INDEX" > /private/standard-output 2> /private/standard-error
-                                                                                                                                                                then
-                                                                                                                                                                    STATUS="$?"
                                                                                                                                                                 else
-                                                                                                                                                                    STATUS="$?"
+                                                                                                                                                                    if init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                    then
+                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                    else
+                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                    fi
                                                                                                                                                                 fi
-                                                                                                                                                                jq \
-                                                                                                                                                                    --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                    --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                    --arg STATUS "$STATUS" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "index" : .index ,
-                                                                                                                                                                        "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                        "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                        "status" : $STATUS
-                                                                                                                                                                    }' \
-                                                                                                                                                                    /input > /output
-                                                                                                                                                            '' ;
-                                                                                                                                                    }
-                                                                                                                                            )
-                                                                                                                                        ] ;
-                                                                                                                            }
-                                                                                                                    )
-                                                                                                                    (
-                                                                                                                        buildFHSUserEnv
-                                                                                                                            {
-                                                                                                                                extraBwrapArgs =
-                                                                                                                                    [
-                                                                                                                                        "--ro-bind" "$OUTPUT_FILE" "/input"
-                                                                                                                                        "--bind" gc-roots-directory "/gc-roots"
-                                                                                                                                        "--bind" resources-directory "/resources"
-                                                                                                                                        "--bind" "$TEMPORARY" "/temporary"
-                                                                                                                                    ] ;
-                                                                                                                                name = "release" ;
-                                                                                                                                runScript = "release" ;
-                                                                                                                                targetPkgs =
-                                                                                                                                    pkgs :
-                                                                                                                                        [
-                                                                                                                                            (
-                                                                                                                                                pkgs.writeShellApplication
-                                                                                                                                                    {
-                                                                                                                                                        name = "release" ;
-                                                                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz log ] ;
-                                                                                                                                                        text =
-                                                                                                                                                            ''
-                                                                                                                                                                INDEX="$( jq --raw-output ".index" /input )" || exit 109
-                                                                                                                                                                find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
-                                                                                                                                                                find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
-                                                                                                                                                                find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
-                                                                                                                                                                find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
-                                                                                                                                                                CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
-                                                                                                                                                                export CHANNEL
-                                                                                                                                                                STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
-                                                                                                                                                                STATUS="$( jq --raw-output ".status" /input )" || exit 148
-                                                                                                                                                                if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                                EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 167
+                                                                                                                                                                OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
+                                                                                                                                                                ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
+                                                                                                                                                                if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
+                                                                                                                                                                    ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                                     jq \
+                                                                                                                                                                        --arg CHANNEL ${ resource-parameters.init.valid-channel } \
+                                                                                                                                                                        --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                                        --arg INDEX "$INDEX" \
+                                                                                                                                                                        --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                                        --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                                        --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                                        --argjson STATUS "$STATUS" \
+                                                                                                                                                                        --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
+                                                                                                                                                                        --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
                                                                                                                                                                         '{
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "status" : .status
+                                                                                                                                                                            "WTF" : .WTF ,
+                                                                                                                                                                            "arguments" : .arguments ,
+                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                            "evaluation" : 0 ,
+                                                                                                                                                                            "index" : $INDEX ,
+                                                                                                                                                                            "inputs" : .inputs ,
+                                                                                                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                                                                                                            "seed" : $SEED ,
+                                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                                            "targets" : $EXPECTED_TARGETS ,
+                                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                                            "temporary" : .temporary
                                                                                                                                                                         }' \
-                                                                                                                                                                        /input | log
-                                                                                                                                                                elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
+                                                                                                                                                                        "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                else
                                                                                                                                                                     jq \
+                                                                                                                                                                        --arg INDEX "$INDEX" \
+                                                                                                                                                                        --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
+                                                                                                                                                                        --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
+                                                                                                                                                                        --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
+                                                                                                                                                                        --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
+                                                                                                                                                                        --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                                        --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                                        --argjson STATUS "$STATUS" \
+                                                                                                                                                                        --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                         '{
-                                                                                                                                                                            "standard-output" : .standard-output ,
-                                                                                                                                                                            "status" : .status
+                                                                                                                                                                            "arguments" : .arguments ,
+                                                                                                                                                                            "channel" : $CHANNEL
+                                                                                                                                                                            "evaluation" : ${ resource-parameters.error } ,
+                                                                                                                                                                            "index" : $INDEX ,
+                                                                                                                                                                            "inputs" : .inputs ,
+                                                                                                                                                                            "seed" : $SEED ,
+                                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                                            "targets" :
+                                                                                                                                                                                {
+                                                                                                                                                                                    "expected" : $EXPECTED_TARGETS ,
+                                                                                                                                                                                    "observed" : $OBSERVED_TARGETS
+                                                                                                                                                                                } ,
+                                                                                                                                                                            "text" : $TEXT
                                                                                                                                                                         }' \
-                                                                                                                                                                        /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
-                                                                                                                                                                elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "standard-error" : .["standard-error"]
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
-                                                                                                                                                                elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "standard-error" : .["standard-error"] ,
-                                                                                                                                                                            "status" : .status
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
+                                                                                                                                                                        "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
                                                                                                                                                     }
@@ -680,156 +498,384 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    mkdir --parents ${ resources-directory }/locks
-                                                                                                                    exec 182> ${ resources-directory }/locks/clean
-                                                                                                                    flock -s 182
-                                                                                                                    rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
-                                                                                                                    do
-                                                                                                                        PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        tail --follow /dev/null --pid "$PID"
-                                                                                                                        rm "$PID_FILE"
-                                                                                                                    done
-                                                                                                                    mkdir --parents ${ resources-directory }/temporary
-                                                                                                                    INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    export INPUT_FILE
-                                                                                                                    jq \
-                                                                                                                        --null-input \
-                                                                                                                        --arg _INDEX "$INDEX"\
-                                                                                                                        '{
-                                                                                                                            "index" : $_INDEX
-                                                                                                                        }' > "$INPUT_FILE"
-                                                                                                                    OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    export OUTPUT_FILE
-                                                                                                                    mkdir --parents ${ gc-roots-directory }
-                                                                                                                    is-releasable
-                                                                                                                    STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
-                                                                                                                    STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
-                                                                                                                    if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                                                                    then
-                                                                                                                        exec 186> "${ resources-directory }/locks/$INDEX.lock"
-                                                                                                                        flock -x 186
-                                                                                                                        TEMPORARY="$( mktemp --directory )" || exit 112
-                                                                                                                        export TEMPORARY
-                                                                                                                        release
-                                                                                                                    else
-                                                                                                                        flock -u 182
-                                                                                                                        "$0"
-                                                                                                                    fi
-                                                                                                                    rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "INPUT_FILE:?must be exported" "}" ] }"
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "OUTPUT_FILE:?must be exported" "}" ] }"
+                                                                                                                    SEQUENCE="$( sequential )" || exit 137
+                                                                                                                    printf -v INDEX "%016d" "$SEQUENCE"
+                                                                                                                    export INDEX
+                                                                                                                    mkdir --parents ${ resources-directory }/flags
+                                                                                                                    touch "${ resources-directory }/flags/$INDEX"
+                                                                                                                    mkdir --parents "${ resources-directory }/mounts/$INDEX"
+                                                                                                                    mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                                    mkdir --parents ${ resources-directory }/release
+                                                                                                                    init
                                                                                                                 '' ;
                                                                                                         } ;
-                                                                                                in "${ application }/bin/release" ;
-                                                                                        text = visitor { string = path : value : value ; } action.text ;
-                                                                                        targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
-                                                                                    } ;
-                                                                        invalid-channel = root-parameters.invalid-release-channel ;
-                                                                        release = visitor { lambda = path : value : value null ; } release ;
-                                                                        recovery = null ;
-                                                                        valid-channel = root-parameters.valid-release-channel ;
+                                                                                                text = visitor { string = path : value : value ; } action.text ;
+                                                                                                targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
+                                                                                            } ;
+                                                                                init = visitor { lambda = path : value : value null ; } init ;
+                                                                                invalid-channel = root-parameters.invalid-init-channel ;
+                                                                                recovery = null ;
+                                                                                valid-channel = root-parameters.valid-init-channel ;
+                                                                            } ;
+                                                                        release =
+                                                                            {
+                                                                                action =
+                                                                                    let
+                                                                                        action = visitor { lambda = path : value : value null ; } resource-parameters.release.release.action ;
+                                                                                        in
+                                                                                            {
+                                                                                                script =
+                                                                                                    let
+                                                                                                        application =
+                                                                                                            writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "release" ;
+                                                                                                                    runtimeInputs =
+                                                                                                                        [
+                                                                                                                            coreutils
+                                                                                                       log =
+                                                                writeShellApplication
+                                                                    {
+                                                                        name = "log" ;
+                                                                        runtimeInputs =
+                                                                            [
+                                                                                coreutils
+                                                                                (
+                                                                                    buildFHSUserEnv
+                                                                                        {
+                                                                                            extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                            name = "log" ;
+                                                                                            runScript = "log" ;
+                                                                                            targetPkgs =
+                                                                                                pkgs :
+                                                                                                    [
+                                                                                                        (
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "log" ;
+                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                                                                                            JSON="$( jq --compact-output )" || exit 129
+                                                                                                                            redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                                        '' ;
+                                                                                                                }
+                                                                                                        )
+                                                                                                    ] ;
+                                                                                        }
+                                                                                )
+                                                                            ] ;
+                                                                        text =
+                                                                            ''
+                                                                                mkdir --parents ${ resources-directory }/locks
+                                                                                exec 174> ${ resources-directory }/locks/clean
+                                                                                flock -s 174
+                                                                                exec 143> ${ resources-directory }/locks/log
+                                                                                flock -x 143
+                                                                                mkdir --parents ${ resources-directory }/log.yaml
+                                                                                log
+                                                                            '' ;
+                                                                    } ;                                                                          flock
+                                                                                                                            log
+                                                                                                                            (
+                                                                                                                                buildFHSUserEnv
+                                                                                                                                    {
+                                                                                                                                        extraBwrapArgs =
+                                                                                                                                            [
+                                                                                                                                                "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                                                                                "--ro-bind" gc-roots-directory "/gc-roots"
+                                                                                                                                                "--bind" "$OUTPUT_FILE" "/output"
+                                                                                                                                                "--tmpfs" "/private"
+                                                                                                                                            ] ;
+                                                                                                                                        name = "is-releasable" ;
+                                                                                                                                        runScript = "is-releasable" ;
+                                                                                                                                        targetPkgs =
+                                                                                                                                            pkgs :
+                                                                                                                                                [
+                                                                                                                                                    (
+                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                            {
+                                                                                                                                                                name = "is-releasable" ;
+                                                                                                                                                                runtimeInputs =
+                                                                                                                                                                    [
+                                                                                                                                                                        pkgs.findutils
+                                                                                                                                                                        pkgs.inotify-tools
+                                                                                                                                                                        pkgs.jq
+                                                                                                                                                                        (
+                                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                                {
+                                                                                                                                                                                    name = "release" ;
+                                                                                                                                                                                    runtimeInputs = resource-parameters.release.action.targetPkgs pkgs ;
+                                                                                                                                                                                    text = resource-parameters.release.action.text ;
+                                                                                                                                                                                }
+                                                                                                                                                                        )
+                                                                                                                                                                    ] ;
+                                                                                                                                                                text =
+                                                                                                                                                                    ''
+                                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 176
+                                                                                                                                                                        EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                        find /gc-roots -type l | sort | while read -r LINK
+                                                                                                                                                                        do
+                                                                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                                            fi
+                                                                                                                                                                        done
+                                                                                                                                                                        if release "$INDEX" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                                        then
+                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                        else
+                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                        fi
+                                                                                                                                                                        jq \
+                                                                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                                                                            --arg STATUS "$STATUS" \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                                "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                                "status" : $STATUS
+                                                                                                                                                                            }' \
+                                                                                                                                                                            /input > /output
+                                                                                                                                                                    '' ;
+                                                                                                                                                            }
+                                                                                                                                                    )
+                                                                                                                                                ] ;
+                                                                                                                                    }
+                                                                                                                            )
+                                                                                                                            (
+                                                                                                                                buildFHSUserEnv
+                                                                                                                                    {
+                                                                                                                                        extraBwrapArgs =
+                                                                                                                                            [
+                                                                                                                                                "--ro-bind" "$OUTPUT_FILE" "/input"
+                                                                                                                                                "--bind" gc-roots-directory "/gc-roots"
+                                                                                                                                                "--bind" resources-directory "/resources"
+                                                                                                                                                "--bind" "$TEMPORARY" "/temporary"
+                                                                                                                                            ] ;
+                                                                                                                                        name = "release" ;
+                                                                                                                                        runScript = "release" ;
+                                                                                                                                        targetPkgs =
+                                                                                                                                            pkgs :
+                                                                                                                                                [
+                                                                                                                                                    (
+                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                            {
+                                                                                                                                                                name = "release" ;
+                                                                                                                                                                runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz log ] ;
+                                                                                                                                                                text =
+                                                                                                                                                                    ''
+                                                                                                                                                                        INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                        find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
+                                                                                                                                                                        find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
+                                                                                                                                                                        find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
+                                                                                                                                                                        find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
+                                                                                                                                                                        CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
+                                                                                                                                                                        export CHANNEL
+                                                                                                                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
+                                                                                                                                                                        STATUS="$( jq --raw-output ".status" /input )" || exit 148
+                                                                                                                                                                        if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                                        then
+                                                                                                                                                                            jq \
+                                                                                                                                                                                '{
+                                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                    "status" : .status
+                                                                                                                                                                                }' \
+                                                                                                                                                                                /input | log
+                                                                                                                                                                        elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                                        then
+                                                                                                                                                                            jq \
+                                                                                                                                                                                '{
+                                                                                                                                                                                    "standard-output" : .standard-output ,
+                                                                                                                                                                                    "status" : .status
+                                                                                                                                                                                }' \
+                                                                                                                                                                                /input | log
+                                                                                                                                                                            exit ${ resource-parameters.error }
+                                                                                                                                                                        elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                                        then
+                                                                                                                                                                            jq \
+                                                                                                                                                                                '{
+                                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                    "standard-error" : .["standard-error"]
+                                                                                                                                                                                }' \
+                                                                                                                                                                                /input | log
+                                                                                                                                                                            exit ${ resource-parameters.error }
+                                                                                                                                                                        elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                                        then
+                                                                                                                                                                            jq \
+                                                                                                                                                                                '{
+                                                                                                                                                                                    "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                    "standard-error" : .["standard-error"] ,
+                                                                                                                                                                                    "status" : .status
+                                                                                                                                                                                }' \
+                                                                                                                                                                                /input | log
+                                                                                                                                                                            exit ${ resource-parameters.error }
+                                                                                                                                                                        fi
+                                                                                                                                                                    '' ;
+                                                                                                                                                            }
+                                                                                                                                                    )
+                                                                                                                                                ] ;
+                                                                                                                                    }
+                                                                                                                            )
+                                                                                                                        ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            INDEX="$( basename "$0" )" || exit 101
+                                                                                                                            mkdir --parents ${ resources-directory }/locks
+                                                                                                                            exec 182> ${ resources-directory }/locks/clean
+                                                                                                                            flock -s 182
+                                                                                                                            rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                            find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
+                                                                                                                            do
+                                                                                                                                PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                                tail --follow /dev/null --pid "$PID"
+                                                                                                                                rm "$PID_FILE"
+                                                                                                                            done
+                                                                                                                            mkdir --parents ${ resources-directory }/temporary
+                                                                                                                            INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                                            export INPUT_FILE
+                                                                                                                            jq \
+                                                                                                                                --null-input \
+                                                                                                                                --arg _INDEX "$INDEX"\
+                                                                                                                                '{
+                                                                                                                                    "index" : $_INDEX
+                                                                                                                                }' > "$INPUT_FILE"
+                                                                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                                                                            export OUTPUT_FILE
+                                                                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                                                                            is-releasable
+                                                                                                                            STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
+                                                                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                                            if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                            then
+                                                                                                                                exec 186> "${ resources-directory }/locks/$INDEX.lock"
+                                                                                                                                flock -x 186
+                                                                                                                                TEMPORARY="$( mktemp --directory )" || exit 112
+                                                                                                                                export TEMPORARY
+                                                                                                                                release
+                                                                                                                            else
+                                                                                                                                flock -u 182
+                                                                                                                                "$0"
+                                                                                                                            fi
+                                                                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                                        '' ;
+                                                                                                                } ;
+                                                                                                        in "${ application }/bin/release" ;
+                                                                                                text = visitor { string = path : value : value ; } action.text ;
+                                                                                                targetPkgs = visitor { lambda = path : value : value ; } action.targetPkgs ;
+                                                                                            } ;
+                                                                                invalid-channel = root-parameters.invalid-release-channel ;
+                                                                                release = visitor { lambda = path : value : value null ; } release ;
+                                                                                recovery = null ;
+                                                                                valid-channel = root-parameters.valid-release-channel ;
+                                                                            } ;
+                                                                        seed =
+                                                                            visitor
+                                                                                {
+                                                                                    bool = stringify ;
+                                                                                    float = stringify ;
+                                                                                    int = stringify ;
+                                                                                    lambda = stringify ;
+                                                                                    list = stringify ;
+                                                                                    null = stringify ;
+                                                                                    path = stringify ;
+                                                                                    set = stringify ;
+                                                                                    string = stringify ;
+                                                                                }
+                                                                                seed ;
+                                                                        targets =
+                                                                            visitor
+                                                                                {
+                                                                                    list = path : value : builtins.sort builtins.lessThan value ;
+                                                                                    string = path : value : value ;
+                                                                                }
+                                                                                targets ;
+                                                                        temporary = visitor { bool = path : value : value ; } temporary ;
                                                                     } ;
-                                                                seed =
-                                                                    visitor
-                                                                        {
-                                                                            bool = stringify ;
-                                                                            float = stringify ;
-                                                                            int = stringify ;
-                                                                            lambda = stringify ;
-                                                                            list = stringify ;
-                                                                            null = stringify ;
-                                                                            path = stringify ;
-                                                                            set = stringify ;
-                                                                            string = stringify ;
-                                                                        }
-                                                                        seed ;
-                                                                targets =
-                                                                    visitor
-                                                                        {
-                                                                            list = path : value : builtins.sort builtins.lessThan value ;
-                                                                            string = path : value : value ;
-                                                                        }
-                                                                        targets ;
-                                                                temporary = visitor { bool = path : value : value ; } temporary ;
-                                                            } ;
-                                                    sequential =
-                                                        writeShellApplication
-                                                            {
-                                                                name = "sequential" ;
-                                                                runtimeInputs =
-                                                                    [
-                                                                        coreutils
-                                                                        flock
-                                                                        (
-                                                                            buildFHSUserEnv
-                                                                                {
-                                                                                    extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
-                                                                                    name = "sequential" ;
-                                                                                    runScript = "sequential" ;
-                                                                                    targetPkgs =
-                                                                                        pkgs :
-                                                                                            [
-                                                                                                (
-                                                                                                    pkgs.writeShellApplication
-                                                                                                        {
-                                                                                                            name = "sequential" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                            text =
-                                                                                                                ''
-                                                                                                                    CURRENT="$( cat /sequential )" || exit 109
-                                                                                                                    NEXT=$(( CURRENT + 1 ))
-                                                                                                                    echo "$NEXT" > /sequential
-                                                                                                                    echo "$CURRENT"
-                                                                                                                '' ;
-                                                                                                        }
-                                                                                                )
-                                                                                            ] ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                text =
-                                                                    ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 113> ${ resources-directory }/locks/clean
-                                                                        flock -s 113
-                                                                        if [[ ! -f ${ resources-directory }/sequential ]]
-                                                                        then
-                                                                            echo 0 > ${ resources-directory }/sequential
-                                                                        fi
-                                                                        sequential
-                                                                    '' ;
-                                                            } ;
-                                                    store =
-                                                        mkDerivation
-                                                            {
-                                                                installPhase = ''install "$out"'' ;
-                                                                name = "resource" ;
-                                                                nativeBuildInputs =
-                                                                    [
-                                                                        (
-                                                                            writeShellApplication
-                                                                                {
-                                                                                    name = "install" ;
-                                                                                    runtimeInputs = [ coreutils ] ;
-                                                                                    text =
-                                                                                        ''
-                                                                                            OUT="$1"
-                                                                                            mkdir --parents "$OUT"
-                                                                                            mkdir --parents "$OUT/init"
-                                                                                            ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
-                                                                                            mkdir --parents "$OUT/release"
-                                                                                            ln --symbolic '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' "$OUT/error.json"
-                                                                                            ln --symbolic '${ builtins.toFile "seed.json" ( builtins.toJSON ( visitor { bool = stringify ; float = stringify ; int = stringify ; lambda = stringify ; list = stringify ; null = stringify ; path = stringify ; set = stringify ; string = stringify ; } resource-parameters seed ) ) }' "$OUT/seed.json"
-                                                                                            ln --symbolic '${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) }' "$OUT/targets.json"
-                                                                                            ln --symbolic '${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) }' "$OUT/temporary.json"
-                                                                                        '' ;
-                                                                                }
-                                                                        )
-                                                                    ] ;
-                                                                src = ./. ;
-                                                            } ;
-                                                    in "${ resource }/bin/resource" ;
-                                    } ;
+                                                            sequential =
+                                                                writeShellApplication
+                                                                    {
+                                                                        name = "sequential" ;
+                                                                        runtimeInputs =
+                                                                            [
+                                                                                coreutils
+                                                                                flock
+                                                                                (
+                                                                                    buildFHSUserEnv
+                                                                                        {
+                                                                                            extraBwrapArgs = [ "--bind" "${ resources-directory }/sequential" "/sequential" ] ;
+                                                                                            name = "sequential" ;
+                                                                                            runScript = "sequential" ;
+                                                                                            targetPkgs =
+                                                                                                pkgs :
+                                                                                                    [
+                                                                                                        (
+                                                                                                            pkgs.writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "sequential" ;
+                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            CURRENT="$( cat /sequential )" || exit 109
+                                                                                                                            NEXT=$(( CURRENT + 1 ))
+                                                                                                                            echo "$NEXT" > /sequential
+                                                                                                                            echo "$CURRENT"
+                                                                                                                        '' ;
+                                                                                                                }
+                                                                                                        )
+                                                                                                    ] ;
+                                                                                        }
+                                                                                )
+                                                                            ] ;
+                                                                        text =
+                                                                            ''
+                                                                                mkdir --parents ${ resources-directory }/locks
+                                                                                exec 113> ${ resources-directory }/locks/clean
+                                                                                flock -s 113
+                                                                                if [[ ! -f ${ resources-directory }/sequential ]]
+                                                                                then
+                                                                                    echo 0 > ${ resources-directory }/sequential
+                                                                                fi
+                                                                                sequential
+                                                                            '' ;
+                                                                    } ;
+                                                            store =
+                                                                mkDerivation
+                                                                    {
+                                                                        installPhase = ''install "$out"'' ;
+                                                                        name = "resource" ;
+                                                                        nativeBuildInputs =
+                                                                            [
+                                                                                (
+                                                                                    writeShellApplication
+                                                                                        {
+                                                                                            name = "install" ;
+                                                                                            runtimeInputs = [ coreutils ] ;
+                                                                                            text =
+                                                                                                ''
+                                                                                                    OUT="$1"
+                                                                                                    mkdir --parents "$OUT"
+                                                                                                    mkdir --parents "$OUT/init"
+                                                                                                    ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
+                                                                                                    mkdir --parents "$OUT/release"
+                                                                                                    ln --symbolic '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' "$OUT/error.json"
+                                                                                                    ln --symbolic '${ builtins.toFile "seed.json" ( builtins.toJSON ( visitor { bool = stringify ; float = stringify ; int = stringify ; lambda = stringify ; list = stringify ; null = stringify ; path = stringify ; set = stringify ; string = stringify ; } resource-parameters seed ) ) }' "$OUT/seed.json"
+                                                                                                    ln --symbolic '${ builtins.toFile "targets.json" ( builtins.toJSON resource-parameters.targets ) }' "$OUT/targets.json"
+                                                                                                    ln --symbolic '${ builtins.toFile "temporary.json" ( builtins.toJSON resource-parameters.temporary ) }' "$OUT/temporary.json"
+                                                                                                '' ;
+                                                                                        }
+                                                                                )
+                                                                            ] ;
+                                                                        src = ./. ;
+                                                                    } ;
+                                                            in "${ resource }/bin/resource" ;
+                                            } ;
                             root-parameters =
                                 let
                                     to-string =
