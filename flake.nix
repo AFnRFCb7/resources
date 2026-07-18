@@ -170,7 +170,7 @@
                                                                                                         text =
                                                                                                             ''
                                                                                                                 echo 1723258852938545 1369941427493491 9362456391665212 >&2
-                                                                                                                redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+                                                                                                                stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     echo 1723258852938545 1369941427493491 5839745978894111 >&2
                                                                                                                     read -r TYPE || break
