@@ -1236,6 +1236,10 @@
                                                                                                                                                     "flag" : $FLAG
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
                                                                                                                                         fi
+                                                                                                                                        if [[ "$FLAG" == true ]]
+                                                                                                                                        then
+                                                                                                                                            exit 108
+                                                                                                                                        fi
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
