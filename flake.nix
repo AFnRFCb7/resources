@@ -120,7 +120,7 @@
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
                                                                                                                 rm --recursive --force /gc-locks/* /resources/*
-                                                                                                                export CHANNEL=${ root-parameters.release.valid-channel }
+                                                                                                                export CHANNEL=${ resource-parameters.release.valid-channel }
                                                                                                                 jq \
                                                                                                                     --null-input \
                                                                                                                     '{
