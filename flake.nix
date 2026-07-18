@@ -1175,11 +1175,6 @@
                                                                                                                                                 FLAG_STATUS=true
                                                                                                                                             fi
                                                                                                                                             AFTER="$( date )" || exit 110
-                                                                                                                                            if [[ "$FLAG" == "true" ]]
-                                                                                                                                            then
-                                                                                                                                                echo 1723258852938545 1369941427493491 8548612841485853 3441816213476469 >&2
-                                                                                                                                                touch "$COMMANDS/FLAG"
-                                                                                                                                            fi
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
                                                                                                                                                 --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
@@ -1228,6 +1223,12 @@
                                                                                                                                                     "text" : $TEXT ,
                                                                                                                                                     "timeout" : $TIMEOUT
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
+                                                                                                                                            if [[ "$FLAG" == "true" ]]
+                                                                                                                                            then
+                                                                                                                                                echo 1723258852938545 1369941427493491 8548612841485853 3441816213476469 >&2
+                                                                                                                                                touch "$COMMANDS/FLAG"
+                                                                                                                                                exit 153
+                                                                                                                                            fi
                                                                                                                                         else
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
@@ -1235,10 +1236,6 @@
                                                                                                                                                 '{
                                                                                                                                                     "flag" : $FLAG
                                                                                                                                                 }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                        fi
-                                                                                                                                        if [[ "$FLAG" == true ]]
-                                                                                                                                        then
-                                                                                                                                            exit 108
                                                                                                                                         fi
                                                                                                                                     '' ;
                                                                                                                             } ;
