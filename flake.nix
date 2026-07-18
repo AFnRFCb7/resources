@@ -54,7 +54,7 @@
                                                                                                 pkgs.writeShellApplication
                                                                                                     {
                                                                                                         name = "clean" ;
-                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.xz ] ;
+                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                         text =
                                                                                                             ''
                                                                                                                 cleanup ( ) {
@@ -73,6 +73,11 @@
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
                                                                                                                 rm --recursive --force /gc-locks/* /resources/*
+                                                                                                                export CHANNEL=${ root-parameters.release.valid-channel }
+                                                                                                                jq \
+                                                                                                                    --null-input \
+                                                                                                                    '{
+                                                                                                                    }' | log
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
