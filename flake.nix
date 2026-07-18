@@ -172,14 +172,15 @@
                                                                                                                 echo 1723258852938545 1369941427493491 9362456391665212 >&2
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 1369941427493491 5839745978894111 >&2
                                                                                                                     read -r TYPE || break
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
-                                                                                                                    echo 1723258852938545 1369941427493491 4157454155213839 "$TYPE" "$CHANNEL" "$PAYLOAD" >&2
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        echo 1723258852938545 1369941427493491 2721396867451812 >&2
+                                                                                                                        ${ pkgs.findutils }/bin/find /release >&2 # 1723258852938545
+                                                                                                                        echo 1723258852938545 1369941427493491 2428595548649985 >&2
                                                                                                                         if [[ -L "/release/$INDEX" ]]
                                                                                                                         then
                                                                                                                             echo 1723258852938545 1369941427493491 8591897185711976 >&2
