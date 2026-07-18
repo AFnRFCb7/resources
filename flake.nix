@@ -131,7 +131,6 @@
                                                                                                                     then
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                                                                         "/release/$INDEX" &
-                                                                                                                    else
                                                                                                                     fi
                                                                                                                 done
                                                                                                             '' ;
