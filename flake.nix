@@ -1172,6 +1172,54 @@
                                                                                                                                             if [[ "$FLAG" == "true" ]]
                                                                                                                                             then
                                                                                                                                                 echo 1723258852938545 1369941427493491 8414195143865719 >> "$COMMANDS/FLAG"
+                                                                                                                                            jq \
+                                                                                                                                                --null-input \
+                                                                                                                                                --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
+                                                                                                                                                --arg AFTER "$AFTER" \
+                                                                                                                                                --arg BEFORE "$BEFORE" \
+                                                                                                                                                --arg EXPECTED_STANDARD_ERROR "" \
+                                                                                                                                                --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
+                                                                                                                                                --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
+                                                                                                                                                --arg FLAG "$FLAG" \
+                                                                                                                                                --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
+                                                                                                                                                --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
+                                                                                                                                                --argjson FLAG_STATUS "$FLAG_STATUS" \
+                                                                                                                                                --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
+                                                                                                                                                --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
+                                                                                                                                                --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
+                                                                                                                                                --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
+                                                                                                                                                --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
+                                                                                                                                                --argjson TIMEOUT ${ builtins.toString action.timeout } \
+                                                                                                                                                '{
+                                                                                                                                                    "accepts-redirect" : $ACCEPTS_REDIRECT ,
+                                                                                                                                                    "flag" : $FLAG ,
+                                                                                                                                                    "process" : $PROCESS ,
+                                                                                                                                                    "stamps" :
+                                                                                                                                                        {
+                                                                                                                                                            "after" : $AFTER ,
+                                                                                                                                                            "before" : $BEFORE
+                                                                                                                                                        } ,
+                                                                                                                                                    "standard-error" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STANDARD_ERROR ,
+                                                                                                                                                            "flag": $FLAG_STANDARD_ERROR ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR
+                                                                                                                                                        } ,
+                                                                                                                                                    "standard-output" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STANDARD_OUTPUT ,
+                                                                                                                                                            "flag" : $FLAG_STANDARD_OUTPUT ,
+                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT
+                                                                                                                                                        } ,
+                                                                                                                                                    "status" :
+                                                                                                                                                        {
+                                                                                                                                                            "expected" : $EXPECTED_STATUS ,
+                                                                                                                                                            "flag" : $FLAG_STATUS ,
+                                                                                                                                                            "observed" : $OBSERVED_STATUS
+                                                                                                                                                        } ,
+                                                                                                                                                    "text" : $TEXT ,
+                                                                                                                                                    "timeout" : $TIMEOUT
+                                                                                                                                                }' >> "$COMMANDS/FLAG"
                                                                                                                                             fi
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
