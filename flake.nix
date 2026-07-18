@@ -232,12 +232,11 @@
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
-                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 146
                                                                             STANDARD_INPUT="$( cat )" || exit 103
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
+                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                             jq \
                                                                                 --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
@@ -253,10 +252,10 @@
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                             jq \
                                                                                 --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
                                                                                 '{
