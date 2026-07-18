@@ -770,7 +770,7 @@
                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    CURRENT="$( cat /sequential )" || exit 166
+                                                                                                                    CURRENT="$( cat /sequential )" || exit 109
                                                                                                                     NEXT=$(( CURRENT + 1 ))
                                                                                                                     echo "$NEXT" > /sequential
                                                                                                                     echo "$CURRENT"
@@ -1278,7 +1278,7 @@
 #                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
 #                                                                                                    done
                                                                                                     # yq eval --prettyPrint "." "$COMMANDS/FLAG"
-                                                                                                    exit 166
+                                                                                                    exit 107
                                                                                                 fi
                                                                                             '' ;
                                                                             } ;
