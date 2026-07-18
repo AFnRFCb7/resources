@@ -635,7 +635,7 @@
                                                                                                                                                                 CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
-                                                                                                                                                                STATUS="$( jq --raw-output ".status" /input )" || exit 148
+                                                                                                                                                                STATUS="$( jq --raw-output ".status" /input )" || exit 112
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     jq \
@@ -707,7 +707,7 @@
                                                                                                                     mkdir --parents ${ gc-roots-directory }
                                                                                                                     is-releasable
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
-                                                                                                                    STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 148
+                                                                                                                    STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                     if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                     then
                                                                                                                         exec 186> "${ resources-directory }/locks/$INDEX.lock"
@@ -1080,7 +1080,7 @@
                                                                                                                                                             if read -t "$TIMEOUT" -r VALUE <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID $VALUE" >&2
-                                                                                                                                                                exit 148
+                                                                                                                                                                exit 179
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
