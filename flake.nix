@@ -632,13 +632,16 @@
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 7582132582732255 >&2
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 9253736393733559 >&2
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' \
                                                                                                                                                                         /input | log
+                                                                                                                                                                    echo 1723258852938545 1369941427493491 8254498393225651 >&2
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
