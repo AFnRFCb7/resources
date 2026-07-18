@@ -120,12 +120,6 @@
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
                                                                                                                 rm --recursive --force /gc-locks/* /resources/*
-                                                                                                                export CHANNEL=${ valid-release-channel }
-                                                                                                                jq \
-                                                                                                                    --null-input \
-                                                                                                                    '{
-                                                                                                                        "wtf" : "7775738698928225"
-                                                                                                                    }' | log
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
