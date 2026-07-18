@@ -153,7 +153,6 @@
                                         resource =
                                             {
                                                 error ,
-                                                error ,
                                                 init ,
                                                 release ,
                                                 seed ,
