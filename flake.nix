@@ -137,8 +137,8 @@
                                                                 ''
                                                                     mkdir --parents ${ gc-roots-directory }
                                                                     mkdir --parents ${ resources-directory }/locks
-                                                                    exec 149> ${ resources-directory }/locks/clean
-                                                                    flock -x 149
+                                                                    exec 131> ${ resources-directory }/locks/clean
+                                                                    flock -x 131
                                                                     TEMPORARY="$( mktemp --directory )" || exit 113
                                                                     export TEMPORARY
                                                                     clean
@@ -1080,7 +1080,7 @@
                                                                                                                                                             if read -t "$TIMEOUT" -r VALUE <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID $VALUE" >&2
-                                                                                                                                                                exit 149
+                                                                                                                                                                exit 148
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
