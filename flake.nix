@@ -197,11 +197,9 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1369941427493491 5196613882482892 >&2
+                                                                    echo 1723258852938545 1369941427493491 4154858587963353 "$( ${ pkgs.findutils }/bin/find ${ resources-directory } )" 9216639719715863 >&2
                                                                     mkdir --parents ${ resources-directory }/release
-                                                                    echo 1723258852938545 1369941427493491 3188351828734463 >&2
                                                                     release
-                                                                    echo 1723258852938545 1369941427493491 2321823986835919 >&2
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/release" ;
