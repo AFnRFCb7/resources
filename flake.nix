@@ -153,6 +153,7 @@
                                         resource =
                                             {
                                                 error ,
+                                                error ,
                                                 init ,
                                                 release ,
                                                 seed ,
@@ -1171,7 +1172,7 @@
                                                                                                                                             AFTER="$( date )" || exit 110
                                                                                                                                             if [[ "$FLAG" == "true" ]]
                                                                                                                                             then
-                                                                                                                                                touch "$COMMANDS/FLAG"
+                                                                                                                                                echo 1723258852938545 1369941427493491 8414195143865719 >> "$COMMANDS/FLAG"
                                                                                                                                             fi
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
@@ -1270,14 +1271,12 @@
                                                                                                 then
                                                                                                     echo FLAG >&2
                                                                                                     cat "$COMMANDS/FLAG" >&2
-                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
-                                                                                                    do
-                                                                                                        echo >&2
-                                                                                                        echo "FLAG:  $FILE" >&2
-                                                                                                        cat "$FILE" >&2
-                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
-                                                                                                    done
-                                                                                                    # yq eval --prettyPrint "." "$COMMANDS/FLAG"
+#                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
+#                                                                                                    do
+#                                                                                                        echo >&2
+#                                                                                                        echo "FLAG:  $FILE" >&2
+#                                                                                                        cat "$FILE" >&2
+#                                                                                                    done
                                                                                                     exit 107
                                                                                                 fi
                                                                                             '' ;
