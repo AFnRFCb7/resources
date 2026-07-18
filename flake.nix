@@ -1271,6 +1271,7 @@
                                                                                                 done
                                                                                                 if [[ -f "$COMMANDS/FLAG" ]]
                                                                                                 then
+                                                                                                    echo 1723258852938545 1369941427493491 2539972519432822 >&2
                                                                                                     echo FLAG >&2
                                                                                                     cat "$COMMANDS/FLAG" >&2
 #                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
