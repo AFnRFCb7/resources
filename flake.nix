@@ -632,6 +632,7 @@
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.valid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -640,6 +641,7 @@
                                                                                                                                                                         /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .standard-output ,
