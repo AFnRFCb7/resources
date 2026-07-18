@@ -1278,13 +1278,13 @@
                                                                                                     echo 1723258852938545 1369941427493491 2539972519432822 >&2
                                                                                                     echo FLAG >&2
                                                                                                     cat "$COMMANDS/FLAG" >&2
-#                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
-#                                                                                                    do
-#                                                                                                        echo >&2
-#                                                                                                        # echo "FLAG:  $FILE" >&2
-#                                                                                                        # cat "$FILE" >&2
-#                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
-#                                                                                                    done
+                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
+                                                                                                    do
+                                                                                                        echo >&2
+                                                                                                        # echo "FLAG:  $FILE" >&2
+                                                                                                        # cat "$FILE" >&2
+                                                                                                        # jq "." "$FILE" >&2 | yq eval --prettyPrint
+                                                                                                    done
                                                                                                     # yq eval --prettyPrint "." "$COMMANDS/FLAG"
                                                                                                     exit 153
                                                                                                 fi
