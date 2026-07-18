@@ -122,7 +122,7 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 1369941427493491 4764772821548914 >&2
+                                                                                                                echo 1723258852938545 1369941427493491 9832784369633235 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     echo 1723258852938545 1369941427493491 1853879985898869 >&2
