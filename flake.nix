@@ -122,16 +122,15 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                exec 133< <( redis-cli SUBSCRIBE valid-init )
                                                                                                                 echo 1723258852938545 1369941427493491 4764772821548914 >&2
                                                                                                                 redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     echo 1723258852938545 1369941427493491 5925664855951242 >&2
-                                                                                                                    read -r -t 1 -u 133 TYPE || break
+                                                                                                                    read -r -t 1 TYPE || break
                                                                                                                     echo 1723258852938545 1369941427493491 5857879952124481 >&2
-                                                                                                                    read -r -t 1 -u 133 CHANNEL || break
+                                                                                                                    read -r -t 1 CHANNEL || break
                                                                                                                     echo 1723258852938545 1369941427493491 8317474124353694 >&2
-                                                                                                                    read -r -t 1 -u 133 PAYLOAD || break
+                                                                                                                    read -r -t 1 PAYLOAD || break
                                                                                                                     echo 1723258852938545 1369941427493491 7535487471992686 >&2
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
