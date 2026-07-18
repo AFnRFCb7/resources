@@ -893,7 +893,7 @@
                                                                                                             EXPECTED_PAYLOAD="$2"
                                                                                                             read -t 1 -r OBSERVED_TYPE <&189 || exit 142
                                                                                                             read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
-                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 160
+                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
                                                                                                             if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
                                                                                                             then
                                                                                                                 echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
@@ -993,7 +993,7 @@
                                                                                                                                                             then
                                                                                                                                                                 exit 173
                                                                                                                                                             fi
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 160
+                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 179
                                                                                                                                                             OBSERVED_PAYLOAD="$( jq --compact-output 'del(.["originator-pid"])' <<< "$PAYLOAD" )" || exit 127
                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                             then
@@ -1080,7 +1080,7 @@
                                                                                                                                                             if read -t "$TIMEOUT" -r VALUE <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$UUID $VALUE" >&2
-                                                                                                                                                                exit 160
+                                                                                                                                                                exit 149
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
