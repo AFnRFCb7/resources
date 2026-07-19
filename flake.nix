@@ -691,7 +691,9 @@
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                        echo 1723258852938545 1369941427493491 1674717918388568 PID "$PID" >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
+                                                                                                                        echo 1723258852938545 1369941427493491 7919596753232553 PID "$PID" >&2
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
