@@ -192,12 +192,10 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1369941427493491 4449786475688797 >&2
-                                                                    while [[ ! -d ${ resources-directory }/release ]]
-                                                                    do
-                                                                        sleep 1s
-                                                                    done
-                                                                    echo 1723258852938545 1369941427493491 4857472913475957 >&2
+                                                                    if [[ ! -d ${ resources-directory }/release ]]
+                                                                    then
+                                                                        echo 1723258852938545 1369941427493491 6944481758781978 >&2
+                                                                    fi
                                                                     release
                                                                 '' ;
                                                         } ;
