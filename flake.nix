@@ -220,6 +220,7 @@
                                                                 runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 1723258852938545 1369941427493491 4163455184242357 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 157> ${ resources-directory }/locks/clean
@@ -293,6 +294,7 @@
                                                                                     "temporary" : .temporary
                                                                                 }' \
                                                                                 "$OUTPUT_FILE" | log
+                                                                            echo 1723258852938545 1369941427493491 8389689964513516 >&2
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
@@ -628,6 +630,7 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 1723258852938545 1369941427493491 5595868676631211 >&2
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
