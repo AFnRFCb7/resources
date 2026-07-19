@@ -171,7 +171,9 @@
                                                                                                             ''
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
+                                                                                                                    echo 1723258852938545 1369941427493491 5652429811295145 >&2
                                                                                                                     read -r TYPE || break
+                                                                                                                    echo 1723258852938545 1369941427493491 5669691277932618 >&2
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
