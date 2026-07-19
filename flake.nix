@@ -279,6 +279,7 @@
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
+                                                                            echo 1723258852938545 1369941427493491 1992715865798984 >&2
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
