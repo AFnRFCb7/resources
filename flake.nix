@@ -195,6 +195,7 @@
                                                                     echo 1723258852938545 1369941427493491 3322263174694842 "$( date )" >&2
                                                                     ${ findutils }/bin/find ${ resources-directory } # echo 1723258852938545 1369941427493491 8831553887835872 >&2
                                                                     echo 1723258852938545 1369941427493491 9264555814543947 "$( date )" >&2
+                                                                    mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
                                                         } ;
