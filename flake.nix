@@ -275,6 +275,10 @@
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
+                                                                            echo 1723258852938545 1369941427493491 8881426317539115 FINDME >&2
+                                                                            echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
+                                                                            ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
+                                                                            echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "2682378745785311" ,
@@ -431,9 +435,6 @@
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
-                                                                                                                                                            echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
-                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
-                                                                                                                                                            echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
