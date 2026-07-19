@@ -276,11 +276,12 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
+                                                                        echo 1723258852938545 1369941427493491 8296193131834786 >&2
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
-                                                                            echo 1723258852938545 1369941427493491 1992715865798984 >&2
+                                                                            echo 1723258852938545 1369941427493491 1992715865798984 INDEX "$INDEX" "$( ls -lah ${ resources-directory }/release )" >&2
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
