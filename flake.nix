@@ -169,7 +169,6 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 1369941427493491 9362456391665212 >&2
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     read -r TYPE || break
@@ -178,12 +177,8 @@
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        echo 1723258852938545 1369941427493491 2721396867451812 >&2
-                                                                                                                        ${ pkgs.findutils }/bin/find /release >&2 # 1723258852938545
-                                                                                                                        echo 1723258852938545 1369941427493491 2428595548649985 >&2
                                                                                                                         if [[ -L "/release/$INDEX" ]]
                                                                                                                         then
-                                                                                                                            echo 1723258852938545 1369941427493491 8591897185711976 >&2
                                                                                                                             "/release/$INDEX" &
                                                                                                                         fi
                                                                                                                     fi
@@ -197,8 +192,10 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1369941427493491 4154858587963353 "$( ls -lah ${ resources-directory } )" 9216639719715863 >&2
-                                                                    # mkdir --parents ${ resources-directory }/release
+                                                                    while ! ${ resources-directory }/release
+                                                                    do
+                                                                        sleep 1s
+                                                                    done
                                                                     release
                                                                 '' ;
                                                         } ;
@@ -220,7 +217,6 @@
                                                                 runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        echo 1723258852938545 1369941427493491 4163455184242357 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 157> ${ resources-directory }/locks/clean
@@ -276,12 +272,10 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
-                                                                        echo 1723258852938545 1369941427493491 8296193131834786 >&2
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
-                                                                            echo 1723258852938545 1369941427493491 1992715865798984 INDEX "$INDEX" "$( ls -lah ${ resources-directory }/release )" >&2
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
@@ -295,7 +289,6 @@
                                                                                     "temporary" : .temporary
                                                                                 }' \
                                                                                 "$OUTPUT_FILE" | log
-                                                                            echo 1723258852938545 1369941427493491 8389689964513516 >&2
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
@@ -631,7 +624,6 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                echo 1723258852938545 1369941427493491 5595868676631211 >&2
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -643,16 +635,13 @@
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 7582132582732255 >&2
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 9253736393733559 >&2
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' \
                                                                                                                                                                         /input | log
-                                                                                                                                                                    echo 1723258852938545 1369941427493491 8254498393225651 >&2
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
@@ -1193,7 +1182,6 @@
                                                                                                                                             AFTER="$( date )" || exit 110
                                                                                                                                             if [[ "$FLAG" == "true" ]]
                                                                                                                                             then
-                                                                                                                                                echo 1723258852938545 1369941427493491 8414195143865719 >> "$COMMANDS/FLAG"
                                                                                                                                             jq \
                                                                                                                                                 --null-input \
                                                                                                                                                 --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
