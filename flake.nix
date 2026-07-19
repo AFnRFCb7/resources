@@ -277,7 +277,8 @@
                                                                             # FINDME SUCCESS 2
                                                                             echo 1723258852938545 1369941427493491 8881426317539115 FINDME >&2
                                                                             echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
-                                                                            ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
+                                                                            mkdir --parents ${ resources-directory }/release
+                                                                            ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             echo 1723258852938545 1369941427493491 1849347315371494 "$( date +%s-%N )" >&2
                                                                             jq \
                                                                                 '{
