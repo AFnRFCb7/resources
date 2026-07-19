@@ -198,7 +198,7 @@
                                                             text =
                                                                 ''
                                                                     echo 1723258852938545 1369941427493491 4154858587963353 "$( ls -lah ${ resources-directory } )" 9216639719715863 >&2
-                                                                    mkdir --parents ${ resources-directory }/release
+                                                                    # mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
                                                         } ;
