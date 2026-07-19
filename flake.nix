@@ -192,7 +192,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    while ! ${ resources-directory }/release
+                                                                    while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
                                                                         sleep 1s
                                                                     done
