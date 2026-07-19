@@ -277,6 +277,7 @@
                                                                             # FINDME SUCCESS 2
                                                                             jq \
                                                                                 '{
+                                                                                    "WTF" : "2682378745785311" ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
@@ -292,6 +293,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
+                                                                                    "WTF" : "6586389267536849" ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
@@ -308,6 +310,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
+                                                                                    "WTF" : "2437324934873537" ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
@@ -325,6 +328,7 @@
                                                                         then
                                                                             jq \
                                                                                 '{
+                                                                                    "WTF" : "9976979456295116" ,
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
