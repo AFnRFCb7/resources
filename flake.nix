@@ -192,9 +192,6 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1369941427493491 3322263174694842 "$( date )" >&2
-                                                                    ${ findutils }/bin/find ${ resources-directory } # echo 1723258852938545 1369941427493491 8831553887835872 >&2
-                                                                    echo 1723258852938545 1369941427493491 9264555814543947 "$( date )" >&2
                                                                     mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
@@ -276,11 +273,8 @@
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
-                                                                            echo 1723258852938545 1369941427493491 8881426317539115 FINDME >&2
-                                                                            echo 1723258852938545 1369941427493491 1849347315371494 "$( date )" >&2
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
-                                                                            echo 1723258852938545 1369941427493491 1696322619271631 "$( date )" >&2
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "2682378745785311" ,
