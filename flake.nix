@@ -442,6 +442,7 @@
                                                                                                                                                                 --argjson TEMPORARY '${ builtins.toJSON resource-parameters.temporary }' \
                                                                                                                                                                 '{
                                                                                                                                                                     "WTF" : .WTF ,
+                                                                                                                                                                    "WTF2" : "5541229353485882" ,
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : 0 ,
