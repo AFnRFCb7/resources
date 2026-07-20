@@ -640,12 +640,14 @@
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
+                                                                                                                                                                    echo 'echo 1723258852938545 1369941427493491 1146455332163843 >&2' > /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' \
                                                                                                                                                                         /input | log
+                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 2798863357385983 >&2' >> /tmp/DEBUG
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
@@ -693,9 +695,9 @@
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 1369941427493491 1674717918388568 PID "$PID" >&2
+                                                                                                                        echo 'echo 1723258852938545 1369941427493491 1674717918388568 PID "$PID" >&2' >> /tmp/DEBUG
                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                        echo 1723258852938545 1369941427493491 7919596753232553 PID "$PID" >&2
+                                                                                                                        echo 'echo 1723258852938545 1369941427493491 7919596753232553 PID "$PID" >&2' >> /tmp/DEBUG
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
