@@ -210,13 +210,13 @@
                                                                                                                 echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    read -r TYPE || { echo "TYPE EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    read -r TYPE || { echo "TYPE _EOF" >> /tmp/DEBUG; break; }
                                                                                                                     echo "TYPE=[$TYPE]" >> /tmp/DEBUG
 
-                                                                                                                    read -r CHANNEL || { echo "CHANNEL EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    read -r CHANNEL || { echo "CHANNEL _EOF" >> /tmp/DEBUG; break; }
                                                                                                                     echo "CHANNEL=[$CHANNEL]" >> /tmp/DEBUG
 
-                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /tmp/DEBUG; break; }
                                                                                                                     echo "PAYLOAD=[$PAYLOAD]" >> /tmp/DEBUG
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
