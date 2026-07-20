@@ -207,32 +207,35 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-#                                                                                                                echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
-#                                                                                                                stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-#                                                                                                                do
-#                                                                                                                    echo 1723258852938545 5652429811295145 ABOUT TO READ >> /tmp/DEBUG
-#                                                                                                                    read -r TYPE || break
-#                                                                                                                    echo 1723258852938545 5669691277932618 "$TYPE" READING "$TYPE" >> /tmp/DEBUG
-#                                                                                                                    read -r CHANNEL || break
-#                                                                                                                    read -r PAYLOAD || break
-#                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-#                                                                                                                    then
-#                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-#                                                                                                                        if [[ -L "/release/$INDEX" ]]
-#                                                                                                                        then
-#                                                                                                                            "/release/$INDEX" &
-#                                                                                                                        fi
-#                                                                                                                    fi
-#                                                                                                                done
-#                                                                                                                echo 1723258852938545 1788411448394499 >> /tmp/DEBUG
-                                                                                                                echo "BEFORE SUBSCRIBE" >> /tmp/DEBUG
-
-                                                                                                                redis-cli --raw SUBSCRIBE valid-init | while IFS= read -r LINE
+                                                                                                                echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
+                                                                                                                stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo "$(date +%s.%N) LINE=[$LINE]" >> /tmp/DEBUG
-                                                                                                                done
+                                                                                                                    read -r TYPE || { echo "TYPE EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    echo "TYPE=[$TYPE]" >> /tmp/DEBUG
 
-                                                                                                                echo "SUBSCRIBER EXITED" >> /tmp/DEBUG
+                                                                                                                    read -r CHANNEL || { echo "CHANNEL EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    echo "CHANNEL=[$CHANNEL]" >> /tmp/DEBUG
+
+                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    echo "PAYLOAD=[$PAYLOAD]" >> /tmp/DEBUG
+                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                                                                    then
+                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        if [[ -L "/release/$INDEX" ]]
+                                                                                                                        then
+                                                                                                                            "/release/$INDEX" &
+                                                                                                                        fi
+                                                                                                                    fi
+                                                                                                                done
+#                                                                                                                echo 1723258852938545 1788411448394499 >> /tmp/DEBUG
+#                                                                                                                echo "BEFORE SUBSCRIBE" >> /tmp/DEBUG
+#
+#                                                                                                                redis-cli --raw SUBSCRIBE valid-init | while IFS= read -r LINE
+#                                                                                                                do
+#                                                                                                                    echo "$(date +%s.%N) LINE=[$LINE]" >> /tmp/DEBUG
+#                                                                                                                done
+#
+#                                                                                                                echo "SUBSCRIBER EXITED" >> /tmp/DEBUG
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
