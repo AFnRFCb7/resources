@@ -228,7 +228,8 @@
                                                                                                                             echo "HAS_SYMBOLIC_LINK" >> /tmp/DEBUG
                                                                                                                             "/release/$INDEX" &
                                                                                                                         else
-                                                                                                                            echo "NO_SYMBOLIC_LINK" >> /tmp/DEBUG
+                                                                                                                            ls -lah /release >> /tmp/DEBUG
+                                                                                                                            echo "NO_SYMBOLIC_LINK INDEX=$INDEX" >> /tmp/DEBUG
                                                                                                                         fi
                                                                                                                     else
                                                                                                                         echo "NO_CONDITION" >> /tmp/DEBUG
@@ -756,9 +757,9 @@
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 'echo 1723258852938545 1369941427493491 1674717918388568 > &2' >> /tmp/DEBUG
+                                                                                                                        echo 1723258852938545 1674717918388568 >> /tmp/DEBUG
                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                        echo 'echo 1723258852938545 1369941427493491 7919596753232553 > &2' >> /tmp/DEBUG
+                                                                                                                        echo 1723258852938545 7919596753232553 >> /tmp/DEBUG
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
