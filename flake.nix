@@ -334,6 +334,7 @@
                                                                         then
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
+                                                                            echo 1723258852938545 9685947669665515 >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
@@ -885,6 +886,7 @@
                                                                                             OUT="$1"
                                                                                             mkdir --parents "$OUT"
                                                                                             mkdir --parents "$OUT/init"
+                                                                                            echo 1723258852938545 6231563213624456 >> /tmp/DEBUG
                                                                                             ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
                                                                                             mkdir --parents "$OUT/release"
                                                                                             ln --symbolic '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' "$OUT/error.json"
@@ -1358,7 +1360,11 @@
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                     in "${ application }/bin/command" ;
-                                                                                                            in ''ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"'' ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    echo 1723258852938545 3114561919435816 >&2 &&
+                                                                                                                    ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"
+                                                                                                                '' ;
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                                                         processes =
                                                                                             let
