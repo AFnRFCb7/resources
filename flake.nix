@@ -186,9 +186,9 @@
                                                                                                             ''
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 5652429811295145 >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 5652429811295145 _ >> /tmp/DEBUG
                                                                                                                     read -r TYPE || break
-                                                                                                                    echo 1723258852938545 5669691277932618 "$TYPE" >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 5669691277932618 "$TYPE" _ >> /tmp/DEBUG
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
@@ -292,7 +292,6 @@
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
-                                                                            echo 'echo 1723258852938545 1369941427493491 5479986716822272 >&2' >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
@@ -306,7 +305,6 @@
                                                                                     "temporary" : .temporary
                                                                                 }' \
                                                                                 "$OUTPUT_FILE" | log
-                                                                        echo 'echo 1723258852938545 1369941427493491 6779359624981556 >&2' >> /tmp/DEBUG
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
