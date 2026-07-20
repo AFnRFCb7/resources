@@ -328,7 +328,6 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
-                                                                        echo 1723258852938545 6959344983768462 >> /tmp/DEBUG
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
@@ -336,6 +335,7 @@
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             echo 1723258852938545 9685947669665515 >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
+                                                                            echo 1723258852938545 4411562628127174 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
@@ -351,6 +351,7 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            echo 1723258852938545 3531584353456769 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "6586389267536849" ,
@@ -368,6 +369,7 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            echo 1723258852938545 6889319265378368 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "2437324934873537" ,
@@ -386,6 +388,7 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
+                                                                            echo 1723258852938545 6328596262546464 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "9976979456295116" ,
@@ -701,7 +704,7 @@
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
-                                                                                                                                                                    echo 'echo 1723258852938545 1369941427493491 1146455332163843 >&2' >> /tmp/DEBUG
+                                                                                                                                                                    echo 1723258852938545 1146455332163843 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -712,6 +715,7 @@
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
+                                                                                                                                                                    echo 1723258852938545 6828124867289837 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .standard-output ,
@@ -721,6 +725,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    echo 1723258852938545 1687545678723597 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -730,6 +735,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    echo 1723258852938545 3624272267552777 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
