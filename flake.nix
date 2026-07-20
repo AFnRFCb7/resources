@@ -220,9 +220,12 @@
                                                                                                                     echo "PAYLOAD=[$PAYLOAD]" >> /tmp/DEBUG
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
+                                                                                                                        echo "CONDITION" >> /tmp/DEBUG
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                                                                        echo INDEX "$INDEX" >> /tmp/DEBUG
                                                                                                                         if [[ -L "/release/$INDEX" ]]
                                                                                                                         then
+                                                                                                                            echo "HAS_SYMBOLIC_LINK" >> /tmp/DEBUG
                                                                                                                             "/release/$INDEX" &
                                                                                                                         fi
                                                                                                                     fi
