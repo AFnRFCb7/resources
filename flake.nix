@@ -227,7 +227,11 @@
                                                                                                                         then
                                                                                                                             echo "HAS_SYMBOLIC_LINK" >> /tmp/DEBUG
                                                                                                                             "/release/$INDEX" &
+                                                                                                                        else
+                                                                                                                            echo "NO_SYMBOLIC_LINK" >> /tmp/DEBUG
                                                                                                                         fi
+                                                                                                                    else
+                                                                                                                        echo "NO_CONDITION" >> /tmp/DEBUG
                                                                                                                     fi
                                                                                                                 done
 #                                                                                                                echo 1723258852938545 1788411448394499 >> /tmp/DEBUG
