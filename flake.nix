@@ -77,14 +77,12 @@
                                                                         jq --compact-output "." > "$INPUT"
                                                                         OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                         export OUTPUT
-                                                                        echo 'echo 1723258852938545 1369941427493491 9243859694285328 >&2' >> /tmp/DEBUG
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
-                                                                        echo 'echo 1723258852938545 1369941427493491 6923885942444861 >&2' >> /tmp/DEBUG
                                                                         log
-                                                                        echo "echo 1723258852938545 1369941427493491 1444874378897782 2761697721844579 SUBSCRIBERS=$( cat "$OUTPUT" ) >&2" >> /tmp/DEBUG
+                                                                        echo "echo 1723258852938545 1444874378897782 JUST LOGGED $( cat "$OUTPUT" ) >&2" >> /tmp/DEBUG
                                                                     '' ;
                                                             } ;
                                         in
@@ -186,9 +184,9 @@
                                                                                                             ''
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 5652429811295145 _ >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 5652429811295145 ABOUT TO READ >> /tmp/DEBUG
                                                                                                                     read -r TYPE || break
-                                                                                                                    echo 1723258852938545 5669691277932618 "$TYPE" _ >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 5669691277932618 "$TYPE" STARTED READING >> /tmp/DEBUG
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
