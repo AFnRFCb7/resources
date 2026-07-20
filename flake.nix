@@ -250,7 +250,6 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    ls -lah ${ resources-directory } >> /tmp/DEBUG
                                                                     mkdir --parents ${ resources-directory }/release
                                                                     release
                                                                 '' ;
