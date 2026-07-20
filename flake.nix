@@ -91,6 +91,7 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 1723258852938545 1899866441441249 >&2
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 135> ${ resources-directory }/locks/clean
                                                                         flock -s 135
