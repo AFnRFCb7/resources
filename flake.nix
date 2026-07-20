@@ -82,7 +82,7 @@
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
-                                                                        echo "echo 1723258852938545 1444874378897782 JUST LOGGED $( cat "$OUTPUT" ) >&2" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( cat "$OUTPUT" )" >> /tmp/DEBUG
                                                                     '' ;
                                                             } ;
                                         in
