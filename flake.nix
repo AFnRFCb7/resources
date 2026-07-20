@@ -628,6 +628,7 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 6544957497586942 >&2' >> /tmp/DEBUG
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -637,10 +638,11 @@
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
+                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 6718441988739488 >&2' >> /tmp/DEBUG
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
-                                                                                                                                                                    echo 'echo 1723258852938545 1369941427493491 1146455332163843 >&2' > /tmp/DEBUG
+                                                                                                                                                                    echo 'echo 1723258852938545 1369941427493491 1146455332163843 >&2' >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
