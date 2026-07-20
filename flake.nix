@@ -37,7 +37,12 @@
                                                                         (
                                                                             buildFHSUserEnv
                                                                                 {
-                                                                                    extraBwrapArgs = [ "--tmpfs" "/private" ] ;
+                                                                                    extraBwrapArgs =
+                                                                                        [
+                                                                                            "--ro-bind" "$INPUT" "/input"
+                                                                                            "--tmpfs" "/private"
+                                                                                            "--bind" "$OUTPUT" "/output"
+                                                                                        ] ;
                                                                                     name = "log" ;
                                                                                     runScript = "log" ;
                                                                                     targetPkgs =
@@ -52,8 +57,8 @@
                                                                                                                 ''
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    JSON="$( jq --compact-output )" || exit 129
-                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-error 2> /private/standard-error
+                                                                                                                    JSON="$( jq --compact-output "." /input )" || exit 129
+                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /output 2> /private/standard-error
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -63,16 +68,23 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        mkdir --parents ${ resources-directory }/locks
+                                                                        exec 135> ${ resources-directory }/locks/clean
+                                                                        flock -s 145
+                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                        INPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 173
+                                                                        export INPUT
+                                                                        jq --compact-output "." > "$INPUT"
+                                                                        OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                        export OUTPUT
                                                                         echo 'echo 1723258852938545 1369941427493491 9243859694285328 >&2' >> /tmp/DEBUG
                                                                         mkdir --parents ${ resources-directory }/locks
-                                                                        exec 174> ${ resources-directory }/locks/clean
-                                                                        flock -s 174
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         echo 'echo 1723258852938545 1369941427493491 6923885942444861 >&2' >> /tmp/DEBUG
                                                                         log
-                                                                        echo 'echo 1723258852938545 1369941427493491 1444874378897782 >&2' >> /tmp/DEBUG
+                                                                        echo 'echo 1723258852938545 1369941427493491 1444874378897782 "$( cat "$OUTPUT" )" >&2' >> /tmp/DEBUG
                                                                     '' ;
                                                             } ;
                                         in
