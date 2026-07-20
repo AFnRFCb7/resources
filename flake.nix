@@ -58,7 +58,30 @@
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     JSON="$( jq --compact-output "." /input )" || exit 129
-                                                                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /output 2> /private/standard-error
+                                                                                                                    if redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-output 2> /private/standard-error
+                                                                                                                    then
+                                                                                                                        jq \
+                                                                                                                            --null-input \
+                                                                                                                            --arg STATUS "$?" \
+                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                            '{
+                                                                                                                                "status" : $STATUS ,
+                                                                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                "standard-output" : $STANDARD_OUTPUT
+                                                                                                                            }' > /output
+                                                                                                                    else
+                                                                                                                        jq \
+                                                                                                                            --null-input \
+                                                                                                                            --arg STATUS "$?" \
+                                                                                                                            --rawfile STANDARD_OUTPUT /private/standard-output \
+                                                                                                                            --rawfile STANDARD_ERROR /private/standard-error \
+                                                                                                                            '{
+                                                                                                                                "status" : $STATUS ,
+                                                                                                                                "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                "standard-output" : $STANDARD_OUTPUT
+                                                                                                                            }' > /output
+                                                                                                                    fi
                                                                                                                 '' ;
                                                                                                         }
                                                                                                 )
@@ -82,7 +105,9 @@
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
-                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( cat "$OUTPUT" )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." <<< "$OUTPUT" )" >> /tmp/DEBUG
+                                                                        STATUS="$( jq ".status" <<< "$OUTPUT" )" || exit 123
+                                                                        exit "$STATUS"
                                                                     '' ;
                                                             } ;
                                         in
