@@ -84,7 +84,7 @@
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         echo 'echo 1723258852938545 1369941427493491 6923885942444861 >&2' >> /tmp/DEBUG
                                                                         log
-                                                                        echo "echo 1723258852938545 1369941427493491 1444874378897782 $( cat "$OUTPUT" ) >&2" >> /tmp/DEBUG
+                                                                        echo "echo 1723258852938545 1369941427493491 1444874378897782 SUBSCRIBERS=$( cat "$OUTPUT" ) >&2" >> /tmp/DEBUG
                                                                     '' ;
                                                             } ;
                                         in
