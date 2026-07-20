@@ -188,7 +188,7 @@
                                                                                                                 do
                                                                                                                     echo 'echo 1723258852938545 1369941427493491 5652429811295145 >&2' >> /tmp/DEBUG
                                                                                                                     read -r TYPE || break
-                                                                                                                    echo 'echo 1723258852938545 1369941427493491 5669691277932618 "$TYPE" >&2' >> /tmp/DEBUG
+                                                                                                                    echo "echo 1723258852938545 1369941427493491 5669691277932618 $TYPE >&2" >> /tmp/DEBUG
                                                                                                                     read -r CHANNEL || break
                                                                                                                     read -r PAYLOAD || break
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
