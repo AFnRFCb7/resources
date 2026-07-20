@@ -70,7 +70,7 @@
                                                                     ''
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 135> ${ resources-directory }/locks/clean
-                                                                        flock -s 145
+                                                                        flock -s 135
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         INPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 173
                                                                         export INPUT
