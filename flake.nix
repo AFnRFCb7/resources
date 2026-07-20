@@ -223,14 +223,11 @@
                                                                                                                         echo "CONDITION" >> /tmp/DEBUG
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                                                                         echo INDEX "$INDEX" >> /tmp/DEBUG
-                                                                                                                        if [[ -L "/release/$INDEX" ]]
-                                                                                                                        then
-                                                                                                                            echo "HAS_SYMBOLIC_LINK" >> /tmp/DEBUG
-                                                                                                                            "/release/$INDEX" &
-                                                                                                                        else
-                                                                                                                            ls -lah /release >> /tmp/DEBUG
-                                                                                                                            echo "NO_SYMBOLIC_LINK INDEX=$INDEX" >> /tmp/DEBUG
-                                                                                                                        fi
+                                                                                                                        while [[ ! -L "/release/$INDEX" ]]
+                                                                                                                        do
+                                                                                                                            sleep 1s
+                                                                                                                        done
+                                                                                                                        "/release/$INDEX" &
                                                                                                                     else
                                                                                                                         echo "NO_CONDITION" >> /tmp/DEBUG
                                                                                                                     fi
