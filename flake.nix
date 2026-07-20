@@ -105,7 +105,7 @@
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
-                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." <<< "$OUTPUT" )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." "$OUTPUT" )" >> /tmp/DEBUG
                                                                         STATUS="$( jq ".status" "$OUTPUT" )" || exit 123
                                                                         exit "$STATUS"
                                                                     '' ;
