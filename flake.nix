@@ -63,13 +63,16 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 'echo 1723258852938545 1369941427493491 9243859694285328 >&2' >> /tmp/DEBUG
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 174> ${ resources-directory }/locks/clean
                                                                         flock -s 174
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
+                                                                        echo 'echo 1723258852938545 1369941427493491 6923885942444861 >&2' >> /tmp/DEBUG
                                                                         log
+                                                                        echo 'echo 1723258852938545 1369941427493491 1444874378897782 >&2' >> /tmp/DEBUG
                                                                     '' ;
                                                             } ;
                                         in
