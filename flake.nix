@@ -91,6 +91,7 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 1723258852938545 3835993197187225 >> /tmp/DEBUG
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 135> ${ resources-directory }/locks/clean
                                                                         flock -s 135
@@ -104,6 +105,7 @@
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
+                                                                        echo 1723258852938545 7759212739822332 >> /tmp/DEBUG
                                                                         log
                                                                         echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." "$OUTPUT" )" >> /tmp/DEBUG
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 123
