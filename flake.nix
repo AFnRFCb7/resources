@@ -347,6 +347,7 @@
                                                                                     "temporary" : .temporary
                                                                                 }' \
                                                                                 "$OUTPUT_FILE" | log
+                                                                            echo 1723258852938545 1772924795733875 >> /tmp/DEBUG
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             echo 1723258852938545 3531584353456769 >> /tmp/DEBUG
