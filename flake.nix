@@ -323,12 +323,15 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
+                                                                        echo 1723258852938545 7193469318222931 >> /tmp/DEBUH
+                                                                        echo -en "${ resources-directory }/mounts/$INDEX" >> /tmp/DEBUG
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                        echo 1723258852938545 1369941427493491 1519635512447981 >> /tmp/DEBUG
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            echo 1723258852938545 9685947669665515 >> /tmp/DEBUG
+                                                                            echo 1723258852938545 9685947669665515  >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             echo 1723258852938545 4411562628127174 >> /tmp/DEBUG
                                                                             jq \
