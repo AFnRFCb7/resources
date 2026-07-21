@@ -223,10 +223,6 @@
                                                                                                                         echo "CONDITION" >> /tmp/DEBUG
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                                                                         echo INDEX "$INDEX" >> /tmp/DEBUG
-                                                                                                                        while [[ ! -L "/release/$INDEX" ]]
-                                                                                                                        do
-                                                                                                                            sleep 1s
-                                                                                                                        done
                                                                                                                         "/release/$INDEX" &
                                                                                                                     else
                                                                                                                         echo "NO_CONDITION" >> /tmp/DEBUG
