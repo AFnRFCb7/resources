@@ -323,7 +323,7 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
-                                                                        echo 1723258852938545 7193469318222931 >> /tmp/DEBUH
+                                                                        echo 1723258852938545 7193469318222931 >> /tmp/DEBUG
                                                                         echo -en "${ resources-directory }/mounts/$INDEX" >> /tmp/DEBUG
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         echo 1723258852938545 1369941427493491 1519635512447981 >> /tmp/DEBUG
