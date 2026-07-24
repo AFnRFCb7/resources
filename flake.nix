@@ -333,7 +333,7 @@
                                                                         then
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            echo 1723258852938545 9685947669665515  >> /tmp/DEBUG
+                                                                            echo 1723258852938545 7684415981422733  >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             echo 1723258852938545 4411562628127174 >> /tmp/DEBUG
                                                                             jq \
