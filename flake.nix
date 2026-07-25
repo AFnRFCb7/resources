@@ -220,8 +220,8 @@
                                                                         then
                                                                             echo 1723258852938545 7414664867233567 >> /tmp/DEBUG
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBUG
-                                                                            "/release/$INDEX" &
+                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" )" >> /tmp/DEBUG
+                                                                            "${ resources-directory }/release/$INDEX" &
                                                                         elif [[ "$TYPE" == "message" ]]
                                                                         then
                                                                             echo 1723258852938545 1172535549115813 >> /tmp/DEBUG
