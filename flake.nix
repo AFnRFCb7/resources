@@ -107,7 +107,7 @@
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         echo 1723258852938545 7759212739822332 >> /tmp/DEBUG
                                                                         log
-                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." "$OUTPUT" )" "$( find  ${ resources-directory } )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." "$OUTPUT" )" "$( find  ${ resources-directory } | sort )" >> /tmp/DEBUG
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 123
                                                                         exit "$STATUS"
                                                                     '' ;
