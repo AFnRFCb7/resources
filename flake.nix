@@ -1050,7 +1050,7 @@
                                                                                                                                         (
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
-                                                                                                                                                    name = "check-redis-valid-init" ;
+                                                                                                                                                    name = "check-redis-json" ;
                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.jq ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
