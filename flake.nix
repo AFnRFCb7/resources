@@ -37,8 +37,9 @@
                                                         ''
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                             JSON="$( jq --compact-output "." )" || exit 108
-                                                            echo 1723258852938545 2896329455296975 ABOT TO LOG >> /tmp/DEBUG
-                                                            redis-cli PUBLISH "$CHANNEL" "$JSON" > /dev/null 2>&1
+                                                            echo 1723258852938545 2896329455296975 ABOUT TO LOG >> /tmp/DEBUG
+                                                            redis-cli PUBLISH "$CHANNEL" "$JSON" >> /tmp/DEBUG 2>&1
+                                                            echo 1723258852938545 9789568814716897 JUST LOGGED >> /tmp/DEBUG
                                                         '' ;
                                                 } ;
                                                     log2 =
@@ -213,7 +214,7 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGG
+                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGGFAB
                                                                             "/release/$INDEX" &
                                                                         fi
                                                                     done
