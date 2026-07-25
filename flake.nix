@@ -221,6 +221,8 @@
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGGFAB
                                                                             "/release/$INDEX" &
+                                                                        else
+                                                                            echo 1723258852938545 1172535549115813 >> /tmp/DEBUG
                                                                         fi
                                                                     done
                                                                 '' ;
