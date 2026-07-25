@@ -797,15 +797,15 @@
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 1369941427493491 8412321143216253 >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 8412321143216253 >> /tmp/DEBUG
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
-                                                                                                                        echo 1723258852938545 1369941427493491 9633617651273146 >> /tmp/DEBUG
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                        echo 1723258852938545 9633617651273146 PID "$PID" >> /tmp/DEBUG
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 1369941427493491 5977325797452114 >> /tmp/DEBUG
+                                                                                                                    echo 1723258852938545 5977325797452114 >> /tmp/DEBUG
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
