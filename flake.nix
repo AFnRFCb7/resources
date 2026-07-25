@@ -193,6 +193,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
+                                                                                        "--bind" "/tmp/DEBUG" ?/debug""
                                                                                         "--tmpfs" "/private"
                                                                                         "--ro-bind" "${ resources-directory }/release" "/release"
                                                                                     ] ;
@@ -208,36 +209,25 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
+                                                                                                                echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /debug
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     read -r TYPE || { echo "TYPE _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "TYPE=[$TYPE]" >> /tmp/DEBUG
-
+                                                                                                                    echo "TYPE=[$TYPE]" >> /debug
                                                                                                                     read -r CHANNEL || { echo "CHANNEL _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "CHANNEL=[$CHANNEL]" >> /tmp/DEBUG
-
+                                                                                                                    echo "CHANNEL=[$CHANNEL]" >> /debug
                                                                                                                     read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "PAYLOAD=[$PAYLOAD]" >> /tmp/DEBUG
+                                                                                                                    echo "PAYLOAD=[$PAYLOAD]" >> /debug
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
-                                                                                                                        echo "CONDITION" >> /tmp/DEBUG
+                                                                                                                        echo "CONDITION" >> /debug
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                                                                         echo INDEX "$INDEX" >> /tmp/DEBUG
                                                                                                                         "/release/$INDEX" &
                                                                                                                     else
-                                                                                                                        echo "NO_CONDITION" >> /tmp/DEBUG
+                                                                                                                        echo "NO_CONDITION" >> /debug
                                                                                                                     fi
                                                                                                                 done
-#                                                                                                                echo 1723258852938545 1788411448394499 >> /tmp/DEBUG
-#                                                                                                                echo "BEFORE SUBSCRIBE" >> /tmp/DEBUG
-#
-#                                                                                                                redis-cli --raw SUBSCRIBE valid-init | while IFS= read -r LINE
-#                                                                                                                do
-#                                                                                                                    echo "$(date +%s.%N) LINE=[$LINE]" >> /tmp/DEBUG
-#                                                                                                                done
-#
-#                                                                                                                echo "SUBSCRIBER EXITED" >> /tmp/DEBUG
                                                                                                             '' ;
                                                                                                     }
                                                                                             )
@@ -250,7 +240,6 @@
                                                                     echo 1723258852938545 1139694771536952 BEGIN RELEASE SERVICE >> /tmp/DEBUG
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
-
                                                                         echo 1723258852938545 5342923298547269 WAITING FOR RELEASE >> /tmp/DEBUG
                                                                         sleep 1s
                                                                     done
