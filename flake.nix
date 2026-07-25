@@ -251,7 +251,7 @@
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
 
-                                                                        echo 1723258852938545 5342923298547269 "$( ${ findutils }/bin/find ${ resources-directory } )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 5342923298547269 "$( ${ findutils }/bin/find ${ resources-directory } -mindepth 1 -maxdepth 1 | sort )" >> /tmp/DEBUG
                                                                         sleep 1s
                                                                     done
                                                                     echo 1723258852938545 7259827474956523 >> /tmp/DEBUG
