@@ -38,7 +38,7 @@
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                             JSON="$( jq --compact-output "." )" || exit 108
                                                             # shellcheck disable=SC2129
-                                                            echo 1723258852938545 2896329455296975 ABOUT TO LOG >> /tmp/DEBUG
+                                                            echo 1723258852938545 2896329455296975 ABOUT TO LOG CHANNEL "$CHANNEL" >> /tmp/DEBUG
                                                             # shellcheck disable=SC2129
                                                             redis-cli PUBLISH "$CHANNEL" "$JSON" >> /tmp/DEBUG 2>&1
                                                             # shellcheck disable=SC2129
@@ -209,7 +209,7 @@
                                                                 ''
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                     do
-                                                                        echo 1723258852938545 6754313451231132 ABOUT TO RELEASE >> /tmp/DEBUG
+                                                                        echo 1723258852938545 6754313451231132 ABOUT TO RELEASE CHANNEL ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
                                                                         read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
