@@ -34,7 +34,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "log" ;
-                                                            runtimeInputs = [ coreutis jq redis ] ;
+                                                            runtimeInputs = [ coreutils jq redis ] ;
                                                             text =
                                                                 ''
                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
