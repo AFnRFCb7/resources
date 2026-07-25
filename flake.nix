@@ -209,9 +209,11 @@
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
                                                                         read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
+                                                                        echo 1723258852938545 2691729123958772 TYPE "$TYPE" >> /tmp/DEBUG
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGG
                                                                             "/release/$INDEX" &
                                                                         fi
                                                                     done
