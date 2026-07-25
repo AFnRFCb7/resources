@@ -250,8 +250,10 @@
                                                                 ''
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
+                                                                        echo 1723258852938545 5342923298547269 >> /tmp/DEBUG
                                                                         sleep 1s
                                                                     done
+                                                                    echo 1723258852938545 7259827474956523 >> /tmp/DEBUG
                                                                     release
                                                                 '' ;
                                                         } ;
