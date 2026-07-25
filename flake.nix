@@ -761,6 +761,7 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
+                                                                                                                    echo 1723258852938545 7472684563869237 "$0" >> /tmp/DEBUG
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     mkdir --parents ${ resources-directory }/locks
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
