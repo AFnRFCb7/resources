@@ -211,6 +211,7 @@
                                                                     do
                                                                         echo 1723258852938545 6754313451231132 ABOUT TO RELEASE CHANNEL ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
+                                                                        echo 1723258852938545 6657339348924315 TYPE "$TYPE" >> /tmp/DEBUG
                                                                         read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
                                                                         echo 1723258852938545 2691729123958772 TYPE "$TYPE" >> /tmp/DEBUG
