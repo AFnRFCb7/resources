@@ -37,6 +37,7 @@
                                                         ''
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                             JSON="$( jq --compact-output "." )" || exit 108
+                                                            echo 1723258852938545 2896329455296975 ABOT TO LOG >> /tmp/DEBUG
                                                             redis-cli PUBLISH "$CHANNEL" "$JSON" > /dev/null 2>&1
                                                         '' ;
                                                 } ;
@@ -204,6 +205,7 @@
                                                                 ''
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                     do
+                                                                        echo 1723258852938545 6754313451231132 ABOUT TO RELEASE >> /tmp/DEBUG
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
                                                                         read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
