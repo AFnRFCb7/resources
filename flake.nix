@@ -204,7 +204,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "release" ;
-                                                            runtimeInputs = [ coreutils jq qredis ] ;
+                                                            runtimeInputs = [ coreutils jq redis ] ;
                                                             text =
                                                                 ''
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
