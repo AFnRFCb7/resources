@@ -1025,6 +1025,7 @@
                                                                                                         '' ;
                                                                                                 }
                                                                                         )
+                                                                                        pkgs.bash
                                                                                         pkgs.coreutils
                                                                                         pkgs.jq
                                                                                         pkgs.redis
@@ -1418,14 +1419,7 @@
                                                                                                             mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    (
-                                                                                                                        true ${ name }
-                                                                                                                        # shellcheck disable=SC2030,SC2031
-                                                                                                                        export PROCESS_PID_0="$$"
-                                                                                                                        # shellcheck disable=SC2030,SC2031
-                                                                                                                        export PROCESS_PID_1="$PPID"
-                                                                                                                        ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
-                                                                                                                    ) &
+                                                                                                                    bash -c '${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }'
                                                                                                                 '' ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
