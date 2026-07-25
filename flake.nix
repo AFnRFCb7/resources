@@ -204,7 +204,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "release" ;
-                                                            runtimeInputs = [ coreutils redis ] ;
+                                                            runtimeInputs = [ coreutils jq qredis ] ;
                                                             text =
                                                                 ''
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
@@ -218,7 +218,7 @@
                                                                         echo 1723258852938545 2691729123958772 PAYLOAD "$PAYLOAD" >> /tmp/DEBUG
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
-                                                                            echo 1723258852938545 1369941427493491 7414664867233567 >> /tmp/DEBUG
+                                                                            echo 1723258852938545 7414664867233567 >> /tmp/DEBUG
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGGFAB
                                                                             "/release/$INDEX" &
