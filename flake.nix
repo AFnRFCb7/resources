@@ -15,6 +15,7 @@
 		                invalid-release-channel ,
 		                jq ,
 		                mkDerivation ,
+		                redis ,
 		                valid-init-channel ,
 		                valid-release-channel ,
 		                visitor ,
@@ -181,6 +182,29 @@
                                                         } ;
                                                 in "${ application }/bin/clean" ;
                                         release =
+                                            let
+                                                application =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "release" ;
+                                                            runtimeInputs = [ coreutils redis ] ;
+                                                            text =
+                                                                ''
+                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+                                                                    do
+                                                                        read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
+                                                                        read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
+                                                                        read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
+                                                                        if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                        then
+                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                            "/release/$INDEX" &
+                                                                        fi
+                                                                    done
+                                                                '' ;
+                                                        } ;
+                                                    in "${ application }/bin/release" ;
+                                        release2 =
                                             let
                                                 application =
                                                     writeShellApplication
