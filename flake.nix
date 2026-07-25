@@ -248,14 +248,14 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1139694771536952 >> /tmp/DEBUG
+                                                                    echo 1723258852938545 1139694771536952 BEGIN RELEASE SERVICE >> /tmp/DEBUG
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
 
-                                                                        echo 1723258852938545 5342923298547269 "$( ${ findutils }/bin/find ${ resources-directory } -mindepth 1 -maxdepth 1 | sort )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 5342923298547269 WAITING FOR RELEASE >> /tmp/DEBUG
                                                                         sleep 1s
                                                                     done
-                                                                    echo 1723258852938545 7259827474956523 >> /tmp/DEBUG
+                                                                    echo 1723258852938545 7259827474956523 OBTAINED RELEASE >> /tmp/DEBUG
                                                                     release
                                                                 '' ;
                                                         } ;
