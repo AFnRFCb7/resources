@@ -212,11 +212,12 @@
                                                                                                                 echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /debug
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    read -r TYPE || { echo "TYPE _EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    echo 1723258852938545 8162197372427451 >> /debug
+                                                                                                                    read -r TYPE || { echo "TYPE _EOF" >> /debug ; break; }
                                                                                                                     echo 1723258852938545 9955514126333415 "TYPE=[$TYPE]" >> /debug
-                                                                                                                    read -r CHANNEL || { echo "CHANNEL _EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    read -r CHANNEL || { echo "CHANNEL _EOF" >> /debug ; break; }
                                                                                                                     echo 1723258852938545 6753912272768186 "CHANNEL=[$CHANNEL]" >> /debug
-                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /tmp/DEBUG; break; }
+                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /debug ; break; }
                                                                                                                     echo 1723258852938545 2757818743775836 "PAYLOAD=[$PAYLOAD]" >> /debug
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
