@@ -1401,9 +1401,9 @@
                                                                                             ''
                                                                                                 COMMANDS="$( mktemp --directory )" || exit 188
                                                                                                 export COMMANDS
-                                                                                                exec 189< <( redis-cli SUBSCRIBE valid-init valid-release invalid-init invalid-release )
+                                                                                                exec 189< <( redis-cli SUBSCRIBE valid-init ${ root-parameters.valid-release-channel } invalid-init invalid-release )
                                                                                                 is-subscribed valid-init 1 <&189
-                                                                                                is-subscribed root-parameters.valid-release-channel 2 <&189
+                                                                                                is-subscribed ${ root-parameters.valid-release-channel } 2 <&189
                                                                                                 is-subscribed invalid-init 3 <&189
                                                                                                 is-subscribed invalid-release 4 <&189
                                                                                                 ${ builtins.concatStringsSep "\n" commands }
