@@ -29,20 +29,17 @@
                                 } :
                                     let
                                         log =
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "log" ;
-                                                            runtimeInputs = [ coreutils jq redis ] ;
-                                                            text =
-                                                                ''
-                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                    JSON="$( jq --compact-output "." )" || exit 108
-                                                                    redis-cli PUBLISH "$CHANNEL" "$JSON" > /dev/null 2>&1
-                                                                '' ;
-                                                        } ;
-                                                    in "${ application }/bin/log" ;
+                                            writeShellApplication
+                                                {
+                                                    name = "log" ;
+                                                    runtimeInputs = [ coreutils jq redis ] ;
+                                                    text =
+                                                        ''
+                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
+                                                            JSON="$( jq --compact-output "." )" || exit 108
+                                                            redis-cli PUBLISH "$CHANNEL" "$JSON" > /dev/null 2>&1
+                                                        '' ;
+                                                } ;
                                                     log2 =
                                                         writeShellApplication
                                                             {
