@@ -221,8 +221,12 @@
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBGGFAB
                                                                             "/release/$INDEX" &
-                                                                        else
+                                                                        elif [[ "$TYPE" == "message" ]]
+                                                                        then
                                                                             echo 1723258852938545 1172535549115813 >> /tmp/DEBUG
+                                                                        elif [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                        then
+                                                                            echo 1723258852938545 7592232811763577 >> /tmp/DEBUG
                                                                         fi
                                                                     done
                                                                 '' ;
