@@ -248,6 +248,7 @@
                                                                 ] ;
                                                             text =
                                                                 ''
+                                                                    echo 1723258852938545 1139694771536952 >> /tmp/DEBUG
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
 
