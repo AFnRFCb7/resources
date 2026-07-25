@@ -213,16 +213,16 @@
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
                                                                                                                     read -r TYPE || { echo "TYPE _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "TYPE=[$TYPE]" >> /debug
+                                                                                                                    echo 1723258852938545 9955514126333415 "TYPE=[$TYPE]" >> /debug
                                                                                                                     read -r CHANNEL || { echo "CHANNEL _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "CHANNEL=[$CHANNEL]" >> /debug
+                                                                                                                    echo 1723258852938545 6753912272768186 "CHANNEL=[$CHANNEL]" >> /debug
                                                                                                                     read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /tmp/DEBUG; break; }
-                                                                                                                    echo "PAYLOAD=[$PAYLOAD]" >> /debug
+                                                                                                                    echo 1723258852938545 2757818743775836 "PAYLOAD=[$PAYLOAD]" >> /debug
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
-                                                                                                                        echo "CONDITION" >> /debug
+                                                                                                                        echo 1723258852938545 5768223659767816 "CONDITION" >> /debug
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        echo INDEX "$INDEX" >> /tmp/DEBUG
+                                                                                                                        echo 1723258852938545 9578992134586334 INDEX "$INDEX" >> /tmp/DEBUG
                                                                                                                         "/release/$INDEX" &
                                                                                                                     else
                                                                                                                         echo "NO_CONDITION" >> /debug
