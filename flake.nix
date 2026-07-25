@@ -193,7 +193,7 @@
                                                                             {
                                                                                 extraBwrapArgs =
                                                                                     [
-                                                                                        "--bind" "/tmp/DEBUG" ?/debug""
+                                                                                        "--bind" "/tmp/DEBUG" ""/debug""
                                                                                         "--tmpfs" "/private"
                                                                                         "--ro-bind" "${ resources-directory }/release" "/release"
                                                                                     ] ;
