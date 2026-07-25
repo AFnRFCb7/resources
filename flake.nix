@@ -91,7 +91,6 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
-                                                                        echo 1723258852938545 3835993197187225 >> /tmp/DEBUG
                                                                         mkdir --parents ${ resources-directory }/locks
                                                                         exec 135> ${ resources-directory }/locks/clean
                                                                         flock -s 135
@@ -105,9 +104,9 @@
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
-                                                                        echo 1723258852938545 7759212739822332 >> /tmp/DEBUG
+                                                                        echo 1723258852938545 7759212739822332 ABOUT TO LOG >> /tmp/DEBUG
                                                                         log
-                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED "$( jq "." "$OUTPUT" )" "$( find  ${ resources-directory }/release | sort )" >> /tmp/DEBUG
+                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED >> /tmp/DEBUG
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 123
                                                                         exit "$STATUS"
                                                                     '' ;
@@ -332,17 +331,13 @@
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
-                                                                        echo 1723258852938545 7193469318222931 >> /tmp/DEBUG
-                                                                        echo -en "${ resources-directory }/mounts/$INDEX" >> /tmp/DEBUG
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        echo 1723258852938545 1369941427493491 1519635512447981 >> /tmp/DEBUG
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            echo 1723258852938545 7684415981422733 ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX" >> /tmp/DEBUG
+                                                                            echo 1723258852938545 7684415981422733 LINKING "${ resources-directory }/release/$INDEX" >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
-                                                                            echo 1723258852938545 4411562628127174 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "arguments" : .arguments ,
@@ -356,10 +351,8 @@
                                                                                     "temporary" : .temporary
                                                                                 }' \
                                                                                 "$OUTPUT_FILE" | log
-                                                                            echo 1723258852938545 1772924795733875 >> /tmp/DEBUG
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            echo 1723258852938545 3531584353456769 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "6586389267536849" ,
@@ -377,7 +370,6 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            echo 1723258852938545 6889319265378368 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "2437324934873537" ,
@@ -396,7 +388,6 @@
                                                                                 "$OUTPUT_FILE" | log
                                                                         elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
-                                                                            echo 1723258852938545 6328596262546464 >> /tmp/DEBUG
                                                                             jq \
                                                                                 '{
                                                                                     "WTF" : "9976979456295116" ,
@@ -698,7 +689,6 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 6544957497586942 >&2' >> /tmp/DEBUG
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 find /gc-roots -mindepth 1 -maxdepth 1 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/gc-roots.tar.xz --xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -708,22 +698,18 @@
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
-                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 6718441988739488 >&2' >> /tmp/DEBUG
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
-                                                                                                                                                                    echo 1723258852938545 1146455332163843 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' \
                                                                                                                                                                         /input | log
-                                                                                                                                                                echo 'echo 1723258852938545 1369941427493491 2798863357385983 >&2' >> /tmp/DEBUG
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
-                                                                                                                                                                    echo 1723258852938545 6828124867289837 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .standard-output ,
@@ -733,7 +719,6 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    echo 1723258852938545 1687545678723597 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -743,7 +728,6 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    echo 1723258852938545 3624272267552777 >> /tmp/DEBUG
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -762,7 +746,6 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    echo 1723258852938545 7472684563869237 "$0" >> /tmp/DEBUG
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     mkdir --parents ${ resources-directory }/locks
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
@@ -771,9 +754,7 @@
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 1674717918388568 >> /tmp/DEBUG
                                                                                                                         tail --follow /dev/null --pid "$PID"
-                                                                                                                        echo 1723258852938545 7919596753232553 >> /tmp/DEBUG
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
@@ -901,7 +882,6 @@
                                                                                             OUT="$1"
                                                                                             mkdir --parents "$OUT"
                                                                                             mkdir --parents "$OUT/init"
-                                                                                            echo 1723258852938545 6231563213624456 >> /tmp/DEBUG
                                                                                             ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
                                                                                             mkdir --parents "$OUT/release"
                                                                                             ln --symbolic '${ builtins.toFile "error.json" ( builtins.toJSON resource-parameters.error ) }' "$OUT/error.json"
@@ -1377,7 +1357,6 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    echo 1723258852938545 3114561919435816 >&2 &&
                                                                                                                     ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"
                                                                                                                 '' ;
                                                                                                 in builtins.genList generator ( builtins.length _actions ) ;
