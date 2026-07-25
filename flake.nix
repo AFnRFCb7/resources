@@ -331,11 +331,10 @@
                                                                         if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
                                                                             STANDARD_INPUT="$( cat )" || exit 103
-                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 184
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                             jq \
                                                                                 --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                 --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
@@ -351,7 +350,7 @@
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
-                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 186
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
