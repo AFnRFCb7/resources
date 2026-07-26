@@ -999,7 +999,7 @@
                                                                                     expected-standard-error ? "" ,
                                                                                     expected-standard-output ? "" ,
                                                                                     expected-status ? 0 ,
-                                                                                    process > "default" ,
+                                                                                    process ? "default" ,
                                                                                     text ,
                                                                                     timeout ? 60
                                                                                 } :
@@ -1020,6 +1020,7 @@
                                                                 pre-actions =
                                                                     [
                                                                         {
+                                                                            process = "before" ;
                                                                             text = "check-redis-subscription ${ root-parameters.valid-init-channel 1" ;
                                                                         }
                                                                     ] ;
