@@ -1016,7 +1016,6 @@
                                                                                                                 ''
                                                                                                                     OUT="$1"
                                                                                                                     mkdir "$OUT"
-                                                                                                                    ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                 '' ;                                                                                                                                                                                                                   '' ;
                                                                                                 }
                                                                                         )
