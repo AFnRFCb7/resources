@@ -1207,6 +1207,7 @@
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "/n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
+                                                                                                                            "$OUT/execute.sh"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
                                                                                                                                 sleep 1s
