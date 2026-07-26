@@ -1098,7 +1098,6 @@
                                                                                                                                         runtimeInputs = [ root-parameters.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                ${ builtins.concatStringsSep "\n" commands }
                                                                                                                                                 echo The test derivation is in >&2
                                                                                                                                                 dirname "$0" >&2
                                                                                                                                                 exit 99
@@ -1109,6 +1108,7 @@
                                                                                                                         ''
                                                                                                                             OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
+                                                                                                                            ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                         '' ;
                                                                                                         }
