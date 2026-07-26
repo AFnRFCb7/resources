@@ -1157,7 +1157,12 @@
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "execute" ;
-                                                                                                                                                text = builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) ;
+                                                                                                                                                runtimeInputs = [ pkgs.redis ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        xec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
+                                                                                                                                                    '' ;
                                                                                                                                             } ;
                                                                                                                             in "${ application }/bin/execute" ;
                                                                                                                     processes =
@@ -1197,8 +1202,7 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/executo.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
-                                                                                                                            ${ builtins.concatStringsSep "\n" processes }
-                                                                                                                            exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                            ${ builtins.concatStringsSep "\n" processes }                                                                                                                         e
                                                                                                                             if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
                                                                                                                             do
