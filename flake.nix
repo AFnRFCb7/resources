@@ -1001,10 +1001,22 @@
                                                                                                     name = "install" ;
                                                                                                     text =
                                                                                                         let
+                                                                                                            test =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "test" ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                    '' ;
+                                                                                                                            } ;
+                                                                                                                        in "${ application "}/bin/test" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     OUT="$1"
                                                                                                                     mkdir "$OUT"
+                                                                                                                    ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                 '' ;
                                                                                                 }
                                                                                         )
@@ -1016,7 +1028,7 @@
                                                                 ''
                                                                     machine.wait_for_unit("multi-user.target")
                                                                     machine.wait_for_unit("network-online.target")
-                                                                    machine.succeed("runuser --login ${ user } -- ${ test }")
+                                                                    machine.succeed("runuser --login ${ user } -- ${ test }/test.sh")
                                                                 '' ;
                                                 } ;
                                     implementation = implementation ;
