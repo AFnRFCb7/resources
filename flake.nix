@@ -1184,6 +1184,7 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
+                                                                                                                            if true ; then exit 11 ; fi
                                                                                                                             exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
 #                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
 #                                                                                                                            do
