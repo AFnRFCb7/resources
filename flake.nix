@@ -1118,16 +1118,15 @@
                                                                                                                                                             ln --symbolic ${ process } "$OUT/commands/${ index }/process"
                                                                                                                                                             ln --symbolic ${ text } "$OUT/commands/${ index }/text"
                                                                                                                                                             echo ${ timeout } > "$OUT/commands/${ index }/timeout"
-                                                                                                                                                            echo "seq 0 $(( ${ index } - 1 ))" >> "$OUT/commands/${ index }/debug"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
-                                                                                                                                                                echo "$FLAG" >> "$OUT/commands/${ index }/debug"
-                                                                                                                                                                while [[ ! -f "$OUT/command/$I.flag" ]]
+                                                                                                                                                                while [[ ! -f "$OUT/command/$FLAG.flag" ]]
                                                                                                                                                                 do
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
                                                                                                                                                             done
-                                                                                                                                                            mkdir --parent "$OUT/commands/$INDEX/observed"
+                                                                                                                                                            echo wtf >>
+                                                                                                                                                            mkdir --parent "$OUT/commands/${ index }/observed"
                                                                                                                                                             if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
