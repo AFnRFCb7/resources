@@ -998,7 +998,7 @@
                                                                                             mkDerivation
                                                                                                 {
                                                                                                     installPhase = ''installPhase "$0"'' ;
-                                                                                                    name = "checker" ;
+                                                                                                    name = "checker2" ;
                                                                                                     nativeBuildInputs =
                                                                                                         [
                                                                                                             (
