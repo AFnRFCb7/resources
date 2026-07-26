@@ -1118,6 +1118,7 @@
                                                                                                                                                             ln --symbolic ${ process } "$OUT/commands/${ index }/process"
                                                                                                                                                             ln --symbolic ${ text } "$OUT/commands/${ index }/text"
                                                                                                                                                             echo ${ timeout } > "$OUT/commands/${ index }/timeout"
+                                                                                                                                                            echo "seq 0 $(( ${ index } - 1 ))" > "$OUT/commands/${ index }/debug"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
                                                                                                                                                                 echo "$FLAG"
