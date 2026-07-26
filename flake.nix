@@ -1129,7 +1129,7 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             else
@@ -1158,7 +1158,7 @@
                                                                                                                                             root-parameters.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "process" ;
-                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
+                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <189'' ) value ) ;
                                                                                                                                                 } ;
                                                                                                                                             in "${ application }/bin/process &" ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
