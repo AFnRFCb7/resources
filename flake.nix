@@ -1160,6 +1160,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        export OUT="$1"
                                                                                                                                                         exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                     '' ;
@@ -1177,10 +1178,7 @@
                                                                                                                                                     name = "process" ;
                                                                                                                                                     text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
                                                                                                                                                 } ;
-                                                                                                                                            in ''
-                                                                                                                                                cat <<EOF
-                                                                                                                                                ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"
-                                                                                                                                                EOF'' ;
+                                                                                                                                            in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"'' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
                                                                                                                         let
@@ -1200,7 +1198,7 @@
                                                                                                                                 in "${ application }/bin/test" ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            export OUT="$1"
+                                                                                                                            OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             # if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 48 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
@@ -1209,7 +1207,7 @@
                                                                                                                             ${ builtins.concatStringsSep "/n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             if true ; then echo 47 > "$OUT/status" && exit 0 ; fi
-                                                                                                                            "$OUT/execute.sh"
+                                                                                                                            "$OUT/execute.sh" "$OUT"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
                                                                                                                                 sleep 1s
