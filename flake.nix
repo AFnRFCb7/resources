@@ -1034,7 +1034,7 @@
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
-                                                                                                                                                        read -r -t 1 OBSERVED_TYPE <&189 || exit 167
+                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_TYPE || exit 167
                                                                                                                                                         if true ; then exit 109 ; fi
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD || exit 125
