@@ -1206,7 +1206,7 @@
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             # if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
-                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 45 > "$OUT/status" && exit 0 ; fi                                                                                                                                                                                                                                                  e
+                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 45 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
