@@ -997,7 +997,7 @@
                                                                     test =
                                                                         let
                                                                             application =
-                                                                                rootParameters.mkDerivation
+                                                                                root-parameters.mkDerivation
                                                                                     {
                                                                                         installPhase = ''install "$out"'' ;
                                                                                         name = "test" ;
