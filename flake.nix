@@ -1031,7 +1031,6 @@
                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if true ; then exit 105 ; fi
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
@@ -1040,11 +1039,6 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                         then
-                                                                                                                                                            jq \
-                                                                                                                                                                --null-input \
-                                                                                                                                                                '}
-                                                                                                                                                                }' >&2
-                                                                                                                                                            if true ; then exit 106 ; fi
                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                             jq \
                                                                                                                                                                 --null-input \
