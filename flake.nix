@@ -1038,7 +1038,7 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         # shellcheck disable=SC2208,SC2016
-                                                                                                                                                        jq \\
+                                                                                                                                                        jq \
                                                                                                                                                             --null-input \\
                                                                                                                                                             --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
                                                                                                                                                             --arg EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
