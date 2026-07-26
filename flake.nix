@@ -1078,13 +1078,13 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$OUT/commands/$INDEX/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output 2> "$OUT/commands/${ index }/observed/standard-error
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error"
                                                                                                                                                             then
-                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status
+                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             else
-                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status
+                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             fi
-                                                                                                                                                            touch "$OUT/commands/${ index }.flag
+                                                                                                                                                            touch "$OUT/commands/${ index }.flag"
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
                                                                                                                                             in ''ln --symbolic ${ application }/bin/command "$OUT/commands${ index }/command"'' ;
