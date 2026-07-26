@@ -1075,6 +1075,10 @@
                                                                                                     writeShellApplication
                                                                                                         {
                                                                                                             name = "install" ;
+                                                                                                            runtimeInputs =
+                                                                                                                [
+                                                                                                                    pkgs.findutils
+                                                                                                                ] ;
                                                                                                             text =
                                                                                                                 let
                                                                                                                     commands =
@@ -1086,7 +1090,7 @@
                                                                                                                                             root-parameters.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "command" ;
-                                                                                                                                                    runtimeInputs = [ root-parameters.coreutils ] ;
+                                                                                                                                                    runtimeInputs = [ root-parameters.coreutils pkgs.diffutils ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/expected"
@@ -1147,9 +1151,10 @@
                                                                                                                                         runtimeInputs = [ root-parameters.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                echo The test derivation is in >&2
-                                                                                                                                                dirname "$0" >&2
-                                                                                                                                                exit 99
+                                                                                                                                                DERIVATION="$( dirname "$0" )" || exit 145
+                                                                                                                                                echo The test derivation is in "$DERIVATION" >&2
+                                                                                                                                                STATUS="$( cat "$DERIVATION/status" )" || exit 199
+                                                                                                                                                exit "$STATUS"
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                                 in "${ application }/bin/test" ;
@@ -1160,6 +1165,11 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
+                                                                                                                            echo 0 > "$OUT/status"
+                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure -type f | while read -r FAILURE
+                                                                                                                            do
+                                                                                                                                echo 119 > "$OUT/status"
+                                                                                                                            done
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
