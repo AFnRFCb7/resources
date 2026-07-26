@@ -1185,23 +1185,21 @@
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-#                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
-#                                                                                                                            do
-#                                                                                                                                "$PROCESS <&189" &
-#                                                                                                                            done
+                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
+                                                                                                                            do
+                                                                                                                                "$PROCESS <&189" &
+                                                                                                                            done
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            if true ; then exit 11 ; fi
-
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
                                                                                                                                 sleep 1s
                                                                                                                             done
-                                                                                                                            echo 10 > "$OUT/status"
-#                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
-#                                                                                                                            do
-#                                                                                                                                echo "$FAILURE" >&2
-#                                                                                                                                echo 119 > "$OUT/status"
-#                                                                                                                            done
+                                                                                                                            echo 0 > "$OUT/status"
+                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                            do
+                                                                                                                                echo "$FAILURE" >&2
+                                                                                                                                echo 119 > "$OUT/status"
+                                                                                                                            done
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
