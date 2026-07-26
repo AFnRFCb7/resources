@@ -1034,9 +1034,9 @@
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
-                                                                                                                                                        read -r -t 1 OBSERVED_TYPE
-                                                                                                                                                        read -r -t 1 OBSERVED_CHANNEL
-                                                                                                                                                        read -r -t 1 OBSERVED_PAYLOAD
+                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_TYPE
+                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_CHANNEL
+                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
                                                                                                                                                         then
                                                                                                                                                             exit 103
@@ -1065,7 +1065,7 @@
                                                                     [
                                                                         {
                                                                             process = "pre-action" ;
-                                                                            text = "check-redis-subscription ${ root-parameters.valid-init-channel } 1" ;
+                                                                            text = "check-redis-subscription ${ root-parameters.valid-init-channel } 1 <&189" ;
                                                                         }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
