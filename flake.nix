@@ -980,61 +980,67 @@
                                             resources-directory ,
                                             user
                                         } :
-                                            pkgs.nixosTest
-                                                {
-                                                    name = "check" ;
-                                                    nodes.machine = { ... } : { imports = private ; } ;
-                                                    testScript =
-                                                        let
-                                                            test =
+                                            let
+                                                check-paraneters =
+                                                    {
+
+                                                    } ;
+                                                in
+                                                    pkgs.nixosTest
+                                                        {
+                                                            name = "check" ;
+                                                            nodes.machine = { ... } : { imports = private ; } ;
+                                                            testScript =
                                                                 let
-                                                                    application =
-                                                                        mkDerivation
-                                                                            {
-                                                                                installPhase = ''install "$out"'' ;
-                                                                                name = "test" ;
-                                                                                nativeBuildInputs =
-                                                                                    [
-                                                                                        (
-                                                                                            writeShellApplication
-                                                                                                {
-                                                                                                    name = "install" ;
-                                                                                                    text =
-                                                                                                        let
-                                                                                                            test =
+                                                                    test =
+                                                                        let
+                                                                            application =
+                                                                                mkDerivation
+                                                                                    {
+                                                                                        installPhase = ''install "$out"'' ;
+                                                                                        name = "test" ;
+                                                                                        nativeBuildInputs =
+                                                                                            [
+                                                                                                (
+                                                                                                    writeShellApplication
+                                                                                                        {
+                                                                                                            name = "install" ;
+                                                                                                            text =
                                                                                                                 let
-                                                                                                                    application =
-                                                                                                                        writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "test" ;
-                                                                                                                                runtimeInputs = [ coreutils ] ;
-                                                                                                                                text =
-                                                                                                                                    ''
-                                                                                                                                        echo The test derivation is in >&2
-                                                                                                                                        dirname "$0" >&2
-                                                                                                                                        exit 99
-                                                                                                                                    '' ;
-                                                                                                                            } ;
-                                                                                                                        in "${ application }/bin/test" ;
-                                                                                                            in
-                                                                                                                ''
-                                                                                                                    OUT="$1"
-                                                                                                                    mkdir --parents "$OUT/commands"
-                                                                                                                    ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                '' ;
-                                                                                                }
-                                                                                        )
-                                                                                    ] ;
-                                                                                src = ./. ;
-                                                                            } ;
-                                                                    in "${ application }/test.sh" ;
-                                                            in
-                                                                ''
-                                                                    machine.wait_for_unit("multi-user.target")
-                                                                    machine.wait_for_unit("network-online.target")
-                                                                    machine.succeed("runuser --login ${ user } -- ${ test }")
-                                                                '' ;
-                                                } ;
+                                                                                                                    test =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "test" ;
+                                                                                                                                        runtimeInputs = [ coreutils ] ;
+                                                                                                                                        text =
+                                                                                                                                            ''
+                                                                                                                                                echo The test derivation is in >&2
+                                                                                                                                                dirname "$0" >&2
+                                                                                                                                                exit 99
+                                                                                                                                            '' ;
+                                                                                                                                    } ;
+                                                                                                                                in "${ application }/bin/test" ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            OUT="$1"
+                                                                                                                            mkdir --parents "$OUT/commands"
+                                                                                                                            ln --symbolic ${ test } "$OUT/test.sh"
+                                                                                                                        '' ;
+                                                                                                        }
+                                                                                                )
+                                                                                            ] ;
+                                                                                        src = ./. ;
+                                                                                    } ;
+                                                                            in "${ application }/test.sh" ;
+                                                                    in
+                                                                        ''
+                                                                            machine.wait_for_unit("multi-user.target")
+                                                                            machine.wait_for_unit("network-online.target")
+                                                                            machine.succeed("runuser --login ${ user } -- ${ test }")
+                                                                        '' ;
+                                                        } ;
                                     implementation = implementation ;
                                 } ;
             } ;
