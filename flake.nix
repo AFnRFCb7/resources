@@ -1181,7 +1181,7 @@
                                                                                                                         ''
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
-                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 43 ; fi
+                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
