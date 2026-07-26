@@ -1007,8 +1007,10 @@
                                                                                                                         writeShellApplication
                                                                                                                             {
                                                                                                                                 name = "test" ;
+                                                                                                                                runtimeInputs = [ coreutils ] ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        dirname "$0"
                                                                                                                                         exit 99
                                                                                                                                     '' ;
                                                                                                                             } ;
@@ -1016,7 +1018,7 @@
                                                                                                             in
                                                                                                                 ''
                                                                                                                     OUT="$1"
-                                                                                                                    mkdir "$OUT"
+                                                                                                                    mkdir --parents "$OUT/commands"
                                                                                                                     ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                 '' ;
                                                                                                 }
