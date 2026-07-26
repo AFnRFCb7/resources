@@ -1415,18 +1415,17 @@
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         let
-                                                                                                            mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
-                                                                                                            in
-                                                                                                                ''
-                                                                                                                    (
-                                                                                                                        true ${ name }
-                                                                                                                        # shellcheck disable=SC2030,SC2031
-                                                                                                                        export PROCESS_PID_0="$$"
-                                                                                                                        # shellcheck disable=SC2030,SC2031
-                                                                                                                        export PROCESS_PID_1="$PPID"
-                                                                                                                        ${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }
-                                                                                                                    ) &
-                                                                                                                '' ;
+                                                                                                            application =
+                                                                                                            writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "process" ;
+                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                    text =
+                                                                                                                        let
+                                                                                                                            mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
+                                                                                                                            in builtins.concatStringsSep "\n]t" ( builtins.map mapper value ) ;
+                                                                                                                } ;
+                                                                                                                in "${ application }/bin/process &" ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
                                                                                             ''
