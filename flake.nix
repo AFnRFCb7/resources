@@ -1203,7 +1203,6 @@
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
-                                                                                                    echo "${ derivation }"
                                                                                                     touch "$1"
                                                                                                 '' ;
                                                                             } ;
