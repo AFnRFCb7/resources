@@ -983,7 +983,7 @@
                                             user
                                         } :
                                             let
-                                                check-paraneters =
+                                                check-parameters =
                                                     {
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
                                                     } ;
