@@ -1135,17 +1135,17 @@
                                                                                                                                                             touch "$OUT/commands/${ index }/flag"
                                                                                                                                                             if "${ critical }" && diff "$OUT/commands/${ index }/expected" "$OUT/commands/${ index }/observed"
                                                                                                                                                             then
-                                                                                                                                                                touch "$OUT/commmands/${ index }/failure"
+                                                                                                                                                                touch "$OUT/commands/${ index }/failure"
                                                                                                                                                             fi
 
                                                                                                                                                             if ! diff "$OUT/commands/${ index }/expected" "$OUT/commands/${ index }/observed"
                                                                                                                                                             then
-                                                                                                                                                                touch "$OUT/commmands/${ index }/failure1"
+                                                                                                                                                                touch "$OUT/commands/${ index }/failure1"
                                                                                                                                                             fi
 
                                                                                                                                                             if "${ critical }"
                                                                                                                                                             then
-                                                                                                                                                                touch "$OUT/commmands/${ index }/failure2"
+                                                                                                                                                                touch "$OUT/commands/${ index }/failure2"
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
