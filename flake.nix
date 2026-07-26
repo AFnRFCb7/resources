@@ -1188,11 +1188,14 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
+                                                                                                                            echo 0 >> "$OUT/debug"
                                                                                                                             find "$OUT/commands" -mindepth 3 -maxdepth 3 -name failure -type f | while read -r FAILURE
                                                                                                                             do
+                                                                                                                                echo 1 >> "$OUT/debug"
                                                                                                                                 echo "$FAILURE" >&2
                                                                                                                                 echo 119 > "$OUT/status"
                                                                                                                             done
+                                                                                                                            echo 2 >> "$OUT/debug"
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
