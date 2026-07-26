@@ -1168,6 +1168,7 @@
                                                                                                                             echo 0 > "$OUT/status"
                                                                                                                             find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure -type f | while read -r FAILURE
                                                                                                                             do
+                                                                                                                                echo "$FAILURE" >&2
                                                                                                                                 echo 119 > "$OUT/status"
                                                                                                                             done
                                                                                                                         '' ;
