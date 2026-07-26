@@ -1052,7 +1052,7 @@
                                                                                                                     commands =
                                                                                                                         let
                                                                                                                             mapper =
-                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , index , process , text , timeouput } @ primary :
+                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , index , process , text , timeout } @ primary :
                                                                                                                                     let
                                                                                                                                         application =
                                                                                                                                             root-parameters.writeShellApplication
