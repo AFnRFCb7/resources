@@ -988,7 +988,7 @@
                                                     {
                                                         actions =
                                                             let
-                                                                _actions = builtins.concatListd [ pre-actions  ] ;
+                                                                _actions = builtins.concatLists [ pre-actions  ] ;
                                                                 generator =
                                                                     index :
                                                                         let
@@ -1024,7 +1024,7 @@
                                                                             text = "check-redis-subscription ${ root-parameters.valid-init-channel } 1" ;
                                                                         }
                                                                     ] ;
-                                                                in builtins.genList generator _actions ;
+                                                                in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
                                                     } ;
                                                 in
