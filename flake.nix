@@ -1087,7 +1087,11 @@
                                                                                                                                                             touch "$OUT/commands/${ index }.flag"
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
-                                                                                                                                            in ''ln --symbolic ${ application }/bin/command "$OUT/commands/${ index }/command"'' ;
+                                                                                                                                            in
+                                                                                                                                                ''
+                                                                                                                                                    mkdir --parents "$OUT/commands/${ index }"
+                                                                                                                                                    ln --symbolic ${ application }/bin/command "$OUT/commands/${ index }/command"
+                                                                                                                                                '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
                                                                                                                     test =
                                                                                                                         let
