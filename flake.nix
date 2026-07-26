@@ -1063,7 +1063,7 @@
                                                                                                                                                     text =
                                                                                                                                                         ''
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/expected"
-                                                                                                                                                            echo '${ critical } > "$OUT/commands/${ index }/critical"
+                                                                                                                                                            echo '${ critical }' > "$OUT/commands/${ index }/critical"
                                                                                                                                                             ln --symbolic ${ expected-standard-error } "$OUT/commands/${ index }/expected/standard-error"
                                                                                                                                                             ln --symbolic ${ expected-standard-output } "$OUT/commands/${ index }/expected/standard-output"
                                                                                                                                                             echo '${ expected-status }' > "$OUT/commands/${ index }/expected/status"
