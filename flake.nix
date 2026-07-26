@@ -1048,7 +1048,7 @@
                                                                 pre-actions =
                                                                     [
                                                                         {
-                                                                            process = "before" ;
+                                                                            process = "pre-action" ;
                                                                             text = "check-redis-subscription ${ root-parameters.valid-init-channel } 1" ;
                                                                         }
                                                                     ] ;
@@ -1112,10 +1112,10 @@
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             fi
                                                                                                                                                             touch "$OUT/commands/${ index }/flag"
-#                                                                                                                                                            if "${ critical }" && ! diff "$OUT/commands/${ index }expected" "$OUT/commands/${ index }/observed
-#                                                                                                                                                            then
-#                                                                                                                                                                touch "$OUT/commmands/${ index }/failure
-#                                                                                                                                                            fi
+                                                                                                                                                            if "${ critical }" && ! diff "$OUT/commands/${ index }expected" "$OUT/commands/${ index }/observed
+                                                                                                                                                            then
+                                                                                                                                                                touch "$OUT/commmands/${ index }/failure
+                                                                                                                                                            fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
                                                                                                                                             in
