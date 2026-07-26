@@ -975,6 +975,7 @@
                                         {
                                             actions ,
                                             gc-roots-directory ,
+                                            nixosTest ,
                                             pkgs ,
                                             private ,
                                             resources-directory ,
@@ -983,10 +984,10 @@
                                             let
                                                 check-paraneters =
                                                     {
-
+                                                        nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
                                                     } ;
                                                 in
-                                                    pkgs.nixosTest
+                                                    nixosTest
                                                         {
                                                             name = "check" ;
                                                             nodes.machine = { ... } : { imports = private ; } ;
