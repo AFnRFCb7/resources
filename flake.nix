@@ -1161,7 +1161,8 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                                                        read -r -t -u 189 EXPECTED_TYPE || exit 158
+                                                                                                                                                        read -r -t -u 189 TYPE || exit 158
+                                                                                                                                                        echo "TYPE=$TYPE"
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                     '' ;
                                                                                                                                             } ;
