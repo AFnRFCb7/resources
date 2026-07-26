@@ -1021,7 +1021,7 @@
                                                                     [
                                                                         {
                                                                             process = "before" ;
-                                                                            text = "check-redis-subscription ${ root-parameters.valid-init-channel 1" ;
+                                                                            text = "check-redis-subscription ${ root-parameters.valid-init-channel } 1" ;
                                                                         }
                                                                     ] ;
                                                                 in builtins.genList generator _actions ;
