@@ -1062,13 +1062,12 @@
                                                                                                                                                     runtimeInputs = [ root-parameters.coreutils ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
-                                                                                                                                                            # ${ builtins.toJSON primary }
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/expected"
                                                                                                                                                             echo '${ critical } > "$OUT/commands/${ index }/critical"
                                                                                                                                                             ln --symbolic ${ expected-standard-error } "$OUT/commands/${ index }/expected/standard-error"
                                                                                                                                                             ln --symbolic ${ expected-standard-output } "$OUT/commands/${ index }/expected/standard-output"
                                                                                                                                                             echo '${ expected-status }' > "$OUT/commands/${ index }/expected/status"
-                                                                                                                                                            ln --symbolic ${ process } "$OUT/commands/${ index }/process
+                                                                                                                                                            ln --symbolic ${ process } "$OUT/commands/${ index }/process"
                                                                                                                                                             ln --symbolic $ text } "$OUT/commands/${ index }/text"
                                                                                                                                                             echo ${ timeout } > "$OUT/commands/${ index }/timeout"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while rear -r FLAG
