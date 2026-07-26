@@ -1045,7 +1045,7 @@
                                                                                                                                                             --arg EXPECTED_TYPE "$EXPECTED_TYPE" \\
                                                                                                                                                             --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \\
                                                                                                                                                             --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \\
-                                                                                                                                                            --arg OBSERVED_TYPE "$OBSERVED_TYPE" ]] \\
+                                                                                                                                                            --arg OBSERVED_TYPE "$OBSERVED_TYPE" \\
                                                                                                                                                             '{
                                                                                                                                                                 "channel" :
                                                                                                                                                                     {
