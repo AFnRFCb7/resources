@@ -980,215 +980,6 @@
                                             resources-directory ,
                                             user
                                         } :
-                                            let
-                                                derivation =
-                                                    mkDerivation
-                                                        {
-                                                            installPhase = ''installPhase "$0"''
-                                                            name = "checker" ;
-                                                            nativeBuildInputs =
-                                                                [
-                                                                    (
-                                                                        writeShellApplication
-                                                                            {
-                                                                                name = "installPbase" ;
-                                                                                runtimeInputs = [ coreutils ] ;
-                                                                                text =
-                                                                                    let
-                                                                                        commands =
-                                                                                            let
-                                                                                                mapper =
-                                                                                                    {
-                                                                                                        critical ,
-                                                                                                        expected-standard-error ,
-                                                                                                        expected-standard-output ,
-                                                                                                        expected-status ,
-                                                                                                        index ,
-                                                                                                        process ,
-                                                                                                        text ,
-                                                                                                        timeout
-                                                                                                    } :
-                                                                                                    let
-                                                                                                        application =
-                                                                                                            writeShellApplication
-                                                                                                                {
-                                                                                                                    name = "command" ;
-                                                                                                                    runtimeInputs = [ coreutils ] ;
-                                                                                                                    text =
-                                                                                                                        ''
-                                                                                                                            seq 0 $(( INDEX - 1 )) | while read -r I
-                                                                                                                            do
-                                                                                                                                while [[ ! -f "$OUT/commands/$I.flag" ]]
-                                                                                                                                do
-                                                                                                                                    sleep 1s
-                                                                                                                                done
-                                                                                                                            done
-                                                                                                                            echo ${ critical } > "$OUT/commands/$INDEX.critical"
-                                                                                                                            ln --symbolic ${ writeShellApplication { name = "command" ; runtimeInputs = runtimeInputs ; text = text ; } }/bin/command "$OUT/commands/$INDEX.sh"
-                                                                                                                            if timeout $( timeout } "$OUT/commands/$INDEX.sh" > "$OUT/commands/$INDEX.standard-output" 2> "$OUT/commands/$INDEX.standard-error"
-                                                                                                                            then
-                                                                                                                                echo "$?" > "$OUT/commands/$INDEX.status"
-                                                                                                                            else
-                                                                                                                                STATUS="$?"
-                                                                                                                            fi
-                                                                                                                            echo "$?" > "$OUT/commands/$INDEX.status"
-                                                                                                                        '' ;
-                                                                                                                } ;
-                                                                                                            in "${ application }/bin/command" ;
-                                                                                                        runtimeInputs =
-                                                                                                            [
-                                                                                                                (
-                                                                                                                    writeShellApplication
-                                                                                                                        {
-                                                                                                                            name = "check-redis-subscribed" ;
-                                                                                                                            runtimeInputs = [ redis ] ;
-                                                                                                                            text =
-                                                                                                                                ''
-                                                                                                                                    EXPECTED_TYPE="subscribe"
-                                                                                                                                    EXPECTED_CHANNEL="$1"
-                                                                                                                                    EXPECTED_PAYLOAD="$2"
-                                                                                                                                    read -t 1 -r OBSERVED_TYPE <&189 || exit 142
-                                                                                                                                    read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
-                                                                                                                                    read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
-                                                                                                                                    if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
-                                                                                                                                    then
-                                                                                                                                        echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
-                                                                                                                                        exit 136
-                                                                                                                                    fi
-                                                                                                                                    if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
-                                                                                                                                    then
-                                                                                                                                        echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
-                                                                                                                                        exit 123
-                                                                                                                                    fi
-                                                                                                                                    if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                    then
-                                                                                                                                        echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
-                                                                                                                                        exit 162
-                                                                                                                                    fi
-                                                                                                                                '' ;
-                                                                                                                        }
-                                                                                                                )
-                                                                                                            ] ;
-                                                                                                in builtins.map mapper parameters.actions ;
-                                                                                        parameters =
-                                                                                            {
-                                                                                                actions =
-                                                                                                    let
-                                                                                                        actions_ = builtins.concatLists [ prescript postscript ] ;
-                                                                                                        generator =
-                                                                                                            index :
-                                                                                                                let
-                                                                                                                    action =
-                                                                                                                        let
-                                                                                                                            identity =
-                                                                                                                                {
-                                                                                                                                    critical ? true ,
-                                                                                                                                    expected-standard-error ? null ,
-                                                                                                                                    expected-standard-output ? null ,
-                                                                                                                                    expected-status ? 0 ,
-                                                                                                                                    text ,
-                                                                                                                                    process ? "default" ,
-                                                                                                                                    timeout ? 60
-                                                                                                                                } :
-                                                                                                                                    {
-                                                                                                                                        critical =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    bool = path : value : builtins.toJSON value ;
-                                                                                                                                                }
-                                                                                                                                                critical ;
-                                                                                                                                        expected-standard-error =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    null = path : value : "" ;
-                                                                                                                                                    string = path : value : value ;
-                                                                                                                                                }
-                                                                                                                                                expected-standard-error ;
-                                                                                                                                        expected-standard-output =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    null = path : value : "" ;
-                                                                                                                                                    string = path : value : value ;
-                                                                                                                                                }
-                                                                                                                                                expected-standard-output ;
-                                                                                                                                        expected-status =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    int = path : value : builtins.toString value ;
-                                                                                                                                                }
-                                                                                                                                                expected-standard-output ;
-                                                                                                                                        text =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    string = path : value : value ;
-                                                                                                                                                }
-                                                                                                                                                text ;
-                                                                                                                                        process =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    string = path : value : value ;
-                                                                                                                                                }
-                                                                                                                                                process ;
-                                                                                                                                        timeout =
-                                                                                                                                            visitor
-                                                                                                                                                {
-                                                                                                                                                    int = path : value : builtins.toString value ;
-                                                                                                                                                }
-                                                                                                                                                process ;
-                                                                                                                                    } ;
-                                                                                                                            in identity ( builtins.elemAt actions_ index ) ;
-                                                                                                                    in action // { index = builtins.toString index ; } ;
-                                                                                                        prescript =
-                                                                                                            [
-                                                                                                                { text = "check-redis-subscribed ${ root-parameters.init.valid-channel } 1" ; }
-                                                                                                                { text = "check-redis-subscribed ${ root-parameters.init.invalid-channel } 2" ; }
-                                                                                                                { text = "check-redis-subscribed ${ root-parameters.release.valid-channel } 3" ; }
-                                                                                                                { text = "check-redis-subscribed ${ root-parameters.release.invalid-channel } 4" ; }
-                                                                                                            ] ;
-                                                                                                        postscript =
-                                                                                                            [
-                                                                                                                { text = "check-redis-blocked" ; }
-                                                                                                            ] ;
-                                                                                                        in builtins.genList generator ( builtins.length actions_ ) ;
-                                                                                            } ;
-                                                                                        processes =
-                                                                                            let
-                                                                                                grouper = action : action.process ;
-                                                                                                mapper =
-                                                                                                    name : value :
-                                                                                                        let
-                                                                                                            application =
-                                                                                                                writeShellApplication
-                                                                                                                    {
-                                                                                                                        name = "process" ;
-                                                                                                                        text =
-                                                                                                                            ''
-                                                                                                                                # ${ name }
-                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( v : "$OUT/commands/${ v.index }.sh" ) value ) }
-                                                                                                                            '' ;
-                                                                                                                    } ;
-                                                                                                                in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }.sh"'' ;
-
-                                                                                                in builtins.attrValues ( builtin.mapAttrs mapper ( builtins.groupBy grouper parameters.actions ) ) ;
-                                                                                        in
-                                                                                            ''
-                                                                                                OUT="$1"
-                                                                                                redis-cli SUBSCRIBE ${ root-parameters.init.valid-channel } ${ root-parameters.init.invalid-channel } ${ root-parameters.release.valid-channel } ${ root-parameters.release.invalid-channel }
-                                                                                                mkdir --parents "$OUT/commands"
-                                                                                                ${ builtins.concatStringsSep "\n" commands }
-                                                                                                mkdir --parents "$OUT/processes"
-                                                                                                ${ builtins.concatStringsSep "\n" processes }
-                                                                                                find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l -name "*.sh" | while read -r FILE
-                                                                                                do
-                                                                                                    "$FILE" &
-                                                                                                done
-                                                                                            '' ;
-                                                                            }
-                                                                    )
-                                                                ] ;
-                                                            src = ./. ;
-                                                        } ;
-                                                in
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
@@ -1198,495 +989,224 @@
                                                             test =
                                                                 let
                                                                     application =
-                                                                        pkgs.writeShellApplication
+                                                                        writeShellApplication
                                                                             {
                                                                                 name = "test" ;
-                                                                                runtimeInputs =
-                                                                                    [
-                                                                                        (
-                                                                                            pkgs.writeShellApplication
-                                                                                                {
-                                                                                                    name = "is-subscribed" ;
-                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
-                                                                                                    text =
-                                                                                                        ''
-                                                                                                            EXPECTED_TYPE="subscribe"
-                                                                                                            EXPECTED_CHANNEL="$1"
-                                                                                                            EXPECTED_PAYLOAD="$2"
-                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 142
-                                                                                                            read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
-                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
-                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
-                                                                                                            then
-                                                                                                                echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
-                                                                                                                exit 136
-                                                                                                            fi
-                                                                                                            if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
-                                                                                                            then
-                                                                                                                echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
-                                                                                                                exit 123
-                                                                                                            fi
-                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                            then
-                                                                                                                echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
-                                                                                                                exit 162
-                                                                                                            fi
-                                                                                                        '' ;
-                                                                                                }
-                                                                                        )
-                                                                                        pkgs.coreutils
-                                                                                        pkgs.jq
-                                                                                        pkgs.redis
-                                                                                        pkgs.yq-go
-                                                                                    ] ;
                                                                                 text =
                                                                                     let
-                                                                                        _actions =
-                                                                                            let
-                                                                                                generator =
-                                                                                                    index :
-                                                                                                        let
-                                                                                                            defaults =
-                                                                                                                {
-                                                                                                                    accepts-redirect = true ;
-                                                                                                                    expected-standard-output = "" ;
-                                                                                                                    expected-status = 0 ;
-                                                                                                                    index = index ;
-                                                                                                                    process = "main" ;
-                                                                                                                    timeout = 60 ;
-                                                                                                                } ;
-                                                                                                            main =  builtins.elemAt list index ;
-                                                                                                            in defaults // main ;
-                                                                                                list =
-                                                                                                    builtins.concatLists
+                                                                                        derivation =
+                                                                                            mkDerivation
+                                                                                                {
+                                                                                                    installPhase = ''installPhase "$0"''
+                                                                                                    name = "checker" ;
+                                                                                                    nativeBuildInputs =
                                                                                                         [
-                                                                                                            [
-                                                                                                                { text = "check-redis-is-blocked 1 2745375537866399" ; }
-                                                                                                                { text = "check-file-integrity 9287791874713682 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ; }
-                                                                                                            ]
-                                                                                                            actions
-                                                                                                            [
-                                                                                                                { text = "check-redis-is-blocked 1 5572814436683922" ; }
-                                                                                                                { text = "check-file-integrity 8592338626733518 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ; }
-                                                                                                            ]
-                                                                                                        ] ;
-                                                                                                in builtins.genList generator ( builtins.length list ) ;
-                                                                                        commands =
-                                                                                            let
-                                                                                                generator =
-                                                                                                    index :
-                                                                                                        let
-                                                                                                            action = builtins.elemAt _actions index ;
-                                                                                                            command =
-                                                                                                                let
-                                                                                                                    application =
-                                                                                                                        pkgs.writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "command" ;
-                                                                                                                                runtimeInputs =
-                                                                                                                                    [
-                                                                                                                                        jq
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "check-redis-json" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.jq ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            while [[ "$#" -gt 0 ]]
-                                                                                                                                                            do
-                                                                                                                                                                case "$1" in
-                                                                                                                                                                    --uuid)
-                                                                                                                                                                        shift 2
-                                                                                                                                                                        ;;
-                                                                                                                                                                    *)
-                                                                                                                                                                        exit 129
-                                                                                                                                                                        ;;
-                                                                                                                                                                esac
-                                                                                                                                                            done
-                                                                                                                                                            read -r -u 189 TYPE
-                                                                                                                                                            read -r -u 189 CHANNEL
-                                                                                                                                                            read -r -u 189 PAYLOAD
-                                                                                                                                                            if [[ "message" != "$TYPE" ]]
-                                                                                                                                                            then
-                                                                                                                                                                exit 102
-                                                                                                                                                            fi
-                                                                                                                                                            if [[ "valid-init" != "$CHANNEL" ]]
-                                                                                                                                                            then
-                                                                                                                                                                exit 173
-                                                                                                                                                            fi
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq --compact-output '.' )" || exit 186
-                                                                                                                                                            OBSERVED_PAYLOAD="$( jq --compact-output 'del(.["originator-pid"])' <<< "$PAYLOAD" )" || exit 127
-                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                            then
-                                                                                                                                                                cat >> "$COMMANDS/FLAG" <<EOF
-                                                                                                                                                                DIFF:
-                                                                                                                                                                $( diff --unified <( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" ) <( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" ) || true )
-
-
-                                                                                                                                                                EXPECTED:
-                                                                                                                                                                $( yq eval --prettyPrint "." <<< "$EXPECTED_PAYLOAD" )
-
-
-                                                                                                                                                                OBSERVED:
-                                                                                                                                                                $( yq eval --prettyPrint "." <<< "$OBSERVED_PAYLOAD" )
-                                                                                                                                                            EOF
-                                                                                                                                                                exit 172
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "check-file-integrity" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            UUID="$1"
-                                                                                                                                                            EXPECTED_HASH="$2"
-                                                                                                                                                            ROOT="$( mktemp --directory )" || exit 128
-                                                                                                                                                            if [[ -d ${ resources-directory } ]]
-                                                                                                                                                            then
-                                                                                                                                                                cp --recursive ${ resources-directory } "$ROOT/resources"
-                                                                                                                                                            fi
-                                                                                                                                                            if [[ -d ${ gc-roots-directory } ]]
-                                                                                                                                                            then
-                                                                                                                                                                cp --recursive ${ gc-roots-directory } "$ROOT/roots"
-                                                                                                                                                            fi
-                                                                                                                                                            YAML_FILE="$( mktemp )" || exit 167
-                                                                                                                                                            cd "$ROOT"
-                                                                                                                                                            find . \( -path './resources/pids' -o -path './resources/temporary' \) -prune -o -type f -print | sort | while IFS= read -r FILE
-                                                                                                                                                            do
-                                                                                                                                                                jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg NAME "$FILE" \
-                                                                                                                                                                    --rawfile CONTENTS "$FILE" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "name": $NAME ,
-                                                                                                                                                                        "contents": $CONTENTS
-                                                                                                                                                                    }' | yq eval --prettyPrint '[.]'
-                                                                                                                                                            done >> "$YAML_FILE"
-                                                                                                                                                            OBSERVED_HASH="$( sha512sum "$YAML_FILE" | cut --characters 1-128 )" || exit 176
-                                                                                                                                                            if [[ "$EXPECTED_HASH" != "$OBSERVED_HASH" ]]
-                                                                                                                                                            then
-                                                                                                                                                                jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg EXPECTED_HASH "$EXPECTED_HASH" \
-                                                                                                                                                                    --arg OBSERVED_HASH "$OBSERVED_HASH" \
-                                                                                                                                                                    --arg UUID "$UUID" \
-                                                                                                                                                                    --rawfile YAML "$YAML_FILE" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "hash" :
+                                                                                                            (
+                                                                                                                writeShellApplication
+                                                                                                                    {
+                                                                                                                        name = "installPbase" ;
+                                                                                                                        runtimeInputs = [ coreutils ] ;
+                                                                                                                        text =
+                                                                                                                            let
+                                                                                                                                commands =
+                                                                                                                                    let
+                                                                                                                                        mapper =
+                                                                                                                                            {
+                                                                                                                                                critical ,
+                                                                                                                                                expected-standard-error ,
+                                                                                                                                                expected-standard-output ,
+                                                                                                                                                expected-status ,
+                                                                                                                                                index ,
+                                                                                                                                                process ,
+                                                                                                                                                text ,
+                                                                                                                                                timeout
+                                                                                                                                            } :
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "command" ;
+                                                                                                                                                            runtimeInputs = [ coreutils ] ;
+                                                                                                                                                            text =
+                                                                                                                                                                ''
+                                                                                                                                                                    seq 0 $(( INDEX - 1 )) | while read -r I
+                                                                                                                                                                    do
+                                                                                                                                                                        while [[ ! -f "$OUT/commands/$I.flag" ]]
+                                                                                                                                                                        do
+                                                                                                                                                                            sleep 1s
+                                                                                                                                                                        done
+                                                                                                                                                                    done
+                                                                                                                                                                    echo ${ critical } > "$OUT/commands/$INDEX.critical"
+                                                                                                                                                                    ln --symbolic ${ writeShellApplication { name = "command" ; runtimeInputs = runtimeInputs ; text = text ; } }/bin/command "$OUT/commands/$INDEX.sh"
+                                                                                                                                                                    if timeout $( timeout } "$OUT/commands/$INDEX.sh" > "$OUT/commands/$INDEX.standard-output" 2> "$OUT/commands/$INDEX.standard-error"
+                                                                                                                                                                    then
+                                                                                                                                                                        echo "$?" > "$OUT/commands/$INDEX.status"
+                                                                                                                                                                    else
+                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                    fi
+                                                                                                                                                                    echo "$?" > "$OUT/commands/$INDEX.status"
+                                                                                                                                                                '' ;
+                                                                                                                                                        } ;
+                                                                                                                                                    in "${ application }/bin/command" ;
+                                                                                                                                                runtimeInputs =
+                                                                                                                                                    [
+                                                                                                                                                        (
+                                                                                                                                                            writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "check-redis-subscribed" ;
+                                                                                                                                                                    runtimeInputs = [ redis ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            EXPECTED_TYPE="subscribe"
+                                                                                                                                                                            EXPECTED_CHANNEL="$1"
+                                                                                                                                                                            EXPECTED_PAYLOAD="$2"
+                                                                                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 142
+                                                                                                                                                                            read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
+                                                                                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
+                                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
+                                                                                                                                                                                exit 136
+                                                                                                                                                                            fi
+                                                                                                                                                                            if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
+                                                                                                                                                                                exit 123
+                                                                                                                                                                            fi
+                                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
+                                                                                                                                                                                exit 162
+                                                                                                                                                                            fi
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
+                                                                                                                                                    ] ;
+                                                                                                                                        in builtins.map mapper parameters.actions ;
+                                                                                                                                check-parameters =
+                                                                                                                                    {
+                                                                                                                                        actions =
+                                                                                                                                            let
+                                                                                                                                                actions_ = builtins.concatLists [ prescript postscript ] ;
+                                                                                                                                                generator =
+                                                                                                                                                    index :
+                                                                                                                                                        let
+                                                                                                                                                            action =
+                                                                                                                                                                let
+                                                                                                                                                                    identity =
+                                                                                                                                                                        {
+                                                                                                                                                                            critical ? true ,
+                                                                                                                                                                            expected-standard-error ? null ,
+                                                                                                                                                                            expected-standard-output ? null ,
+                                                                                                                                                                            expected-status ? 0 ,
+                                                                                                                                                                            text ,
+                                                                                                                                                                            process ? "default" ,
+                                                                                                                                                                            timeout ? 60
+                                                                                                                                                                        } :
                                                                                                                                                                             {
-                                                                                                                                                                                "expected" : $EXPECTED_HASH ,
-                                                                                                                                                                                "observed" : $OBSERVED_HASH
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "uuid" : $UUID ,
-                                                                                                                                                                        "yaml" : $YAML
-                                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> "$COMMANDS/FLAG"
-                                                                                                                                                                exit 101
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "check-redis-is-blocked" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            TIMEOUT="$1"
-                                                                                                                                                            UUID="$2"
-                                                                                                                                                            if read -t "$TIMEOUT" -r TYPE <&189
-                                                                                                                                                            then
-                                                                                                                                                                read -t "$TIMEOUT" -r CHANNEL <&189
-                                                                                                                                                                read -t "$TIMEOUT" -r PAYLOAD <&189
-                                                                                                                                                                echo "$UUID" >&2
-                                                                                                                                                                echo "$TYPE" >&2
-                                                                                                                                                                echo "$CHANNEL" >&2
-                                                                                                                                                                echo "$PAYLOAD" >&2
-                                                                                                                                                                exit 179
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "check-verify-executable" ;
-                                                                                                                                                    runtimeInputs = [ ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            EXECUTABLE="$1"
-                                                                                                                                                            UUID="$2"
-                                                                                                                                                            if [[ ! -x "$EXECUTABLE" ]]
-                                                                                                                                                            then
-                                                                                                                                                                echo "UUID=$UUID" "EXECUTABLE=$EXECUTABLE" >&2
-                                                                                                                                                                exit 137
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                        (
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "is-subscribed" ;
-                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            EXPECTED_TYPE="subscribe"
-                                                                                                                                                            EXPECTED_CHANNEL="$1"
-                                                                                                                                                            EXPECTED_PAYLOAD="$2"
-                                                                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 142
-                                                                                                                                                            read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
-                                                                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
-                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
-                                                                                                                                                            then
-                                                                                                                                                                echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
-                                                                                                                                                                exit 136
-                                                                                                                                                            fi
-                                                                                                                                                            if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
-                                                                                                                                                            then
-                                                                                                                                                                echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
-                                                                                                                                                                exit 123
-                                                                                                                                                            fi
-                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                            then
-                                                                                                                                                                echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
-                                                                                                                                                                exit 162
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                }
-                                                                                                                                        )
-                                                                                                                                    ] ;
-                                                                                                                                text =
+                                                                                                                                                                                critical =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            bool = path : value : builtins.toJSON value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        critical ;
+                                                                                                                                                                                expected-standard-error =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            null = path : value : "" ;
+                                                                                                                                                                                            string = path : value : value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        expected-standard-error ;
+                                                                                                                                                                                expected-standard-output =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            null = path : value : "" ;
+                                                                                                                                                                                            string = path : value : value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        expected-standard-output ;
+                                                                                                                                                                                expected-status =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            int = path : value : builtins.toString value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        expected-standard-output ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            string = path : value : value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        text ;
+                                                                                                                                                                                process =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            string = path : value : value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        process ;
+                                                                                                                                                                                timeout =
+                                                                                                                                                                                    visitor
+                                                                                                                                                                                        {
+                                                                                                                                                                                            int = path : value : builtins.toString value ;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        process ;
+                                                                                                                                                                            } ;
+                                                                                                                                                                    in identity ( builtins.elemAt actions_ index ) ;
+                                                                                                                                                            in action // { index = builtins.toString index ; } ;
+                                                                                                                                                prescript =
+                                                                                                                                                    [
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.init.valid-channel } 1" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.init.invalid-channel } 2" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.release.valid-channel } 3" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.release.invalid-channel } 4" ; }
+                                                                                                                                                    ] ;
+                                                                                                                                                postscript =
+                                                                                                                                                    [
+                                                                                                                                                        { text = "check-redis-blocked" ; }
+                                                                                                                                                    ] ;
+                                                                                                                                                in builtins.genList generator ( builtins.length actions_ ) ;
+                                                                                                                                    } ;
+                                                                                                                                processes =
+                                                                                                                                    let
+                                                                                                                                        grouper = action : action.process ;
+                                                                                                                                        mapper =
+                                                                                                                                            name : value :
+                                                                                                                                                let
+                                                                                                                                                    application =
+                                                                                                                                                        writeShellApplication
+                                                                                                                                                            {
+                                                                                                                                                                name = "process" ;
+                                                                                                                                                                text =
+                                                                                                                                                                    ''
+                                                                                                                                                                        # ${ name }
+                                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( v : "$OUT/commands/${ v.index }.sh" ) value ) }
+                                                                                                                                                                    '' ;
+                                                                                                                                                            } ;
+                                                                                                                                                        in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }.sh"'' ;
+
+                                                                                                                                        in builtins.attrValues ( builtin.mapAttrs mapper ( builtins.groupBy grouper parameters.actions ) ) ;
+                                                                                                                                in
                                                                                                                                     ''
-                                                                                                                                        export COMMAND_PID="$$"
-                                                                                                                                        seq 0 ${ builtins.toString ( index - 1 ) } | while read -r INDEX
+                                                                                                                                        OUT="$1"
+                                                                                                                                        redis-cli SUBSCRIBE ${ root-parameters.init.valid-channel } ${ root-parameters.init.invalid-channel } ${ root-parameters.release.valid-channel } ${ root-parameters.release.invalid-channel }
+                                                                                                                                        mkdir --parents "$OUT/commands"
+                                                                                                                                        ${ builtins.concatStringsSep "\n" commands }
+                                                                                                                                        mkdir --parents "$OUT/processes"
+                                                                                                                                        ${ builtins.concatStringsSep "\n" processes }
+                                                                                                                                        find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l -name "*.sh" | while read -r FILE
                                                                                                                                         do
-                                                                                                                                            while [[ ! -f "$COMMANDS/$INDEX.json" ]]
-                                                                                                                                            do
-                                                                                                                                                sleep 1
-                                                                                                                                            done
-                                                                                                                                            FLAG="$( jq --raw-output ".flag" "$COMMANDS/$INDEX.json" )" || exit 182
-                                                                                                                                            if "$FLAG"
-                                                                                                                                            then
-                                                                                                                                                jq "." "$COMMANDS/$INDEX.json" >&2
-                                                                                                                                            fi
+                                                                                                                                            "$FILE" &
                                                                                                                                         done
-                                                                                                                                        if [[ ! -f "$COMMANDS/FLAG" ]]
-                                                                                                                                        then
-                                                                                                                                            BEFORE="$( date )" || exit 137
-                                                                                                                                            ACCEPTS_REDIRECT="${ builtins.toJSON action.accepts-redirect }"
-                                                                                                                                            STANDARD_ERROR_FILE="$( mktemp )" || exit 154
-                                                                                                                                            STANDARD_OUTPUT_FILE="$( mktemp )" || exit 130
-                                                                                                                                            if "$ACCEPTS_REDIRECT"
-                                                                                                                                            then
-                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; } }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
-                                                                                                                                                then
-                                                                                                                                                    OBSERVED_STATUS="$?"
-                                                                                                                                                else
-                                                                                                                                                    OBSERVED_STATUS="$?"
-                                                                                                                                                fi
-                                                                                                                                            else
-                                                                                                                                                if time timeout ${ builtins.toString action.timeout }s ${ pkgs.writeShellApplication { name = "text" ; text = builtins.toString action.text ; } }/bin/text > "$STANDARD_OUTPUT_FILE" 2> "$STANDARD_ERROR_FILE"
-                                                                                                                                                then
-                                                                                                                                                    OBSERVED_STATUS="$?"
-                                                                                                                                                else
-                                                                                                                                                    OBSERVED_STATUS="$?"
-                                                                                                                                                fi
-                                                                                                                                            fi
-                                                                                                                                            rm "$COMMANDS/${ builtins.toString index }"
-                                                                                                                                            FLAG=false
-                                                                                                                                            FLAG_STANDARD_ERROR=false
-                                                                                                                                            if [[ -s "$STANDARD_ERROR_FILE" ]]
-                                                                                                                                            then
-                                                                                                                                                FLAG=true
-                                                                                                                                                FLAG_STANDARD_ERROR=true
-                                                                                                                                            fi
-                                                                                                                                            FLAG_STANDARD_OUTPUT=false
-                                                                                                                                            OBSERVED_STANDARD_OUTPUT="$( cat "$STANDARD_OUTPUT_FILE" )" || exit 120
-                                                                                                                                            if [[ '${ builtins.toString action.expected-standard-output }' != "$OBSERVED_STANDARD_OUTPUT" ]]
-                                                                                                                                            then
-                                                                                                                                                FLAG=true
-                                                                                                                                                FLAG_STANDARD_OUTPUT=true
-                                                                                                                                            fi
-                                                                                                                                            FLAG_STATUS=false
-                                                                                                                                            if [[ "$OBSERVED_STATUS" == 124 ]]
-                                                                                                                                            then
-                                                                                                                                                FLAG=true
-                                                                                                                                                FLAG_STATUS=true
-                                                                                                                                            elif [[ '${ builtins.toString action.expected-status }' != "$OBSERVED_STATUS" ]]
-                                                                                                                                            then
-                                                                                                                                                FLAG=true
-                                                                                                                                                FLAG_STATUS=true
-                                                                                                                                            fi
-                                                                                                                                            AFTER="$( date )" || exit 110
-                                                                                                                                            if [[ "$FLAG" == "true" ]]
-                                                                                                                                            then
-                                                                                                                                            jq \
-                                                                                                                                                --null-input \
-                                                                                                                                                --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
-                                                                                                                                                --arg AFTER "$AFTER" \
-                                                                                                                                                --arg BEFORE "$BEFORE" \
-                                                                                                                                                --arg EXPECTED_STANDARD_ERROR "" \
-                                                                                                                                                --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
-                                                                                                                                                --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
-                                                                                                                                                --arg FLAG "$FLAG" \
-                                                                                                                                                --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
-                                                                                                                                                --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
-                                                                                                                                                --argjson FLAG_STATUS "$FLAG_STATUS" \
-                                                                                                                                                --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
-                                                                                                                                                --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
-                                                                                                                                                --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
-                                                                                                                                                --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
-                                                                                                                                                --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
-                                                                                                                                                --argjson TIMEOUT ${ builtins.toString action.timeout } \
-                                                                                                                                                '{
-                                                                                                                                                    "accepts-redirect" : $ACCEPTS_REDIRECT ,
-                                                                                                                                                    "flag" : $FLAG ,
-                                                                                                                                                    "process" : $PROCESS ,
-                                                                                                                                                    "stamps" :
-                                                                                                                                                        {
-                                                                                                                                                            "after" : $AFTER ,
-                                                                                                                                                            "before" : $BEFORE
-                                                                                                                                                        } ,
-                                                                                                                                                    "standard-error" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STANDARD_ERROR ,
-                                                                                                                                                            "flag": $FLAG_STANDARD_ERROR ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR
-                                                                                                                                                        } ,
-                                                                                                                                                    "standard-output" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STANDARD_OUTPUT ,
-                                                                                                                                                            "flag" : $FLAG_STANDARD_OUTPUT ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT
-                                                                                                                                                        } ,
-                                                                                                                                                    "status" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STATUS ,
-                                                                                                                                                            "flag" : $FLAG_STATUS ,
-                                                                                                                                                            "observed" : $OBSERVED_STATUS
-                                                                                                                                                        } ,
-                                                                                                                                                    "text" : $TEXT ,
-                                                                                                                                                    "timeout" : $TIMEOUT
-                                                                                                                                                }' >> "$COMMANDS/FLAG"
-                                                                                                                                            fi
-                                                                                                                                            jq \
-                                                                                                                                                --null-input \
-                                                                                                                                                --argjson ACCEPTS_REDIRECT "$ACCEPTS_REDIRECT" \
-                                                                                                                                                --arg AFTER "$AFTER" \
-                                                                                                                                                --arg BEFORE "$BEFORE" \
-                                                                                                                                                --arg EXPECTED_STANDARD_ERROR "" \
-                                                                                                                                                --rawfile EXPECTED_STANDARD_OUTPUT '${ builtins.toFile "standard-output" ( builtins.toString action.expected-standard-output ) }' \
-                                                                                                                                                --argjson EXPECTED_STATUS ${ builtins.toString action.expected-status } \
-                                                                                                                                                --arg FLAG "$FLAG" \
-                                                                                                                                                --argjson FLAG_STANDARD_ERROR "$FLAG_STANDARD_ERROR" \
-                                                                                                                                                --argjson FLAG_STANDARD_OUTPUT "$FLAG_STANDARD_OUTPUT" \
-                                                                                                                                                --argjson FLAG_STATUS "$FLAG_STATUS" \
-                                                                                                                                                --rawfile PROCESS ${ builtins.toFile "process" ( builtins.toString action.process ) } \
-                                                                                                                                                --rawfile OBSERVED_STANDARD_ERROR "$STANDARD_ERROR_FILE" \
-                                                                                                                                                --rawfile OBSERVED_STANDARD_OUTPUT "$STANDARD_OUTPUT_FILE" \
-                                                                                                                                                --argjson OBSERVED_STATUS "$OBSERVED_STATUS" \
-                                                                                                                                                --rawfile TEXT ${ builtins.toFile "text" ( builtins.toString action.text ) } \
-                                                                                                                                                --argjson TIMEOUT ${ builtins.toString action.timeout } \
-                                                                                                                                                '{
-                                                                                                                                                    "accepts-redirect" : $ACCEPTS_REDIRECT ,
-                                                                                                                                                    "flag" : $FLAG ,
-                                                                                                                                                    "process" : $PROCESS ,
-                                                                                                                                                    "stamps" :
-                                                                                                                                                        {
-                                                                                                                                                            "after" : $AFTER ,
-                                                                                                                                                            "before" : $BEFORE
-                                                                                                                                                        } ,
-                                                                                                                                                    "standard-error" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STANDARD_ERROR ,
-                                                                                                                                                            "flag": $FLAG_STANDARD_ERROR ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_ERROR
-                                                                                                                                                        } ,
-                                                                                                                                                    "standard-output" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STANDARD_OUTPUT ,
-                                                                                                                                                            "flag" : $FLAG_STANDARD_OUTPUT ,
-                                                                                                                                                            "observed" : $OBSERVED_STANDARD_OUTPUT
-                                                                                                                                                        } ,
-                                                                                                                                                    "status" :
-                                                                                                                                                        {
-                                                                                                                                                            "expected" : $EXPECTED_STATUS ,
-                                                                                                                                                            "flag" : $FLAG_STATUS ,
-                                                                                                                                                            "observed" : $OBSERVED_STATUS
-                                                                                                                                                        } ,
-                                                                                                                                                    "text" : $TEXT ,
-                                                                                                                                                    "timeout" : $TIMEOUT
-                                                                                                                                                }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                        else
-                                                                                                                                            jq \
-                                                                                                                                                --null-input \
-                                                                                                                                                --argjson FLAG true \
-                                                                                                                                                '{
-                                                                                                                                                    "flag" : $FLAG
-                                                                                                                                                }' > "$COMMANDS/${ builtins.toString index }.json"
-                                                                                                                                        fi
                                                                                                                                     '' ;
-                                                                                                                            } ;
-                                                                                                                    in "${ application }/bin/command" ;
-                                                                                                            in
-                                                                                                                ''
-                                                                                                                    ln --symbolic ${ command } "$COMMANDS/${ builtins.toString index }"
-                                                                                                                '' ;
-                                                                                                in builtins.genList generator ( builtins.length _actions ) ;
-                                                                                        processes =
-                                                                                            let
-                                                                                                grouper = action : action.process ;
-                                                                                                mapper =
-                                                                                                    name : value :
-                                                                                                        let
-                                                                                                            application =
-                                                                                                            writeShellApplication
-                                                                                                                {
-                                                                                                                    name = "process" ;
-                                                                                                                    runtimeInputs = [ ] ;
-                                                                                                                    text =
-                                                                                                                        let
-                                                                                                                            mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
-                                                                                                                            in builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) ;
-                                                                                                                } ;
-                                                                                                                in "${ application }/bin/process &" ;
-                                                                                                in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
-                                                                                        in
-                                                                                            ''
-                                                                                                COMMANDS="$( mktemp --directory )" || exit 188
-                                                                                                export COMMANDS
-                                                                                                exec 189< <( redis-cli SUBSCRIBE valid-init ${ root-parameters.valid-release-channel } invalid-init invalid-release )
-                                                                                                is-subscribed valid-init 1 <&189
-                                                                                                is-subscribed ${ root-parameters.valid-release-channel } 2 <&189
-                                                                                                is-subscribed invalid-init 3 <&189
-                                                                                                is-subscribed invalid-release 4 <&189
-                                                                                                ${ builtins.concatStringsSep "\n" commands }
-                                                                                                ${ builtins.concatStringsSep "\n" processes }
-                                                                                                while [[ ! -f "$COMMANDS/${ builtins.toString ( ( builtins.length _actions ) - 1 ) }.json" ]]
-                                                                                                do
-                                                                                                    sleep 1
-                                                                                                done
-                                                                                                if [[ -f "$COMMANDS/FLAG" ]]
-                                                                                                then
-                                                                                                    echo FLAG >&2
-                                                                                                    cat "$COMMANDS/FLAG" >&2
-#                                                                                                    find "$COMMANDS" -type f -name "*.json" | sort | while read -r FILE
-#                                                                                                    do
-#                                                                                                        echo >&2
-#                                                                                                        echo "FLAG:  $FILE" >&2
-#                                                                                                        cat "$FILE" >&2
-#                                                                                                    done
-                                                                                                    exit 107
-                                                                                                fi
-                                                                                            '' ;
+                                                                                                                    }
+                                                                                                            )
+                                                                                                        ] ;
+                                                                                                    src = ./. ;
+                                                                                                } ;
+                                                                                            in
+                                                                                                ''
+                                                                                                    touch "$1"
+                                                                                                '' ;
                                                                             } ;
-                                                                        in "${ application }/bin/test" ;
+                                                                    in "${ application }/bin/test"
                                                             in
                                                                 ''
                                                                     machine.wait_for_unit("multi-user.target")
