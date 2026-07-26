@@ -989,14 +989,41 @@
                                                             test =
                                                                 let
                                                                     application =
-                                                                        writeShellApplication
+                                                                        mkDerivation
                                                                             {
+                                                                                installPhase = ''installPhase "$out"'' ;
                                                                                 name = "test" ;
-                                                                                text =
-                                                                                    ''
-                                                                                    '' ;
+                                                                                nativeBuildInputs =
+                                                                                    [
+                                                                                        (
+                                                                                            writeShellApplication
+                                                                                                {
+                                                                                                    name = "installPhase" ;
+                                                                                                    text =
+                                                                                                        let
+                                                                                                            test =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "test" ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                    '' ;
+                                                                                                                            } ;
+                                                                                                                        in "${ application }/bin/test" ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    OUT="$1"
+                                                                                                                    mkdir "$OUT"
+                                                                                                                    ln --symbolic ${ test } "$OUT/test.sh"
+                                                                                                                '' ;                                                                                                                                                                                                                   '' ;
+                                                                                                }
+                                                                                        )
+                                                                                    ] ;
+                                                                                src = ./. ;
                                                                             } ;
-                                                                    in "${ application }/bin/test" ;
+                                                                    in "${ application }/test.sh" ;
                                                             in
                                                                 ''
                                                                     machine.wait_for_unit("multi-user.target")
