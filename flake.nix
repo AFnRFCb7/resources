@@ -986,6 +986,44 @@
                                             let
                                                 check-parameters =
                                                     {
+                                                        actions =
+                                                            let
+                                                                _actions = builtins.concatListd [ pre-actions  ] ;
+                                                                generator =
+                                                                    index :
+                                                                        let
+                                                                            action = builtins.elemAt _actions index ;
+                                                                            identity =
+                                                                                {
+                                                                                    critical ? false ,
+                                                                                    expected-standard-error ? "" ,
+                                                                                    expected-standard-output ? "" ,
+                                                                                    expected-status ? 0 ,
+                                                                                    process > "default" ,
+                                                                                    text ,
+                                                                                    timeout ? 60
+                                                                                } :
+                                                                                    {
+                                                                                        critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
+                                                                                        expected-standard-error = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-error" value ; } expected-standar-error ;
+                                                                                        expected-standard-output = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-output" value ; } expected-standard-output ;
+                                                                                        expected-status = visitor { int = path : value : builtins.toString value ; } expected-status ;
+                                                                                        index = builtins.toString index ;
+                                                                                        process = visitor { path = path : value : value ; string = path : value : builtins.toFile "process" value ; } process ;
+                                                                                        text = visitor { path = path : value : value ; string = path : value : "${ root-parameters.writeShellApplication { name = "command" ; text = value ; } }/bin/command" ; } text ;
+                                                                                        timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
+                                                                                    } ;
+                                                                            in identity action ;
+                                                                post-actions =
+                                                                    [
+                                                                    ] ;
+                                                                pre-actions =
+                                                                    [
+                                                                        {
+                                                                            text = "check-redis-subscription ${ root-parameters.valid-init-channel 1" ;
+                                                                        }
+                                                                    ] ;
+                                                                in builtins.genList generator _actions ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
                                                     } ;
                                                 in
@@ -1010,6 +1048,46 @@
                                                                                                             name = "install" ;
                                                                                                             text =
                                                                                                                 let
+                                                                                                                    commands =
+                                                                                                                        let
+                                                                                                                            mapper =
+                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , process , text , timeouput } @ primary :
+                                                                                                                                    let
+                                                                                                                                        application =
+                                                                                                                                            root-parameters.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "command" ;
+                                                                                                                                                    runtimeInputs = [ root-parameters.coreutils ] ;
+                                                                                                                                                    text =
+                                                                                                                                                        ''
+                                                                                                                                                            # ${ builtins.toJSON primary }
+                                                                                                                                                            mkdir --parent "$OUT/commands/${ index }/expected"
+                                                                                                                                                            echo '${ critical } > "$OUT/commands/${ index }/critical"
+                                                                                                                                                            ln --symbolic ${ expected-standard-error } "$OUT/commands/${ index }/expected/standard-error"
+                                                                                                                                                            ln --symbolic ${ expected-standard-output } "$OUT/commands/${ index }/expected/standard-output"
+                                                                                                                                                            echo '${ expected-status }' > "$OUT/commands/${ index }/expected/status"
+                                                                                                                                                            ln --symbolic ${ process } "$OUT/commands/${ index }/process
+                                                                                                                                                            ln --symbolic $ text } "$OUT/commands/${ index }/text"
+                                                                                                                                                            echo ${ timeout } > "$OUT/commands/${ index }/timeout"
+                                                                                                                                                            seq 0 $(( ${ index } - 1 )) | while rear -r FLAG
+                                                                                                                                                            do
+                                                                                                                                                                while [[ ! -f "$OUT/command/$I.flag" ]]
+                                                                                                                                                                do
+                                                                                                                                                                    sleep 1
+                                                                                                                                                                done
+                                                                                                                                                            done
+                                                                                                                                                            mkdir --parent "$OUT/commands/$INDEX/observed"
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text > "$OUT/commands/${ index }/observed/standard-output 2> "$OUT/commands/${ index }/observed/standard-error
+                                                                                                                                                            then
+                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status
+                                                                                                                                                            else
+                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status
+                                                                                                                                                            fi
+                                                                                                                                                            touch "$OUT/commands/${ index }.flag
+                                                                                                                                                        '' ;
+                                                                                                                                                } ;
+                                                                                                                                            in ''ln --symbolic ${ application }/bin/command "$OUT/commands${ index }/command"'' ;
+                                                                                                                            in builtins.map mapper check-parameters.actions ;
                                                                                                                     test =
                                                                                                                         let
                                                                                                                             application =
@@ -1019,6 +1097,7 @@
                                                                                                                                         runtimeInputs = [ root-parameters.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
+                                                                                                                                                ${ builtins.concatStringsSep "\n" commands }
                                                                                                                                                 echo The test derivation is in >&2
                                                                                                                                                 dirname "$0" >&2
                                                                                                                                                 exit 99
