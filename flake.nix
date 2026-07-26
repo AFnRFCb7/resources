@@ -1028,7 +1028,7 @@
                                                                 ''
                                                                     machine.wait_for_unit("multi-user.target")
                                                                     machine.wait_for_unit("network-online.target")
-                                                                    machine.succeed("runuser --login ${ user } -- ${ test }/test.sh")
+                                                                    machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                 '' ;
                                                 } ;
                                     implementation = implementation ;
