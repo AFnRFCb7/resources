@@ -960,6 +960,7 @@
                                             mkDerivation = visitor { lambda = path : value : value ; } mkDerivation ;
                                             valid-init-channel = to-string valid-init-channel ;
                                             valid-release-channel = to-string valid-release-channel ;
+                                            writeShellApplication = visitor { lambda = path : value : value ; } writeShellApplication ;
                                         } ;
                             stringify =
                                 path : value :
