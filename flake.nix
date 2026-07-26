@@ -1031,10 +1031,10 @@
                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
+                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
