@@ -1153,10 +1153,10 @@
                                                                                                                                                             in action // { index = builtins.toString index ; } ;
                                                                                                                                                 prescript =
                                                                                                                                                     [
-                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.init.valid-channel } 1" ; }
-                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.init.invalid-channel } 2" ; }
-                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.release.valid-channel } 3" ; }
-                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.release.invalid-channel } 4" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.valid-init-channel } 1" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.invalid-init-channel } 2" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.valid-release-channel } 3" ; }
+                                                                                                                                                        { text = "check-redis-subscribed ${ root-parameters.invalid-release-channel } 4" ; }
                                                                                                                                                     ] ;
                                                                                                                                                 postscript =
                                                                                                                                                     [
