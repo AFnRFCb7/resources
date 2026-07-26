@@ -1004,7 +1004,7 @@
                                                                                                             (
                                                                                                                 writeShellApplication
                                                                                                                     {
-                                                                                                                        name = "installPbase" ;
+                                                                                                                        name = "installPhase" ;
                                                                                                                         runtimeInputs = [ coreutils redis ] ;
                                                                                                                         text =
                                                                                                                             let
