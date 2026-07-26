@@ -1124,6 +1124,20 @@
                                                                                                                                                     ln --symbolic ${ application }/bin/command "$OUT/commands/${ index }/command"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
+                                                                                                                    processes =
+                                                                                                                        let
+                                                                                                                            grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
+                                                                                                                            mapper =
+                                                                                                                                name : value :
+                                                                                                                                    let
+                                                                                                                                        application =
+                                                                                                                                            root-parameters.writeShellApplication
+                                                                                                                                                {
+                                                                                                                                                    name = "process" ;
+                                                                                                                                                    text = builtins.concatStringSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command"'' ) value ) ;
+                                                                                                                                                } ;
+                                                                                                                                            in "${ application }/bin/process &" ;
+                                                                                                                            in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
                                                                                                                         let
                                                                                                                             application =
@@ -1144,6 +1158,7 @@
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
+                                                                                                                            ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                         '' ;
                                                                                                         }
