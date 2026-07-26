@@ -1206,7 +1206,7 @@
                                                                                                     touch "$out"
                                                                                                 '' ;
                                                                             } ;
-                                                                    in "${ application }/bin/test"
+                                                                    in "${ application }/bin/test" ;
                                                             in
                                                                 ''
                                                                     machine.wait_for_unit("multi-user.target")
