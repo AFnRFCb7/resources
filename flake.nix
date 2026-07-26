@@ -956,6 +956,7 @@
                                         {
                                             invalid-init-channel = to-string invalid-init-channel ;
                                             invalid-release-channel = to-string invalid-release-channel ;
+                                            mkDerivation = visitor { lambda = path : value : value ; } mkDerivation ;
                                             valid-init-channel = to-string valid-init-channel ;
                                             valid-release-channel = to-string valid-release-channel ;
                                         } ;
@@ -987,7 +988,7 @@
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
                                                     } ;
                                                 in
-                                                    nixosTest
+                                                    check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
                                                             nodes.machine = { ... } : { imports = private ; } ;
@@ -996,7 +997,7 @@
                                                                     test =
                                                                         let
                                                                             application =
-                                                                                mkDerivation
+                                                                                rootParameters.mkDerivation
                                                                                     {
                                                                                         installPhase = ''install "$out"'' ;
                                                                                         name = "test" ;
