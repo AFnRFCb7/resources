@@ -1010,8 +1010,7 @@
                                                                                                                                 runtimeInputs = [ coreutils ] ;
                                                                                                                                 text =
                                                                                                                                     ''
-                                                                                                                                        echo The test de
-                                                                                                                                        rqivation is in >&2
+                                                                                                                                        echo The test derivation is in >&2
                                                                                                                                         dirname "$0" >&2
                                                                                                                                         exit 99
                                                                                                                                     '' ;
