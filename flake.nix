@@ -1201,9 +1201,9 @@
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
-                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }                                                                                                                         e
+                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
