@@ -1040,7 +1040,7 @@
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
                                                                                                                                                         then
                                                                                                                                                             exit 103
-                                                                                                                                                        elif [[ "#EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                                        elif [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
                                                                                                                                                         then
                                                                                                                                                             exit 157
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
