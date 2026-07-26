@@ -1011,7 +1011,34 @@
                                                                                         expected-status = visitor { int = path : value : builtins.toString value ; } expected-status ;
                                                                                         index = builtins.toString index ;
                                                                                         process = visitor { path = path : value : value ; string = path : value : builtins.toFile "process" value ; } process ;
-                                                                                        text = visitor { path = path : value : value ; string = path : value : "${ root-parameters.writeShellApplication { name = "command" ; text = value ; } }/bin/command" ; } text ;
+                                                                                        text =
+                                                                                            visitor
+                                                                                                {
+                                                                                                    path = path : value : value ;
+                                                                                                    string =
+                                                                                                        path : value :
+                                                                                                            let
+                                                                                                                application =
+                                                                                                                    root-parameters.writeShellApplication
+                                                                                                                        {
+                                                                                                                            name = "command" ;
+                                                                                                                            runtimeInputs =
+                                                                                                                                [
+                                                                                                                                    (
+                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "check-redis-subscription" ;
+                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                ] ;
+                                                                                                                            text = value ;
+                                                                                                                        } ;
+                                                                                                                    in "${ application }/bin/command" ;
+                                                                                                } text ;
                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
                                                                                     } ;
                                                                             in identity action ;
