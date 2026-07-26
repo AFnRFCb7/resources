@@ -1042,9 +1042,8 @@
                                                                                                                                                                     then
                                                                                                                                                                         echo "$?" > "$OUT/commands/$INDEX.status"
                                                                                                                                                                     else
-                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                        echo "$?" > "$OUT/commands/$INDEX.status"
                                                                                                                                                                     fi
-                                                                                                                                                                    echo "$?" > "$OUT/commands/$INDEX.status"
                                                                                                                                                                 '' ;
                                                                                                                                                         } ;
                                                                                                                                                     in "${ application }/bin/command" ;
