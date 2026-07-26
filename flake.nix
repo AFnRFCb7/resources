@@ -1133,7 +1133,7 @@
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             fi
                                                                                                                                                             touch "$OUT/commands/${ index }/flag"
-                                                                                                                                                            if "${ critical }" && ! diff "$OUT/commands/${ index }expected" "$OUT/commands/${ index }/observed"
+                                                                                                                                                            if "${ critical }" && ! diff "$OUT/commands/${ index }/expected" "$OUT/commands/${ index }/observed"
                                                                                                                                                             then
                                                                                                                                                                 touch "$OUT/commmands/${ index }/failure"
                                                                                                                                                             fi
