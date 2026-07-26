@@ -1171,6 +1171,7 @@
                                                                                                                                                 DERIVATION="$( dirname "$0" )" || exit 145
                                                                                                                                                 echo The test derivation is in "$DERIVATION" >&2
                                                                                                                                                 STATUS="$( cat "$DERIVATION/status" )" || exit 199
+                                                                                                                                                exit 137
                                                                                                                                                 exit "$STATUS"
                                                                                                                                             '' ;
                                                                                                                                     } ;
