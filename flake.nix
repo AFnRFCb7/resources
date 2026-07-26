@@ -954,7 +954,7 @@
                                             } ;
                                     in
                                         {
-                                            coreutils = visitor { strig = path : value : value ;} coreutils ;
+                                            coreutils = visitor { string = path : value : value ;} coreutils ;
                                             invalid-init-channel = to-string invalid-init-channel ;
                                             invalid-release-channel = to-string invalid-release-channel ;
                                             mkDerivation = visitor { lambda = path : value : value ; } mkDerivation ;
