@@ -954,6 +954,7 @@
                                             } ;
                                     in
                                         {
+                                            coreutils = visitor { } coreutils ;
                                             invalid-init-channel = to-string invalid-init-channel ;
                                             invalid-release-channel = to-string invalid-release-channel ;
                                             mkDerivation = visitor { lambda = path : value : value ; } mkDerivation ;
@@ -1015,7 +1016,7 @@
                                                                                                                                 writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "test" ;
-                                                                                                                                        runtimeInputs = [ coreutils ] ;
+                                                                                                                                        runtimeInputs = [ root-parameters.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 echo The test derivation is in >&2
