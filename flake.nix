@@ -1064,7 +1064,7 @@
                                                                                                                                                                             "expected" : $EXPECTED_PAYLOAD ,
                                                                                                                                                                             "observed" : $OBSERVED_PAYLOAD
                                                                                                                                                                         }
-                                                                                                                                                                }' >&2
+                                                                                                                                                                }'
                                                                                                                                                             fi
                                                                                                                                                     '' ;
                                                                                                                                             }
