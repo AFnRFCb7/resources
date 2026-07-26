@@ -991,27 +991,16 @@
                                                                     application =
                                                                         mkDerivation
                                                                             {
-                                                                                installPhase = ''installPhase "$out"'' ;
+                                                                                installPhase = ''install "$out"'' ;
                                                                                 name = "test" ;
                                                                                 nativeBuildInputs =
                                                                                     [
                                                                                         (
                                                                                             writeShellApplication
                                                                                                 {
-                                                                                                    name = "installPhase" ;
+                                                                                                    name = "install" ;
                                                                                                     text =
                                                                                                         let
-                                                                                                            test =
-                                                                                                                let
-                                                                                                                    application =
-                                                                                                                        writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "test" ;
-                                                                                                                                text =
-                                                                                                                                    ''
-                                                                                                                                    '' ;
-                                                                                                                            } ;
-                                                                                                                        in "${ application }/bin/test" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     OUT="$1"
