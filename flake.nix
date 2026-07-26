@@ -1198,16 +1198,12 @@
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             export OUT="$1"
+                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }                                                                                                                         e
-                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
-                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
-                                                                                                                            do
-                                                                                                                                "$PROCESS <&189" &
-                                                                                                                            done
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
