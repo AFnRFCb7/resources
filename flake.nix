@@ -1182,7 +1182,7 @@
                                                                                                                                                             } ;
                                                                                                                                                         in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }.sh"'' ;
 
-                                                                                                                                        in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper parameters.actions ) ) ;
+                                                                                                                                        in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                                 in
                                                                                                                                     ''
                                                                                                                                         OUT="$1"
