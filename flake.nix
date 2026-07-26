@@ -980,6 +980,215 @@
                                             resources-directory ,
                                             user
                                         } :
+                                            let
+                                                derivation =
+                                                    mkDerivation
+                                                        {
+                                                            installPhase = ''installPhase "$0"''
+                                                            name = "checker" ;
+                                                            nativeBuildInputs =
+                                                                [
+                                                                    (
+                                                                        writeShellApplication
+                                                                            {
+                                                                                name = "installPbase" ;
+                                                                                runtimeInputs = [ coreutils ] ;
+                                                                                text =
+                                                                                    let
+                                                                                        commands =
+                                                                                            let
+                                                                                                mapper =
+                                                                                                    {
+                                                                                                        critical ,
+                                                                                                        expected-standard-error ,
+                                                                                                        expected-standard-output ,
+                                                                                                        expected-status ,
+                                                                                                        index ,
+                                                                                                        process ,
+                                                                                                        text ,
+                                                                                                        timeout
+                                                                                                    } :
+                                                                                                    let
+                                                                                                        application =
+                                                                                                            writeShellApplication
+                                                                                                                {
+                                                                                                                    name = "command" ;
+                                                                                                                    runtimeInputs = [ coreutils ] ;
+                                                                                                                    text =
+                                                                                                                        ''
+                                                                                                                            seq 0 $(( INDEX - 1 )) | while read -r I
+                                                                                                                            do
+                                                                                                                                while [[ ! -f "$OUT/commands/$I.flag" ]]
+                                                                                                                                do
+                                                                                                                                    sleep 1s
+                                                                                                                                done
+                                                                                                                            done
+                                                                                                                            echo ${ critical } > "$OUT/commands/$INDEX.critical"
+                                                                                                                            ln --symbolic ${ writeShellApplication { name = "command" ; runtimeInputs = runtimeInputs ; text = text ; } }/bin/command "$OUT/commands/$INDEX.sh"
+                                                                                                                            if timeout $( timeout } "$OUT/commands/$INDEX.sh" > "$OUT/commands/$INDEX.standard-output" 2> "$OUT/commands/$INDEX.standard-error"
+                                                                                                                            then
+                                                                                                                                echo "$?" > "$OUT/commands/$INDEX.status"
+                                                                                                                            else
+                                                                                                                                STATUS="$?"
+                                                                                                                            fi
+                                                                                                                            echo "$?" > "$OUT/commands/$INDEX.status"
+                                                                                                                        '' ;
+                                                                                                                } ;
+                                                                                                            in "${ application }/bin/command" ;
+                                                                                                        runtimeInputs =
+                                                                                                            [
+                                                                                                                (
+                                                                                                                    writeShellApplication
+                                                                                                                        {
+                                                                                                                            name = "check-redis-subscribed" ;
+                                                                                                                            runtimeInputs = [ redis ] ;
+                                                                                                                            text =
+                                                                                                                                ''
+                                                                                                                                    EXPECTED_TYPE="subscribe"
+                                                                                                                                    EXPECTED_CHANNEL="$1"
+                                                                                                                                    EXPECTED_PAYLOAD="$2"
+                                                                                                                                    read -t 1 -r OBSERVED_TYPE <&189 || exit 142
+                                                                                                                                    read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
+                                                                                                                                    read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
+                                                                                                                                    if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                                                    then
+                                                                                                                                        echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
+                                                                                                                                        exit 136
+                                                                                                                                    fi
+                                                                                                                                    if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                    then
+                                                                                                                                        echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
+                                                                                                                                        exit 123
+                                                                                                                                    fi
+                                                                                                                                    if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                    then
+                                                                                                                                        echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
+                                                                                                                                        exit 162
+                                                                                                                                    fi
+                                                                                                                                '' ;
+                                                                                                                        }
+                                                                                                                )
+                                                                                                            ] ;
+                                                                                                in builtins.map mapper parameters.actions ;
+                                                                                        parameters =
+                                                                                            {
+                                                                                                actions =
+                                                                                                    let
+                                                                                                        actions_ = builtins.concatLists [ prescript postscript ] ;
+                                                                                                        generator =
+                                                                                                            index :
+                                                                                                                let
+                                                                                                                    action =
+                                                                                                                        let
+                                                                                                                            identity =
+                                                                                                                                {
+                                                                                                                                    critical ? true ,
+                                                                                                                                    expected-standard-error ? null ,
+                                                                                                                                    expected-standard-output ? null ,
+                                                                                                                                    expected-status ? 0 ,
+                                                                                                                                    text ,
+                                                                                                                                    process ? "default" ,
+                                                                                                                                    timeout ? 60
+                                                                                                                                } :
+                                                                                                                                    {
+                                                                                                                                        critical =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    bool = path : value : builtins.toJSON value ;
+                                                                                                                                                }
+                                                                                                                                                critical ;
+                                                                                                                                        expected-standard-error =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    null = path : value : "" ;
+                                                                                                                                                    string = path : value : value ;
+                                                                                                                                                }
+                                                                                                                                                expected-standard-error ;
+                                                                                                                                        expected-standard-output =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    null = path : value : "" ;
+                                                                                                                                                    string = path : value : value ;
+                                                                                                                                                }
+                                                                                                                                                expected-standard-output ;
+                                                                                                                                        expected-status =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    int = path : value : builtins.toString value ;
+                                                                                                                                                }
+                                                                                                                                                expected-standard-output ;
+                                                                                                                                        text =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    string = path : value : value ;
+                                                                                                                                                }
+                                                                                                                                                text ;
+                                                                                                                                        process =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    string = path : value : value ;
+                                                                                                                                                }
+                                                                                                                                                process ;
+                                                                                                                                        timeout =
+                                                                                                                                            visitor
+                                                                                                                                                {
+                                                                                                                                                    int = path : value : builtins.toString value ;
+                                                                                                                                                }
+                                                                                                                                                process ;
+                                                                                                                                    } ;
+                                                                                                                            in identity ( builtins.elemAt actions_ index ) ;
+                                                                                                                    in action // { index = builtins.toString index ; } ;
+                                                                                                        prescript =
+                                                                                                            [
+                                                                                                                { text = "check-redis-subscribed ${ root-parameters.init.valid-channel } 1" ; }
+                                                                                                                { text = "check-redis-subscribed ${ root-parameters.init.invalid-channel } 2" ; }
+                                                                                                                { text = "check-redis-subscribed ${ root-parameters.release.valid-channel } 3" ; }
+                                                                                                                { text = "check-redis-subscribed ${ root-parameters.release.invalid-channel } 4" ; }
+                                                                                                            ] ;
+                                                                                                        postscript =
+                                                                                                            [
+                                                                                                                { text = "check-redis-blocked" ; }
+                                                                                                            ] ;
+                                                                                                        in builtins.genList generator ( builtins.length actions_ ) ;
+                                                                                            } ;
+                                                                                        processes =
+                                                                                            let
+                                                                                                grouper = action : action.process ;
+                                                                                                mapper =
+                                                                                                    name : value :
+                                                                                                        let
+                                                                                                            application =
+                                                                                                                writeShellApplication
+                                                                                                                    {
+                                                                                                                        name = "process" ;
+                                                                                                                        text =
+                                                                                                                            ''
+                                                                                                                                # ${ name }
+                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( v : "$OUT/commands/${ v.index }.sh" ) value ) }
+                                                                                                                            '' ;
+                                                                                                                    } ;
+                                                                                                                in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }.sh"'' ;
+
+                                                                                                in builtins.attrValues ( builtin.mapAttrs mapper ( builtins.groupBy grouper parameters.actions ) ) ;
+                                                                                        in
+                                                                                            ''
+                                                                                                OUT="$1"
+                                                                                                redis-cli SUBSCRIBE ${ root-parameters.init.valid-channel } ${ root-parameters.init.invalid-channel } ${ root-parameters.release.valid-channel } ${ root-parameters.release.invalid-channel }
+                                                                                                mkdir --parents "$OUT/commands"
+                                                                                                ${ builtins.concatStringsSep "\n" commands }
+                                                                                                mkdir --parents "$OUT/processes"
+                                                                                                ${ builtins.concatStringsSep "\n" processes }
+                                                                                                find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l -name "*.sh" | while read -r FILE
+                                                                                                do
+                                                                                                    "$FILE" &
+                                                                                                done
+                                                                                            '' ;
+                                                                            }
+                                                                    )
+                                                                ] ;
+                                                            src = ./. ;
+                                                        } ;
+                                                in
                                             pkgs.nixosTest
                                                 {
                                                     name = "check" ;
@@ -1227,6 +1436,27 @@
                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
+                                                                                                                                                            EXPECTED_TYPE="subscribe"
+                                                                                                                                                            EXPECTED_CHANNEL="$1"
+                                                                                                                                                            EXPECTED_PAYLOAD="$2"
+                                                                                                                                                            read -t 1 -r OBSERVED_TYPE <&189 || exit 142
+                                                                                                                                                            read -t 1 -r OBSERVED_CHANNEL <&189 || exit 154
+                                                                                                                                                            read -t 1 -r OBSERVED_PAYLOAD <&189 || exit 164
+                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo "OBSERVED_TYPE=$OBSERVED_TYPE" >&2
+                                                                                                                                                                exit 136
+                                                                                                                                                            fi
+                                                                                                                                                            if [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo "OBSERVED_CHANNEL=$OBSERVED_CHANNEL" >&2
+                                                                                                                                                                exit 123
+                                                                                                                                                            fi
+                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                                            then
+                                                                                                                                                                echo "OBSERVED_PAYLOAD=$OBSERVED_PAYLOAD" >&2
+                                                                                                                                                                exit 162
+                                                                                                                                                            fi
                                                                                                                                                         '' ;
                                                                                                                                                 }
                                                                                                                                         )
