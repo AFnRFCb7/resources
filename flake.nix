@@ -1120,7 +1120,7 @@
                                                                                                                                                             echo ${ timeout } > "$OUT/commands/${ index }/timeout"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
-                                                                                                                                                                echo "FLAG"
+                                                                                                                                                                echo "$FLAG"
                                                                                                                                                                 while [[ ! -f "$OUT/command/$I.flag" ]]
                                                                                                                                                                 do
                                                                                                                                                                     sleep 1
