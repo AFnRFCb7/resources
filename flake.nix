@@ -1152,7 +1152,7 @@
                                                                                                                             application =
                                                                                                                                 let
                                                                                                                                     grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
-                                                                                                                                    mapper = name : value : ''( "$OUT/process/${ name }" <&189 & )'' ;
+                                                                                                                                    mapper = name : value : ''( "$OUT/processes/${ name }" <&189 & )'' ;
                                                                                                                                     in
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
@@ -1160,7 +1160,6 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        export OUT="$1"
                                                                                                                                                         exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                     '' ;
@@ -1198,7 +1197,7 @@
                                                                                                                                 in "${ application }/bin/test" ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            OUT="$1"
+                                                                                                                            export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             # if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 48 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
@@ -1207,7 +1206,7 @@
                                                                                                                             ${ builtins.concatStringsSep "/n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             if true ; then echo 47 > "$OUT/status" && exit 0 ; fi
-                                                                                                                            "$OUT/execute.sh" "$OUT"
+                                                                                                                            "$OUT/execute.sh"
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
                                                                                                                                 sleep 1s
