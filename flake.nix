@@ -1009,6 +1009,7 @@
                                                                                                                                 name = "test" ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        exit 99
                                                                                                                                     '' ;
                                                                                                                             } ;
                                                                                                                         in "${ application }/bin/test" ;
