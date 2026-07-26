@@ -1005,7 +1005,7 @@
                                                                                                                 writeShellApplication
                                                                                                                     {
                                                                                                                         name = "installPbase" ;
-                                                                                                                        runtimeInputs = [ coreutils ] ;
+                                                                                                                        runtimeInputs = [ coreutils redis ] ;
                                                                                                                         text =
                                                                                                                             let
                                                                                                                                 commands =
