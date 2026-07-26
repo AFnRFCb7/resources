@@ -996,7 +996,8 @@
                                                                             action = builtins.elemAt _actions index ;
                                                                             identity =
                                                                                 {
-                                                                                    critical ? false ,
+                                                                                    critical ? true
+                                                                                     ,
                                                                                     expected-standard-error ? "" ,
                                                                                     expected-standard-output ? "" ,
                                                                                     expected-status ? 0 ,
