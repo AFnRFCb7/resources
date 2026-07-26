@@ -1010,8 +1010,9 @@
                                                                                                                                 runtimeInputs = [ coreutils ] ;
                                                                                                                                 text =
                                                                                                                                     ''
-                                                                                                                                        echo The test derqivation is in >&2
-                                                                                                                                        dirname "$0" >&2q
+                                                                                                                                        echo The test de
+                                                                                                                                        rqivation is in >&2
+                                                                                                                                        dirname "$0" >&2
                                                                                                                                         exit 99
                                                                                                                                     '' ;
                                                                                                                             } ;
