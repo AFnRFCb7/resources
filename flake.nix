@@ -1028,7 +1028,7 @@
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "check-redis-subscription" ;
-                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_CHANNEL="$1"
@@ -1037,6 +1037,31 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
+                                                                                                                                                        jq \\
+                                                                                                                                                            --null-input
+                                                                                                                                                            --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \\
+                                                                                                                                                            --arg EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \\
+                                                                                                                                                            --arg EXPECTED_TYPE "$EXPECTED_TYPE" ]] \\
+                                                                                                                                                            --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \\
+                                                                                                                                                            --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \\
+                                                                                                                                                            --arg OBSERVED_TYPE "$OBSERVED_TYPE" ]] \\
+                                                                                                                                                            '{
+                                                                                                                                                                "channel" :
+                                                                                                                                                                    {
+                                                                                                                                                                        "expected" : $EXPECTED_CHANNEL ,
+                                                                                                                                                                        "observed" : $OBSERVED_CHANNEL
+                                                                                                                                                                    } ,
+                                                                                                                                                                "type" :
+                                                                                                                                                                    {
+                                                                                                                                                                        "expected" : $EXPECTED_TYPE ,
+                                                                                                                                                                        "observed" : $OBSERVED_TYPE
+                                                                                                                                                                    } ,
+                                                                                                                                                                "payload" :
+                                                                                                                                                                    {
+                                                                                                                                                                        "expected" : $EXPECTED_PAYLOAD ,
+                                                                                                                                                                        "observed" : $OBSERVED_PAYLOAD
+                                                                                                                                                                    }
+                                                                                                                                                            }'>&2
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
                                                                                                                                                         then
                                                                                                                                                             exit 103
@@ -1063,10 +1088,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        {
-                                                                            process = "pre-action" ;
-                                                                            text = "check-redis-subscription ${ root-parameters.invalid-init-channel } 1 <&189" ;
-                                                                        }
+                                                                        { text = "check-redis-subscription ${ root-parameters.invalid-init-channel } 1 <&189" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
