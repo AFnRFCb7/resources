@@ -1203,6 +1203,7 @@
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
+                                                                                                    exit 99
                                                                                                 '' ;
                                                                             } ;
                                                                     in "${ application }/bin/test" ;
