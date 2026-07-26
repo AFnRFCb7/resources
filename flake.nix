@@ -1189,7 +1189,7 @@
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
                                                                                                                             echo 0 >> "$OUT/debug"
-                                                                                                                            find "$OUT/commands" -mindepth 3 -maxdepth 3 -name failure -type f | while read -r FAILURE
+                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure -type f | while read -r FAILURE
                                                                                                                             do
                                                                                                                                 echo 1 >> "$OUT/debug"
                                                                                                                                 echo "$FAILURE" >&2
