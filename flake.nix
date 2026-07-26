@@ -1062,7 +1062,7 @@
                                                                                                                                                                         "expected" : $EXPECTED_PAYLOAD ,
                                                                                                                                                                         "observed" : $OBSERVED_PAYLOAD
                                                                                                                                                                     }
-                                                                                                                                                            }'>&2
+                                                                                                                                                            }' >&2
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
                                                                                                                                                         then
                                                                                                                                                             exit 103
