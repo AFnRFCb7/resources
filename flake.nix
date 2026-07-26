@@ -1034,8 +1034,8 @@
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
-                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE
+                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
