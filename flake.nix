@@ -1181,11 +1181,11 @@
                                                                                                                         ''
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
-                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                            if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
                                                                                                                             do
                                                                                                                                 "$PROCESS <&189" &
