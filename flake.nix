@@ -997,8 +997,8 @@
                                                                                         derivation =
                                                                                             mkDerivation
                                                                                                 {
-                                                                                                    installPhase = ''installPhase "$0"'' ;
-                                                                                                    name = "checker2" ;
+                                                                                                    installPhase = ''installPhase "$1"'' ;
+                                                                                                    name = "checker" ;
                                                                                                     nativeBuildInputs =
                                                                                                         [
                                                                                                             (
