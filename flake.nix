@@ -1202,6 +1202,7 @@
                                                                                                                         ''
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
+                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 48 > "OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
