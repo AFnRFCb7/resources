@@ -1010,6 +1010,7 @@
                                                                                                                                 runtimeInputs = [ coreutils ] ;
                                                                                                                                 text =
                                                                                                                                     ''
+                                                                                                                                        echo The test derivation is in
                                                                                                                                         dirname "$0"
                                                                                                                                         exit 99
                                                                                                                                     '' ;
