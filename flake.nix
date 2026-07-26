@@ -1187,7 +1187,10 @@
                                                                                                                             exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            while [[ ! -f "$OUT/commands/${ builtins.toString ( builtins.length commands ) }/flag
+                                                                                                                            while [[ ! -f "$OUT/commands/${ builtins.toString ( builtins.length commands ) }/flag" ]]
+                                                                                                                            do
+                                                                                                                                sleep 1s
+                                                                                                                            done
                                                                                                                             echo 0 > "$OUT/status"
                                                                                                                             find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                             do
