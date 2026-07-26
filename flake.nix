@@ -1200,7 +1200,7 @@
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
-                                                                                                                            ln --symbolic ${ execute } "$OUT/executo.sh"
+                                                                                                                            # ln --symbolic ${ execute } "$OUT/executo.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }                                                                                                                         e
                                                                                                                             if true ; then ln -s ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
