@@ -1112,32 +1112,32 @@
                                                                                                                                                     runtimeInputs = [ root-parameters.coreutils pkgs.diffutils ] ;
                                                                                                                                                     text =
                                                                                                                                                         ''
-                                                                                                                                                            mkdir --parent "$OUT/commands/${ index }/expected"
-                                                                                                                                                            echo '${ critical }' > "$OUT/commands/${ index }/critical"
-                                                                                                                                                            ln --symbolic ${ expected-standard-error } "$OUT/commands/${ index }/expected/standard-error"
-                                                                                                                                                            ln --symbolic ${ expected-standard-output } "$OUT/commands/${ index }/expected/standard-output"
-                                                                                                                                                            echo '${ expected-status }' > "$OUT/commands/${ index }/expected/status"
-                                                                                                                                                            ln --symbolic ${ process } "$OUT/commands/${ index }/process"
-                                                                                                                                                            ln --symbolic ${ text } "$OUT/commands/${ index }/text"
-                                                                                                                                                            echo ${ timeout } > "$OUT/commands/${ index }/timeout"
+                                                                                                                                                            mkdir --parent "$SCRATCH/commands/${ index }/expected"
+                                                                                                                                                            echo '${ critical }' > "$SCRATCH/commands/${ index }/critical"
+                                                                                                                                                            ln --symbolic ${ expected-standard-error } "$SCRATCH/commands/${ index }/expected/standard-error"
+                                                                                                                                                            ln --symbolic ${ expected-standard-output } "$SCRATCH/commands/${ index }/expected/standard-output"
+                                                                                                                                                            echo '${ expected-status }' > "$SCRATCH/commands/${ index }/expected/status"
+                                                                                                                                                            ln --symbolic ${ process } "$SCRATCH/commands/${ index }/process"
+                                                                                                                                                            ln --symbolic ${ text } "$SCRATCH/commands/${ index }/text"
+                                                                                                                                                            echo ${ timeout } > "$SCRATCH/commands/${ index }/timeout"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
-                                                                                                                                                                while [[ ! -f "$OUT/command/$FLAG.flag" ]]
+                                                                                                                                                                while [[ ! -f "$SCRATCH/command/$FLAG.flag" ]]
                                                                                                                                                                 do
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
                                                                                                                                                             done
-                                                                                                                                                            mkdir --parent "$OUT/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
+                                                                                                                                                            mkdir --parent "$SCRATCH/commands/${ index }/observed"
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
-                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status"
+                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             else
-                                                                                                                                                                 echo "$?" > "$OUT/commands/${ index }/observed/status"
+                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             fi
-                                                                                                                                                            touch "$OUT/commands/${ index }/flag"
-                                                                                                                                                            if "${ critical }" && ! diff "$OUT/commands/${ index }/expected" "$OUT/commands/${ index }/observed"
+                                                                                                                                                            touch "$SCRATCH/commands/${ index }/flag"
+                                                                                                                                                            if "${ critical }" && ! diff "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
                                                                                                                                                             then
-                                                                                                                                                                touch "$OUT/commands/${ index }/failure"
+                                                                                                                                                                touch "$SCRATCH/commands/${ index }/failure"
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
@@ -1200,6 +1200,7 @@
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             export OUT="$1"
+                                                                                                                            export SCRATCH="$OUT"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             # if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 48 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
