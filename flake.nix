@@ -1032,7 +1032,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_CHANNEL="$1"
-                                                                                                                                                        EXPECTED_PAYLOAD=""2"
+                                                                                                                                                        EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
                                                                                                                                                         read -r -t 1 OBSERVED_TYPE
                                                                                                                                                         read -r -t 1 OBSERVED_CHANNEL
