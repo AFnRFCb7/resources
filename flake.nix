@@ -1125,7 +1125,6 @@
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
                                                                                                                                                             done
-                                                                                                                                                            echo wtf >>
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/observed"
                                                                                                                                                             if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
