@@ -1423,7 +1423,7 @@
                                                                                                                     text =
                                                                                                                         let
                                                                                                                             mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
-                                                                                                                            in builtins.concatStringsSep "\n]t" ( builtins.map mapper value ) ;
+                                                                                                                            in builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) ;
                                                                                                                 } ;
                                                                                                                 in "${ application }/bin/process &" ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
