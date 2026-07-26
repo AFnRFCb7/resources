@@ -996,8 +996,7 @@
                                                                             action = builtins.elemAt _actions index ;
                                                                             identity =
                                                                                 {
-                                                                                    critical ? true
-                                                                                     ,
+                                                                                    critical ? true                                                                                    ,
                                                                                     expected-standard-error ? "" ,
                                                                                     expected-standard-output ? "" ,
                                                                                     expected-status ? 0 ,
@@ -1119,7 +1118,7 @@
                                                                                                                                                             ln --symbolic ${ process } "$OUT/commands/${ index }/process"
                                                                                                                                                             ln --symbolic ${ text } "$OUT/commands/${ index }/text"
                                                                                                                                                             echo ${ timeout } > "$OUT/commands/${ index }/timeout"
-                                                                                                                                                            seq 0 $(( ${ index } - 1 )) | while rear -r FLAG
+                                                                                                                                                            seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
                                                                                                                                                                 while [[ ! -f "$OUT/command/$I.flag" ]]
                                                                                                                                                                 do
