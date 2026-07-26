@@ -1198,8 +1198,8 @@
                                                                                                                     in
                                                                                                                         ''
                                                                                                                             export OUT="$1"
-                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             mkdir --parents "$OUT/commands"
+                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
