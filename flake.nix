@@ -1203,7 +1203,8 @@
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
-                                                                                                    touch "$out"
+                                                                                                    echo "${ derivatio }"
+                                                                                                    touch "$1"
                                                                                                 '' ;
                                                                             } ;
                                                                     in "${ application }/bin/test" ;
