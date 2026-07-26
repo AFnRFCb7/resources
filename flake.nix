@@ -1005,7 +1005,7 @@
                                                                                 } :
                                                                                     {
                                                                                         critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
-                                                                                        expected-standard-error = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-error" value ; } expected-standar-error ;
+                                                                                        expected-standard-error = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-error" value ; } expected-standard-error ;
                                                                                         expected-standard-output = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-output" value ; } expected-standard-output ;
                                                                                         expected-status = visitor { int = path : value : builtins.toString value ; } expected-status ;
                                                                                         index = builtins.toString index ;
