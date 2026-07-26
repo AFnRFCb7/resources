@@ -1039,6 +1039,10 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                         then
+                                                                                                                                                            jq \
+                                                                                                                                                                --null-input \
+                                                                                                                                                                '}
+                                                                                                                                                                }' >&2
                                                                                                                                                             if true ; then exit 106 ; fi
                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                             jq \
@@ -1069,7 +1073,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = "check-redis-subscription ${ root-parameters.invalid-init-channel } 1 <&189" ; }
+                                                                        { text = "check-redis-subscription wrong ${ root-parameters.invalid-init-channel } 1 <&189" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
