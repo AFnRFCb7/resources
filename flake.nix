@@ -1199,12 +1199,12 @@
                                                                                                                         ''
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
-                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }                                                                                                                         e
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
+                                                                                                                            if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 44 > "$OUT/status" && exit 0 ; fi
                                                                                                                             while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                             do
                                                                                                                                 sleep 1s
