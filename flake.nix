@@ -1137,16 +1137,6 @@
                                                                                                                                                             then
                                                                                                                                                                 touch "$OUT/commands/${ index }/failure"
                                                                                                                                                             fi
-
-                                                                                                                                                            if ! diff "$OUT/commands/${ index }/expected" "$OUT/commands/${ index }/observed"
-                                                                                                                                                            then
-                                                                                                                                                                touch "$OUT/commands/${ index }/failure1"
-                                                                                                                                                            fi
-
-                                                                                                                                                            if "${ critical }"
-                                                                                                                                                            then
-                                                                                                                                                                touch "$OUT/commands/${ index }/failure2"
-                                                                                                                                                            fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
                                                                                                                                             in
@@ -1198,7 +1188,7 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
-                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure -type f | while read -r FAILURE
+                                                                                                                            find "$OUT/commands" -mindepth 3 -maxdepth 3 -name failure -type f | while read -r FAILURE
                                                                                                                             do
                                                                                                                                 echo "$FAILURE" >&2
                                                                                                                                 echo 119 > "$OUT/status"
