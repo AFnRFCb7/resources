@@ -1031,6 +1031,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
