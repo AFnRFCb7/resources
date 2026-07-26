@@ -1185,6 +1185,7 @@
                                                                                                                                 in
                                                                                                                                     ''
                                                                                                                                         OUT="$1"
+                                                                                                                                        mkdir --parent "$OUT"
                                                                                                                                         redis-cli SUBSCRIBE ${ root-parameters.valid-init-channel } ${ root-parameters.invalid-init-channel } ${ root-parameters.valid-release-channel } ${ root-parameters.invalid-release-channel }
                                                                                                                                         mkdir --parents "$OUT/commands"
                                                                                                                                         ${ builtins.concatStringsSep "\n" commands }
