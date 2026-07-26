@@ -1035,7 +1035,6 @@
                                                                                                                                                         EXPECTED_PAYLOAD="$2"
                                                                                                                                                         EXPECTED_TYPE="subscription"
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE || exit 167
-                                                                                                                                                        if true ; then exit 109 ; fi
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD || exit 125
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
@@ -1069,7 +1068,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = "check-redis-subscription wrong ${ root-parameters.invalid-init-channel } 1 <&189" ; }
+                                                                        { text = "check-redis-subscription wrong ${ root-parameters.invalid-init-channel } 1 <189" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
@@ -1129,7 +1128,7 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <189
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             else
