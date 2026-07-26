@@ -1189,7 +1189,7 @@
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
                                                                                                                             echo 0 >> "$OUT/debug"
-                                                                                                                            find "$OUT/commands" >> "$OUT/debug"
+                                                                                                                            find "$OUT/commands" | sort >> "$OUT/debug"
                                                                                                                             find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                             do
                                                                                                                                 echo 1 >> "$OUT/debug"
