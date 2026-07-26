@@ -1203,7 +1203,7 @@
                                                                                                 } ;
                                                                                             in
                                                                                                 ''
-                                                                                                    exit 99
+                                                                                                    echo ${ derivation }
                                                                                                 '' ;
                                                                             } ;
                                                                     in "${ application }/bin/test" ;
