@@ -1419,7 +1419,7 @@
                                                                                                             mapper = { accepts-redirect , expected-standard-output , expected-status , index , process , text , timeout } : ''"$COMMANDS/${ builtins.toString index }"'' ;
                                                                                                             in
                                                                                                                 ''
-                                                                                                                    bash -c '${ builtins.concatStringsSep "\n\t" ( builtins.map mapper value ) }'
+                                                                                                                    bash -c '${ builtins.concatStringsSep " && " ( builtins.map mapper value ) }'
                                                                                                                 '' ;
                                                                                                 in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper _actions ) ) ;
                                                                                         in
