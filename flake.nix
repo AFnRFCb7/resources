@@ -1185,7 +1185,7 @@
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l } | while read -r PROCESS
+                                                                                                                            find "$OUT/processes" -mindepth 1 -maxdepth 1 -type l | while read -r PROCESS
                                                                                                                             do
                                                                                                                                 "$PROCESS <&189" &
                                                                                                                             done
