@@ -1049,21 +1049,7 @@
                                                                                                                                                                 --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
                                                                                                                                                                 --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
                                                                                                                                                                 '{
-                                                                                                                                                                    "channel" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                            "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "type" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                            "observed" : $OBSERVED_TYPE
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "payload" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                            "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                        }
+
                                                                                                                                                                 }'
                                                                                                                                                             fi
                                                                                                                                                     '' ;
