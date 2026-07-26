@@ -1037,42 +1037,35 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
-                                                                                                                                                        # shellcheck disable=SC2208,SC2016
-                                                                                                                                                        jq \
-                                                                                                                                                            --null-input \
-                                                                                                                                                            --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
-                                                                                                                                                            --arg EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
-                                                                                                                                                            --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
-                                                                                                                                                            --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                            --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
-                                                                                                                                                            --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
-                                                                                                                                                            '{
-                                                                                                                                                                "channel" :
-                                                                                                                                                                    {
-                                                                                                                                                                        "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                        "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                    } ,
-                                                                                                                                                                "type" :
-                                                                                                                                                                    {
-                                                                                                                                                                        "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                        "observed" : $OBSERVED_TYPE
-                                                                                                                                                                    } ,
-                                                                                                                                                                "payload" :
-                                                                                                                                                                    {
-                                                                                                                                                                        "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                        "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                    }
-                                                                                                                                                            }' >&2
-                                                                                                                                                        if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                                                                        if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                         then
-                                                                                                                                                            exit 103
-                                                                                                                                                        elif [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
-                                                                                                                                                        then
-                                                                                                                                                            exit 157
-                                                                                                                                                        elif [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                        then
-                                                                                                                                                            exit 109
-                                                                                                                                                        fi
+                                                                                                                                                            # shellcheck disable=SC2208,SC2016
+                                                                                                                                                            jq \
+                                                                                                                                                                --null-input \
+                                                                                                                                                                --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
+                                                                                                                                                                --arg EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
+                                                                                                                                                                --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
+                                                                                                                                                                --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
+                                                                                                                                                                --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
+                                                                                                                                                                --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
+                                                                                                                                                                '{
+                                                                                                                                                                    "channel" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_CHANNEL ,
+                                                                                                                                                                            "observed" : $OBSERVED_CHANNEL
+                                                                                                                                                                        } ,
+                                                                                                                                                                    "type" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_TYPE ,
+                                                                                                                                                                            "observed" : $OBSERVED_TYPE
+                                                                                                                                                                        } ,
+                                                                                                                                                                    "payload" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_PAYLOAD ,
+                                                                                                                                                                            "observed" : $OBSERVED_PAYLOAD
+                                                                                                                                                                        }
+                                                                                                                                                                }' >&2
+                                                                                                                                                            fi
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
