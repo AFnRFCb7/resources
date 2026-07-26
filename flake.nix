@@ -1078,6 +1078,7 @@
                                                                                                             runtimeInputs =
                                                                                                                 [
                                                                                                                     pkgs.findutils
+                                                                                                                    pkgs.redis
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 let
@@ -1163,6 +1164,7 @@
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
+                                                                                                                            exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-releasse-channel }
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
