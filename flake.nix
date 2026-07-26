@@ -1011,7 +1011,7 @@
                                                                                                                                     ''
                                                                                                                                     '' ;
                                                                                                                             } ;
-                                                                                                                        in "${ application "}/bin/test" ;
+                                                                                                                        in "${ application }/bin/test" ;
                                                                                                             in
                                                                                                                 ''
                                                                                                                     OUT="$1"
