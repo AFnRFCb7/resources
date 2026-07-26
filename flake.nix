@@ -1170,10 +1170,6 @@
                                                                                                                                             ''
                                                                                                                                                 DERIVATION="$( dirname "$0" )" || exit 145
                                                                                                                                                 echo The test derivation is in "$DERIVATION" >&2
-                                                                                                                                                if true
-                                                                                                                                                then
-                                                                                                                                                    exit 137
-                                                                                                                                                fi
                                                                                                                                                 STATUS="$( cat "$DERIVATION/status" )" || exit 199
                                                                                                                                                 exit "$STATUS"
                                                                                                                                             '' ;
