@@ -1149,7 +1149,7 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$OUT/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             else
