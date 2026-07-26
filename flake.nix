@@ -1039,6 +1039,7 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
                                                                                                                                                         then
+                                                                                                                                                            if true ; then exit 106 ; fi
                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                             jq \
                                                                                                                                                                 --null-input \
