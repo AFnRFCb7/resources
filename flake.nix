@@ -1147,6 +1147,19 @@
                                                                                                                                                     ln --symbolic ${ application }/bin/command "$OUT/commands/${ index }/command"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
+                                                                                                                    execute =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                let
+                                                                                                                                    grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
+                                                                                                                                    mapper = name : value : ''( $OUT/process/${ name } <&189 & )'' ;
+                                                                                                                                    in
+                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "execute" ;
+                                                                                                                                                text = builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) ;
+                                                                                                                                            } ;
+                                                                                                                            in "${ application }/bin/execute" ;
                                                                                                                     processes =
                                                                                                                         let
                                                                                                                             grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
@@ -1182,6 +1195,7 @@
                                                                                                                             export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
+                                                                                                                            ln --symbolic ${ execute } "$OUT/executo.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             exec 189> <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
