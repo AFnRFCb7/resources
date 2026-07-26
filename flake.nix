@@ -1031,6 +1031,22 @@
                                                                                                                                                 runtimeInputs = [ ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        EXPECTED_CHANNEL="$1"
+                                                                                                                                                        EXPECTED_PAYLOAD=""2"
+                                                                                                                                                        EXPECTED_TYPE="subscription"
+                                                                                                                                                        read -r -t 1 OBSERVED_TYPE
+                                                                                                                                                        read -r -t 1 OBSERVED_CHANNEL
+                                                                                                                                                        read -r -t 1 OBSERVED_PAYLOAD
+                                                                                                                                                        if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]]
+                                                                                                                                                        then
+                                                                                                                                                            exit 103
+                                                                                                                                                        elif [[ "#EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                                        then
+                                                                                                                                                            exit 157
+                                                                                                                                                        elif [[ "$EXPECTED_PAYLOAD" == "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                                        then
+                                                                                                                                                            exit 109
+                                                                                                                                                        fi
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
@@ -1110,7 +1126,7 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$OUT/commands/$INDEX/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error"
+                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text/" > "$OUT/commands/${ index }/observed/standard-output" 2> "$OUT/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$OUT/commands/${ index }/observed/status"
                                                                                                                                                             else
@@ -1167,7 +1183,7 @@
                                                                                                                             exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            echo 0 > "$OUT/status"
+                                                                                                                            echo 0 > "$OUT/status"git
                                                                                                                             find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure -type f | while read -r FAILURE
                                                                                                                             do
                                                                                                                                 echo "$FAILURE" >&2
