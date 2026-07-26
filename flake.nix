@@ -1106,7 +1106,7 @@
                                                                                                                                 in "${ application }/bin/test" ;
                                                                                                                     in
                                                                                                                         ''
-                                                                                                                            OUT="$1"
+                                                                                                                            export OUT="$1"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
