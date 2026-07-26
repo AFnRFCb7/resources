@@ -1177,7 +1177,7 @@
                                                                                                                                                                 text =
                                                                                                                                                                     ''
                                                                                                                                                                         # ${ name }
-                                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( v : "$OUT/commands/${ v.index }.sh" ) value ) }
+                                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index }.sh"'' ) value ) }
                                                                                                                                                                     '' ;
                                                                                                                                                             } ;
                                                                                                                                                         in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }.sh"'' ;
