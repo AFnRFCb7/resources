@@ -1285,7 +1285,7 @@
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "/n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            echo 112 > "$OUT/status"
+                                                                                                                            echo 0 > "$OUT/status"
                                                                                                                             "$OUT/execute.sh"
                                                                                                                         '' ;
                                                                                                         }
