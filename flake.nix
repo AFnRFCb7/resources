@@ -1134,7 +1134,9 @@
                                                                         { text = ''check-redis-block <&189'' ; }
                                                                         {
                                                                             expected-standard-error =
-                                                                                ''find: '/home/checker/resources': No such file or directory'' ;
+                                                                                ''
+                                                                                    find: '/home/checker/resources': No such file or directory
+                                                                                '' ;
                                                                                  expected-status = 1 ;
                                                                                  text = ''check-file "$SCRATCH/alpha.yaml"'' ;
                                                                          }
