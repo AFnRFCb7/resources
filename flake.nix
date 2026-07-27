@@ -1161,6 +1161,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         redis-server --port 14012 &
+                                                                                                                                                        sleep 1m
                                                                                                                                                         ## if true ; then exit 0 ; fi
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         # if true ; then exit 0 ; fi
