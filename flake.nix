@@ -1084,7 +1084,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json'' ; }
+                                                                        { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
