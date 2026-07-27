@@ -1027,7 +1027,7 @@
                                                                                                                                     (
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
-                                                                                                                                                name = "check-redis-subscription" ;
+                                                                                                                                                name = "check-redis-message" ;
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
@@ -1084,7 +1084,7 @@
                                                                 pre-actions =
                                                                     [
                                                                         { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
