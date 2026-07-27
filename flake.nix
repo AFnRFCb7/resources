@@ -1281,9 +1281,9 @@
                                                                                                                                                 } ;
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    echo 1723258852938545 1369941427493491 5651365546617915 >&2
+                                                                                                                                                    echo 1723258852938545 5651365546617915 >&2
                                                                                                                                                     ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"
-                                                                                                                                                    echo 1723258852938545 1369941427493491 3697645843629644 >&2
+                                                                                                                                                    echo 1723258852938545 3697645843629644 >&2
                                                                                                                                                 '' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
@@ -1310,7 +1310,7 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
-                                                                                                                            ${ builtins.concatStringsSep "/n" processes }
+                                                                                                                            ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             echo 0 > "$OUT/status"
                                                                                                                             "$OUT/execute.sh"
