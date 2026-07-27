@@ -1027,7 +1027,7 @@
                                                                                                                                     (
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
-                                                                                                                                                name = "cneck-redis-block" ;
+                                                                                                                                                name = "check-redis-block" ;
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
