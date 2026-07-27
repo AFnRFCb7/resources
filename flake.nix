@@ -1084,6 +1084,24 @@
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
+                                                                                                                                    (
+                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "check-file" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        YAML_FILE="$1"
+                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/resources/pids' -o -path '${ resources-directory }/resources/temporary' \) -prune -o -type f,l -print | sort | while IFS= read -r FILE |
+                                                                                                                                                        do
+                                                                                                                                                            CONTENT="$( cat "$FILE" )" || exit 125
+                                                                                                                                                            echo "- name:  $FILE" >> "$YAML_FILE"
+                                                                                                                                                            echo "  content: "$CONTENT" >> "$YAML_FILE"
+                                                                                                                                                        done
+                                                                                                                                                        sha512sum "$YAML_FILE" | cut --characters 1-128
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
                                                                                                                                 ] ;
                                                                                                                             text = value ;
                                                                                                                         } ;
@@ -1106,6 +1124,7 @@
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" <&189'' ; }
                                                                         { text = ''check-redis-block <&189'' ; }
+                                                                        { expected-standard-output = "" ; text = ''check file "$SCRATCH/pre.yaml""'' ;}
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
