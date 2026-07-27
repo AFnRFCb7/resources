@@ -1160,7 +1160,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        SCRATCB="$( mktemp ==directory )"
+                                                                                                                                                        SCRATCH="$( mktemp ==directory )"
                                                                                                                                                         ## if true ; then exit 0 ; fi
                                                                                                                                                         exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         # if true ; then exit 0 ; fi
