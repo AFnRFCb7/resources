@@ -1033,7 +1033,7 @@
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_CHANNEL="$1"
                                                                                                                                                         EXPECTED_TYPE="$2"
-                                                                                                                                                        EXPECTED_PAYLOAD="$( cat )" || exit 148
+                                                                                                                                                        read -r -t 1 -u 145 EXPECTED_PAYLOAD || exit 178
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 167
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
@@ -1072,7 +1072,13 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = "echo 2 | check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189" ; }
+                                                                        {
+                                                                            text =
+                                                                                ''
+                                                                                    exec 145< <( echo 2 )
+                                                                                    check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189 <&145
+                                                                                '' ;
+                                                                        }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
