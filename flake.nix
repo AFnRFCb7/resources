@@ -1301,7 +1301,7 @@
                                                                                                                         ''
                                                                                                                             export OUT="$1"
                                                                                                                             export SCRATCH="$OUT"
-                                                                                                                            mkdir --parments "$OUT/commands"
+                                                                                                                            mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
