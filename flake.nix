@@ -1280,7 +1280,7 @@
                                                                                                                                                     name = "process" ;
                                                                                                                                                     text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
                                                                                                                                                 } ;
-                                                                                                                                            in ''ln --symbolic ${ application }/bin/process "$OUT/processes2/${ name }"'' ;
+                                                                                                                                            in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"'' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
                                                                                                                         let
