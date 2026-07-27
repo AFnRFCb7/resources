@@ -1138,10 +1138,7 @@
                                                                                     find: '/home/checker/resources': No such file or directory
                                                                                  '' ;
                                                                                  expected-status = 1 ;
-                                                                                 text =
-                                                                                    ''
-                                                                                        check-file "$SCRATCH/alpha.yaml"
-                                                                                    '' ;
+                                                                                 text = ''check-file "$SCRATCH/alpha.yaml"'' ;
                                                                          }
                                                                     ] ;
                                                                 pre-actions =
