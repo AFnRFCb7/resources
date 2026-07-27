@@ -1252,24 +1252,24 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        OUT="$( dirname "$0" )" || exit 193
-                                                                                                                                                        export OUT
+                                                                                                                                                        # OUT="$( dirname "$0" )" || exit 193
+                                                                                                                                                        # export OUT
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
-#                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
-#                                                                                                                                                        do
-#                                                                                                                                                            sleep 1s
-#                                                                                                                                                        done
+                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
+                                                                                                                                                        do
+                                                                                                                                                            sleep 1s
+                                                                                                                                                        done
                                                                                                                                                         echo 10 > "$SCRATCH/status"
-#                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
-#                                                                                                                                                        do
-#                                                                                                                                                            echo "$FAILURE" >&2
-#                                                                                                                                                            echo 119 > "$SCRATCH/status"
-#                                                                                                                                                        done
+                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                                                        do
+                                                                                                                                                            echo "$FAILURE" >&2
+                                                                                                                                                            echo 119 > "$SCRATCH/status"
+                                                                                                                                                        done
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
                                                                                                                                                         echo OUT="$OUT"
                                                                                                                                                         echo SCRATCH="$SCRATCH"
@@ -1287,7 +1287,7 @@
                                                                                                                                             root-parameters.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "process" ;
-                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
+                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$out/commands/${ v.index}/command" <&189'' ) value ) ;
                                                                                                                                                 } ;
                                                                                                                                             in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"'' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
