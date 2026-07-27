@@ -1254,6 +1254,7 @@
                                                                                                                                                     ''
                                                                                                                                                         # OUT="$( dirname "$0" )" || exit 193
                                                                                                                                                         # export OUT
+                                                                                                                                                        echo "$OUT"
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
