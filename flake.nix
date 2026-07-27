@@ -1279,7 +1279,12 @@
                                                                                                                                                     name = "process" ;
                                                                                                                                                     text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
                                                                                                                                                 } ;
-                                                                                                                                            in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"'' ;
+                                                                                                                                            in
+                                                                                                                                                ''
+                                                                                                                                                    echo 1723258852938545 1369941427493491 5651365546617915 >&2
+                                                                                                                                                    ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"
+                                                                                                                                                    echo 1723258852938545 1369941427493491 3697645843629644 >&2
+                                                                                                                                                '' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
                                                                                                                         let
