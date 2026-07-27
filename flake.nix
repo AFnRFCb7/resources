@@ -1083,6 +1083,8 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
+                                                                        { text = ''echo 1 > "$SCRATCH/invalid-init-channel.json"'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-init-channel } "$SCRATCH/invalid-init-channel.json" <&189'' ; }
                                                                         { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
                                                                         { text = ''echo 3 > "$SCRATCH/valid-init-channel.json"'' ; }
@@ -1183,12 +1185,6 @@
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                                                        read -r -t 1 -u 189 TYPE <&189 || exit 177
-                                                                                                                                                        echo "TYPE=$TYPE"
-                                                                                                                                                        read -r -t 1 -u 189 CHANNEL <&189 || exit 140
-                                                                                                                                                        echo "CHANNEL=$CHANNEL"
-                                                                                                                                                        read -r -t 1 -u 189 PAYLOAD <&189 || exit 131
-                                                                                                                                                        echo "PAYLOAD=$PAYLOAD"
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                         sleep 10s
 #                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
