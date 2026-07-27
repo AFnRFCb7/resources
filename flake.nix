@@ -1052,7 +1052,7 @@
                                                                                                                                                                     "type" :
                                                                                                                                                                         {
                                                                                                                                                                             "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                            "observed: $OBSERVED_TYPE
+                                                                                                                                                                            "observed" : $OBSERVED_TYPE
                                                                                                                                                                         }
                                                                                                                                                                 }' >&2
                                                                                                                                                             fi
