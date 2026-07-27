@@ -1031,8 +1031,8 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        EXPECTED_CHANNEL="$1"
-                                                                                                                                                        EXPECTED_TYPE="$2"
+                                                                                                                                                        EXPECTED_TYPE="$1"
+                                                                                                                                                        EXPECTED_CHANNEL="$2"
                                                                                                                                                         read -r -t 1 -u 145 EXPECTED_PAYLOAD || exit 178
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 167
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
@@ -1053,6 +1053,16 @@
                                                                                                                                                                         {
                                                                                                                                                                             "expected" : $EXPECTED_TYPE ,
                                                                                                                                                                             "observed" : $OBSERVED_TYPE
+                                                                                                                                                                        } ,
+                                                                                                                                                                    "channel" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_CHANNEL ,
+                                                                                                                                                                            "observed" : $OBSERVED_CHANNEL
+                                                                                                                                                                        } ,
+                                                                                                                                                                    "payload" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_PAYLOAD ,
+                                                                                                                                                                            "observed" : $OBSERVED_PAYLOAD
                                                                                                                                                                         }
                                                                                                                                                                 }' >&2
                                                                                                                                                             fi
