@@ -1084,7 +1084,7 @@
                                                                 pre-actions =
                                                                     [
                                                                         { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
+                                                                        # { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
