@@ -1035,7 +1035,6 @@
                                                                                                                                                         EXPECTED_CHANNEL="$2"
                                                                                                                                                         EXPECTED_PAYLOAD_FILE="$3"
                                                                                                                                                         EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 162
-                                                                                                                                                        read -r -t 1 -u 145 EXPECTED_PAYLOAD || exit 178
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 167
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
@@ -1085,7 +1084,7 @@
                                                                 pre-actions =
                                                                     [
                                                                         { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
-                                                                        # { text = ''check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
