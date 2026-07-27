@@ -1130,10 +1130,7 @@
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" <&189'' ; }
                                                                         { text = ''check-redis-block <&189'' ; }
-                                                                        {
-                                                                            # expected-standard-error = "find: '/home/checker/resources': No such file or directory" ;
-                                                                            expected-status = "1" ;
-                                                                            text = ''check-file "$SCRATCH/alpha.yaml"'' ; }
+                                                                        { expected-standard-error = "find: '/home/checker/resources': No such file or directory" ; expected-status = 1 ; text = ''check-file "$SCRATCH/alpha.yaml"'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
