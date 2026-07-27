@@ -1253,6 +1253,8 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        OUT="$( basename "$0" )" || exit 113
+                                                                                                                                                        export OUT
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
