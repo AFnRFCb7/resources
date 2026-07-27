@@ -1031,7 +1031,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if read -r -t 1s -u 189 TYPE <&189
+                                                                                                                                                        if read -r -t 1 -u 189 TYPE <&189
                                                                                                                                                         then
                                                                                                                                                             jq --null-input --arg TYPE "$TYPE" '{ "type" : $TYPE }'
                                                                                                                                                         fi
