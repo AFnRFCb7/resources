@@ -989,7 +989,7 @@
                                                     {
                                                         actions =
                                                             let
-                                                                _actions = builtins.concatLists [ pre-actions post-actions ] ;
+                                                                _actions = builtins.concatLists [ pre-actions actions post-actions ] ;
                                                                 generator =
                                                                     index :
                                                                         let
