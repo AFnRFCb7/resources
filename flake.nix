@@ -1253,8 +1253,8 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        OUT="$( basename "$0" )" || exit 113
-                                                                                                                                                        export OUT
+                                                                                                                                                        OUT2="$( basename "$0" )" || exit 113
+                                                                                                                                                        export OUT2
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
@@ -1272,7 +1272,7 @@
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
-                                                                                                                                                        echo OUT="$OUT"
+                                                                                                                                                        echo OUT2="$OUT2"
                                                                                                                                                         echo SCRATCH="$SCRATCH"
                                                                                                                                                         exit "$STATUS"
                                                                                                                                                     '' ;
