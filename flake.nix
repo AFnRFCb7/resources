@@ -1253,6 +1253,8 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        SCRATCH="${ mktemp --directory }" || exit 198
+                                                                                                                                                        export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
@@ -1261,13 +1263,14 @@
                                                                                                                                                         do
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
-                                                                                                                                                        echo 0 > "$SCRATCH/status"
+                                                                                                                                                        echo 10 > "$SCRATCH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "$FAILURE" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
+                                                                                                                                                        echo "$SCRATCH"
                                                                                                                                                         exit "$STATUS"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
