@@ -1164,6 +1164,16 @@
                                                                                                                                                         read -r -t 1 -u 189 TYPE || exit 158
                                                                                                                                                         echo "TYPE=$TYPE"
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
+                                                                                                                                                        while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
+                                                                                                                                                        do
+                                                                                                                                                            sleep 1s
+                                                                                                                                                        done
+                                                                                                                                                        echo 0 > "$SCRATCH/status"
+                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                                                        do
+                                                                                                                                                            echo "$FAILURE" >&2
+                                                                                                                                                            echo 119 > "$SCRATCH/status"
+                                                                                                                                                        done
                                                                                                                                                     '' ;
                                                                                                                                             } ;
                                                                                                                             in "${ application }/bin/execute" ;
@@ -1210,16 +1220,6 @@
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
                                                                                                                             if true ; then echo 47 > "$OUT/status" && exit 0 ; fi
                                                                                                                             "$OUT/execute.sh"
-                                                                                                                            while [[ ! -f "$OUT/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
-                                                                                                                            do
-                                                                                                                                sleep 1s
-                                                                                                                            done
-                                                                                                                            echo 0 > "$OUT/status"
-                                                                                                                            find "$OUT/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
-                                                                                                                            do
-                                                                                                                                echo "$FAILURE" >&2
-                                                                                                                                echo 119 > "$OUT/status"
-                                                                                                                            done
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
