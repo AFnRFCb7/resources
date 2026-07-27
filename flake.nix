@@ -1032,8 +1032,8 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_CHANNEL="$1"
-                                                                                                                                                        EXPECTED_PAYLOAD="$2"
-                                                                                                                                                        EXPECTED_TYPE="subscription"
+                                                                                                                                                        EXPECTED_TYPE="$2"
+                                                                                                                                                        EXPECTED_PAYLOAD="$( cat )" || exit 171
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 167
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD || exit 125
@@ -1072,7 +1072,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = "check-redis-subscription ${ root-parameters.invalid-release-channel } 1 <&189" ; }
+                                                                        { text = "echo 2 | check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
