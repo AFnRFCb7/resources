@@ -1071,7 +1071,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { text = "check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189" ; }
+                                                                        { text = "check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } 2 <&189" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
