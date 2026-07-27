@@ -1080,7 +1080,7 @@
                                                             nodes.machine = { ... } : { imports = private ; } ;
                                                             testScript =
                                                                 let
-                                                                    test =
+                                                                    out =
                                                                         let
                                                                             application =
                                                                                 root-parameters.mkDerivation
@@ -1231,7 +1231,7 @@
                                                                                             ] ;
                                                                                         src = ./. ;
                                                                                     } ;
-                                                                            in "${ application }/test.sh" ;
+                                                                            in "${ application }" ;
                                                                     in
                                                                         ''
                                                                             machine.wait_for_unit("multi-user.target")
