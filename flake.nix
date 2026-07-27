@@ -929,9 +929,6 @@
                                                                                     text =
                                                                                         ''
                                                                                             OUT="$1"
-                                                                                            echo 1723258852938545 3217887793929698 >&2
-                                                                                            mkdir --parents "$OUT"
-                                                                                            echo 1723258852938545 5651365546617915 >&2
                                                                                             mkdir --parents "$OUT/init"
                                                                                             ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
                                                                                             mkdir --parents "$OUT/release"
