@@ -1033,6 +1033,8 @@
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_TYPE="$1"
                                                                                                                                                         EXPECTED_CHANNEL="$2"
+                                                                                                                                                        EXPECTED_PAYLOAD_FILE="$3"
+                                                                                                                                                        EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 162
                                                                                                                                                         read -r -t 1 -u 145 EXPECTED_PAYLOAD || exit 178
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 167
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
@@ -1082,27 +1084,8 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        {
-                                                                            text =
-                                                                                ''
-                                                                                    exec 145< <( echo 2 )
-                                                                                    check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189 <&145
-                                                                                '' ;
-                                                                        }
-                                                                        {
-                                                                            text =
-                                                                                ''
-                                                                                    exec 145< <( echo 3 )
-                                                                                    check-redis-subscription subscribe ${ root-parameters.valid-init-channel } <&189 <&145
-                                                                                '' ;
-                                                                        }
-#                                                                        {
-#                                                                            text =
-#                                                                                ''
-#                                                                                    exec 145< <( echo 4 )
-#                                                                                    check-redis-subscription subscribe ${ root-parameters.valid-release-channel } <&189 <&145
-#                                                                                '' ;
-#                                                                        }
+                                                                        { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json'' ; }
+                                                                        { text = "check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json"" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
