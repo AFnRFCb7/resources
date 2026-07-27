@@ -1162,20 +1162,18 @@
                                                                                                                                                     ''
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
-                                                                                                                                                        ## if true ; then exit 0 ; fi
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                                                        ## if true ; then exit 0 ; fi
                                                                                                                                                         read -r -t 1 -u 189 TYPE <&189 || exit 177
-                                                                                                                                                        ## if true ; then exit 0 ; fi
                                                                                                                                                         echo "TYPE=$TYPE"
-                                                                                                                                                        ## if true ; then exit 0 ; fi
+                                                                                                                                                        read -r -t 1 -u 189 CHANNEL <&189 || exit 140
+                                                                                                                                                        echo "CHANNEL=$CHANNEL"
+                                                                                                                                                        read -r -t 1 -u 189 PAYLOAD <&189 || exit 131
+                                                                                                                                                        echo "PAYLOAD=$PAYLOAD"
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
-                                                                                                                                                        ## if true ; then exit 0 ; fi
                                                                                                                                                         while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
                                                                                                                                                         do
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
-                                                                                                                                                        # if true ; then exit 0 ; fi
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "$FAILURE" >&2
