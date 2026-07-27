@@ -1025,6 +1025,21 @@
                                                                                                                             runtimeInputs =
                                                                                                                                 [
                                                                                                                                     (
+                                                                                                                                        root-parameters.writeShellAplication
+                                                                                                                                            {
+                                                                                                                                                name = "cneck-redis-block" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        TIMEOUT="$1"
+                                                                                                                                                        if read -r -t "$TIMEOUT" -u 189 TYPE <&189
+                                                                                                                                                        then
+                                                                                                                                                            jq --null-input --arg TYPE "$TYPE" '{ "type" : $TYPE }'
+                                                                                                                                                        fi
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                    (
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "check-redis-message" ;
@@ -1091,6 +1106,7 @@
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" <&189'' ; }
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" <&189'' ; }
+                                                                        { test = ''check-redis-block 60 <*189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
