@@ -1261,11 +1261,14 @@
                                                                                                                                                         do
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
+                                                                                                                                                        echo 0 > "$SCRATH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "$FAILURE" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
+                                                                                                                                                        STATUS=$( cat "$SCRATCH/status" )" || exit 114
+                                                                                                                                                        exit "$STATUS"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
                                                                                                                             in "${ application }/bin/execute" ;
@@ -1317,7 +1320,7 @@
                                                                                             ] ;
                                                                                         src = ./. ;
                                                                                     } ;
-                                                                            in "${ application }/test.sh" ;
+                                                                            in "${ application }/execute.sh" ;
                                                                     in
                                                                         ''
                                                                             machine.wait_for_unit("multi-user.target")
