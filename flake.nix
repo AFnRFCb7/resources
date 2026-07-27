@@ -1097,8 +1097,8 @@
                                                                                                                                                             CONTENT="$( cat "$FILE" )" || exit 125
                                                                                                                                                             jq \
                                                                                                                                                                 null-input \
-                                                                                                                                                                --arg FILE "$FILE"
-                                                                                                                                                                --arg CONTENT "$CONTENT"
+                                                                                                                                                                --arg FILE "$FILE" \
+                                                                                                                                                                --arg CONTENT "$CONTENT" \
                                                                                                                                                                 '{
                                                                                                                                                                     "file" : $FILE ,
                                                                                                                                                                     "content" : $CONTENT
