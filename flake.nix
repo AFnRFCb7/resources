@@ -1160,10 +1160,9 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        redis-server --port 14012 &
                                                                                                                                                         sleep 1s
                                                                                                                                                         ## if true ; then exit 0 ; fi
-                                                                                                                                                        exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                                                        exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         ## if true ; then exit 0 ; fi
                                                                                                                                                         read -r -t 1 -u 189 TYPE <&189 || exit 177
                                                                                                                                                         ## if true ; then exit 0 ; fi
