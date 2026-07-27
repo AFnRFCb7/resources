@@ -1089,13 +1089,13 @@
                                                                                     check-redis-subscription subscribe ${ root-parameters.invalid-release-channel } <&189 <&145
                                                                                 '' ;
                                                                         }
-#                                                                        {
-#                                                                            text =
-#                                                                                ''
-#                                                                                    exec 145< <( echo 3 )
-#                                                                                    check-redis-subscription subscribe ${ root-parameters.valid-init-channel } <&189 <&145
-#                                                                                '' ;
-#                                                                        }
+                                                                        {
+                                                                            text =
+                                                                                ''
+                                                                                    exec 145< <( echo 3 )
+                                                                                    check-redis-subscription subscribe ${ root-parameters.valid-init-channel } <&189 <&145
+                                                                                '' ;
+                                                                        }
 #                                                                        {
 #                                                                            text =
 #                                                                                ''
