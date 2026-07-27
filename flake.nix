@@ -1092,7 +1092,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         YAML_FILE="$1"
-                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/resources/pids' -o -path '${ resources-directory }/resources/temporary' \) -prune -o -type f,l -print | sort | while IFS= read -r FILE |
+                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/resources/pids' -o -path '${ resources-directory }/resources/temporary' \) -prune -o -type f,l -print | sort | while IFS= read -r FILE
                                                                                                                                                         do
                                                                                                                                                             CONTENT="$( cat "$FILE" )" || exit 125
                                                                                                                                                             echo "- name:  $FILE" >> "$YAML_FILE"
