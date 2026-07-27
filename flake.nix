@@ -1049,8 +1049,12 @@
                                                                                                                                                                 --arg OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
                                                                                                                                                                 --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
                                                                                                                                                                 '{
-
-                                                                                                                                                                }'
+                                                                                                                                                                    "type" :
+                                                                                                                                                                        {
+                                                                                                                                                                            "expected" : $EXPECTED_TYPE ,
+                                                                                                                                                                            "observed: $OBSERVED_TYPE
+                                                                                                                                                                        }
+                                                                                                                                                                }' >&2
                                                                                                                                                             fi
                                                                                                                                                     '' ;
                                                                                                                                             }
