@@ -1221,7 +1221,7 @@
                                                                                                                                                                 done
                                                                                                                                                             done
                                                                                                                                                             mkdir --parent "$SCRATCH/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$OUT/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
+                                                                                                                                                            if timeout ${ timeout }s "$SCRATCH/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             else
