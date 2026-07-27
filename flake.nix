@@ -1143,7 +1143,7 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { critical = false ; text = "whoami" ; }
+                                                                        { critical = false ; text = "ls /home" ; }
                                                                         { critical = false ; text = "env" ; }
                                                                         { text = ''echo 1 > "$SCRATCH/invalid-init-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.invalid-init-channel } "$SCRATCH/invalid-init-channel.json" <&189'' ; }
