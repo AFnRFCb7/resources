@@ -1185,7 +1185,7 @@
                                                                                                                                                             echo ${ timeout } > "$SCRATCH/commands/${ index }/timeout"
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
-                                                                                                                                                                while [[ ! -f "$SCRATCH/command/$FLAG/flag" ]]
+                                                                                                                                                                while [[ ! -f "$SCRATCH/commands/$FLAG/flag" ]]
                                                                                                                                                                 do
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
@@ -1228,10 +1228,10 @@
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                         sleep 20s
-#                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
-#                                                                                                                                                        do
-#                                                                                                                                                            sleep 1s
-#                                                                                                                                                        done
+                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
+                                                                                                                                                        do
+                                                                                                                                                            sleep 1s
+                                                                                                                                                        done
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "$FAILURE" >&2
