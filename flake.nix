@@ -1270,7 +1270,8 @@
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
-                                                                                                                                                        echo "$SCRATCH"
+                                                                                                                                                        echo OUT="$OUT"
+                                                                                                                                                        echo SCRATCH="$SCRATCH"
                                                                                                                                                         exit "$STATUS"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
