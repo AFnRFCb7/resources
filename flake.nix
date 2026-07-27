@@ -989,7 +989,7 @@
                                                     {
                                                         actions =
                                                             let
-                                                                _actions = builtins.concatLists [ pre-actions  post-actions ] ;
+                                                                _actions = builtins.concatLists [ pre-actions post-actions ] ;
                                                                 generator =
                                                                     index :
                                                                         let
@@ -1024,6 +1024,44 @@
                                                                                                                             name = "command" ;
                                                                                                                             runtimeInputs =
                                                                                                                                 [
+                                                                                                                                    (
+                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "check-executable" ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        EXECUTABLE="$1"
+                                                                                                                                                        if [[ ! -x "$EXECUTABLE" ]]
+                                                                                                                                                        then
+                                                                                                                                                            echo NOTEXECUTABLE >&2
+                                                                                                                                                        fi
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
+                                                                                                                                    (
+                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "check-file" ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        YAML_FILE="$1"
+                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
+                                                                                                                                                        do
+                                                                                                                                                            CONTENT="$( cat "$FILE" )" || exit 125
+                                                                                                                                                            jq \
+                                                                                                                                                                null-input \
+                                                                                                                                                                --arg FILE "$FILE" \
+                                                                                                                                                                --arg CONTENT "$CONTENT" \
+                                                                                                                                                                '{
+                                                                                                                                                                    "file" : $FILE ,
+                                                                                                                                                                    "content" : $CONTENT
+                                                                                                                                                                }' | yq eval --prettyPrint >> "$YAML_FILE"
+                                                                                                                                                        done
+                                                                                                                                                        sha512sum "$YAML_FILE" | cut --characters 1-128
+                                                                                                                                                    '' ;
+                                                                                                                                            }
+                                                                                                                                    )
                                                                                                                                     (
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
@@ -1081,30 +1119,6 @@
                                                                                                                                                                         }
                                                                                                                                                                 }' >&2
                                                                                                                                                             fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-file" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        YAML_FILE="$1"
-                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
-                                                                                                                                                        do
-                                                                                                                                                            CONTENT="$( cat "$FILE" )" || exit 125
-                                                                                                                                                            jq \
-                                                                                                                                                                null-input \
-                                                                                                                                                                --arg FILE "$FILE" \
-                                                                                                                                                                --arg CONTENT "$CONTENT" \
-                                                                                                                                                                '{
-                                                                                                                                                                    "file" : $FILE ,
-                                                                                                                                                                    "content" : $CONTENT
-                                                                                                                                                                }' | yq eval --prettyPrint >> "$YAML_FILE"
-                                                                                                                                                        done
-                                                                                                                                                        sha512sum "$YAML_FILE" | cut --characters 1-128
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
