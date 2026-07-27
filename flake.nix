@@ -1250,10 +1250,10 @@
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "execute" ;
-                                                                                                                                                runtimeInputs = [ pkgs.redis ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        SCRATCH="${ mktemp --directory }" || exit 198
+                                                                                                                                                        SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
