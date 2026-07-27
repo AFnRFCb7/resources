@@ -989,7 +989,7 @@
                                                     {
                                                         actions =
                                                             let
-                                                                _actions = builtins.concatLists [ pre-actions  ] ;
+                                                                _actions = builtins.concatLists [ pre-actions  post-actions ] ;
                                                                 generator =
                                                                     index :
                                                                         let
@@ -1118,6 +1118,15 @@
                                                                             in identity action ;
                                                                 post-actions =
                                                                     [
+                                                                        { text = ''check-redis-block <&189'' ; }
+                                                                        {
+                                                                            expected-standard-error =
+                                                                                ''
+                                                                                    find: '/home/checker/resources': No such file or directory
+                                                                                 '' ;
+                                                                                 expected-status = 1 ;
+                                                                                 text = ''check-file "$SCRATCH/alpha.yaml"'' ;
+                                                                         }
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
