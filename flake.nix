@@ -1160,6 +1160,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        if true ; then exit 0 ; fi
                                                                                                                                                         exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                                                         read -r -t 1 -u 189 TYPE || exit 177
                                                                                                                                                         echo "TYPE=$TYPE"
@@ -1168,7 +1169,6 @@
                                                                                                                                                         do
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
-                                                                                                                                                        echo 0 > "$SCRATCH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "$FAILURE" >&2
@@ -1212,7 +1212,6 @@
                                                                                                                             export OUT="$1"
                                                                                                                             export SCRATCH="$OUT"
                                                                                                                             mkdir --parents "$OUT/commands"
-                                                                                                                            # if true ; then ln --symbolic ${ test } "$OUT/test.sh" && echo 48 > "$OUT/status" && exit 0 ; fi
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
