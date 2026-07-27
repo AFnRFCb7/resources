@@ -1305,9 +1305,10 @@
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             ln --symbolic ${ execute } "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
+                                                                                                                            ${ builtins.concatStringsSep "/n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            echo 33 > "$OUT/status"
-                                                                                                                            # "$OUT/execute.sh"
+                                                                                                                            echo 0 > "$OUT/status"
+                                                                                                                            "$OUT/execute.sh"
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
