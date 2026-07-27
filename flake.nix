@@ -1088,6 +1088,7 @@
                                                                         { text = ''echo 3 > "$SCRATCH/valid-init-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" <&189'' ; }
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" <&189'' ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
                                                         nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
