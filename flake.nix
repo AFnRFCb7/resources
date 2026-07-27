@@ -1028,7 +1028,7 @@
                                                                                                                                         root-parameters.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "check-redis-subscription" ;
-                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         EXPECTED_CHANNEL="$1"
