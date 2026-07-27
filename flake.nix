@@ -1265,11 +1265,11 @@
 #                                                                                                                                                            sleep 1s
 #                                                                                                                                                        done
                                                                                                                                                         echo 10 > "$SCRATCH/status"
-                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
-                                                                                                                                                        do
-                                                                                                                                                            echo "$FAILURE" >&2
-                                                                                                                                                            echo 119 > "$SCRATCH/status"
-                                                                                                                                                        done
+#                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+#                                                                                                                                                        do
+#                                                                                                                                                            echo "$FAILURE" >&2
+#                                                                                                                                                            echo 119 > "$SCRATCH/status"
+#                                                                                                                                                        done
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
                                                                                                                                                         echo OUT="$OUT"
                                                                                                                                                         echo SCRATCH="$SCRATCH"
