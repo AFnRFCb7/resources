@@ -1161,7 +1161,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                                                        read -r -t 1 -u 189 TYPE || exit 158
+                                                                                                                                                        read -r -t 1 -u 189 TYPE || exit 177
                                                                                                                                                         echo "TYPE=$TYPE"
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
                                                                                                                                                         while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
