@@ -325,7 +325,7 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         echo 1723258852938545 7174165218615388 >&2
                                                                         mkdir --parents ${ resources-directory }
-                                                                        echo 1723258852938545 7927415862128472 >2&
+                                                                        echo 1723258852938545 7927415862128472 >&2
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         echo 1723258852938545 6212216562738761 >&2
                                                                         flock -s 157
@@ -361,6 +361,7 @@
                                                                         else
                                                                             echo 1723258852938545 6721696452663537 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
+                                                                            echo 1723258852938545 4222524774531742 >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -374,7 +375,9 @@
                                                                                     "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
+                                                                            echo 1723258852938545 3783418127778219 >&2
                                                                         fi
+                                                                        echo 1723258852938545 9387748418659483 >&2
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
