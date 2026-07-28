@@ -340,7 +340,9 @@
                                                                         then
                                                                             echo 1723258852938545 6191927895616119 >&2
                                                                             STANDARD_INPUT="$( cat )" || exit 103
+                                                                            echo 1723258852938545 2382127235828588 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                            echo 1723258852938545 7117965132162246 >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -358,6 +360,7 @@
                                                                                     "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
+                                                                            echo 1723258852938545 7623338399713778 >&2
                                                                         else
                                                                             echo 1723258852938545 6721696452663537 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
