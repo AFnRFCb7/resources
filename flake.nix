@@ -1073,7 +1073,7 @@
                                                                                                                                                             STRIPPED_PAYLOAD="$OBSERVED_PAYLOAD"
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
                                                                                                                                                         then
-                                                                                                                                                            EXPECTED_PAYLOAD="$( cat $EXPECTED_PAYLOAD_FILE" )" || exit 182
+                                                                                                                                                            EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 182
                                                                                                                                                             STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
                                                                                                                                                         else
                                                                                                                                                             exit 151
