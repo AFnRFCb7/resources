@@ -1064,16 +1064,15 @@
                                                                                                                                                         EXPECTED_CHANNEL="$2"
                                                                                                                                                         EXPECTED_PAYLOAD_FILE="$3"
                                                                                                                                                         EXPECTED_PAYLOAD_TYPE="$4"
-                                                                                                                                                        EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 162
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 157
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
                                                                                                                                                         if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
                                                                                                                                                         then
-                                                                                                                                                            STRIPPED_PAYLOAD_TYPE="$OBSERVED_PAYLOAD"
+                                                                                                                                                            STRIPPED_PAYLOAD="$OBSERVED_PAYLOAD_FILE"
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
                                                                                                                                                         then
-                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
+                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' "$OBSERVED_PAYLOAD_FILE" )" || exit 113
                                                                                                                                                         else
                                                                                                                                                             exit 151
                                                                                                                                                         fi
