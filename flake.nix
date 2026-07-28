@@ -212,11 +212,6 @@
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             "${ resources-directory }/release/$INDEX" &
-                                                                        elif [[ "$TYPE" == "message" ]]
-                                                                        then
-                                                                        elif [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-                                                                        then
-                                                                        else
                                                                         fi
                                                                     done
                                                                 '' ;
