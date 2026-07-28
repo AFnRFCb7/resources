@@ -1273,7 +1273,7 @@
                                                                                                                                                         do
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
-                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
+                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         echo 10 > "$SCRATCH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                         do
