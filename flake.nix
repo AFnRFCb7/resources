@@ -1238,7 +1238,7 @@
                                                                                                                                                 ''
                                                                                                                                                     mkdir --parents "$OUT/commands/${ index }"
                                                                                                                                                     sed -e "s#\$OUT#$OUT#" -e "w$OUT/commands/${ index }/command" ${ application }/bin/command
-                                                                                                                                                    chmod 0500 "$OUT/commands/${ index }/command"
+                                                                                                                                                    chmod 0555 "$OUT/commands/${ index }/command"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
                                                                                                                     execute =
@@ -1254,10 +1254,9 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        # OUT="$( dirname "$0" )" || exit 193
-                                                                                                                                                        # export OUT
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
+                                                                                                                                                        sleep 10
                                                                                                                                                         redis-server --port 14012 &
                                                                                                                                                         sleep 1s
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
@@ -1294,7 +1293,7 @@
                                                                                                                                             in
                                                                                                                                                 ''
                                                                                                                                                     sed -e "s#\$OUT#$OUT#" -e "w$OUT/processes/${ name }" ${ application }/bin/process
-                                                                                                                                                    chmod 0500 "$OUT/processes/${ name }"
+                                                                                                                                                    chmod 0555 "$OUT/processes/${ name }"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
@@ -1320,7 +1319,7 @@
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
                                                                                                                             sed -e "s#\$OUT#$OUT#" e "w$OUT/execute.sh" ${ execute }
-                                                                                                                            chmod 0500 "$OUT/execute.sh"
+                                                                                                                            chmod 0555 "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
