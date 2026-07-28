@@ -1262,7 +1262,7 @@
                                                                                                                                                         sleep 10
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         # redis-server --port 14012 &
-                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
+                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         sleep 1s
                                                                                                                                                         if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
