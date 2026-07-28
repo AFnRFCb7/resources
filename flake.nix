@@ -1273,13 +1273,13 @@
                                                                                                                                                             sleep 1s
                                                                                                                                                         done
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        echo 10 > "$SCRATCH/status"
+                                                                                                                                                        echo 0 > "$SCRATCH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
                                                                                                                                                         do
                                                                                                                                                             echo "FAILURE:  $FAILURE" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         echo OUT="$OUT"
