@@ -1274,9 +1274,9 @@
                                                                                                                                                         done
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         echo 10 > "$SCRATCH/status"
-                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
                                                                                                                                                         do
-                                                                                                                                                            echo "$FAILURE" >&2
+                                                                                                                                                            echo "FAILURE:  $FAILURE" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
