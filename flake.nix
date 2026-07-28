@@ -353,7 +353,7 @@
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             jq \
-                                                                                '{Q
+                                                                                '{
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
