@@ -321,9 +321,9 @@
                                                                 runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 1723258852938545 7266697529476679 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 157> ${ resources-directory }/locks/clean
+                                                                        exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
