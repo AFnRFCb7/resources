@@ -1236,9 +1236,8 @@
                                                                                                                                                 } ;
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    mkdir --parents "$OUT/commands/${ index }"
-                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/commands/${ index }/command" ${ application }/bin/command
-                                                                                                                                                    chmod 0555 "$OUT/commands/${ index }/command"
+                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/commands/${ index }" ${ application }/bin/command
+                                                                                                                                                    chmod 0555 "$OUT/commands/${ index }"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
                                                                                                                     execute =
@@ -1301,7 +1300,7 @@
                                                                                                                                             root-parameters.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "process" ;
-                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
+                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}" <&189'' ) value ) ;
                                                                                                                                                 } ;
                                                                                                                                             in
                                                                                                                                                 ''
