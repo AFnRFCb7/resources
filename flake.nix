@@ -1319,7 +1319,8 @@
                                                                                                                             export SCRATCH="$OUT"
                                                                                                                             mkdir --parents "$OUT/commands"
                                                                                                                             ${ builtins.concatStringsSep "\n" commands }
-                                                                                                                            ln --symbolic ${ execute } "$OUT/execute.sh"
+                                                                                                                            sed -w "s#\$OUT#$OUT#" e "w$OUT/execute.sh"
+                                                                                                                            chmod 0500 "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
                                                                                                                             ln --symbolic ${ test } "$OUT/test.sh"
