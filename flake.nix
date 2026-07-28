@@ -325,14 +325,20 @@
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         echo 1723258852938545 7174165218615388 >&2
                                                                         mkdir --parents ${ resources-directory }
-                                                                        echo 1723258852938545 7927415862128472 >&
+                                                                        echo 1723258852938545 7927415862128472 >2&
                                                                         exec 157> ${ resources-directory }/clean.lock
+                                                                        echo 1723258852938545 6212216562738761 >&2
                                                                         flock -s 157
+                                                                        echo 1723258852938545 3479861621732271 >&2
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
+                                                                        echo 1723258852938545 1877465892888949 >&2
                                                                         export INPUT_FILE
+                                                                        echo 1723258852938545 4451545852288394 >&2
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
+                                                                        echo 1723258852938545 3183564253993116 >&2
                                                                         if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
+                                                                            echo 1723258852938545 6191927895616119 >&2
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                             jq \
@@ -353,6 +359,7 @@
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
                                                                         else
+                                                                            echo 1723258852938545 6721696452663537 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                             jq \
                                                                                 --null-input \
