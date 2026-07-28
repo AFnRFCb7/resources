@@ -1043,7 +1043,7 @@
                                                                                                                                                 name = "check-file-empty" ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if [[ -e ${ resources-directory } ]]
+                                                                                                                                                        if [[ ! -e ${ resources-directory } ]]
                                                                                                                                                         then
                                                                                                                                                             echo Not Empty
                                                                                                                                                         fi
