@@ -1071,32 +1071,33 @@
                                                                                                                                                         then
                                                                                                                                                             EXPECTED_PAYLOAD="$EXPECTED_PAYLOAD_FILE"
                                                                                                                                                             if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                            # shellcheck disable=SC2208,SC2016
-                                                                                                                                                            jq \
-                                                                                                                                                                --null-input \
-                                                                                                                                                                --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
-                                                                                                                                                                --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
-                                                                                                                                                                --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
-                                                                                                                                                                --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                                --argjson OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
-                                                                                                                                                                --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
-                                                                                                                                                                '{
-                                                                                                                                                                    "type" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                            "observed" : $OBSERVED_TYPE
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "channel" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                            "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "payload" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                            "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                        }
-                                                                                                                                                                }' >&2
+                                                                                                                                                            then
+                                                                                                                                                                # shellcheck disable=SC2208,SC2016
+                                                                                                                                                                jq \
+                                                                                                                                                                    --null-input \
+                                                                                                                                                                    --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
+                                                                                                                                                                    --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
+                                                                                                                                                                    --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
+                                                                                                                                                                    --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
+                                                                                                                                                                    --argjson OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
+                                                                                                                                                                    --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
+                                                                                                                                                                    '{
+                                                                                                                                                                        "type" :
+                                                                                                                                                                            {
+                                                                                                                                                                                "expected" : $EXPECTED_TYPE ,
+                                                                                                                                                                                "observed" : $OBSERVED_TYPE
+                                                                                                                                                                            } ,
+                                                                                                                                                                        "channel" :
+                                                                                                                                                                            {
+                                                                                                                                                                                "expected" : $EXPECTED_CHANNEL ,
+                                                                                                                                                                                "observed" : $OBSERVED_CHANNEL
+                                                                                                                                                                            } ,
+                                                                                                                                                                        "payload" :
+                                                                                                                                                                            {
+                                                                                                                                                                                "expected" : $EXPECTED_PAYLOAD ,
+                                                                                                                                                                                "observed" : $OBSERVED_PAYLOAD
+                                                                                                                                                                            }
+                                                                                                                                                                    }' >&2
                                                                                                                                                             fi
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
                                                                                                                                                         then
