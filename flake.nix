@@ -1067,7 +1067,8 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 157
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
-                                                                                                                                                        if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
+                                                                                                                                                        STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
+                                                                                                                                                        if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" != "$STRIPPED_PAYLOAD" ]]
                                                                                                                                                         then
                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                             jq \
@@ -1076,7 +1077,7 @@
                                                                                                                                                                 --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
                                                                                                                                                                 --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
                                                                                                                                                                 --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                                --argjson OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
+                                                                                                                                                                --argjson OBSERVED_PAYLOAD "$STRIPPED_PAYLOAD" \
                                                                                                                                                                 --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
                                                                                                                                                                 '{
                                                                                                                                                                     "type" :
