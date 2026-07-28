@@ -38,11 +38,9 @@
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                             JSON="$( jq --compact-output "." )" || exit 108
                                                             # shellcheck disable=SC2129
-                                                            echo 1723258852938545 2896329455296975 ABOUT TO LOG CHANNEL "$CHANNEL" >> /tmp/DEBUG
                                                             # shellcheck disable=SC2129
                                                             redis-cli PUBLISH "$CHANNEL" "$JSON" >> /tmp/DEBUG 2>&1
                                                             # shellcheck disable=SC2129
-                                                            echo 1723258852938545 9789568814716897 JUST LOGGED >> /tmp/DEBUG
                                                         '' ;
                                                 } ;
                                                     log2 =
@@ -122,9 +120,7 @@
                                                                         exec 143> ${ resources-directory }/locks/log
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
-                                                                        echo 1723258852938545 7759212739822332 ABOUT TO LOG >> /tmp/DEBUG
                                                                         log
-                                                                        echo 1723258852938545 1444874378897782 JUST LOGGED >> /tmp/DEBUG
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 123
                                                                         exit "$STATUS"
                                                                     '' ;
@@ -209,27 +205,18 @@
                                                                 ''
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                     do
-                                                                        echo 1723258852938545 6754313451231132 ABOUT TO RELEASE CHANNEL ${ root-parameters.valid-init-channel } >> /tmp/DEBUG
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
-                                                                        echo 1723258852938545 6657339348924315 TYPE "$TYPE" >> /tmp/DEBUG
                                                                         read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
-                                                                        echo 1723258852938545 7753862861752476 CHANNEL "$CHANNEL" >> /tmp/DEBUG
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
-                                                                        echo 1723258852938545 2691729123958772 PAYLOAD "$PAYLOAD" >> /tmp/DEBUG
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
-                                                                            echo 1723258852938545 7414664867233567 >> /tmp/DEBUG
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            echo 1723258852938545 6151465728584331 INDEX "$INDEX" >> /tmp/DEBUG
                                                                             "${ resources-directory }/release/$INDEX" &
                                                                         elif [[ "$TYPE" == "message" ]]
                                                                         then
-                                                                            echo 1723258852938545 1172535549115813 >> /tmp/DEBUG
                                                                         elif [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
-                                                                            echo 1723258852938545 7592232811763577 >> /tmp/DEBUG
                                                                         else
-                                                                            echo 1723258852938545 1369941427493491 6393762319377488 >> /tmp/DEBUG
                                                                         fi
                                                                     done
                                                                 '' ;
@@ -264,21 +251,14 @@
                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
                                                                                                         text =
                                                                                                             ''
-                                                                                                                echo 1723258852938545 1696474268884939 BEFORE SUBSCRIBE ${ root-parameters.valid-init-channel } >> /debug
                                                                                                                 stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                                                                 do
-                                                                                                                    echo 1723258852938545 8162197372427451 >> /debug
                                                                                                                     read -r TYPE || { echo "TYPE _EOF" >> /debug ; break; }
-                                                                                                                    echo 1723258852938545 9955514126333415 "TYPE=[$TYPE]" >> /debug
                                                                                                                     read -r CHANNEL || { echo "CHANNEL _EOF" >> /debug ; break; }
-                                                                                                                    echo 1723258852938545 6753912272768186 "CHANNEL=[$CHANNEL]" >> /debug
                                                                                                                     read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /debug ; break; }
-                                                                                                                    echo 1723258852938545 2757818743775836 "PAYLOAD=[$PAYLOAD]" >> /debug
                                                                                                                     if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                                                                     then
-                                                                                                                        echo 1723258852938545 5768223659767816 "CONDITION" >> /debug
                                                                                                                         INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        echo 1723258852938545 9578992134586334 INDEX "$INDEX" >> /tmp/DEBUG
                                                                                                                         "/release/$INDEX" &
                                                                                                                     else
                                                                                                                         echo "NO_CONDITION" >> /debug
@@ -293,13 +273,10 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    echo 1723258852938545 1139694771536952 BEGIN RELEASE SERVICE >> /tmp/DEBUG
                                                                     while [[ ! -d ${ resources-directory }/release ]]
                                                                     do
-                                                                        echo 1723258852938545 5342923298547269 WAITING FOR RELEASE >> /tmp/DEBUG
                                                                         sleep 1s
                                                                     done
-                                                                    echo 1723258852938545 7259827474956523 OBTAINED RELEASE >> /tmp/DEBUG
                                                                     release
                                                                 '' ;
                                                         } ;
@@ -321,29 +298,18 @@
                                                                 runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        echo 1723258852938545 7266697529476679 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
-                                                                        echo 1723258852938545 7174165218615388 >&2
                                                                         mkdir --parents ${ resources-directory }
-                                                                        echo 1723258852938545 7927415862128472 >&2
                                                                         exec 157> ${ resources-directory }/clean.lock
-                                                                        echo 1723258852938545 6212216562738761 >&2
                                                                         flock -s 157
-                                                                        echo 1723258852938545 3479861621732271 >&2
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
-                                                                        echo 1723258852938545 1877465892888949 >&2
                                                                         export INPUT_FILE
-                                                                        echo 1723258852938545 4451545852288394 >&2
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
-                                                                        echo 1723258852938545 3183564253993116 >&2
                                                                         if [[ -t 0 ]]
                                                                         # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
-                                                                            echo 1723258852938545 6191927895616119 >&2
                                                                             STANDARD_INPUT="$( cat )" || exit 103
-                                                                            echo 1723258852938545 2382127235828588 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
-                                                                            echo 1723258852938545 7117965132162246 >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -361,11 +327,8 @@
                                                                                     "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
-                                                                            echo 1723258852938545 7623338399713778 >&2
                                                                         else
-                                                                            echo 1723258852938545 6721696452663537 >&2
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
-                                                                            echo 1723258852938545 4222524774531742 >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -379,19 +342,12 @@
                                                                                     "temporary" : $TEMPORARY
                                                                                 }' \
                                                                                 -- "$@" > "$INPUT_FILE"
-                                                                            echo 1723258852938545 3783418127778219 >&2
                                                                         fi
-                                                                        echo 1723258852938545 9387748418659483 >&2
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                        echo 1723258852938545 8449632885445124 >&2
                                                                         export OUTPUT_FILE
-                                                                        echo 1723258852938545 6464886316791683 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
-                                                                        echo 1723258852938545 5528629196393928 >&2
                                                                         mkdir --parents ${ resources-directory }
-                                                                        echo 1723258852938545 1215539951116358 >&2
                                                                         init
-                                                                        echo 1723258852938545 7968745499339675 >&2
                                                                         CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
@@ -403,7 +359,6 @@
                                                                         then
                                                                             # FINDME SUCCESS 2
                                                                             mkdir --parents ${ resources-directory }/release
-                                                                            echo 1723258852938545 7684415981422733 LINKING "${ resources-directory }/release/$INDEX" >> /tmp/DEBUG
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             jq \
                                                                                 '{
@@ -813,21 +768,17 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    echo 1723258852938545 8211446413926155 >> /tmp/DEBUG
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     mkdir --parents ${ resources-directory }/locks
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 8412321143216253 >> /tmp/DEBUG
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 9633617651273146 PID "$PID" "$$" "$PPID" >> /tmp/DEBUG
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 5977325797452114 >> /tmp/DEBUG
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
