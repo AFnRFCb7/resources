@@ -1281,6 +1281,7 @@
                                                                                                                                                         done
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
+                                                                                                                                                        echo STATUS="$STATUS"
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
                                                                                                                                                         echo OUT="$OUT"
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
