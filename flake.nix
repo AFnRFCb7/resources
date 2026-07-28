@@ -1256,12 +1256,19 @@
                                                                                                                                                     ''
                                                                                                                                                         if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         export SCRATCH
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         sleep 10
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         redis-server --port 14012 &
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         sleep 1s
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         exec 189< <( redis-cli -p 14012 SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
 #                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
 #                                                                                                                                                        do
 #                                                                                                                                                            sleep 1s
@@ -1272,9 +1279,13 @@
                                                                                                                                                             echo "$FAILURE" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         echo OUT="$OUT"
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         echo SCRATCH="$SCRATCH"
+                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         exit "$STATUS"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
