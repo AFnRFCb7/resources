@@ -1097,6 +1097,7 @@
                                                                                                                                                                             "observed" : $OBSERVED_PAYLOAD
                                                                                                                                                                         }
                                                                                                                                                                 }' >&2
+                                                                                                                                                            fi
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
                                                                                                                                                         then
                                                                                                                                                             EXPECTED_PAYLOAD="$( jq "." "$EXPECTED_PAYLOAD_FILE" )" || exit 121
