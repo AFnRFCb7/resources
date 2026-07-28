@@ -1254,6 +1254,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        if true ; then exit 10 ; fi
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         sleep 10
@@ -1323,9 +1324,6 @@
                                                                                                                             chmod 0555 "$OUT/execute.sh"
                                                                                                                             mkdir --parents "$OUT/processes"
                                                                                                                             ${ builtins.concatStringsSep "\n" processes }
-                                                                                                                            ln --symbolic ${ test } "$OUT/test.sh"
-                                                                                                                            echo 10 > "$OUT/status"
-                                                                                                                            # "$OUT/execute.sh"
                                                                                                                         '' ;
                                                                                                         }
                                                                                                 )
