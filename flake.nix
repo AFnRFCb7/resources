@@ -1253,7 +1253,7 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         # OUT="$( dirname "$0" )" || exit 193
-                                                                                                                                                        export OUT
+                                                                                                                                                        # export OUT
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         export SCRATCH
                                                                                                                                                         redis-server --port 14012 &
@@ -1289,7 +1289,11 @@
                                                                                                                                                     name = "process" ;
                                                                                                                                                     text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}/command" <&189'' ) value ) ;
                                                                                                                                                 } ;
-                                                                                                                                            in ''ln --symbolic ${ application }/bin/process "$OUT/processes/${ name }"'' ;
+                                                                                                                                            in
+                                                                                                                                                ''
+                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/processes/${ name }" ${ application }/bin/process
+                                                                                                                                                    chmod 0500 "$OUT/processes/${ name }"
+                                                                                                                                                '' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
                                                                                                                     test =
                                                                                                                         let
