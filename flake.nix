@@ -1048,7 +1048,7 @@
                                                                                                                                                     ''
                                                                                                                                                         if read -r -t 1 -u 189 TYPE <&189
                                                                                                                                                         then
-                                                                                                                                                            jq --null-input --arg TYPE "$TYPE" '{ "type" : $TYPE }'
+                                                                                                                                                            jq --null-input --arg TYPE "$TYPE" '{ "type" : $TYPE }' >&2
                                                                                                                                                         fi
                                                                                                                                                     '' ;
                                                                                                                                             }
