@@ -353,8 +353,7 @@
                                                                             mkdir --parents ${ resources-directory }/release
                                                                             ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                             jq \
-                                                                                '{
-                                                                                    "WTF" : "9277484221134793" ,
+                                                                                '{Q
                                                                                     "arguments" : .arguments ,
                                                                                     "index" : .index ,
                                                                                     "inputs" : .inputs ,
