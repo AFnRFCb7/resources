@@ -1032,7 +1032,7 @@
                                                                                                                                                         EXECUTABLE="$1"
                                                                                                                                                         if [[ ! -x "$EXECUTABLE" ]]
                                                                                                                                                         then
-                                                                                                                                                            echo NOTEXECUTABLE >&2
+                                                                                                                                                            echo NOT EXECUTABLE >&2
                                                                                                                                                         fi
                                                                                                                                                     '' ;
                                                                                                                                             }
