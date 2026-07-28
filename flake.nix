@@ -379,10 +379,15 @@
                                                                         fi
                                                                         echo 1723258852938545 9387748418659483 >&2
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                        echo 1723258852938545 8449632885445124 >&2
                                                                         export OUTPUT_FILE
+                                                                        echo 1723258852938545 6464886316791683 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
+                                                                        echo 1723258852938545 5528629196393928 >&2
                                                                         mkdir --parents ${ resources-directory }
+                                                                        echo 1723258852938545 1215539951116358 >&2
                                                                         init
+                                                                        echo 1723258852938545 7968745499339675 >&2
                                                                         CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
