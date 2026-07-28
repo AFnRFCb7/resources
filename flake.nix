@@ -323,6 +323,7 @@
                                                                     ''
                                                                         echo 1723258852938545 7266697529476679 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
+                                                                        mkdur --parents ${ resources-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
