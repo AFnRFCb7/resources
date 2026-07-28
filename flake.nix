@@ -336,7 +336,7 @@
                                                                         echo 1723258852938545 4451545852288394 >&2
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         echo 1723258852938545 3183564253993116 >&2
-                                                                        if [[ -t 0 ]]
+                                                                        if [[ ! -t 0 ]]
                                                                         # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
                                                                             echo 1723258852938545 6191927895616119 >&2
