@@ -37,10 +37,7 @@
                                                         ''
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                             JSON="$( jq --compact-output "." )" || exit 108
-                                                            # shellcheck disable=SC2129
-                                                            # shellcheck disable=SC2129
                                                             redis-cli PUBLISH "$CHANNEL" "$JSON" >> /tmp/DEBUG 2>&1
-                                                            # shellcheck disable=SC2129
                                                         '' ;
                                                 } ;
                                                     log2 =
