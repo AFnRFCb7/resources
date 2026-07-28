@@ -1063,11 +1063,20 @@
                                                                                                                                                         EXPECTED_TYPE="$1"
                                                                                                                                                         EXPECTED_CHANNEL="$2"
                                                                                                                                                         EXPECTED_PAYLOAD_FILE="$3"
+                                                                                                                                                        EXPECTED_PAYLOAD_TYPE="$4"
                                                                                                                                                         EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 162
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 157
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
-                                                                                                                                                        STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
+                                                                                                                                                        if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
+                                                                                                                                                        then
+                                                                                                                                                            STRIPPED_PAYLOAD_TYPE="$OBSERVED_PAYLOAD"
+                                                                                                                                                        elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
+                                                                                                                                                        then
+                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
+                                                                                                                                                        else
+                                                                                                                                                            exit 151
+                                                                                                                                                        fi
                                                                                                                                                         if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" != "$STRIPPED_PAYLOAD" ]]
                                                                                                                                                         then
                                                                                                                                                             # shellcheck disable=SC2208,SC2016
@@ -1115,16 +1124,14 @@
                                                                     ] ;
                                                                 pre-actions =
                                                                     [
-                                                                        { critical = false ; text = "ls /home" ; }
-                                                                        { critical = false ; text = "env" ; }
                                                                         { text = ''echo 1 > "$SCRATCH/invalid-init-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-init-channel } "$SCRATCH/invalid-init-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-init-channel } "$SCRATCH/invalid-init-channel.json" number <&189'' ; }
                                                                         { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" number <&189'' ; }
                                                                         { text = ''echo 3 > "$SCRATCH/valid-init-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" number <&189'' ; }
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" <&189'' ; }
+                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" number <&189'' ; }
                                                                         { text = ''check-redis-block <&189'' ; }
                                                                         { text = "check-file-empty" ; }
                                                                     ] ;
