@@ -1283,7 +1283,7 @@
                                                                                                                                                         STATUS="$( cat "$SCRATCH/status" )" || exit 114
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
                                                                                                                                                         echo OUT="$OUT"
-                                                                                                                                                        if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
+                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
                                                                                                                                                         echo SCRATCH="$SCRATCH"
                                                                                                                                                         if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
                                                                                                                                                         exit "$STATUS"
