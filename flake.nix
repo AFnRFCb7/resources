@@ -1188,6 +1188,7 @@
                                                                                                             runtimeInputs =
                                                                                                                 [
                                                                                                                     pkgs.findutils
+                                                                                                                    pkgs.gnused
                                                                                                                     pkgs.redis
                                                                                                                 ] ;
                                                                                                             text =
@@ -1236,7 +1237,8 @@
                                                                                                                                             in
                                                                                                                                                 ''
                                                                                                                                                     mkdir --parents "$OUT/commands/${ index }"
-                                                                                                                                                    ln --symbolic ${ application }/bin/command "$OUT/commands/${ index }/command"
+                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/commands/${ index }/command" /home/emory/resources/mounts/0817428816951530/repository/resource/flake.nix
+                                                                                                                                                    chmod 0500 $OUT/commands/${ index }/command
                                                                                                                                                 '' ;
                                                                                                                             in builtins.map mapper check-parameters.actions ;
                                                                                                                     execute =
