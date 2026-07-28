@@ -1261,7 +1261,7 @@
                                                                                                                                                         ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         sleep 10
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        redis-server --port 14012 &
+                                                                                                                                                        # redis-server --port 14012 &
                                                                                                                                                         if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         sleep 1s
                                                                                                                                                         if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
