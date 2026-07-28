@@ -1069,10 +1069,10 @@
                                                                                                                                                         read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
                                                                                                                                                         if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
                                                                                                                                                         then
-                                                                                                                                                            STRIPPED_PAYLOAD="$OBSERVED_PAYLOAD_FILE"
+                                                                                                                                                            STRIPPED_PAYLOAD="$OBSERVED_PAYLOAD"
                                                                                                                                                         elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
                                                                                                                                                         then
-                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' "$OBSERVED_PAYLOAD_FILE" )" || exit 113
+                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
                                                                                                                                                         else
                                                                                                                                                             exit 151
                                                                                                                                                         fi
