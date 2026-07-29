@@ -1278,7 +1278,7 @@
                                                                                                                                                             touch "$SCRATCH/commands/${ index }/flag"
                                                                                                                                                             if "${ critical }" && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
                                                                                                                                                             then
-                                                                                                                                                                touch "$SCRATCH/commands/${ index }/failure"
+                                                                                                                                                                echo "${ uuid } > "$SCRATCH/commands/${ index }/failure"
                                                                                                                                                             fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
@@ -1324,7 +1324,8 @@
                                                                                                                                                         echo 0 > "$SCRATCH/status"
                                                                                                                                                         find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
                                                                                                                                                         do
-                                                                                                                                                            echo "FAILURE:  $FAILURE" >&2
+                                                                                                                                                            REASON="$( cat "$FAILURE" )" || exit 192
+                                                                                                                                                            echo "FAILURE:  $REASON" >&2
                                                                                                                                                             echo 119 > "$SCRATCH/status"
                                                                                                                                                         done
                                                                                                                                                         # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
