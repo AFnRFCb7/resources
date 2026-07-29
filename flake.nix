@@ -191,6 +191,63 @@
                                                                 '' ;
                                                         } ;
                                                 in "${ application }/bin/clean" ;
+                                        log =
+                                            let
+                                                application =
+                                                    writeShellApplication
+                                                        {
+                                                            name = "log" ;
+                                                            runtimeInputs =
+                                                                [
+                                                                    (
+                                                                        buildFHSUserEnv
+                                                                            {
+                                                                                extraBwrapArgs = [ "--bind" "${ resources-directory }/log.yaml" "/log" ] ;
+                                                                                name = "log" ;
+                                                                                runScript = "log" ;
+                                                                                targetPkgs =
+                                                                                    pkgs :
+                                                                                        [
+                                                                                            (
+                                                                                                pkgs.writeShellApplication
+                                                                                                    {
+                                                                                                        name = "log" ;
+                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis pkgs.yq-go ] ;
+                                                                                                        text =
+                                                                                                            ''
+                                                                                                                exec 170< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
+                                                                                                                while true
+                                                                                                                do
+                                                                                                                    read -r -u 170 TYPE || break
+                                                                                                                    read -r -u 170 CHANNEL || break
+                                                                                                                    read -r -u 170 PAYLOAD || break
+                                                                                                                    jq \
+                                                                                                                        --null-input \
+                                                                                                                        --arg TYPE "$TYPE" \
+                                                                                                                        --arg CHANNEL "$CHANNEL" \
+                                                                                                                        --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                        '{
+                                                                                                                            "type" : $TYPE ,
+                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                        }' | yq eval --prettyPrint '[.]' >> /log
+                                                                                                                done\
+
+                                                                                                            '' ;
+                                                                                                    } ;
+                                                                                            )
+                                                                                        ] ;
+                                                                            }
+                                                                    )
+                                                                ] ;
+                                                            text =
+                                                                ''
+                                                                    mkdir --parents ${ resources-directory }
+                                                                    touch ${ resources-directory }/log.yaml
+                                                                    log
+                                                                '' ;
+                                                        } ;
+                                                in "${ application }/bin/log" ;
                                         release =
                                             let
                                                 application =
