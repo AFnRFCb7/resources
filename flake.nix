@@ -1075,6 +1075,7 @@
                                         {
                                             actions ,
                                             gc-roots-directory ,
+                                            machines ,
                                             nixosTest ,
                                             pkgs ,
                                             private ,
@@ -1354,7 +1355,7 @@
                                                     check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
-                                                            nodes.machine = { ... } : { imports = private ; } ;
+                                                            nodes = machines // { machine = { ... } : { imports = private ; } ; } ;
                                                             testScript =
                                                                 let
                                                                     test =
