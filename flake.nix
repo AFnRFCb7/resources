@@ -231,8 +231,7 @@
                                                                                                                             "channel" : $CHANNEL ,
                                                                                                                             "payload" : $PAYLOAD
                                                                                                                         }' | yq eval --prettyPrint '[.]' >> /log
-                                                                                                                done\
-
+                                                                                                                done
                                                                                                             '' ;
                                                                                                     } ;
                                                                                             )
