@@ -451,6 +451,7 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                        echo 1723258852938545 1369941427493491 7936928764981727 STATUS="$STATUS" STANDARD_ERROR "$STANDARD_ERROR" >&2
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
@@ -484,8 +485,7 @@
                                                                                     "targets" : .targets ,
                                                                                     "text" : .text ,
                                                                                     "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
+                                                                                }' "$OUTPUT_FILE" | log
                                                                         elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                         then
                                                                             jq \
