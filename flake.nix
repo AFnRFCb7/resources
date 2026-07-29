@@ -297,13 +297,11 @@
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
-                                                                        echo 1723258852938545 6698591628534872 >&2
                                                                         if [[ -t 0 ]]
                                                                         # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
-                                                                            echo 1723258852938545 2764565176164825 "$ORIGINATOR_PID" >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -326,7 +324,6 @@
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                            echo 1723258852938545 8347399439889794 WTF "$ORIGINATOR_PID" >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -771,15 +768,12 @@
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 1683442695675518 BEFORE TAIL >&2
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 3753736136348644 PID "$PID" MID TAIL >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 3753736136348644 AFTER TAIL >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
