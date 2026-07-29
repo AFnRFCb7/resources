@@ -233,7 +233,7 @@
                                                                                                                         }' | yq eval --prettyPrint '[.]' >> /log
                                                                                                                 done
                                                                                                             '' ;
-                                                                                                    } ;
+                                                                                                    }
                                                                                             )
                                                                                         ] ;
                                                                             }
