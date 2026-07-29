@@ -302,6 +302,7 @@
                                                                         then
                                                                             STANDARD_INPUT="$( cat )" || exit 103
                                                                             ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                            echo 1723258852938545 2764565176164825 "$ORIGINATOR_PID" >&2
                                                                             jq \
                                                                                 --null-input \
                                                                                 --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
