@@ -557,6 +557,7 @@
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
+                                                                                                                                                                --argjson EVALUATION 0 \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
@@ -570,7 +571,7 @@
                                                                                                                                                                     "WTF2" : "5541229353485882" ,
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL ,
-                                                                                                                                                                    "evaluation" : 0 ,
+                                                                                                                                                                    "evaluation" : $EVALUATION ,
                                                                                                                                                                     "index" : $INDEX ,
                                                                                                                                                                     "inputs" : .inputs ,
                                                                                                                                                                     "originator-pid" : .["originator-pid"] ,
@@ -581,8 +582,7 @@
                                                                                                                                                                     "targets" : $EXPECTED_TARGETS ,
                                                                                                                                                                     "text" : $TEXT ,
                                                                                                                                                                     "temporary" : .temporary
-                                                                                                                                                                }' \
-                                                                                                                                                                "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
                                                                                                                                                             jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
