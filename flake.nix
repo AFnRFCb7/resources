@@ -1157,18 +1157,23 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         YAML_FILE="$1"
-                                                                                                                                                        find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
-                                                                                                                                                        do
-                                                                                                                                                            CONTENT="$( cat "$FILE" )" || exit 125
-                                                                                                                                                            jq \
-                                                                                                                                                                null-input \
-                                                                                                                                                                --arg FILE "$FILE" \
-                                                                                                                                                                --arg CONTENT "$CONTENT" \
-                                                                                                                                                                '{
-                                                                                                                                                                    "file" : $FILE ,
-                                                                                                                                                                    "content" : $CONTENT
-                                                                                                                                                                }' | yq eval --prettyPrint >> "$YAML_FILE"
-                                                                                                                                                        done
+                                                                                                                                                        if [[ -e ${ resources-directory } ]]
+                                                                                                                                                        then
+                                                                                                                                                            find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
+                                                                                                                                                            do
+                                                                                                                                                                CONTENT="$( cat "$FILE" )" || exit 125
+                                                                                                                                                                jq \
+                                                                                                                                                                    null-input \
+                                                                                                                                                                    --arg FILE "$FILE" \
+                                                                                                                                                                    --arg CONTENT "$CONTENT" \
+                                                                                                                                                                    '{
+                                                                                                                                                                        "file" : $FILE ,
+                                                                                                                                                                        "content" : $CONTENT
+                                                                                                                                                                    }' | yq eval --prettyPrint >> "$YAML_FILE"
+                                                                                                                                                            done
+                                                                                                                                                        else
+                                                                                                                                                            touch "$YAML_FILE"
+                                                                                                                                                        fi
                                                                                                                                                         sha512sum "$YAML_FILE" | cut --characters 1-128
                                                                                                                                                     '' ;
                                                                                                                                             }
