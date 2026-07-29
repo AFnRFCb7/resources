@@ -297,47 +297,92 @@
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
-                                                                        if [[ -t 0 ]]
-                                                                        # if [[ -p /dev/stdin || -f /dev/stdin ]]
+                                                                        if "$IS_NIX_FLAKE_CBECM"
                                                                         then
-                                                                            STANDARD_INPUT="$( cat )" || exit 103
-                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                --arg STANDARD_INPUT "$STANDARD_INPUT" \
-                                                                                --argjson TEMPORARY "$TEMPORARY" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "WTF" : "2128979479613286" ,
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" :
-                                                                                        {
-                                                                                            "standard" : $STANDARD_INPUT
-                                                                                        } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "temporary" : $TEMPORARY
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
+                                                                            if [[ -t 0 ]]
+                                                                            # if [[ -p /dev/stdin || -f /dev/stdin ]]
+                                                                            then
+                                                                                STANDARD_INPUT="$( cat )" || exit 103
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "WTF" : "2128979479613286" ,
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "inputs" :
+                                                                                            {
+                                                                                                "standard" : $STANDARD_INPUT
+                                                                                            } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' \
+                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                            else
+                                                                                # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "WTF" : "5482197652155478" ,
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "inputs" : { } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' \
+                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                            fi
                                                                         else
-                                                                            # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
-                                                                            PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
-                                                                            ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                            jq \
-                                                                                --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                --argjson TEMPORARY "$TEMPORARY" \
-                                                                                --args \
-                                                                                '{
-                                                                                    "WTF" : "5482197652155478" ,
-                                                                                    "arguments" : $ARGS.positional ,
-                                                                                    "inputs" : { } ,
-                                                                                    "originator-pid" : $ORIGINATOR_PID ,
-                                                                                    "temporary" : $TEMPORARY
-                                                                                }' \
-                                                                                -- "$@" > "$INPUT_FILE"
-                                                                        fi
+                   if [[ -t 0 ]]
+                                                                            # if [[ -p /dev/stdin || -f /dev/stdin ]]
+                                                                            then
+                                                                                STANDARD_INPUT="$( cat )" || exit 103
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --arg STANDARD_INPUT "$STANDARD_INPUT" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "WTF" : "2128979479613286" ,
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "inputs" :
+                                                                                            {
+                                                                                                "standard" : $STANDARD_INPUT
+                                                                                            } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' \
+                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                            else
+                                                                                # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                jq \
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "WTF" : "5482197652155478" ,
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "inputs" : { } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' \
+                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                            fi
+                                                                        vi
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
