@@ -1303,7 +1303,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        IS_NIX_FLAKE_CHECK=true
+                                                                                                                                                        export IS_NIX_FLAKE_CHECK=true
                                                                                                                                                         ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
                                                                                                                                                         SCRATCH="$( mktemp --directory )" || exit 198
                                                                                                                                                         ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
