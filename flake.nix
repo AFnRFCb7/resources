@@ -325,10 +325,11 @@
                                                                             # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                             PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                             ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                            echo 1723258852938545 8347399439889794  "$ULTIMATE_PID" >&2
+                                                                            ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                            echo 1723258852938545 8347399439889794 WTF "$ORIGINATOR_PID" >&2
                                                                             jq \
                                                                                 --null-input \
-                                                                                --argjson ORIGINATOR_PID "$ULTIMATE_PID" \
+                                                                                --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                 --argjson TEMPORARY "$TEMPORARY" \
                                                                                 --args \
                                                                                 '{
@@ -770,15 +771,15 @@
                                                                                                                     exec 182> ${ resources-directory }/locks/clean
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 1683442695675518 >&2
+                                                                                                                    echo 1723258852938545 1683442695675518 BEFORE TAIL >&2
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 3753736136348644 PID "$PID" >&2
+                                                                                                                        echo 1723258852938545 3753736136348644 PID "$PID" MID TAIL >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 3753736136348644 >&2
+                                                                                                                    echo 1723258852938545 3753736136348644 AFTER TAIL >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
