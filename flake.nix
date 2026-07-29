@@ -1057,7 +1057,7 @@
                                                                                                                                                                     '{
                                                                                                                                                                         "type" : $TYPE ,
                                                                                                                                                                         "channel" : $CHANNEL ,
-                                                                                                                                                                        "payload" : $PAYLOD
+                                                                                                                                                                        "payload" : $PAYLOAD
                                                                                                                                                                     }' >&2
                                                                                                                                                             fi
                                                                                                                                                         }
