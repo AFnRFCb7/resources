@@ -587,6 +587,7 @@
                                                                                                                                                             jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
+                                                                                                                                                                --argjson EVALUATION ${ resource-parameters.error } \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
                                                                                                                                                                 --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
                                                                                                                                                                 --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
@@ -597,7 +598,7 @@
                                                                                                                                                                 '{
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL
-                                                                                                                                                                    "evaluation" : ${ resource-parameters.error } ,
+                                                                                                                                                                    "evaluation" : $EVALUATION ,
                                                                                                                                                                     "index" : $INDEX ,
                                                                                                                                                                     "inputs" : .inputs ,
                                                                                                                                                                     "seed" : $SEED ,
