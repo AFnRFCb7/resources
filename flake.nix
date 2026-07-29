@@ -1049,7 +1049,16 @@
                                                                                                                                                         cleanup ( ) {
                                                                                                                                                             if [[ "$?" == 0 ]]
                                                                                                                                                             then
-                                                                                                                                                                jq --null-input --arg TYPE "$TYPE" --arg CHANNEL "$CHANNEL" --argjson PAYLOAD "$PAYLOAD" '{ "type" : $TYPE , "channel" : $CHANNEL , "payload" : $PAYLOD }' >&2
+                                                                                                                                                                jq \
+                                                                                                                                                                    --null-input \
+                                                                                                                                                                    --arg TYPE "$TYPE" \
+                                                                                                                                                                    --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                                    --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                                                                    '{
+                                                                                                                                                                        "type" : $TYPE ,
+                                                                                                                                                                        "channel" : $CHANNEL ,
+                                                                                                                                                                        "payload" : $PAYLOD
+                                                                                                                                                                    }' >&2
                                                                                                                                                             fi
                                                                                                                                                         }
                                                                                                                                                         trap cleanup EXIT
