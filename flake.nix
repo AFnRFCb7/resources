@@ -1205,7 +1205,7 @@
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" number <&189'' ; }
                                                                         { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
                                                                         { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" number <&189'' ; }
-                                                                        { text = ''check-redis-block <&189'' ; }
+                                                                        { text = ''check-redis-block <&189'' ; uuid = "redis_blocked" ; }
                                                                         { text = "check-file-empty" ; }
                                                                     ] ;
                                                                 in builtins.genList generator ( builtins.length _actions ) ;
