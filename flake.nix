@@ -611,7 +611,7 @@
                                                                                                                                                         echo 1723258852938545 1369941427493491 7936928764981727 >&2
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            echo 1723258852938545 1369941427493491 2594734563376424 >&2
+                                                                                                                                                            echo 1723258852938545 2594734563376424 >&2
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
@@ -642,7 +642,7 @@
                                                                                                                                                                     "temporary" : .temporary
                                                                                                                                                                 }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
-                                                                                                                                                            echo 1723258852938545 1369941427493491 4499518512878879 >&2
+                                                                                                                                                            echo 1723258852938545 4499518512878879 >&2
                                                                                                                                                             jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
