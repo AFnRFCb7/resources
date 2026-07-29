@@ -1187,7 +1187,7 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                 } text ;
                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
-                                                                                        uuid = visitor { null = path : value : builtins.toString index ; string = path }
+                                                                                        uuid = visitor { null = path : value : builtins.toString index ; string = path ; } uuid ;
                                                                                     } ;
                                                                             in identity action ;
                                                                 post-actions =
