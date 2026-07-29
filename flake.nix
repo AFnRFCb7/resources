@@ -1046,10 +1046,16 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if read -r -t 1 -u 189 TYPE <&189
-                                                                                                                                                        then
-                                                                                                                                                            jq --null-input --arg TYPE "$TYPE" '{ "type" : $TYPE }' >&2
-                                                                                                                                                        fi
+                                                                                                                                                        cleanup ( ) {
+                                                                                                                                                            if [[ "$?" != 124 ]]
+                                                                                                                                                            then
+                                                                                                                                                                jq --null-input --arg TYPE "$TYPE" --arg CHANNEL "$CHANNEL" --argjson PAYLOAD "$PAYLOAD"'{ "type" : $TYPE , "channel" : $CHANNEL , "payload" : $PAYLOD }' >&2
+                                                                                                                                                            fi
+                                                                                                                                                        }
+                                                                                                                                                        trap cleanup EXIT
+                                                                                                                                                        read -r -t 1 -u 189 TYPE <&189
+                                                                                                                                                        read -r -t 1 -u 189 CHANNEL <&189
+                                                                                                                                                        read -r -t 1 -u 189 PAYLOAD <&189
                                                                                                                                                     '' ;
                                                                                                                                             }
                                                                                                                                     )
