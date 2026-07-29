@@ -451,7 +451,6 @@
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        echo 1723258852938545 1369941427493491 7936928764981727 STATUS="$STATUS" STANDARD_ERROR "$STANDARD_ERROR" >&2
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
                                                                             # FINDME SUCCESS 2
@@ -608,10 +607,8 @@
                                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 136
                                                                                                                                                         OBSERVED_TARGETS="$( LC_ALL=C find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | sort | jq -R "." | jq -s "." )" || exit 111
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
-                                                                                                                                                        echo 1723258852938545 1369941427493491 7936928764981727 >&2
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            echo 1723258852938545 2594734563376424 >&2
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
@@ -642,7 +639,6 @@
                                                                                                                                                                     "temporary" : .temporary
                                                                                                                                                                 }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
-                                                                                                                                                            echo 1723258852938545 4499518512878879 >&2
                                                                                                                                                             # shellcheck disable=SC2016
                                                                                                                                                             echo jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
