@@ -1536,7 +1536,7 @@
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
-                                                                            machine.suceed("ifconfig")
+                                                                            machine.succeed("ifconfig")
                                                                             machine.fail("ifconfig")
                                                                         '' ;
                                                         } ;
