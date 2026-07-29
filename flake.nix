@@ -967,7 +967,8 @@
                                                                                     expected-status ? 0 ,
                                                                                     process ? "default" ,
                                                                                     text ,
-                                                                                    timeout ? 60
+                                                                                    timeout ? 60 ,
+                                                                                    uuid ? null
                                                                                 } :
                                                                                     {
                                                                                         critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
@@ -1186,6 +1187,7 @@
                                                                                                                     in "${ application }/bin/command" ;
                                                                                                 } text ;
                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
+                                                                                        uuid = visitor { null = path : value : builtins.toString index ; string = path }
                                                                                     } ;
                                                                             in identity action ;
                                                                 post-actions =
@@ -1240,7 +1242,7 @@
                                                                                                                     commands =
                                                                                                                         let
                                                                                                                             mapper =
-                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , index , process , text , timeout } @ primary :
+                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , index , process , text , timeout , uuid } @ primary :
                                                                                                                                     let
                                                                                                                                         application =
                                                                                                                                             root-parameters.writeShellApplication
@@ -1271,7 +1273,7 @@
                                                                                                                                                             else
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             fi
-                                                                                                                                                            touch "$SCRATCH/commands/${ index }/flag"
+                                                                                                                                                            touch "$SCRATCH/commands/${ uuid }/flag"
                                                                                                                                                             if "${ critical }" && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
                                                                                                                                                             then
                                                                                                                                                                 touch "$SCRATCH/commands/${ index }/failure"
