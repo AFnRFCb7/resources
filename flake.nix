@@ -297,6 +297,7 @@
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
+                                                                        echo 1723258852938545 6698591628534872 >&2
                                                                         if [[ -t 0 ]]
                                                                         # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                         then
