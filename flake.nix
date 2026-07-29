@@ -297,7 +297,7 @@
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
-                                                                        if "$IS_NIX_FLAKE_CBECM"
+                                                                        if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
                                                                             if [[ -t 0 ]]
                                                                             # if [[ -p /dev/stdin || -f /dev/stdin ]]
