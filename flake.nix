@@ -341,8 +341,8 @@
                                                                                     -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         else
-                   if [[ -t 0 ]]
-                                                                            # if [[ -p /dev/stdin || -f /dev/stdin ]]
+                                                                            # if [[ -t 0 ]]
+                                                                            if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                             then
                                                                                 STANDARD_INPUT="$( cat )" || exit 103
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
@@ -382,7 +382,7 @@
                                                                                     }' \
                                                                                     -- "$@" > "$INPUT_FILE"
                                                                             fi
-                                                                        vi
+                                                                        fi
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                         export OUTPUT_FILE
                                                                         mkdir --parents ${ gc-roots-directory }
