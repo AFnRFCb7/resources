@@ -1061,6 +1061,8 @@
                                                                                                                                                                         "channel" : $CHANNEL ,
                                                                                                                                                                         "payload" : $PAYLOAD
                                                                                                                                                                     }' >&2
+                                                                                                                                                            else
+                                                                                                                                                                exit 0
                                                                                                                                                             fi
                                                                                                                                                         }
                                                                                                                                                         trap cleanup EXIT
