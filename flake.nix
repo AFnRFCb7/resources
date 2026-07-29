@@ -643,6 +643,7 @@
                                                                                                                                                                 }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
                                                                                                                                                             echo 1723258852938545 4499518512878879 >&2
+                                                                                                                                                            # shellcheck disable=SC2016
                                                                                                                                                             echo jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
