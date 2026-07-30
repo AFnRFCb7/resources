@@ -1365,27 +1365,28 @@
                                                                                     {
                                                                                         addresses =
                                                                                             [
-                                                                                                {
-                                                                                                    address = "131.211.85.78" ;
-                                                                                                    prefixLength = 25 ;
-                                                                                                }
+#                                                                                                {
+#                                                                                                    address = "131.211.85.78" ;
+#                                                                                                    prefixLength = 25 ;
+#                                                                                                }
                                                                                             ] ;
+                                                                                        option = { } ;
+                                                                                        routes =
+                                                                                            {
+#                                                                                                address = "131.211.85.78" ;
+#                                                                                                eth0 =
+#                                                                                                    {
+#                                                                                                        prefixLength = 25 ;
+#                                                                                                        type = null ;
+#                                                                                                    } ;
+                                                                                                useDHCP = true ;
+                                                                                            } ;
                                                                                     } ;
                                                                             } ;
                                                                     github =
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
-                                                                                networking.interfaces.eth0.ipv4 =
-                                                                                    {
-                                                                                        addresses =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "131.211.85.79" ;
-                                                                                                    prefixLength = 25 ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                    } ;
                                                                             } ;
                                                                 } ;
                                                             testScript =
