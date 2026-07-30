@@ -1361,13 +1361,16 @@
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
-#                                                                                networking.interfaces.eth0.ipv4.addresses =
-#                                                                                    [
-#                                                                                        {
-#                                                                                            address = "131.211.85.78" ;
-#                                                                                            prefixLength = 25 ;
-#                                                                                        }
-#                                                                                    ] ;
+                                                                                networking.interfaces.eth0.ipv4 =
+                                                                                    {
+                                                                                        addresses =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "131.211.85.78" ;
+                                                                                                    prefixLength = 25 ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                    } ;
                                                                             } ;
                                                                     github =
                                                                         { ... } :
