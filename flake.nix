@@ -1361,7 +1361,7 @@
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
-                                                                                networking.interfaces.eth0.ipv4 =
+                                                                                networking.interfaces.eth0 =
                                                                                     {
                                                                                         useDHCP = true ;
                                                                                     } ;
