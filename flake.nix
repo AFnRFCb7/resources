@@ -1363,22 +1363,8 @@
                                                                                 imports = private ;
                                                                                 networking.interfaces.eth0.ipv4 =
                                                                                     {
-                                                                                        addresses =
-#                                                                                            [
-#                                                                                                {
-#                                                                                                    address = "131.211.85.78" ;
-#                                                                                                    prefixLength = 25 ;
-#                                                                                                }
-#                                                                                            ] ;
-                                                                                        options = { } ;
                                                                                         routes =
                                                                                             {
-#                                                                                                address = "131.211.85.78" ;
-#                                                                                                eth0 =
-#                                                                                                    {
-#                                                                                                        prefixLength = 25 ;
-#                                                                                                        type = null ;
-#                                                                                                    } ;
                                                                                                 useDHCP = true ;
                                                                                             } ;
                                                                                     } ;
