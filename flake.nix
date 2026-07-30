@@ -1535,7 +1535,9 @@
                                                                             machine.wait_for_unit("multi-user.target")
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
+                                                                            mobile.succeed("echo 5319182444214221");
                                                                             mobile.succeed("ifconfig");
+                                                                            mobile.succeed("echo 4999576663482949");
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
