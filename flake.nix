@@ -1532,6 +1532,8 @@
                                                                             in "${ application }/execute.sh" ;
                                                                     in
                                                                         ''
+                                                                            machine.start()
+                                                                            mobile.start()
                                                                             machine.wait_for_unit("multi-user.target")
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
@@ -1539,7 +1541,7 @@
                                                                             mobile.wait_for_unit("network-online.target")
                                                                             mobile.wait_for_unit("redis.service")
                                                                             mobile.succeed("ifconfig")
-                                                                            mobile.succeed("runuser --login XXXX -- ${ test }")
+                                                                            machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
                                     implementation = implementation ;
