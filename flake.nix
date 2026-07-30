@@ -1539,7 +1539,7 @@
                                                                             mobile.wait_for_unit("network-online.target")
                                                                             mobile.wait_for_unit("redis.service")
                                                                             mobile.succeed("ifconfig")
-                                                                            machine.succeed("runuser --login ${ user } -- ${ test }")
+                                                                            mobile.succeed("runuser --login XXXX -- ${ test }")
                                                                        '' ;
                                                         } ;
                                     implementation = implementation ;
