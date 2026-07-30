@@ -1540,7 +1540,7 @@
                                                                             mobile.wait_for_unit("multi-user.target")
                                                                             mobile.wait_for_unit("network-online.target")
                                                                             mobile.wait_for_unit("redis.service")
-                                                                            mobile.succeed("ifconfig")
+                                                                            mobile.fail("ifconfig")
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
