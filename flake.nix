@@ -1530,6 +1530,19 @@
                                                                                         src = ./. ;
                                                                                     } ;
                                                                             in "${ application }/execute.sh" ;
+                                                                    github =
+                                                                        let
+                                                                            application =
+                                                                                pkgs.writeShellApplication
+                                                                                    {
+                                                                                        name = "github" ;
+                                                                                        runtimeInputs = [ ] ;
+                                                                                        text =
+                                                                                            ''
+                                                                                                ifconfig
+                                                                                            '' ;
+                                                                                    } ;
+                                                                        in "${ application }/bin/github" ;
                                                                     in
                                                                         ''
                                                                             machine.start()
@@ -1540,7 +1553,7 @@
                                                                             github.wait_for_unit("multi-user.target")
                                                                             github.wait_for_unit("network-online.target")
                                                                             machine.succeed("ifconfig")
-                                                                            github.fail("ifconfig")
+                                                                            github.succeed("runuser --login ${ user } -- ${ github }")
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
