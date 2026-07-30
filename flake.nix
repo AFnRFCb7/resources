@@ -1355,7 +1355,7 @@
                                                     check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
-                                                            nodes = machines // { machine = { ... } : { imports = private ; } ; } ;
+                                                            nodes = machines // { machine = { ... } : { imports = private ; } ; github = { ... } : { imports = private ; } ; } ;
                                                             testScript =
                                                                 let
                                                                     test =
@@ -1533,14 +1533,14 @@
                                                                     in
                                                                         ''
                                                                             machine.start()
-                                                                            mobile.start()
+                                                                            github.start()
                                                                             machine.wait_for_unit("multi-user.target")
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
-                                                                            mobile.wait_for_unit("multi-user.target")
-                                                                            mobile.wait_for_unit("network-online.target")
-                                                                            mobile.wait_for_unit("redis.service")
-                                                                            mobile.fail("ifconfig")
+                                                                            github.wait_for_unit("multi-user.target")
+                                                                            github.wait_for_unit("network-online.target")
+                                                                            machine.succeed("ifconfig")
+                                                                            github.fail("ifconfig")
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
