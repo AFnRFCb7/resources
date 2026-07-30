@@ -1539,7 +1539,7 @@
                                                                                         runtimeInputs = [ ] ;
                                                                                         text =
                                                                                             ''
-                                                                                                ifconfig
+                                                                                                ifconfig >&2
                                                                                             '' ;
                                                                                     } ;
                                                                         in "${ application }/bin/github" ;
