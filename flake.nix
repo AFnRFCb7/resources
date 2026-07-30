@@ -1363,7 +1363,7 @@
                                                                                 imports = private ;
                                                                                 networking.interfaces.eth0.ipv4 =
                                                                                     {
-                                                                                        seDHCP = true ;
+                                                                                        UseDHCP = true ;
                                                                                     } ;
                                                                             } ;
                                                                     github =
