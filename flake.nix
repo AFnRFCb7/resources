@@ -1362,10 +1362,12 @@
                                                                             {
                                                                                 imports = private ;
                                                                                 networking.interfaces.eth9.ipv4.addresses =
-                                                                                    {
-                                                                                        address = "131.211.85.78" ;
-                                                                                        prefixLength = 25 ;
-                                                                                    } ;
+                                                                                    [
+                                                                                        {
+                                                                                            address = "131.211.85.78" ;
+                                                                                            prefixLength = 25 ;
+                                                                                        }
+                                                                                    ] ;
                                                                             } ;
                                                                     github = { ... } : { imports = private ; } ;
                                                                 } ;
