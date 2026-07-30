@@ -1355,7 +1355,20 @@
                                                     check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
-                                                            nodes = machines // { machine = { ... } : { imports = private ; } ; github = { ... } : { imports = private ; } ; } ;
+                                                            nodes =
+                                                                {
+                                                                    machine =
+                                                                        { ... } :
+                                                                            {
+                                                                                imports = private ;
+                                                                                networking.interfaces.eth9.ipv4.addresses =
+                                                                                    {
+                                                                                        address = "131.211.85.78" ;
+                                                                                        prefixLength = 25 ;
+                                                                                    } ;
+                                                                            } ;
+                                                                    github = { ... } : { imports = private ; } ;
+                                                                } ;
                                                             testScript =
                                                                 let
                                                                     test =
