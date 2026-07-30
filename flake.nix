@@ -1536,10 +1536,12 @@
                                                                                 pkgs.writeShellApplication
                                                                                     {
                                                                                         name = "github" ;
-                                                                                        runtimeInputs = [ ] ;
+                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
                                                                                         text =
                                                                                             ''
+                                                                                                echo 1723258852938545 8227226241357269 >&2
                                                                                                 ifconfig >&2
+                                                                                                echo 1723258852938545 2599363965377888 >&2
                                                                                             '' ;
                                                                                     } ;
                                                                         in "${ application }/bin/github" ;
