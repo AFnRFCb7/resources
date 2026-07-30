@@ -1376,6 +1376,17 @@
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
+                                                                                imports = private ;
+                                                                                networking.interfaces.eth0.ipv4 =
+                                                                                    {
+                                                                                        addresses =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "131.211.85.79" ;
+                                                                                                    prefixLength = 25 ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                    } ;
                                                                             } ;
                                                                 } ;
                                                             testScript =
