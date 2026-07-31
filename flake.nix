@@ -1641,7 +1641,7 @@
                                                                         in "${ application }/bin/github" ;
                                                                     in
                                                                         ''
-                                                                            router.wait_for_unit("network-online.target)
+                                                                            router.wait_for_unit("network-online.target")
                                                                             machine.start()
                                                                             github.start()
                                                                             machine.wait_for_unit("multi-user.target")
