@@ -1360,7 +1360,37 @@
                                                                     router =
                                                                         { ... } :
                                                                             {
-                                                                                services.kea.dhcp4.enable = true ;
+                                                                                services.kea.dhcp4 =
+                                                                                    {
+                                                                                        enable = true ;
+                                                                                        settings =
+                                                                                        {
+                                                                                          interfaces-config = {
+                                                                                            interfaces = [
+                                                                                              "eth0"
+                                                                                            ];
+                                                                                          };
+                                                                                          lease-database = {
+                                                                                            name = "/var/lib/kea/dhcp4.leases";
+                                                                                            persist = true;
+                                                                                            type = "memfile";
+                                                                                          };
+                                                                                          rebind-timer = 2000;
+                                                                                          renew-timer = 1000;
+                                                                                          subnet4 = [
+                                                                                            {
+                                                                                              id = 1;
+                                                                                              pools = [
+                                                                                                {
+                                                                                                  pool = "10.0.0.1 - 10.0.0.240";
+                                                                                                }
+                                                                                              ];
+                                                                                              subnet = "192.0.2.0/24";
+                                                                                            }
+                                                                                          ];
+                                                                                          valid-lifetime = 4000;
+                                                                                        } ;
+                                                                                    } ;
                                                                                 networking.interfaces.eth0.ipv4 =
                                                                                     {
                                                                                         addresses =
