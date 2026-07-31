@@ -1375,6 +1375,7 @@
                                                                                                 {
                                                                                                     address = "10.0.0.0" ;
                                                                                                     prefixLength = 24 ;
+                                                                                                    via = "10.0.0.0" ;
                                                                                                 }
                                                                                             ] ;
                                                                                     } ;
@@ -1383,7 +1384,24 @@
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
-                                                                                networking.interfaces.eth0.useDHCP = true ;
+                                                                                networking.interfaces.eth0.ipv4 =
+                                                                                    {
+                                                                                        addresses =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "10.0.0.102" ;
+                                                                                                    prefixLength = 24 ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                        routes =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "10.0.0.0" ;
+                                                                                                    prefixLength = 24 ;
+                                                                                                    via = "10.0.0.0" ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                    } ;
                                                                             } ;
                                                                 } ;
                                                             testScript =
