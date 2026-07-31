@@ -1366,11 +1366,17 @@
                                                                                         addresses =
                                                                                             [
                                                                                                 {
-                                                                                                    address = "10.0.0.100" ;
-                                                                                                    prefixLength = 25 ;
+                                                                                                    address = "10.0.0.101" ;
+                                                                                                    prefixLength = 24 ;
                                                                                                 }
                                                                                             ] ;
-                                                                                        routes = [ ] ;
+                                                                                        routes =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "10.0.0.0""
+                                                                                                    prefixLength = 24 ;
+                                                                                                }
+                                                                                            ] ;
                                                                                     } ;
                                                                             } ;
                                                                     github =
