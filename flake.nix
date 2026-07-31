@@ -1361,9 +1361,16 @@
                                                                         { ... } :
                                                                             {
                                                                                 imports = private ;
-                                                                                networking.interfaces.eth0 =
+                                                                                networking.interfaces.eth0.ipv4 =
                                                                                     {
-                                                                                        useDHCP = true ;
+                                                                                        addresses =
+                                                                                            [
+                                                                                                {
+                                                                                                    addresss = "10.0.0.100" ;
+                                                                                                    prefixLength = 25 ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                        routes = [ ] ;
                                                                                     } ;
                                                                             } ;
                                                                     github =
@@ -1566,6 +1573,7 @@
                                                                         ''
                                                                             machine.start()
                                                                             github.start()
+                                                                            dhcp.wait_for_unit("dhcp.service")
                                                                             machine.wait_for_unit("multi-user.target")
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
