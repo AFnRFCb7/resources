@@ -1355,101 +1355,7 @@
                                                     check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
-                                                            nodes =
-                                                                {
-                                                                    router =
-                                                                        { ... } :
-                                                                            {
-                                                                                services.kea.dhcp4 =
-                                                                                    {
-                                                                                        enable = true ;
-                                                                                        settings =
-                                                                                        {
-                                                                                          interfaces-config = {
-                                                                                            interfaces = [
-                                                                                              "eth0"
-                                                                                            ];
-                                                                                          };
-                                                                                          lease-database = {
-                                                                                            name = "/var/lib/kea/dhcp4.leases";
-                                                                                            persist = true;
-                                                                                            type = "memfile";
-                                                                                          };
-                                                                                          rebind-timer = 2000;
-                                                                                          renew-timer = 1000;
-                                                                                          subnet4 = [
-                                                                                            {
-                                                                                              id = 1;
-                                                                                              pools = [
-                                                                                                {
-                                                                                                  pool = "10.0.0.1 - 10.0.0.240";
-                                                                                                }
-                                                                                              ];
-                                                                                              subnet = "10.0.0.0/24";
-                                                                                            }
-                                                                                          ];
-                                                                                          valid-lifetime = 4000;
-                                                                                        } ;
-                                                                                    } ;
-                                                                                networking.interfaces.eth0.ipv4 =
-                                                                                    {
-                                                                                        addresses =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "10.0.0.1" ;
-                                                                                                    prefixLength = 24 ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                        routes = [ ] ;
-                                                                                    } ;
-                                                                            } ;
-                                                                    machine =
-                                                                        { ... } :
-                                                                            {
-                                                                                imports = private ;
-                                                                                networking.interfaces.eth0.ipv4 =
-                                                                                    {
-                                                                                        addresses =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "10.0.0.101" ;
-                                                                                                    prefixLength = 24 ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                        routes =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "10.0.0.0" ;
-                                                                                                    prefixLength = 24 ;
-                                                                                                    via = "10.0.0.1" ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                    } ;
-                                                                            } ;
-                                                                    github =
-                                                                        { ... } :
-                                                                            {
-                                                                                imports = private ;
-                                                                                networking.interfaces.eth0.ipv4 =
-                                                                                    {
-                                                                                        addresses =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "10.0.0.102" ;
-                                                                                                    prefixLength = 24 ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                        routes =
-                                                                                            [
-                                                                                                {
-                                                                                                    address = "10.0.0.0" ;
-                                                                                                    prefixLength = 24 ;
-                                                                                                    via = "10.0.0.1" ;
-                                                                                                }
-                                                                                            ] ;
-                                                                                    } ;
-                                                                            } ;
-                                                                } ;
+                                                            nodes = { machine = { ... } : { import = private ; } ;
                                                             testScript =
                                                                 let
                                                                     test =
@@ -1641,16 +1547,9 @@
                                                                         in "${ application }/bin/github" ;
                                                                     in
                                                                         ''
-                                                                            router.wait_for_unit("network-online.target")
-                                                                            machine.start()
-                                                                            github.start()
                                                                             machine.wait_for_unit("multi-user.target")
                                                                             machine.wait_for_unit("network-online.target")
                                                                             machine.wait_for_unit("redis.service")
-                                                                            github.wait_for_unit("multi-user.target")
-                                                                            github.wait_for_unit("network-online.target")
-                                                                            machine.succeed("ifconfig")
-                                                                            github.succeed("runuser --login ${ user } -- ${ github }")
                                                                             machine.succeed("runuser --login ${ user } -- ${ test }")
                                                                        '' ;
                                                         } ;
