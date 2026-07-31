@@ -1373,7 +1373,7 @@
                                                                                         routes =
                                                                                             [
                                                                                                 {
-                                                                                                    address = "10.0.0.0""
+                                                                                                    address = "10.0.0.0" ;
                                                                                                     prefixLength = 24 ;
                                                                                                 }
                                                                                             ] ;
