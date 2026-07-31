@@ -1360,6 +1360,7 @@
                                                                     router =
                                                                         { ... } :
                                                                             {
+                                                                                services.kea.dhcp4.enable = true ;
                                                                                 networking.interfaces.eth0.ipv4 =
                                                                                     {
                                                                                         addresses =
@@ -1610,6 +1611,7 @@
                                                                         in "${ application }/bin/github" ;
                                                                     in
                                                                         ''
+                                                                            router.wait_for_unit("network-online.target)
                                                                             machine.start()
                                                                             github.start()
                                                                             machine.wait_for_unit("multi-user.target")
