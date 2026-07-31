@@ -1357,6 +1357,21 @@
                                                             name = "check" ;
                                                             nodes =
                                                                 {
+                                                                    router =
+                                                                        { ... } :
+                                                                            {
+                                                                                networking.interfaces.eth0.ipv4 =
+                                                                                    {
+                                                                                        addresses =
+                                                                                            [
+                                                                                                {
+                                                                                                    address = "10.0.0.1" ;
+                                                                                                    prefixLength = 24 ;
+                                                                                                }
+                                                                                            ] ;
+                                                                                        routes = [ ] ;
+                                                                                    } ;
+                                                                            } ;
                                                                     machine =
                                                                         { ... } :
                                                                             {
@@ -1375,7 +1390,7 @@
                                                                                                 {
                                                                                                     address = "10.0.0.0" ;
                                                                                                     prefixLength = 24 ;
-                                                                                                    via = "10.0.0.0" ;
+                                                                                                    via = "10.0.0.1" ;
                                                                                                 }
                                                                                             ] ;
                                                                                     } ;
@@ -1398,7 +1413,7 @@
                                                                                                 {
                                                                                                     address = "10.0.0.0" ;
                                                                                                     prefixLength = 24 ;
-                                                                                                    via = "10.0.0.0" ;
+                                                                                                    via = "10.0.0.1" ;
                                                                                                 }
                                                                                             ] ;
                                                                                     } ;
