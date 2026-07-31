@@ -1355,7 +1355,7 @@
                                                     check-parameters.nixosTest
                                                         {
                                                             name = "check" ;
-                                                            nodes = { machine = { ... } : { import = private ; } ; } ;
+                                                            nodes = { machine = { ... } : { imports = private ; } ; } ;
                                                             testScript =
                                                                 let
                                                                     test =
