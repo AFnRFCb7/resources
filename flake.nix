@@ -1366,7 +1366,7 @@
                                                                                         addresses =
                                                                                             [
                                                                                                 {
-                                                                                                    addresss = "10.0.0.100" ;
+                                                                                                    address = "10.0.0.100" ;
                                                                                                     prefixLength = 25 ;
                                                                                                 }
                                                                                             ] ;
