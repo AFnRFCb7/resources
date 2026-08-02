@@ -1377,7 +1377,7 @@
                                                                                     ] ;
                                                                             } ;
                                                                     in
-                                                                        builtins.concatStringsSep "/n" ( builtins.concatLists [ tests ] ) ;
+                                                                        builtins.concatStringsSep "/n" ( builtins.concatLists [ tests [ ultimate ] ] ) ;
                                                         } ;
                                     check =
                                         {
