@@ -1370,7 +1370,7 @@
                                                                                                                     OUT="$1"
                                                                                                                     mkdir --parents "$OUT/commands"
                                                                                                                     ${ builtins.concatStringsSep "\n" ( builtins.map (command : command.link ) commands ) }
-                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processws ) }
+                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                                     ${ execute }
                                                                                                                 '' ;
                                                                                                 }
