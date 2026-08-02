@@ -1071,6 +1071,315 @@
                                             } ;
                             in
                                 {
+                                    check2 =
+                                        {
+                                            actions ,
+                                            nixosTest ,
+                                            nodes ,
+                                            tests
+                                        } :
+                                            let
+                                                in
+                                                    nixosTest
+                                                        {
+                                                            name = "resource-check" ;
+                                                            nodes = nodes ;
+                                                            testScript =
+                                                                let
+                                                                    derivation =
+                                                                        mkDerivation
+                                                                            {
+                                                                                installPhase = ''install "$out"'' ;
+                                                                                name = "check-derivation" ;
+                                                                                nativeBuildInputs =
+                                                                                    [
+                                                                                        (
+                                                                                            writeShellApplication
+                                                                                                {
+                                                                                                    name = "install" ;
+                                                                                                    runTimeInputs = [ pkgs.coreutils ] ;
+                                                                                                    text =
+                                                                                                        let
+                                                                                                            commands =
+                                                                                                                let
+                                                                                                                    mapper =
+                                                                                                                        {
+                                                                                                                            command-index ,
+                                                                                                                            critical ,
+                                                                                                                            process ,
+                                                                                                                            standard-error ,
+                                                                                                                            standard-output ,
+                                                                                                                            status ,
+                                                                                                                            text ,
+                                                                                                                            timeout
+                                                                                                                        } :
+                                                                                                                            let
+                                                                                                                                file-name = ''"$OUT/commands/${ command-index }"'' ;
+                                                                                                                                in
+                                                                                                                                    {
+                                                                                                                                        delay =
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "delay" ;
+                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                            text =
+                                                                                                                                                                ''
+                                                                                                                                                                    while [[ ! -f "$SCRATCH/commands/${ command-index }/flag ]]
+                                                                                                                                                                    do
+                                                                                                                                                                        sleep 1s
+                                                                                                                                                                    done
+                                                                                                                                                                '' ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/delay" ;
+                                                                                                                                        file-name = file-name ;
+                                                                                                                                        link =
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "link" ;
+                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                            text =
+                                                                                                                                                                ''
+                                                                                                                                                                    OUT="$1"
+                                                                                                                                                                    mkdir --parents "$OUT/commands"
+                                                                                                                                                                    ln --symbolic ${ file } ${ file-name }
+                                                                                                                                                                '' ;
+                                                                                                                                                        } ;
+                                                                                                                                                file =
+                                                                                                                                                    let
+                                                                                                                                                        application =
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "file" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.diffutils ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
+                                                                                                                                                                            echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
+                                                                                                                                                                            ln --symbolic ${ process } "$SCRATCH/commands/${ command-index }/process"
+                                                                                                                                                                            ln --symbolic ${ text } "$SCRATCH/commands/$ command-index }/text"
+                                                                                                                                                                            echo ${ timeout } > "$SCRATCH/commands/$ command-index }/timeout"
+                                                                                                                                                                            ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/standard-error"
+                                                                                                                                                                            ln --symbolic ${ standard-output } "$SCRATCH/commands/${ command-index }/expected/standard-standard-output"
+                                                                                                                                                                            ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/status"
+                                                                                                                                                                            mkdir --parents "$SCRATCH/commands/${ command-index }/observed"
+                                                                                                                                                                            seq 0 $(( ${ command-index } - 1 )) | while read -r I
+                                                                                                                                                                            do
+                                                                                                                                                                                while [[ ! -f "$SCRATCH/commands/$I/flag ]]
+                                                                                                                                                                                do
+                                                                                                                                                                                    sleep 1s
+                                                                                                                                                                                done
+                                                                                                                                                                            done
+                                                                                                                                                                            seq 0 $(( ${ command-index } - 1 )) | while read -r I
+                                                                                                                                                                            do
+                                                                                                                                                                                if [[ -f "$SCRATCH/command/$I/failure ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    touch "$SCRATCH/commands/${ command-index }/failure"
+                                                                                                                                                                                fi
+                                                                                                                                                                            done
+                                                                                                                                                                            if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" > "$SCRATCH/commands/${ command-index }/observed/standard-error"
+                                                                                                                                                                                then
+                                                                                                                                                                                    echo "$? > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                                                else
+                                                                                                                                                                                    echo "$? > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                                                fi
+                                                                                                                                                                            fi
+                                                                                                                                                                            touch "$SCRATCH/commands/${ command-index }/flag"
+                                                                                                                                                                            if [[ $[ critical } == "true" ]] && ! diff --recursive "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed"
+                                                                                                                                                                            then
+                                                                                                                                                                                touch $SCRATCH/commands/${ command-index }/failure
+                                                                                                                                                                            fi
+                                                                                                                                                                        '' ;
+                                                                                                                                                                } ;
+                                                                                                                                                    in "${ application }/bin/file" ;
+                                                                                                                                                in ''${ application }/bin/link "$OUT"'' ;
+                                                                                                                                    } ;
+                                                                                                                    in builtins.map mapper parameters ;
+                                                                                                            execute =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "application" ;
+                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                                                text =
+                                                                                                                                    let
+                 `                                                                                                                      file =
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "file" ;
+                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                            text =
+                                                                                                                                                                ''
+                                                                                                                                                                    SCRATCH="$( mktemp --diectory )" || exit 125
+                                                                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
+                                                                                                                                                                    ${ builtins.concatStringSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                                                    echo "$SCRATCH"
+                                                                                                                                                                '' ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/file" ;
+                                                                                                                                        in
+                                                                                                                                            ''
+                                                                                                                                                OUT="$1"
+                                                                                                                                                mkdir --parent "$OUT"
+                                                                                                                                                sed -e "s#\$OUT#$OUT# -e "w$OUT/execute" ${ file }
+                                                                                                                                            '' ;
+                                                                                                                            } ;
+                                                                                                                            in "${ application }/bin/file" ;
+                                                                                                                    in ''${ application }/bin/application $OUT'' ;
+                                                                                                            parameters =
+                                                                                                                let
+                                                                                                                    generator =
+                                                                                                                        index :
+                                                                                                                            let
+                                                                                                                                action = builtins.elemAt index actions ;
+                                                                                                                                identity =
+                                                                                                                                    {
+                                                                                                                                        critical ? true ,
+                                                                                                                                        process ? "" ,
+                                                                                                                                        standard-error ? "" ,
+                                                                                                                                        standard-output ? "" ,
+                                                                                                                                        status ? 0 ,
+                                                                                                                                        text ,
+                                                                                                                                        timeout ? 60
+                                                                                                                                    } :
+                                                                                                                                        {
+                                                                                                                                            command-index = builtins.toString index ;
+                                                                                                                                            critical = visitor { bool = path : value : builtins.fromJSON value ; } critical ;
+                                                                                                                                            process =
+                                                                                                                                                let
+                                                                                                                                                    path =
+                                                                                                                                                        visitor
+                                                                                                                                                            {
+                                                                                                                                                                string = path : value : builtins.toFile "process" value ;
+                                                                                                                                                                path = path : value : value ;
+                                                                                                                                                            }
+                                                                                                                                                            process ;
+                                                                                                                                                    string = toString path ;
+                                                                                                                                                    in
+                                                                                                                                                        {
+                                                                                                                                                            path = path ;
+                                                                                                                                                            string = string ;
+                                                                                                                                                        } ;
+                                                                                                                                            standard-error =
+                                                                                                                                                visitor
+                                                                                                                                                    {
+                                                                                                                                                        string = path : value : builtins.toFile "process" value ;
+                                                                                                                                                        path = path : value : value ;
+                                                                                                                                                    }
+                                                                                                                                                    standard-error ;
+                                                                                                                                            standard-output =
+                                                                                                                                                visitor
+                                                                                                                                                    {
+                                                                                                                                                        string = path : value : builtins.toFile "process" value ;
+                                                                                                                                                        path = path : value : value ;
+                                                                                                                                                    }
+                                                                                                                                                    standard-output ;
+                                                                                                                                            status = visitor { int = path : value : builtins.toString value ; } status ;
+                                                                                                                                            text =
+                                                                                                                                                visitor
+                                                                                                                                                    {
+                                                                                                                                                        string =
+                                                                                                                                                            path : value :
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "text" ;
+                                                                                                                                                                        runtimeInputs = [ ] ;
+                                                                                                                                                                        text = text ;
+                                                                                                                                                                    } ;
+                                                                                                                                                    }
+                                                                                                                                                    text ;
+                                                                                                                                            timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
+                                                                                                                                        } ;
+                                                                                                                                in identity action ;
+                                                                                                                    in builtins.genList generator ( builtins.length actions ) ;
+                                                                                                            processes =
+                                                                                                                let
+                                                                                                                    generator =
+                                                                                                                        index :
+                                                                                                                            let
+                                                                                                                                file-name = ''"$OUT/processes/${ builtins.toString index }"'' ;
+                                                                                                                                process = builtins.elemAt list index ;
+                                                                                                                                in
+                                                                                                                                    {
+                                                                                                                                        delay =
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "delay" ;
+                                                                                                                                                            runtimeInputs = process.delay ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/delay" ;
+                                                                                                                                        file-name = file-name ;
+                                                                                                                                        link =
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "link" ;
+                                                                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                                                                            text =
+                                                                                                                                                                let
+                                                                                                                                                                    file =
+                                                                                                                                                                        let
+                                                                                                                                                                            application =
+                                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                                    {
+                                                                                                                                                                                        name = "file" ;
+                                                                                                                                                                                        text = process.value ;
+                                                                                                                                                                                    } ;
+                                                                                                                                                                        in "${ application.commands }/bin/file" ;
+                                                                                                                                                                    in
+                                                                                                                                                                        ''
+                                                                                                                                                                            OUT="$1"
+                                                                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w${ file-name }" ${ file }
+                                                                                                                                                                            chmod a+rx "${ file-name }"
+                                                                                                                                                                        '' ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/link" ;
+                                                                                                                                    } ;
+                                                                                                                    grouper = command.process.string ;
+                                                                                                                    list = builtins.attrList ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
+                                                                                                                    mapper =
+                                                                                                                        name : value :
+                                                                                                                            {
+                                                                                                                                name = name ;
+                                                                                                                                value =
+                                                                                                                                    {
+                                                                                                                                        commands =
+                                                                                                                                            let
+                                                                                                                                                mapper = command : command.file-name ;
+                                                                                                                                                in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
+                                                                                                                                        delays =
+                                                                                                                                            let
+                                                                                                                                                mapper = command : command.delay ;
+                                                                                                                                                in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
+                                                                                                                                    } ;
+                                                                                                                            } ;
+                                                                                                                    in builtins.genList generator list ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    OUT="$1"
+                                                                                                                    mkdir --parents "$OUT/commands"
+                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map (command : command.link ) commands ) }
+                                                                                                                    ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processws ) }
+                                                                                                                    ${ execute }
+                                                                                                                '' ;
+                                                                                                }
+                                                                                        )
+                                                                                    ] ;
+                                                                            } ;
+                                                                    in
+                                                                        builtins.concatStringsSep "/n" ( builtins.concatLists [ tests ] ) ;
+                                                        } ;
                                     check =
                                         {
                                             actions ,
