@@ -1086,7 +1086,7 @@
                                                             nodes = nodes ;
                                                             testScript =
                                                                 let
-                                                                    derivation =
+                                                                    ultimate =
                                                                         mkDerivation
                                                                             {
                                                                                 installPhase = ''install "$out"'' ;
@@ -1209,7 +1209,7 @@
                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
                                                                                                                                 text =
                                                                                                                                     let
-                 `                                                                                                                      file =
+                                                                                                                                        file =
                                                                                                                                             let
                                                                                                                                                 application =
                                                                                                                                                     pkgs.writeShellApplication
