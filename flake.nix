@@ -1076,6 +1076,7 @@
                                             actions ,
                                             nixosTest ,
                                             nodes ,
+                                            pkgs ,
                                             tests
                                         } :
                                             let
