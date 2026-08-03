@@ -1339,7 +1339,7 @@
                                                                                                                             in "${ application }/bin/link" ;
                                                                                                                 } ;
                                                                                                 grouper = command : command.process.string ;
-                                                                                                list = builtins.attrList ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
+                                                                                                list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
                                                                                                 mapper =
                                                                                                     name : value :
                                                                                                         {
