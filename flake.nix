@@ -1074,7 +1074,6 @@
                                     check2 =
                                         {
                                             actions ,
-                                            nixosTest ,
                                             nodes ,
                                             pkgs ,
                                             tests
@@ -1388,6 +1387,7 @@
                                             actions ,
                                             gc-roots-directory ,
                                             machines ,
+                                            nixosTest ,
                                             pkgs ,
                                             private ,
                                             resources-directory ,
