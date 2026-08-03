@@ -1168,7 +1168,7 @@
                                                                                                                                                         done
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
                                                                                                                                                         do
-                                                                                                                                                            if [[ -f "$SCRATCH/command/$I/failure ]]
+                                                                                                                                                            if [[ -f "$SCRATCH/command/$I/failure" ]]
                                                                                                                                                             then
                                                                                                                                                                 touch "$SCRATCH/commands/${ command-index }/failure"
                                                                                                                                                             fi
