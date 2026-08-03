@@ -1329,7 +1329,7 @@
                                                                                                                                                                     name = "file" ;
                                                                                                                                                                     text = process.value ;
                                                                                                                                                                 } ;
-                                                                                                                                                    in "${ application.commands }/bin/file" ;
+                                                                                                                                                    in "${ application }/bin/file" ;
                                                                                                                                                 in
                                                                                                                                                     ''
                                                                                                                                                         OUT="$1"
