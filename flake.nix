@@ -1213,6 +1213,7 @@
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 SCRATCH="$( mktemp --diectory )" || exit 125
+                                                                                                                                                export SCRATCH
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                                 echo "$SCRATCH"
