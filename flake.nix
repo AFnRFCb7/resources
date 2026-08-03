@@ -1223,8 +1223,11 @@
                                                                                                                                                 echo 1723258852938545 8223974419263356 >&2
                                                                                                                                                 echo SCRATCH "$SCRATCH"
                                                                                                                                                 echo 1723258852938545 5429817447893955 >&2
-                                                                                                                                                find "$SCRATCH" | sort >&2
-                                                                                                                                                exit 138
+                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure -exec touch "$SCRATCH/failure" \;
+                                                                                                                                                if [[ -f "$SCRATCH/failure" ]]
+                                                                                                                                                then
+                                                                                                                                                    exit 138
+                                                                                                                                                fi
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
