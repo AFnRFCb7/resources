@@ -1150,7 +1150,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        exit 198
+                                                                                                                                                        if true ; then exit 198 ; fi
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
                                                                                                                                                         ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
