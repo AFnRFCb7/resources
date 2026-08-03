@@ -1119,7 +1119,7 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                while [[ ! -f "$SCRATCH/commands/${ command-index }/flag ]]
+                                                                                                                                                while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
                                                                                                                                                 do
                                                                                                                                                     sleep 1s
                                                                                                                                                 done
