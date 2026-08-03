@@ -1339,7 +1339,7 @@
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/link" ;
                                                                                                                 } ;
-                                                                                                grouper = command : builtins.hashString ( command.process.string ) ;
+                                                                                                grouper = command : builtins.hashString "sha512" ( command.process.string ) ;
                                                                                                 list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
                                                                                                 mapper =
                                                                                                     name : value :
