@@ -448,7 +448,7 @@
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 126
+                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 197
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
