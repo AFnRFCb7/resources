@@ -1212,9 +1212,11 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
+                                                                                                                                                echo 1723258852938545 4147214574973352 >&2
                                                                                                                                                 SCRATCH="$( mktemp --diectory )" || exit 125
+                                                                                                                                                echo 1723258852938545 1386748597143951 >&2
                                                                                                                                                 export SCRATCH
-
+                                                                                                                                                echo 1723258852938545 4539792524237488 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
                                                                                                                                                 echo 1723258852938545 6851139914967758 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
