@@ -1209,7 +1209,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 echo 1723258852938545 4147214574973352 >&2
@@ -1223,6 +1223,7 @@
                                                                                                                                                 echo 1723258852938545 8223974419263356 >&2
                                                                                                                                                 echo SCRATCH "$SCRATCH"
                                                                                                                                                 echo 1723258852938545 5429817447893955 >&2
+                                                                                                                                                find "$SCRATCH"
                                                                                                                                                 exit 138
                                                                                                                                             '' ;
                                                                                                                                     } ;
