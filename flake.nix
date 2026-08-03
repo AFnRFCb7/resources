@@ -1147,7 +1147,7 @@
                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                             {
                                                                                                                                                 name = "file" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.diffutils ] ;
+                                                                                                                                                runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
@@ -1175,7 +1175,7 @@
                                                                                                                                                         done
                                                                                                                                                         if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
                                                                                                                                                         then
-                                                                                                                                                            if timeout ${ timeout }s ${ text }2 > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
+                                                                                                                                                            if timeout ${ timeout }s sh ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
                                                                                                                                                             then
                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
