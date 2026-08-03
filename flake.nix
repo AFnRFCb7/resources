@@ -1308,7 +1308,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "delay" ;
-                                                                                                                                        runtimeInputs = process.delay ;
+                                                                                                                                        runtimeInputs = process.value.delay ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/delay" ;
                                                                                                                     file-name = file-name ;
@@ -1327,7 +1327,7 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "file" ;
-                                                                                                                                                                    text = process.value ;
+                                                                                                                                                                    text = process.value.commands ;
                                                                                                                                                                 } ;
                                                                                                                                                     in "${ application }/bin/file" ;
                                                                                                                                                 in
@@ -1347,7 +1347,6 @@
                                                                                                             name = name ;
                                                                                                             value =
                                                                                                                 {
-                                                                                                                    find = true ;
                                                                                                                     commands =
                                                                                                                         let
                                                                                                                             mapper = command : command.file-name ;
