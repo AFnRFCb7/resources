@@ -1157,7 +1157,7 @@
                                                                                                                                                         echo ${ timeout } > "$SCRATCH/commands/${ command-index }/timeout"
                                                                                                                                                         ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/standard-error"
                                                                                                                                                         ln --symbolic ${ standard-output } "$SCRATCH/commands/${ command-index }/expected/standard-output"
-                                                                                                                                                        ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/status"
+                                                                                                                                                        ln --symbolic ${ status } "$SCRATCH/commands/${ command-index }/expected/status"
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/observed"
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
                                                                                                                                                         do
