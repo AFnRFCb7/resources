@@ -1371,7 +1371,7 @@
                                                                 ] ;
                                                         } ;
                                                 in
-                                                    nixosTest
+                                                    pkgs.nixosTest
                                                         {
                                                             name = "resource-check" ;
                                                             nodes = nodes ;
@@ -1388,7 +1388,6 @@
                                             actions ,
                                             gc-roots-directory ,
                                             machines ,
-                                            nixosTest ,
                                             pkgs ,
                                             private ,
                                             resources-directory ,
