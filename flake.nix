@@ -1374,13 +1374,7 @@
                                                         {
                                                             name = "resource-check" ;
                                                             nodes = nodes ;
-                                                            testScript =
-                                                                visitor
-                                                                    {
-                                                                       lambda = path : value : action-derivation ;
-                                                                       list = path : value : builtins.concatStringsSep "/n" value ;
-                                                                    }
-                                                                    tests ;
+                                                            testScript = builtins.concatStringsSep "/n" ( tests action-derivation ) ;
                                                         } ;
                                     check =
                                         {
