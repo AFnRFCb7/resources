@@ -1119,7 +1119,6 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                if true ; then find "$SCRATCH" | sort >&2 && sleep 10 && exit 141 ; fi
                                                                                                                                                 while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
                                                                                                                                                 do
                                                                                                                                                     sleep 1s
@@ -1152,7 +1151,6 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
-                                                                                                                                                        # if true ; then touch "$SCRATCH/commands/${ command-index }/flag" && exit 0 ; fi
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
                                                                                                                                                         ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
                                                                                                                                                         ln --symbolic ${ text } "$SCRATCH/commands/${ command-index }/text"
