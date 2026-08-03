@@ -1214,7 +1214,7 @@
                                                                                                                                             ''
                                                                                                                                                 SCRATCH="$( mktemp --diectory )" || exit 125
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
-                                                                                                                                                ${ builtins.concatStringSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                                 echo "$SCRATCH"
                                                                                                                                             '' ;
                                                                                                                                     } ;
