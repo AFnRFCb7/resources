@@ -1161,7 +1161,7 @@
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/observed"
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
                                                                                                                                                         do
-                                                                                                                                                            while [[ ! -f "$SCRATCH/commands/$I/flag ]]
+                                                                                                                                                            while [[ ! -f "$SCRATCH/commands/$I/flag" ]]
                                                                                                                                                             do
                                                                                                                                                                 sleep 1s
                                                                                                                                                             done
