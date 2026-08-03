@@ -1191,6 +1191,7 @@
                                                                                                                                             } ;
                                                                                                                                 in "${ application }/bin/file" ;
                                                                                                                             in ''${ application }/bin/link "$OUT"'' ;
+                                                                                                                    process = process ;
                                                                                                                 } ;
                                                                                                 in builtins.map mapper parameters ;
                                                                                         execute =
