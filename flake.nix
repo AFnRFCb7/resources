@@ -1231,7 +1231,7 @@
                                                                                                 generator =
                                                                                                     index :
                                                                                                         let
-                                                                                                            action = builtins.elemAt index actions ;
+                                                                                                            action = builtins.elemAt actions index ;
                                                                                                             identity =
                                                                                                                 {
                                                                                                                     critical ? true ,
