@@ -1382,6 +1382,7 @@
                                                                        list = path : value : builtins.concatStringsSep "/n" value ;
                                                                     }
                                                                     tests ;
+                                                        } ;
                                     check =
                                         {
                                             actions ,
