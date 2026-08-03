@@ -1076,6 +1076,7 @@
                                             actions ,
                                             nodes ,
                                             pkgs ,
+                                            resources-directory ,
                                             tests
                                         } :
                                             let
