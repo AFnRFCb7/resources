@@ -1337,7 +1337,7 @@
                                                                                                                                                         chmod a+rx ${ file-name }
                                                                                                                                                     '' ;
                                                                                                                                     } ;
-                                                                                                                            in ''${ application }/bin/link "4OUT"'' ;
+                                                                                                                            in ''${ application }/bin/link "$OUT"'' ;
                                                                                                                 } ;
                                                                                                 grouper = command : builtins.hashString "sha512" ( command.process.string ) ;
                                                                                                 list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
