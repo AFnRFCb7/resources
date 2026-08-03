@@ -1333,7 +1333,7 @@
                                                                                                                                                 in
                                                                                                                                                     ''
                                                                                                                                                         OUT="$1"
-                                                                                                                                                        sed -e "s#\$OUT#$OUT#" -e "w${ file-name }" ${ file }
+                                                                                                                                                        sed -e "s#\$OUT#$OUT#" -e w${ file-name } ${ file }
                                                                                                                                                         chmod a+rx ${ file-name }
                                                                                                                                                     '' ;
                                                                                                                                     } ;
