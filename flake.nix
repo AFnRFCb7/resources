@@ -1244,7 +1244,7 @@
                                                                                                                 } :
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
-                                                                                                                        critical = visitor { bool = path : value : builtins.fromJSON value ; } critical ;
+                                                                                                                        critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
                                                                                                                         process =
                                                                                                                             let
                                                                                                                                 path =
