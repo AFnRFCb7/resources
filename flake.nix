@@ -1090,7 +1090,7 @@
                                                                         writeShellApplication
                                                                             {
                                                                                 name = "install" ;
-                                                                                runTimeInputs = [ pkgs.coreutils ] ;
+                                                                                runtimeInputs = [ pkgs.coreutils ] ;
                                                                                 text =
                                                                                     let
                                                                                         commands =
