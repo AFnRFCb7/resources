@@ -1077,7 +1077,6 @@
                                             nixosTest ,
                                             nodes ,
                                             pkgs ,
-                                            shared-install ,
                                             tests
                                         } :
                                             let
@@ -1371,19 +1370,11 @@
                                                                     )
                                                                 ] ;
                                                         } ;
-                                                shared-derivation =
-                                                    pkgs.stdev.mkDerivation
-                                                        {
-                                                            installPhase = ''"${ shared-install }/bin/install "$0"'' ;
-                                                            name = "shared-derivation" ;
-                                                            nativeBuildInputs = [ shared-install ] ;
-                                                            src =./. ;
-                                                        } ;
                                                 in
                                                     nixosTest
                                                         {
                                                             name = "resource-check" ;
-                                                            nodes = visitor { lambda = path : value : value shared-derivation ; } nodes ;
+                                                            nodes = nodes ;
                                                             testScript =
                                                                 visitor
                                                                     {
