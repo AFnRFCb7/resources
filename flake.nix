@@ -1334,7 +1334,7 @@
                                                                                                                                                     ''
                                                                                                                                                         OUT="$1"
                                                                                                                                                         sed -e "s#\$OUT#$OUT#" -e "w${ file-name }" ${ file }
-                                                                                                                                                        chmod a+rx "${ file-name }"
+                                                                                                                                                        chmod a+rx ${ file-name }
                                                                                                                                                     '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/link" ;
