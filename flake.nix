@@ -1369,6 +1369,7 @@
                                                                             }
                                                                     )
                                                                 ] ;
+                                                            src = ./. ;
                                                         } ;
                                                 in
                                                     pkgs.nixosTest
@@ -1376,7 +1377,6 @@
                                                             name = "resource-check" ;
                                                             nodes = nodes ;
                                                             testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                            src = ./. ;
                                                         } ;
                                     check =
                                         {
