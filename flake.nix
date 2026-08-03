@@ -1284,7 +1284,22 @@
                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                 {
                                                                                                                                                     name = "text" ;
-                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                    runtimeInputs =
+                                                                                                                                                        [
+                                                                                                                                                            (
+                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                    {
+                                                                                                                                                                        name = "check-executable" ;
+                                                                                                                                                                        text =
+                                                                                                                                                                            ''
+                                                                                                                                                                                if [[ ! -x "$1" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    echo "$1 is not an executable" >&2
+                                                                                                                                                                                fi
+                                                                                                                                                                            '' ;
+                                                                                                                                                                    }
+                                                                                                                                                            )
+                                                                                                                                                        ] ;
                                                                                                                                                     text = text ;
                                                                                                                                                 } ;
                                                                                                                                 }
