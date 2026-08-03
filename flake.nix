@@ -1735,7 +1735,7 @@
                                                                                                                         let
                                                                                                                             application =
                                                                                                                                 let
-                                                                                                                                    grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
+                                                                                                                                    grouper = action : builtins.hashString "sha512" ( builtins.toString action.process.string ) ;
                                                                                                                                     mapper = name : value : ''( "$OUT/processes/${ name }" <&189 & )'' ;
                                                                                                                                     in
                                                                                                                                         root-parameters.writeShellApplication
