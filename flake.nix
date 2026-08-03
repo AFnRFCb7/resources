@@ -1347,6 +1347,7 @@
                                                                                                             name = name ;
                                                                                                             value =
                                                                                                                 {
+                                                                                                                    find = true ;
                                                                                                                     commands =
                                                                                                                         let
                                                                                                                             mapper = command : command.file-name ;
