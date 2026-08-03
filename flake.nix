@@ -1374,7 +1374,7 @@
                                                         {
                                                             name = "resource-check" ;
                                                             nodes = nodes ;
-                                                            testScript = builtins.concatStringsSep "/n" ( tests action-derivation ) ;
+                                                            testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
                                                         } ;
                                     check =
                                         {
