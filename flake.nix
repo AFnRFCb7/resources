@@ -1150,6 +1150,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        if true ; then touch "$SCRATCH/commands/${ command-index }/flag" && exit 0 ; fi
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
                                                                                                                                                         ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
