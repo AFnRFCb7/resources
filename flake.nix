@@ -1223,7 +1223,7 @@
                                                                                                                         ''
                                                                                                                             OUT="$1"
                                                                                                                             mkdir --parent "$OUT"
-                                                                                                                            sed -e "s#\$OUT#$OUT# -e "w$OUT/execute" ${ file }
+                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
                                                                                                                         '' ;
                                                                                                         } ;
                                                                                                 in ''${ application }/bin/application $OUT'' ;
