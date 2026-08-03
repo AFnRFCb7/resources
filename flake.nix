@@ -1733,7 +1733,7 @@
                                                                                                                                                             ln --symbolic ${ process } "$SCRATCH/commands/${ index }/process"
                                                                                                                                                             ln --symbolic ${ text } "$SCRATCH/commands/${ index }/text"
                                                                                                                                                             echo ${ timeout } > "$SCRATCH/commands/${ index }/timeout"
-                                                                                                                                                            # if true ; then exit 0 ; fi
+                                                                                                                                                            3# if true ; then exit 0 ; fi
                                                                                                                                                             seq 0 $(( ${ index } - 1 )) | while read -r FLAG
                                                                                                                                                             do
                                                                                                                                                                 while [[ ! -f "$SCRATCH/commands/$FLAG/flag" ]]
@@ -1741,8 +1741,9 @@
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
                                                                                                                                                             done
-                                                                                                                                                            if true ; then exit 0 ; fi
+                                                                                                                                                            # if true ; then exit 0 ; fi
                                                                                                                                                             mkdir --parent "$SCRATCH/commands/${ index }/observed"
+                                                                                                                                                            if true ; then exit 0 ; fi
                                                                                                                                                             if timeout ${ timeout }s "$SCRATCH/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
