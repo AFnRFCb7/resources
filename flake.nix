@@ -1223,7 +1223,6 @@
                                                                                                                                                 echo 1723258852938545 8223974419263356 >&2
                                                                                                                                                 echo SCRATCH "$SCRATCH"
                                                                                                                                                 echo 1723258852938545 5429817447893955 >&2
-                                                                                                                                                exit 144
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
