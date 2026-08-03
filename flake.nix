@@ -1119,7 +1119,7 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                if true ; then find "$SCRATCH | sort >&2 && sleep 10 && exit 141 ; fi
+                                                                                                                                                if true ; then find "$SCRATCH" | sort >&2 && sleep 10 && exit 141 ; fi
                                                                                                                                                 while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
                                                                                                                                                 do
                                                                                                                                                     sleep 1s
