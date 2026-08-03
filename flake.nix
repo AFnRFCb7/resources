@@ -1231,6 +1231,7 @@
                                                                                                                             OUT="$1"
                                                                                                                             mkdir --parent "$OUT"
                                                                                                                             sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
+                                                                                                                            chmod a+rx "$OUT/execute"
                                                                                                                         '' ;
                                                                                                         } ;
                                                                                                 in ''${ application }/bin/application "$OUT"'' ;
