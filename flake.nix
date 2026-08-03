@@ -1183,7 +1183,7 @@
                                                                                                                                                             fi
                                                                                                                                                         fi
                                                                                                                                                         touch "$SCRATCH/commands/${ command-index }/flag"
-                                                                                                                                                        if ${ critical } && ! diff --side-by-side q--recursive "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed"
+                                                                                                                                                        if ${ critical } && ! diff --side-by-side --recursive "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed"
                                                                                                                                                         then
                                                                                                                                                             touch "$SCRATCH/commands/${ command-index }/failure"
                                                                                                                                                         fi
