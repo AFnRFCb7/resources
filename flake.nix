@@ -1214,9 +1214,13 @@
                                                                                                                                             ''
                                                                                                                                                 SCRATCH="$( mktemp --diectory )" || exit 125
                                                                                                                                                 export SCRATCH
+
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
+                                                                                                                                                echo 1723258852938545 6851139914967758 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                                echo 1723258852938545 8223974419263356 >&2
                                                                                                                                                 echo "$SCRATCH"
+                                                                                                                                                echo 1723258852938545 5429817447893955 >&2
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
