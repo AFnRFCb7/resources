@@ -1175,7 +1175,7 @@
                                                                                                                                                         done
                                                                                                                                                         if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
                                                                                                                                                         then
-                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" > "$SCRATCH/commands/${ command-index }/observed/standard-error"
+                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
                                                                                                                                                             then
                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
