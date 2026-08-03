@@ -1741,15 +1741,16 @@
                                                                                                                                                                     sleep 1
                                                                                                                                                                 done
                                                                                                                                                             done
-                                                                                                                                                            # if true ; then exit 0 ; fi
+                                                                                                                                                            ## if true ; then exit 0 ; fi
                                                                                                                                                             mkdir --parent "$SCRATCH/commands/${ index }/observed"
-                                                                                                                                                            if true ; then exit 0 ; fi
+                                                                                                                                                            # if true ; then exit 0 ; fi
                                                                                                                                                             if timeout ${ timeout }s "$SCRATCH/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             else
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             fi
+                                                                                                                                                            if true ; then exit 0 ; fi
                                                                                                                                                             touch "$SCRATCH/commands/${ index }/flag"
                                                                                                                                                             if "${ critical }" && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
                                                                                                                                                             then
