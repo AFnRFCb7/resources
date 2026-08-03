@@ -1150,7 +1150,6 @@
                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        if true ; then exit 198 ; fi
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
                                                                                                                                                         ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
@@ -1220,7 +1219,7 @@
                                                                                                                                                 echo 1723258852938545 4539792524237488 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
                                                                                                                                                 echo 1723258852938545 6851139914967758 >&2
-                                                                                                                                                # ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                                 echo 1723258852938545 8223974419263356 >&2
                                                                                                                                                 echo SCRATCH "$SCRATCH"
                                                                                                                                                 echo 1723258852938545 5429817447893955 >&2
