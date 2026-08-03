@@ -1226,7 +1226,7 @@
                                                                                                                             sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
                                                                                                                         '' ;
                                                                                                         } ;
-                                                                                                in ''${ application }/bin/application $OUT'' ;
+                                                                                                in ''${ application }/bin/application "$OUT"'' ;
                                                                                         parameters =
                                                                                             let
                                                                                                 generator =
