@@ -1152,7 +1152,7 @@
                                                                                                                                                     ''
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
-                                                                                                                                                        ln --symbolic ${ process } "$SCRATCH/commands/${ command-index }/process"
+                                                                                                                                                        ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
                                                                                                                                                         ln --symbolic ${ text } "$SCRATCH/commands/$ command-index }/text"
                                                                                                                                                         echo ${ timeout } > "$SCRATCH/commands/$ command-index }/timeout"
                                                                                                                                                         ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/standard-error"
@@ -1786,7 +1786,7 @@
                                                                                                                             in "${ application }/bin/execute" ;
                                                                                                                     processes =
                                                                                                                         let
-                                                                                                                            grouper = action : builtins.hashString "sha512" ( builtins.toString action.process ) ;
+                                                                                                                            grouper = action : builtins.hashString "sha512" ( builtins.toString action.proces.string  ) ;
                                                                                                                             mapper =
                                                                                                                                 name : value :
                                                                                                                                     let
