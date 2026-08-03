@@ -1750,13 +1750,14 @@
                                                                                                                                                             else
                                                                                                                                                                  echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
                                                                                                                                                             fi
-                                                                                                                                                            # if true ; then exit 0 ; fi
+                                                                                                                                                            ## if true ; then exit 0 ; fi
                                                                                                                                                             touch "$SCRATCH/commands/${ index }/flag"
-                                                                                                                                                            if true ; then exit 0 ; fi
+                                                                                                                                                            # if true ; then exit 0 ; fi
                                                                                                                                                             if "${ critical }" && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
                                                                                                                                                             then
                                                                                                                                                                 echo "${ uuid }" > "$SCRATCH/commands/${ index }/failure"
                                                                                                                                                             fi
+                                                                                                                                                            if true ; then exit 0 ; fi
                                                                                                                                                         '' ;
                                                                                                                                                 } ;
                                                                                                                                             in
