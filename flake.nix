@@ -1799,7 +1799,7 @@
                                                                                                                                                 } ;
                                                                                                                                             in
                                                                                                                                                 ''
-                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/processes/${ name }" ${ application }/bin/process
+                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e w$OUT/processes/${ name } ${ application }/bin/process
                                                                                                                                                     chmod 0555 "$OUT/processes/${ name }"
                                                                                                                                                 '' ;
                                                                                                                             in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
