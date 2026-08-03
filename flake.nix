@@ -1221,7 +1221,7 @@
                                                                                                                                                 echo 1723258852938545 6851139914967758 >&2
                                                                                                                                                 # ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                                 echo 1723258852938545 8223974419263356 >&2
-                                                                                                                                                echo "$SCRATCH"
+                                                                                                                                                echo SCRATCH "$SCRATCH"
                                                                                                                                                 echo 1723258852938545 5429817447893955 >&2
                                                                                                                                                 exit 144
                                                                                                                                             '' ;
