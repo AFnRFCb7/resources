@@ -1177,9 +1177,9 @@
                                                                                                                                                         then
                                                                                                                                                             if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" > "$SCRATCH/commands/${ command-index }/observed/standard-error"
                                                                                                                                                             then
-                                                                                                                                                                echo "$? > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                                echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
-                                                                                                                                                                echo "$? > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                                echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             fi
                                                                                                                                                         fi
                                                                                                                                                         touch "$SCRATCH/commands/${ command-index }/flag"
