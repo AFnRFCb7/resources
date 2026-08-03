@@ -1175,7 +1175,7 @@
                                                                                                                                                         done
                                                                                                                                                         if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
                                                                                                                                                         then
-                                                                                                                                                            if timeout ${ timeout }s sh ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
+                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
                                                                                                                                                             then
                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
@@ -1299,27 +1299,30 @@
                                                                                                                                 {
                                                                                                                                     string =
                                                                                                                                         path : value :
-                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "text" ;
-                                                                                                                                                    runtimeInputs =
-                                                                                                                                                        [
-                                                                                                                                                            (
-                                                                                                                                                                pkgs.writeShellApplication
-                                                                                                                                                                    {
-                                                                                                                                                                        name = "check-executable" ;
-                                                                                                                                                                        text =
-                                                                                                                                                                            ''
-                                                                                                                                                                                if [[ ! -x "$1" ]]
-                                                                                                                                                                                then
-                                                                                                                                                                                    echo "$1 is not an executable" >&2
-                                                                                                                                                                                fi
-                                                                                                                                                                            '' ;
-                                                                                                                                                                    }
-                                                                                                                                                            )
-                                                                                                                                                        ] ;
-                                                                                                                                                    text = text ;
-                                                                                                                                                } ;
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "text" ;
+                                                                                                                                                            runtimeInputs =
+                                                                                                                                                                [
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-executable" ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        if [[ ! -x "$1" ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            echo "$1 is not an executable" >&2
+                                                                                                                                                                                        fi
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                ] ;
+                                                                                                                                                            text = text ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/text" ;
                                                                                                                                 }
                                                                                                                                 text ;
                                                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
