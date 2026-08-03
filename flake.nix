@@ -1130,7 +1130,7 @@
                                                                                                                     link =
                                                                                                                         let
                                                                                                                             application =
-                                                                                                                                pkgs.writeApplication
+                                                                                                                                pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "link" ;
                                                                                                                                         runtimeInputs = [ pkgs.coreutils ] ;
