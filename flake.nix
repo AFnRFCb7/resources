@@ -1357,7 +1357,7 @@
                                                                                                                             in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
                                                                                                                 } ;
                                                                                                         } ;
-                                                                                                in builtins.genList generator list ;
+                                                                                                in builtins.genList generator ( builtins.length list ) ;
                                                                                         in
                                                                                             ''
                                                                                                 OUT="$1"
