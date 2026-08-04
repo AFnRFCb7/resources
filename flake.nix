@@ -1240,6 +1240,7 @@
                                                                                                                                                 if [[ -f "$SCRATCH/failure" ]]
                                                                                                                                                 then
                                                                                                                                                     echo SCRATCH "$SCRATCH" >&2
+                                                                                                                                                    echo OUT "$OUT"
                                                                                                                                                     exit 138
                                                                                                                                                 fi
                                                                                                                                             '' ;
