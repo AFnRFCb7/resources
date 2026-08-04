@@ -344,7 +344,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils gnused log resource-parameters.init.action.script ] ;
+                                                                runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
@@ -399,7 +399,17 @@
                                                                         EOF
                                                                                 ) >&2
                                                                                 # if true ; then exit 0 ; fi
-                                                                                jq --null-input '{}' > "$INPUT_FILE"
+                                                                                    jq
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "arguments" : \$ARGS.positional ,
+                                                                                        "inputs" : { } ,
+                                                                                        "originator-pid" : \$ORIGINATOR_PID ,
+                                                                                        "temporary" : \$TEMPORARY
+                                                                                    }' -- "$@" > "$INPUT_FILE"
                                                                                 if true ; then exit 0 ; fi
                                                                             fi
                                                                         else
