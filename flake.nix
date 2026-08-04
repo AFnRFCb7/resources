@@ -1353,9 +1353,10 @@
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
                                                                                                                                                                                 name = "check-log" ;
-                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
