@@ -1151,6 +1151,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        export DOCUMENT="$SCRATCH/commands/${ command-index }/document"
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
                                                                                                                                                         ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
@@ -1227,6 +1228,11 @@
                                                                                                                                                 find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                 do
                                                                                                                                                     echo failure "$FAILURE" >&2
+                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 183
+                                                                                                                                                    if [[ -f "$DIR/document" ]]
+                                                                                                                                                    then
+                                                                                                                                                        cat "$DIR/document" >&2
+                                                                                                                                                    fi
                                                                                                                                                     touch "$SCRATCH/failure"
                                                                                                                                                 done
                                                                                                                                                 if [[ -f "$SCRATCH/failure" ]]
@@ -1327,7 +1333,6 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
-                                                                                                                                                                                        YAML_FILE="$1"
                                                                                                                                                                                         if [[ -e ${ resources-directory } ]]
                                                                                                                                                                                         then
                                                                                                                                                                                             find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
@@ -1339,12 +1344,12 @@
                                                                                                                                                                                                     '{
                                                                                                                                                                                                         "file" : $FILE ,
                                                                                                                                                                                                         "content" : $CONTENT
-                                                                                                                                                                                                    }' | yq eval --prettyPrint >> "$YAML_FILE"
+                                                                                                                                                                                                    }' | yq eval --prettyPrint >> "$DOCUMENT"
                                                                                                                                                                                             done
                                                                                                                                                                                         else
-                                                                                                                                                                                            touch "$YAML_FILE"
+                                                                                                                                                                                            touch "$DOCUMENT"
                                                                                                                                                                                         fi
-                                                                                                                                                                                        sha512sum "$YAML_FILE" | cut --characters 1-128
+                                                                                                                                                                                        sha512sum "$DOCUMENT" | cut --characters 1-128
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
