@@ -384,31 +384,17 @@
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 # if true ; then exit 0 ; fi
-                                                                                ( cat <<EOF
-                                                                                    jq
-                                                                                    --null-input \
-                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                    --argjson TEMPORARY "$TEMPORARY" \
-                                                                                    --args \
-                                                                                    '{
-                                                                                        "arguments" : \$ARGS.positional ,
-                                                                                        "inputs" : { } ,
-                                                                                        "originator-pid" : \$ORIGINATOR_PID ,
-                                                                                        "temporary" : \$TEMPORARY
-                                                                                    }' -- "$@"
-                                                                        EOF
-                                                                                ) >&2
                                                                                 # if true ; then exit 0 ; fi
-                                                                                    jq
+                                                                                jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
                                                                                     '{
-                                                                                        "arguments" : \$ARGS.positional ,
+                                                                                        "arguments" : $ARGS.positional ,
                                                                                         "inputs" : { } ,
-                                                                                        "originator-pid" : \$ORIGINATOR_PID ,
-                                                                                        "temporary" : \$TEMPORARY
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                                 if true ; then exit 0 ; fi
                                                                             fi
