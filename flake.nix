@@ -14,6 +14,7 @@
 		                invalid-init-channel ,
 		                invalid-release-channel ,
 		                jq ,
+		                log-channel ,
 		                mkDerivation ,
 		                redis ,
 		                valid-init-channel ,
@@ -1212,20 +1213,14 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.redis ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                echo 1723258852938545 4147214574973352 >&2
                                                                                                                                                 SCRATCH="$( mktemp --directory )" || exit 125
-                                                                                                                                                echo 1723258852938545 1386748597143951 >&2
+                                                                                                                                                exec 189> >( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel }
                                                                                                                                                 export SCRATCH
-                                                                                                                                                echo 1723258852938545 4539792524237488 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
-                                                                                                                                                echo 1723258852938545 6851139914967758 >&2
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
-                                                                                                                                                echo 1723258852938545 8223974419263356 >&2
-                                                                                                                                                echo 1723258852938545 5429817447893955 >&2
-                                                                                                                                                find "$SCRATCH" | sort >&2
                                                                                                                                                 find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                 do
                                                                                                                                                     echo failure "$FAILURE" >&2
