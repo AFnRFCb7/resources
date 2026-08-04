@@ -1553,7 +1553,7 @@
                                                                                                                                     } ;
                                                                                                                             in ''${ application }/bin/link "$OUT"'' ;
                                                                                                                 } ;
-                                                                                                grouper = command : builtins.import ( command.process.string ) ;
+                                                                                                grouper = command : builtins.readFromFile ( command.process.string ) ;
                                                                                                 list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
                                                                                                 mapper =
                                                                                                     name : value :
