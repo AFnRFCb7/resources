@@ -385,7 +385,7 @@
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
+                                                                                # fORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # if true ; then exit 0 ; fi
                                                                                 jq \
@@ -1183,7 +1183,7 @@
                                                                                                                                                         done
                                                                                                                                                         if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
                                                                                                                                                         then
-                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error" <&189
+                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error" ${ if reads then "<&189" else "" }
                                                                                                                                                             then
                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
@@ -1264,6 +1264,7 @@
                                                                                                                     critical ? true ,
                                                                                                                     document ? false ,
                                                                                                                     process ? "" ,
+                                                                                                                    reads ? true ,
                                                                                                                     standard-error ? "" ,
                                                                                                                     standard-output ? "" ,
                                                                                                                     status ? 0 ,
@@ -1289,6 +1290,7 @@
                                                                                                                                         path = path ;
                                                                                                                                         string = string ;
                                                                                                                                     } ;
+                                                                                                                        reads = visitor { bool = path : value : value ; } reads ;
                                                                                                                         standard-error =
                                                                                                                             visitor
                                                                                                                                 {
