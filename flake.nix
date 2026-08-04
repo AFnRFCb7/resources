@@ -225,9 +225,10 @@
                                                                                                                     read -r -u 170 PAYLOAD || break
                                                                                                                     jq \
                                                                                                                         --null-input \
-                                                                                                                        --arg TYPE "$TYPE" \
                                                                                                                         --arg CHANNEL "$CHANNEL" \
                                                                                                                         --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                        --argjson TIMESTAMP "$TIMESTAMP" \
+                                                                                                                        --arg TYPE "$TYPE" \
                                                                                                                         '{
                                                                                                                             "channel" : $CHANNEL ,
                                                                                                                             "payload" : $PAYLOAD ,
