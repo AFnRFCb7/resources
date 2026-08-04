@@ -394,7 +394,7 @@
                                                                                     --args \
                                                                                     '{
                                                                                         "arguments" : $ARGS.positional ,
-                                                                                        "inputs" : { wtf = true ; } ,
+                                                                                        "inputs" : { "wtf" : true } ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
