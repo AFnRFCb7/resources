@@ -1356,6 +1356,7 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+                                                                                                                                                                                        touch ${ resources-directory }/log.yaml
                                                                                                                                                                                         touch "$DOCUMENT"
                                                                                                                                                                                         yq eval --prettyPrint ". | map(del(.originator-pid,.timestamp))" ${ resources-directory }/log.yaml > "$DOCUMENT"
                                                                                                                                                                                         echo > ${ resources-directory }/log.yaml
