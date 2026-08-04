@@ -222,18 +222,21 @@
                                                                                                                     read -r -u 170 TYPE || break
                                                                                                                     read -r -u 170 CHANNEL || break
                                                                                                                     read -r -u 170 PAYLOAD || break
-                                                                                                                    jq \
-                                                                                                                        --null-input \
-                                                                                                                        --arg CHANNEL "$CHANNEL" \
-                                                                                                                        --argjson PAYLOAD "$PAYLOAD" \
-                                                                                                                        --argjson TIMESTAMP "$TIMESTAMP" \
-                                                                                                                        --arg TYPE "$TYPE" \
-                                                                                                                        '{
-                                                                                                                            "channel" : $CHANNEL ,
-                                                                                                                            "payload" : $PAYLOAD ,
-                                                                                                                            "timestamp" : $TIMESTAMP ,
-                                                                                                                            "type" : $TYPE
-                                                                                                                        }' | yq eval --prettyPrint '[.]' >> /log
+                                                                                                                    if [[ "$TYPE" == "message" ]]
+                                                                                                                    then
+                                                                                                                        jq \
+                                                                                                                            --null-input \
+                                                                                                                            --arg CHANNEL "$CHANNEL" \
+                                                                                                                            --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                            --argjson TIMESTAMP "$TIMESTAMP" \
+                                                                                                                            --arg TYPE "$TYPE" \
+                                                                                                                            '{
+                                                                                                                                "channel" : $CHANNEL ,
+                                                                                                                                "payload" : $PAYLOAD ,
+                                                                                                                                "timestamp" : $TIMESTAMP ,
+                                                                                                                                "type" : $TYPE
+                                                                                                                            }' | yq eval --prettyPrint '[.]' >> /log
+                                                                                                                    fi
                                                                                                                 done
                                                                                                             '' ;
                                                                                                     }
