@@ -1321,13 +1321,13 @@
                                                                                                                                                                             }
                                                                                                                                                                     )
                                                                                                                                                                     (
-                                                                                                                                                                        root-parameters.writeShellApplication
+                                                                                                                                                                        pkgs.writeShellApplication
                                                                                                                                                                             {
                                                                                                                                                                                 name = "check-file" ;
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
-                                                                                                                                                                                        YAML_FILE="$1"
+                                                                                                                                                                                        YAML_FILE="$( mktemp )" || exit 107
                                                                                                                                                                                         if [[ -e ${ resources-directory } ]]
                                                                                                                                                                                         then
                                                                                                                                                                                             find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
