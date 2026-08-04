@@ -219,6 +219,7 @@
                                                                                                                 exec 170< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
                                                                                                                 while true
                                                                                                                 do
+                                                                                                                    TIMESTAMP="$( date +%s)" || exit 164
                                                                                                                     read -r -u 170 TYPE || break
                                                                                                                     read -r -u 170 CHANNEL || break
                                                                                                                     read -r -u 170 PAYLOAD || break
@@ -228,9 +229,10 @@
                                                                                                                         --arg CHANNEL "$CHANNEL" \
                                                                                                                         --argjson PAYLOAD "$PAYLOAD" \
                                                                                                                         '{
-                                                                                                                            "type" : $TYPE ,
                                                                                                                             "channel" : $CHANNEL ,
-                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                            "payload" : $PAYLOAD ,
+                                                                                                                            "timestamp" : $TIMESTAMP ,./
+                                                                                                                            "type" : $TYPE
                                                                                                                         }' | yq eval --prettyPrint '[.]' >> /log
                                                                                                                 done
                                                                                                             '' ;
