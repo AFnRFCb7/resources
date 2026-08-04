@@ -384,7 +384,8 @@
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 # if true ; then exit 0 ; fi
-                                                                                ( cat <<EOF jq \
+                                                                                ( cat <<EOF
+                                                                                    jq
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
