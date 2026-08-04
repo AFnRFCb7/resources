@@ -1356,7 +1356,10 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
-
+                                                                                                                                                                                        touch "$DOCUMENT"
+                                                                                                                                                                                        yq eval --prettyPrint ". | map(del(.originator-pid,.timestamp))" $[ resources-directory }/log.yaml > "$DOCUMENT"
+                                                                                                                                                                                        echo > $[ resources-directory }/log.yaml
+                                                                                                                                                                                        sha512sum "$DOCUMENT" | cut --characters 1-128
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
