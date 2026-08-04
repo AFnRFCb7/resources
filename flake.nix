@@ -267,8 +267,6 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            ls -lah "${ resources-directory }/release/$INDEX"
-                                                                            stat /home/checker/resources/clean.lock
                                                                             "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
@@ -451,7 +449,7 @@
                                                                         CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                         export CHANNEL
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 183
+                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
                                                                         STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
@@ -1230,7 +1228,7 @@
                                                                                                                                                 find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                 do
                                                                                                                                                     echo failure "$FAILURE" >&2
-                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 183
+                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 128
                                                                                                                                                     if [[ -f "$DIR/document" ]]
                                                                                                                                                     then
                                                                                                                                                         cat "$DIR/document" >&2
@@ -1407,7 +1405,7 @@
                                                                                                                                                                                             EXPECTED_TYPE="$1"
                                                                                                                                                                                             EXPECTED_CHANNEL="$2"
                                                                                                                                                                                             EXPECTED_PAYLOAD_TYPE="$3"
-                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 183
+                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 131
                                                                                                                                                                                             read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                                                             read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
                                                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
