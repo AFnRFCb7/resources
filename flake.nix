@@ -1374,8 +1374,6 @@
                                                                                                                                                                                     ''
                                                                                                                                                                                         touch ${ resources-directory }/log.yaml
                                                                                                                                                                                         touch "$DOCUMENT"
-                                                                                                                                                                                        ADDITION="$( jq --null-input --arg PROCESS_INDEX "$PROCESS_INDEX" '{ "process-index" : $PROCESS_INDEX }' )" || exit 109
-                                                                                                                                                                                        export ADDITION
                                                                                                                                                                                         yq eval --prettyPrint '. | map(del(.timestamp)) | map(del(.payload.["originator-pid"]))' ${ resources-directory }/log.yaml > "$DOCUMENT"
                                                                                                                                                                                         echo > ${ resources-directory }/log.yaml
                                                                                                                                                                                         sha512sum "$DOCUMENT" | cut --characters 1-128
@@ -1538,7 +1536,7 @@
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             export PROCESS_INDEX=${ builtins.toString index }
-                                                                                                                                                                            exprot PROCESS_NAME="$( cat ${ process.name } )" || exit 129
+                                                                                                                                                                            export PROCESS_NAME="$( cat ${ process.name } )" || exit 129
                                                                                                                                                                             echo PROCESS ${ builtins.toString index } "$$" >&2
                                                                                                                                                                             ${ process.value.commands }
                                                                                                                                                                         '' ;
