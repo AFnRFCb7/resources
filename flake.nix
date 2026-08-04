@@ -1392,7 +1392,7 @@
                                                                                                                                                                                                 jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                             elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set" ]]
                                                                                                                                                                                             then
-                                                                                                                                                                                                jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT
+                                                                                                                                                                                                jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                             else
                                                                                                                                                                                                 exit 170
                                                                                                                                                                                             fi
