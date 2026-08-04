@@ -105,8 +105,8 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 135> ${ resources-directory }/locks/clean
+                                                                        mkdir --parents ${ resources-directory }
+                                                                        exec 135> ${ resources-directory }/clean.lock
                                                                         flock -s 135
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         INPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 173
@@ -114,8 +114,8 @@
                                                                         jq --compact-output "." > "$INPUT"
                                                                         OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                         export OUTPUT
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 143> ${ resources-directory }/locks/log
+                                                                        mkdir --parents ${ resources-directory }
+                                                                        exec 143> ${ resources-directory }/log.lock
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
@@ -181,8 +181,7 @@
                                                             text =
                                                                 ''
                                                                     mkdir --parents ${ gc-roots-directory }
-                                                                    mkdir --parents ${ resources-directory }/locks
-                                                                    exec 131> ${ resources-directory }/locks/clean
+                                                                    exec 131> ${ resources-directory }/clean.lock
                                                                     flock -x 131
                                                                     TEMPORARY="$( mktemp --directory )" || exit 113
                                                                     export TEMPORARY
@@ -897,8 +896,8 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    mkdir --parents ${ resources-directory }/locks
-                                                                                                                    exec 182> ${ resources-directory }/locks/clean
+                                                                                                                    mkdir --parents ${ resources-directory }
+                                                                                                                    exec 182> ${ resources-directory }/clean.lock
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
@@ -924,7 +923,8 @@
                                                                                                                     STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                     if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                     then
-                                                                                                                        exec 186> "${ resources-directory }/locks/$INDEX.lock"
+                                                                                                                        mkdir --parents ${ resources-directory }
+                                                                                                                        exec 186> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 186
                                                                                                                         TEMPORARY="$( mktemp --directory )" || exit 112
                                                                                                                         export TEMPORARY
@@ -1005,8 +1005,8 @@
                                                                     ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents ${ resources-directory }/locks
-                                                                        exec 113> ${ resources-directory }/locks/clean
+                                                                        mkdir --parents ${ resources-directory }
+                                                                        exec 113> ${ resources-directory }/clean.lock
                                                                         flock -s 113
                                                                         if [[ ! -f ${ resources-directory }/sequential ]]
                                                                         then
