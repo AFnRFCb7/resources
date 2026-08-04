@@ -1339,7 +1339,7 @@
                                                                                                                                                                                         then
                                                                                                                                                                                             find ${ gc-roots-directory } -type l -print | sort | while read -r FILE
                                                                                                                                                                                             do
-                                                                                                                                                                                                LINK="( readlink --canonicalize "$FILE" )" || exit 105
+                                                                                                                                                                                                LINK="$( readlink --canonicalize "$FILE" )" || exit 105
                                                                                                                                                                                                 jq \
                                                                                                                                                                                                     --null-input \
                                                                                                                                                                                                     --arg FILE "$FILE" \
