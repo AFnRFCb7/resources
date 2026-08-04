@@ -1162,7 +1162,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        export COMMAND_INDEX=$ command-index }
+                                                                                                                                                        export COMMAND_INDEX=${ command-index }
                                                                                                                                                         export DOCUMENT="$SCRATCH/commands/${ command-index }/document"
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
