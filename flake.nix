@@ -1352,6 +1352,16 @@
                                                                                                                                                                     (
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
+                                                                                                                                                                                name = "check-log" ;
+                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
                                                                                                                                                                                 name = "check-redis" ;
                                                                                                                                                                                 runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                 text =
