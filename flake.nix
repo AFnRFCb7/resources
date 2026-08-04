@@ -396,7 +396,7 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
-                                                                                if true ; then exit 0 ; fi
+                                                                                # if true ; then exit 0 ; fi
                                                                             fi
                                                                         else
                                                                             # if [[ -t 0 ]]
