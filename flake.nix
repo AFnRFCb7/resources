@@ -402,7 +402,7 @@
                                                                                     --null-input \
                                                                                     --args \
                                                                                     '{
-                                                                                    }' -- "$@" > "$INPUT_FILE"
+                                                                                    }' > "$INPUT_FILE"
                                                                                 if true ; then exit 0 ; fi
                                                                             fi
                                                                         else
