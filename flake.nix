@@ -268,6 +268,7 @@
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             ls -lah "${ resources-directory }/release/$INDEX"
+                                                                            stat /home/checker/resources/clean.lock
                                                                             "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
