@@ -362,7 +362,7 @@
                                                                             # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                             then
                                                                                 STANDARD_INPUT="$( cat )" || exit 103
-                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 184
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -382,7 +382,7 @@
                                                                             else
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
-                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 192
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 # if true ; then exit 0 ; fi
@@ -1405,12 +1405,11 @@
                                                                                                                                                                                             EXPECTED_TYPE="$1"
                                                                                                                                                                                             EXPECTED_CHANNEL="$2"
                                                                                                                                                                                             EXPECTED_PAYLOAD_TYPE="$3"
-                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 131
+                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 183
                                                                                                                                                                                             read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
                                                                                                                                                                                             read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
                                                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
                                                                                                                                                                                             then
-                                                                                                                                                                                                jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                                 jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                             elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set" ]]
                                                                                                                                                                                             then
