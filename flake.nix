@@ -1335,9 +1335,9 @@
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
                                                                                                                                                                                         touch "$DOCUMENT"
-                                                                                                                                                                                        if [[ -e ${ gc-root-directory } ]]
+                                                                                                                                                                                        if [[ -e ${ gc-roots-directory } ]]
                                                                                                                                                                                         then
-                                                                                                                                                                                            find ${ gc-root-directory } -type l -print | sort | while read -r FILE
+                                                                                                                                                                                            find ${ gc-roots-directory } -type l -print | sort | while read -r FILE
                                                                                                                                                                                             do
                                                                                                                                                                                                 LINK="( readlink --canonicalize "$FILE" )" || exit 105
                                                                                                                                                                                                 jq \
