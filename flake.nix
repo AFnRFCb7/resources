@@ -231,7 +231,7 @@
                                                                                                                         '{
                                                                                                                             "channel" : $CHANNEL ,
                                                                                                                             "payload" : $PAYLOAD ,
-                                                                                                                            "timestamp" : $TIMESTAMP ,./
+                                                                                                                            "timestamp" : $TIMESTAMP ,
                                                                                                                             "type" : $TYPE
                                                                                                                         }' | yq eval --prettyPrint '[.]' >> /log
                                                                                                                 done
