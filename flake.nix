@@ -896,8 +896,8 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    echo 1723258852938545 2371174711974196 "$INDEX" >&2
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
+                                                                                                                    echo 1723258852938545 2371174711974196 "$INDEX" >&2
                                                                                                                     mkdir --parents ${ resources-directory }
                                                                                                                     exec 182> ${ resources-directory }/clean.lock
                                                                                                                     flock -s 182
