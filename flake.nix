@@ -1536,7 +1536,7 @@
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             export PROCESS_INDEX=${ builtins.toString index }
-                                                                                                                                                                            PROCESS_NAME="$( cat ${ process.name } )" || exit 129
+                                                                                                                                                                            PROCESS_NAME=${ process.name }
                                                                                                                                                                             export PROCESS_NAME
                                                                                                                                                                             echo PROCESS ${ builtins.toString index } "$$" >&2
                                                                                                                                                                             ${ process.value.commands }
