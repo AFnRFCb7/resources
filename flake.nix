@@ -398,10 +398,7 @@
                                                                                     }' -- "$@"
                                                                         EOF
                                                                                 ) >&2
-                                                                                jq \
-                                                                                    --null-input \
-                                                                                    '{
-                                                                                    }' > "$INPUT_FILE"
+                                                                                jq --null-input '{}' > "$INPUT_FILE"
                                                                                 if true ; then exit 0 ; fi
                                                                             fi
                                                                         else
