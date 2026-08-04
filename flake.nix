@@ -376,9 +376,9 @@
                                                                                             } ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                                    }' -- "$@" > "$INPUT_FILE"
                                                                             else
+                                                                                if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
@@ -418,8 +418,7 @@
                                                                                             } ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                                    }' -- "$@" > "$INPUT_FILE"
                                                                             else
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 186
                                                                                 # PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
