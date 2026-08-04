@@ -1353,7 +1353,7 @@
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
                                                                                                                                                                                 name = "check-redis" ;
-                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
                                                                                                                                                                                         if [[ "$#" == 0 ]]
