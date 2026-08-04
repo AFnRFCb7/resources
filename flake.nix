@@ -382,7 +382,7 @@
                                                                             else
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
-                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 192
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 # if true ; then exit 0 ; fi
@@ -1410,6 +1410,7 @@
                                                                                                                                                                                             read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
                                                                                                                                                                                             if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
                                                                                                                                                                                             then
+                                                                                                                                                                                                jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                                 jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
                                                                                                                                                                                             elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set" ]]
                                                                                                                                                                                             then
