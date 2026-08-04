@@ -400,8 +400,6 @@
                                                                                 ) >&2
                                                                                 jq \
                                                                                     --null-input \
-                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
-                                                                                    --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
                                                                                     '{
                                                                                     }' -- "$@" > "$INPUT_FILE"
