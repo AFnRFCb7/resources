@@ -400,7 +400,6 @@
                                                                                 ) >&2
                                                                                 jq \
                                                                                     --null-input \
-                                                                                    --args \
                                                                                     '{
                                                                                     }' > "$INPUT_FILE"
                                                                                 if true ; then exit 0 ; fi
