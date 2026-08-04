@@ -1390,7 +1390,7 @@
                                                                                                                                                                                             if [[ "EXPECTED_PAYLOAD_TYPE" == "number" ]]
                                                                                                                                                                                             then
                                                                                                                                                                                                 jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
-                                                                                                                                                                                            elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set"
+                                                                                                                                                                                            elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set" ]]
                                                                                                                                                                                             then
                                                                                                                                                                                                 jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT
                                                                                                                                                                                             else
@@ -1425,7 +1425,7 @@
                                                                                                                                                                                                                 "observed" : $OBSERVED_PAYLOAD
                                                                                                                                                                                                             }
                                                                                                                                                                                                     }' >&2
-                                                                                                                                                                                                fi
+                                                                                                                                                                                            fi
                                                                                                                                                                                         else
                                                                                                                                                                                             echo Improper Usage >&2
                                                                                                                                                                                         fi
