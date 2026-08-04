@@ -391,10 +391,10 @@
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
                                                                                     '{
-                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "arguments" : \$ARGS.positional ,
                                                                                         "inputs" : { } ,
-                                                                                        "originator-pid" : $ORIGINATOR_PID ,
-                                                                                        "temporary" : $TEMPORARY
+                                                                                        "originator-pid" : \$ORIGINATOR_PID ,
+                                                                                        "temporary" : \$TEMPORARY
                                                                                     }' -- "$@"
                                                                         EOF
                                                                                 ) >&2
