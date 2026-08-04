@@ -1375,7 +1375,7 @@
                                                                                                                                                                                         touch ${ resources-directory }/log.yaml
                                                                                                                                                                                         touch "$DOCUMENT"
                                                                                                                                                                                         ADDITION="$( jq --null-input --argjson COMMAND_INDEX "$COMMAND_INDEX" --argjson PROCESS_INDEX "$PROCESS_INDEX" --arg PROCESS_NAME "$PROCESS_NAME" '{ "command-index" : $COMMAND_INDEX , "process-index" : $PROCESS_INDEX , "process-name" : $PROCESS_NAME }' )" || exit 109
-                                                                                                                                                                                        yq eval --prettyPrint '. | map(del(.timestamp)) | map(del(.payload.["originator-pid"]))' ${ resources-directory }/log.yaml | yq eval --prettyPrint "$ADDITION"> "$DOCUMENT"
+                                                                                                                                                                                        yq eval --prettyPrint '. | map(del(.timestamp)) | map(del(.payload.["originator-pid"]))' ${ resources-directory }/log.yaml | yq eval --prettyPrint ". + $ADDITION"> "$DOCUMENT"
                                                                                                                                                                                         echo > ${ resources-directory }/log.yaml
                                                                                                                                                                                         sha512sum "$DOCUMENT" | cut --characters 1-128
                                                                                                                                                                                     '' ;
@@ -1553,7 +1553,7 @@
                                                                                                                                     } ;
                                                                                                                             in ''${ application }/bin/link "$OUT"'' ;
                                                                                                                 } ;
-                                                                                                grouper = command : builtins.readFile ( command.process.string ) ;
+                                                                                                grouper = command : builtins.readFFile ( command.process.string ) ;
                                                                                                 list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
                                                                                                 mapper =
                                                                                                     name : value :
