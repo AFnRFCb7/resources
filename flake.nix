@@ -714,7 +714,7 @@
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                             export INDEX
                                                                                                             mkdir --parents ${ resources-directory }/flage =
-                                                                                                            touch "${ resources-directory }/flags/$INDEX"
+                                                                                                            touch "${ resources-directory }/flags2/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                             mkdir --parents ${ resources-directory }/release
