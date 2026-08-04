@@ -1530,7 +1530,7 @@
                                                                                                                                                                     name = "file" ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            echo PROCESS { builtins.toString index } ${ builtins.import process.name } "$$" >&2
+                                                                                                                                                                            echo PROCESS { builtins.toString index } "$$" >&2
                                                                                                                                                                             ${ process.value.commands }
                                                                                                                                                                         '' ;
                                                                                                                                                                 } ;
