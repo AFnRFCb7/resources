@@ -1179,7 +1179,7 @@
                                                                                                                                                         done
                                                                                                                                                         if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
                                                                                                                                                         then
-                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error"
+                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error" <&189
                                                                                                                                                             then
                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
                                                                                                                                                             else
@@ -1219,7 +1219,7 @@
                                                                                                                                                 SCRATCH="$( mktemp --directory )" || exit 125
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 export SCRATCH
-                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } & )" ) processes ) }
+                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                                 find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
                                                                                                                                                 do
@@ -1480,7 +1480,7 @@
                                                                                                                 {
                                                                                                                     commands =
                                                                                                                         let
-                                                                                                                            mapper = command : command.file-name ;
+                                                                                                                            mapper = command : "${ command.file-name } <&189" ;
                                                                                                                             in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
                                                                                                                     delays =
                                                                                                                         let
