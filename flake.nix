@@ -1075,6 +1075,7 @@
                                         {
                                             actions ,
                                             nodes ,
+                                            gc-roots-directory ,
                                             pkgs ,
                                             resources-directory ,
                                             tests
@@ -1323,6 +1324,33 @@
                                                                                                                                                                                         then
                                                                                                                                                                                             echo "$1 is not an executable" >&2
                                                                                                                                                                                         fi
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-gc-root-directory" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        touch "$DOCUMENT"
+                                                                                                                                                                                        if [[ -e ${ gc-root-directory } ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            find ${ gc-root-directory } -type l -print | sort | while read -r FILE
+                                                                                                                                                                                            do
+                                                                                                                                                                                                LINK="( readlink --canonicalize "$FILE" )" || exit 105
+                                                                                                                                                                                                jq \
+                                                                                                                                                                                                    --null-input \
+                                                                                                                                                                                                    --arg FILE "$FILE" \
+                                                                                                                                                                                                    --arg CONTENT "$LINK" \
+                                                                                                                                                                                                    '{
+                                                                                                                                                                                                        "file" : $FILE ,
+                                                                                                                                                                                                        "content" : $CONTENT
+                                                                                                                                                                                                    }' | yq eval --prettyPrint >> "$DOCUMENT"
+                                                                                                                                                                                            done
+                                                                                                                                                                                        fi
+                                                                                                                                                                                        sha512sum "$DOCUMENT" | cut --characters 1-128
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
