@@ -901,12 +901,15 @@
                                                                                                                     exec 182> ${ resources-directory }/clean.lock
                                                                                                                     flock -s 182
                                                                                                                     rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                    echo 1723258852938545 2258996327865388 "$INDEX" >&2
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                        echo 1723258852938545 4238629529687522 "$PID" >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
+                                                                                                                    echo 1723258852938545 1723258852938545 >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
