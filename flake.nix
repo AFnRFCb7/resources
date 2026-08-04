@@ -1528,7 +1528,11 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "file" ;
-                                                                                                                                                                    text = process.value.commands ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            echo PROCESS { builtins.toString index } ${ builtins.import process.name } "$$" >&2
+                                                                                                                                                                            ${ process.value.commands }
+                                                                                                                                                                        '' ;
                                                                                                                                                                 } ;
                                                                                                                                                     in "${ application }/bin/file" ;
                                                                                                                                                 in
