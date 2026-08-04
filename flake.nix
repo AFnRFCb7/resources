@@ -1327,6 +1327,7 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+                                                                                                                                                                                        if true ; then exit 0 ; fi
                                                                                                                                                                                         YAML_FILE="$1"
                                                                                                                                                                                         if [[ -e ${ resources-directory } ]]
                                                                                                                                                                                         then
