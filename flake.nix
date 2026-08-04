@@ -1162,6 +1162,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        export COMMAND_INDEX=$ command-index }
                                                                                                                                                         export DOCUMENT="$SCRATCH/commands/${ command-index }/document"
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
                                                                                                                                                         echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
@@ -1534,6 +1535,8 @@
                                                                                                                                                                     name = "file" ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            export PROCESS_INDEX=${ builtins.toString index }
+                                                                                                                                                                            exprot PROCESS_NAME="$( cat ${ prcocess.name } )" || exit 129
                                                                                                                                                                             echo PROCESS ${ builtins.toString index } "$$" >&2
                                                                                                                                                                             ${ process.value.commands }
                                                                                                                                                                         '' ;
