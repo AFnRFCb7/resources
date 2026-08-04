@@ -384,6 +384,17 @@
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 # if true ; then exit 0 ; fi
+                                                                                echo jq \
+                                                                                    --null-input \
+                                                                                    --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
+                                                                                    --argjson TEMPORARY "$TEMPORARY" \
+                                                                                    --args \
+                                                                                    '{
+                                                                                        "arguments" : $ARGS.positional ,
+                                                                                        "inputs" : { } ,
+                                                                                        "originator-pid" : $ORIGINATOR_PID ,
+                                                                                        "temporary" : $TEMPORARY
+                                                                                    }' -- "$@" >&2
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
