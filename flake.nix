@@ -383,14 +383,13 @@
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                                if true ; then exit 0 ; fi
+                                                                                # if true ; then exit 0 ; fi
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
                                                                                     '{
-                                                                                        "WTF" : "5482197652155478" ,
                                                                                         "arguments" : $ARGS.positional ,
                                                                                         "inputs" : { } ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
@@ -436,8 +435,7 @@
                                                                                         "inputs" : { } ,
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
-                                                                                    }' \
-                                                                                    -- "$@" > "$INPUT_FILE"
+                                                                                    }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
