@@ -1333,6 +1333,7 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+                                                                                                                                                                                        touch "$DOCUMENT"
                                                                                                                                                                                         if [[ -e ${ resources-directory } ]]
                                                                                                                                                                                         then
                                                                                                                                                                                             find ${ resources-directory } \( -path '${ resources-directory }/log.yaml' -o -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
@@ -1346,12 +1347,8 @@
                                                                                                                                                                                                         "content" : $CONTENT
                                                                                                                                                                                                     }' | yq eval --prettyPrint >> "$DOCUMENT"
                                                                                                                                                                                             done
-                                                                                                                                                                                        else
-                                                                                                                                                                                            touch "$DOCUMENT"
                                                                                                                                                                                         fi
-                                                                                                                                                                                        echo 1723258852938545 4542615318617329 >&2
                                                                                                                                                                                         sha512sum "$DOCUMENT" | cut --characters 1-128
-                                                                                                                                                                                        echo 1723258852938545 2464359165283743 >&2
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
