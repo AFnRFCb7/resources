@@ -1103,6 +1103,7 @@
                                                                                                 mapper =
                                                                                                     {
                                                                                                         command-index ,
+                                                                                                        document ,
                                                                                                         critical ,
                                                                                                         process ,
                                                                                                         standard-error ,
@@ -1189,7 +1190,7 @@
                                                                                                                                                             fi
                                                                                                                                                         fi
                                                                                                                                                         touch "$SCRATCH/commands/${ command-index }/flag"
-                                                                                                                                                        if ${ critical } && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed" 2>&1
+                                                                                                                                                        if ( ${ critical } && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed" ) || ${ document } 2>&1
                                                                                                                                                         then
                                                                                                                                                             touch "$SCRATCH/commands/${ command-index }/failure"
                                                                                                                                                         fi
@@ -1260,6 +1261,7 @@
                                                                                                             identity =
                                                                                                                 {
                                                                                                                     critical ? true ,
+                                                                                                                    document ? false ,
                                                                                                                     process ? "" ,
                                                                                                                     standard-error ? "" ,
                                                                                                                     standard-output ? "" ,
@@ -1270,6 +1272,7 @@
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
                                                                                                                         critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
+                                                                                                                        document = visitor { bool = path : value : builtins.toJSON value ; } document ;
                                                                                                                         process =
                                                                                                                             let
                                                                                                                                 path =
