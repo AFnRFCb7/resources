@@ -1330,7 +1330,7 @@
                                                                                                                                                                     (
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
-                                                                                                                                                                                name = "check-gc-root-directory" ;
+                                                                                                                                                                                name = "check-gc-roots-directory" ;
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
