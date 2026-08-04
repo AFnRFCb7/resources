@@ -1349,7 +1349,9 @@
                                                                                                                                                                                         else
                                                                                                                                                                                             touch "$DOCUMENT"
                                                                                                                                                                                         fi
+                                                                                                                                                                                        echo 1723258852938545 4542615318617329 >&2
                                                                                                                                                                                         sha512sum "$DOCUMENT" | cut --characters 1-128
+                                                                                                                                                                                        echo 1723258852938545 2464359165283743 >&2
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
