@@ -1357,6 +1357,45 @@
                                                                                                                                                                     (
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
+                                                                                                                                                                                name = "check-redis" ;
+                                                                                                                                                                                runtimeInputs = [ ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        if [[ "$#" == 0 ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            cleanup ( ) {
+                                                                                                                                                                                                if [[ "$?" == 0 ]]
+                                                                                                                                                                                                then
+                                                                                                                                                                                                    jq \
+                                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                                        --arg TYPE "$TYPE" \
+                                                                                                                                                                                                        --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                                                                        --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                                                                                                        '{
+                                                                                                                                                                                                            "type" : $TYPE ,
+                                                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                                                                                                        }' >&2
+                                                                                                                                                                                                else
+                                                                                                                                                                                                    exit 0
+                                                                                                                                                                                                fi
+                                                                                                                                                                                            }
+                                                                                                                                                                                            trap cleanup EXIT
+                                                                                                                                                                                            read -r -t 1 -u 189 TYPE <&189
+                                                                                                                                                                                            read -r -t 1 -u 189 CHANNEL <&189
+                                                                                                                                                                                            read -r -t 1 -u 189 PAYLOAD <&189
+                                                                                                                                                                                        elif [[ "$#" == 2 ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            echo unimplemented >&2
+                                                                                                                                                                                        else
+                                                                                                                                                                                            echo Improper Usage >&2
+                                                                                                                                                                                        fi
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
                                                                                                                                                                                 name = "check-resources-directory" ;
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
