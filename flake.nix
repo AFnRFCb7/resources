@@ -915,14 +915,14 @@
                                                                                                                                 exit 0
                                                                                                                             fi
                                                                                                                         done
-#                                                                                                                        mkdir --parents ${ resources-directory }/temporary
-#                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 114
-#                                                                                                                        export INPUT_FILE
-#                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE""
-#                                                                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
-#                                                                                                                        is-releasable/nix/store/8g6p1kfa09vgxhpd596yxm8digcr03pk-release/bin/release
-#                                                                                                                        exec 162> "${ resources-directory }/$INDEX.lock"
-#                                                                                                                        flock -x 162
+                                                                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 114
+                                                                                                                        export INPUT_FILE
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
+                                                                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
+                                                                                                                        is-releasable/nix/store/8g6p1kfa09vgxhpd596yxm8digcr03pk-release/bin/release
+                                                                                                                        exec 162> "${ resources-directory }/$INDEX.lock"
+                                                                                                                        flock -x 162
                                                                                                                         if [[ -f "${ resources-directory }/flags/$INDEX" ]]
                                                                                                                         then
                                                                                                                             flock -u 162
