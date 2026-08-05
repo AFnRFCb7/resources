@@ -1238,10 +1238,12 @@
                                                                                                                                                 export SCRATCH
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
-                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
                                                                                                                                                 do
+                                                                                                                                                    echo >&2
                                                                                                                                                     echo failure "$FAILURE" >&2
                                                                                                                                                     DIR="$( dirname "$FAILURE" )" || exit 128
+                                                                                                                                                    diff --recursive --reports-identical-files "$DIFF/expected" "$DIFF/observed"
                                                                                                                                                     if [[ -f "$DIR/document" ]]
                                                                                                                                                     then
                                                                                                                                                         cat "$DIR/document" >&2
