@@ -562,6 +562,7 @@
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
+                                                                                                                                "--bind" gc-roots-directory "/gc-root"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                                 "--bind" "${ resources-directory }/release" "/release"
@@ -719,6 +720,7 @@
                                                                                                             SEQUENCE="$( sequential )" || exit 137
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                             export INDEX
+                                                                                                            mkdir --parents ${ gc-roots }
                                                                                                             mkdir --parents ${ resources-directory }/flags
                                                                                                             touch "${ resources-directory }/flags/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
