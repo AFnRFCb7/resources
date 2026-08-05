@@ -920,6 +920,7 @@
                                                                                                                         export INPUT_FILE
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
+                                                                                                                        export OUTPUT_FILE
                                                                                                                         is-releasable/nix/store/8g6p1kfa09vgxhpd596yxm8digcr03pk-release/bin/release
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
