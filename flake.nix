@@ -1243,7 +1243,7 @@
                                                                                                                                                     echo >&2
                                                                                                                                                     echo failure "$FAILURE" >&2
                                                                                                                                                     DIR="$( dirname "$FAILURE" )" || exit 128
-                                                                                                                                                    diff --recursive --reports-identical-files "$DIFF/expected" "$DIFF/observed"
+                                                                                                                                                    diff --recursive --reports-identical-files "$DIFF/expected" "$DIFF/observed" >&2
                                                                                                                                                     if [[ -f "$DIR/document" ]]
                                                                                                                                                     then
                                                                                                                                                         cat "$DIR/document" >&2
