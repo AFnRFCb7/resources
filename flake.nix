@@ -797,7 +797,7 @@
                                                                                                                                                                 find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                                 do
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                                                                    echo 1723258852938545 7863422579297753 "$INDEX" "$OBSERVED" >&2
+                                                                                                                                                                    echo 1723258852938545 7863422579297753 "$INDEX" "$LINK" "$OBSERVED" >&2
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
                                                                                                                                                                         # KLUDGE
