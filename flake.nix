@@ -909,6 +909,7 @@
                                                                                                                         find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                            echo 1723258852938545 1537128814264277 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
                                                                                                                                 while [[ -f "$LINK" ]]
