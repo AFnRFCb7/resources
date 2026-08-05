@@ -915,7 +915,7 @@
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 8392857898642995 >&2
+                                                                                                                    echo 1723258852938545 6321671814833451 "$INDEX" >&2
                                                                                                                     mkdir --parents ${ resources-directory }/temporary
                                                                                                                     INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export INPUT_FILE
