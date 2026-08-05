@@ -945,7 +945,7 @@
                                                                                                                     find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                     do
                                                                                                                         OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                        echo 1723258852938545  1741858147842999 "$INDEX" "$LINK" "$OBSERVED" >&2
+                                                                                                                        echo 1723258852938545  1741858147842999 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                         if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                         then
                                                                                                                             # KLUDGE
@@ -956,6 +956,7 @@
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                         fi
                                                                                                                     done
+                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX >&2
 
                                                                                                                     is-releasable
                                                                                                                     echo 1723258852938545 1811124298664784 "$INDEX" >&2
