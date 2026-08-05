@@ -956,7 +956,7 @@
                                                                                                                                 # KLUDGE
                                                                                                                                 sleep 30s
                                                                                                                             done
-                                                                                                                            echo 1723258852938545 5538995455297877  "$LINK" "$EXPECTED" "$OBSERVED" >&2
+                                                                                                                            echo 1723258852938545 5538995455297877 "$LINK" "$EXPECTED" "$OBSERVED" "$$"q >&2
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                         fi
                                                                                                                         echo 1723258852938545 1769867859563763 >&2
