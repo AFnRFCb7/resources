@@ -940,6 +940,8 @@
                                                                                                                     mkdir --parents ${ gc-roots-directory }
                                                                                                                     echo 1723258852938545 3282539279253693 "$INDEX" >&2
 
+
+                                                                                                                    EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                     find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                     do
                                                                                                                         OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
