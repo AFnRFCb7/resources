@@ -791,7 +791,9 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
+                                                                                                                                                                echo 1723258852938545 1132147345183855 "$INDEX" >&2
                                                                                                                                                                 EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                                                                echo 1723258852938545 9684421671855866 "$INDEX" >&2
                                                                                                                                                                 find /gc-roots -type l | sort | while read -r LINK
                                                                                                                                                                 do
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
@@ -805,12 +807,14 @@
                                                                                                                                                                         # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                                                                     fi
                                                                                                                                                                 done
+                                                                                                                                                                echo 1723258852938545 2165142988395599 "$INDEX" >&2
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 else
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 fi
+                                                                                                                                                                echo 1723258852938545 4445965552819372 "$INDEX" >&2
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
@@ -821,6 +825,7 @@
                                                                                                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                         "status" : $STATUS
                                                                                                                                                                     }' /input > /output
+                                                                                                                                                                echo 1723258852938545 2417631932995768 "$INDEX" >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
