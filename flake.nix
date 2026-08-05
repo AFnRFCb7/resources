@@ -909,15 +909,12 @@
                                                                                                                         find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                            # echo 1723258852938545 1537128814264277 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
-                                                                                                                                echo 1723258852938545 2274111657945466 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
-                                                                                                                                while [[ -f "$LINK" ]]
+                                                                                                                                while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
-                                                                                                                                echo 1723258852938545 8648215991627666 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             fi
                                                                                                                         done
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
