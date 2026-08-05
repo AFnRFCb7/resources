@@ -562,7 +562,7 @@
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
-                                                                                                                                "--bind" "${ }gc-roots-directory }/$INDEX" "/gc-root"
+                                                                                                                                "--bind" "${ gc-roots-directory }/$INDEX" "/gc-root"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                                 "--bind" "${ resources-directory }/release" "/release"
