@@ -340,6 +340,7 @@
                                                 error ,
                                                 init ,
                                                 release ,
+                                                resources ,
                                                 seed ,
                                                 targets ,
                                                 temporary
@@ -584,7 +585,7 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "init" ;
-                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs { gc-roots-directory = gc-roots-directory ;pkgs =pkgs ; resources = resources ; };
+                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs { gc-roots-directory = gc-roots-directory ; pkgs =pkgs ; resources = resources ; };
                                                                                                                                                                     text = resource-parameters.init.action.text ;
                                                                                                                                                                 }
                                                                                                                                                         )
