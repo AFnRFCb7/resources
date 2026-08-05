@@ -917,11 +917,12 @@
                                                                                                                                 done
                                                                                                                             fi
                                                                                                                         done
-                                                                                                                        mkdir --parents ${ resources-directory }/temporary
-                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 114
+                                                                                                                        export TEMPORARY=${ resources-directory }/temporary
+                                                                                                                        mkdir --parents "$TEMPORARY"
+                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
                                                                                                                         export INPUT_FILE
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
-                                                                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
+                                                                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 153
                                                                                                                         export OUTPUT_FILE
                                                                                                                         echo 1723258852938545 9185798584513769 >&2
                                                                                                                         is-releasable
