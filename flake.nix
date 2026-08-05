@@ -1363,7 +1363,7 @@
                                                                                                                                                                                                     --arg LINK "$LINK" \
                                                                                                                                                                                                     '{
                                                                                                                                                                                                         "file" : $FILE ,
-                                                                                                                                                                                                        "content" : $CONTENT
+                                                                                                                                                                                                        "link" : $LINK
                                                                                                                                                                                                     }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
                                                                                                                                                                                             done
                                                                                                                                                                                         fi
