@@ -1484,7 +1484,7 @@
                                                                                                                                                                                                     --null-input \
                                                                                                                                                                                                     --rawfile CAT "$FILE" \
                                                                                                                                                                                                     --arg FILE "$FILE" \
-                                                                                                                                                                                                    --ard STAT "$STAT" \
+                                                                                                                                                                                                    --arg STAT "$STAT" \
                                                                                                                                                                                                     '{
                                                                                                                                                                                                         "cat" : $CAT
                                                                                                                                                                                                         "file" : $FILE ,
