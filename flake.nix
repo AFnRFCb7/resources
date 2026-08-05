@@ -797,8 +797,7 @@
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        sleep 10s
-                                                                                                                                                                        # inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                                        inotifywait --event delete_self "$OBSERVED" > /private/inotifywait
                                                                                                                                                                     fi
                                                                                                                                                                 done
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
