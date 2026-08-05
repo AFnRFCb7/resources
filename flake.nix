@@ -584,7 +584,7 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "init" ;
-                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs pkgs ;
+                                                                                                                                                                    runtimeInputs = resource-parameters.init.action.targetPkgs { gc-roots-directory = gc-roots-directory ;pkgs =pkgs ; resources = resources ; };
                                                                                                                                                                     text = resource-parameters.init.action.text ;
                                                                                                                                                                 }
                                                                                                                                                         )
