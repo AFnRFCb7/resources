@@ -952,9 +952,9 @@
                                                                                                                             # KLUDGE
                                                                                                                             while [[ -e "$LINK" ]]
                                                                                                                             do
+                                                                                                                                "$0"
                                                                                                                                 echo 1723258852938545 3851742713597919 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                                 # KLUDGE
-                                                                                                                                sleep 30s
                                                                                                                             done
                                                                                                                             echo 1723258852938545 5538995455297877 "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
@@ -963,7 +963,8 @@
                                                                                                                     done
                                                                                                                     echo 1723258852938545 1631694525644691 "$INDEX" "$INDEX" >&2
 
-                                                                                                                    is-releasable
+
+                                                                                                                    # is-releasable
                                                                                                                     echo 1723258852938545 1811124298664784 "$INDEX" >&2
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                                     STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
