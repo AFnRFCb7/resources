@@ -1229,7 +1229,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.redis ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 SCRATCH="$( mktemp --directory )" || exit 125
@@ -1243,7 +1243,7 @@
                                                                                                                                                     echo >&2
                                                                                                                                                     echo failure "$FAILURE" >&2
                                                                                                                                                     DIR="$( dirname "$FAILURE" )" || exit 128
-                                                                                                                                                    diff --recursive --reports-identical-files "$DIFF/expected" "$DIFF/observed" >&2
+                                                                                                                                                    diff --recursive --reports-identical-files "$DIR/expected" "$DIR/observed" >&2
                                                                                                                                                     if [[ -f "$DIR/document" ]]
                                                                                                                                                     then
                                                                                                                                                         cat "$DIR/document" >&2
