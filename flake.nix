@@ -956,7 +956,7 @@
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                         fi
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX >&2
+                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX" >&2
 
                                                                                                                     is-releasable
                                                                                                                     echo 1723258852938545 1811124298664784 "$INDEX" >&2
