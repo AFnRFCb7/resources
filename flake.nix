@@ -797,7 +797,12 @@
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                                                                        # KLUDGE
+                                                                                                                                                                        while [[ -e "$LINK" ]]
+                                                                                                                                                                        do
+                                                                                                                                                                            sleep 1s
+                                                                                                                                                                        done
+                                                                                                                                                                        # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                                                                     fi
                                                                                                                                                                 done
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
