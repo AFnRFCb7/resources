@@ -939,6 +939,22 @@
                                                                                                                     export OUTPUT_FILE
                                                                                                                     mkdir --parents ${ gc-roots-directory }
                                                                                                                     echo 1723258852938545 3282539279253693 "$INDEX" >&2
+
+                                                                                                                    find ${ gc-roots-directory } -type l | sort | while read -r LINK
+                                                                                                                    do
+                                                                                                                        OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                        echo 1723258852938545 7863422579297753 "$INDEX" "$LINK" "$OBSERVED" >&2
+                                                                                                                        if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                        then
+                                                                                                                            # KLUDGE
+                                                                                                                            while [[ -e "$LINK" ]]
+                                                                                                                            do
+                                                                                                                                sleep 1s
+                                                                                                                            done
+                                                                                                                            # inotifywait --event delete_self "$LINK" > /private/inotifywait
+                                                                                                                        fi
+                                                                                                                    done
+
                                                                                                                     is-releasable
                                                                                                                     echo 1723258852938545 1811124298664784 "$INDEX" >&2
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
