@@ -924,7 +924,7 @@
                                                                                                                         is-releasable
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
-                                                                                                                        if [[ -f ${ resources-directory }/flags/$INDEX" ]]
+                                                                                                                        if [[ -f "${ resources-directory }/flags/$INDEX" ]]
                                                                                                                         then
                                                                                                                             flock -u 162
                                                                                                                             "$0"
