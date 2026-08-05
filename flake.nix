@@ -911,8 +911,10 @@
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
-                                                                                                                                "$0"
-                                                                                                                                exit 0
+                                                                                                                                while [[ -f "$LINK" ]]
+                                                                                                                                do
+                                                                                                                                    sleep 1s
+                                                                                                                                done
                                                                                                                             fi
                                                                                                                         done
                                                                                                                         mkdir --parents ${ resources-directory }/temporary
