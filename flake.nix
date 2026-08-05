@@ -923,7 +923,9 @@
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
                                                                                                                         export OUTPUT_FILE
+                                                                                                                        echo 1723258852938545 9185798584513769 >&2
                                                                                                                         is-releasable
+                                                                                                                        echo 1723258852938545 5567166137496158 >&2
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
                                                                                                                         if [[ -f "${ resources-directory }/flags/$INDEX" ]]
@@ -932,7 +934,9 @@
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
+                                                                                                                            echo 1723258852938545 1553254695495935 >&2
                                                                                                                             release
+                                                                                                                            echo 1723258852938545 7383244777938869 >&2
                                                                                                                         fi
                                                                                                                     fi
                                                                                                                 '' ;
