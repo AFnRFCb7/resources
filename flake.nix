@@ -1486,7 +1486,7 @@
                                                                                                                                                                                                     --arg FILE "$FILE" \
                                                                                                                                                                                                     --arg STAT "$STAT" \
                                                                                                                                                                                                     '{
-                                                                                                                                                                                                        "cat" : $CAT
+                                                                                                                                                                                                        "cat" : $CAT ,
                                                                                                                                                                                                         "file" : $FILE ,
                                                                                                                                                                                                         "stat" : $STAT
                                                                                                                                                                                                     }' | yq eval --prettyPrint >> "$DOCUMENT"
