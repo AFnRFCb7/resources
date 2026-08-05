@@ -895,26 +895,26 @@
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
                                                                                                                         mkdir --parents ${ resources-directory }
-#                                                                                                                        exec 182> ${ resources-directory }/clean.lock
-#                                                                                                                        flock -s 182
-#                                                                                                                        rm --force "${ resources-directory }/flags/$INDEX"
-#                                                                                                                        find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
-#                                                                                                                        do
-#                                                                                                                            PID="$( basename "$PID_FILE" )" || exit 169
-#                                                                                                                            tail --follow /dev/null --pid "$PID"
-#                                                                                                                            rm "$PID_FILE"
-#                                                                                                                        done
-#                                                                                                                        mkdir --parents ${ gc-roots-directory }
-#                                                                                                                        EXPECTED="${ resources-directory }/mounts/$INDEX"
-#                                                                                                                        find ${ gc-roots-directory } -type l | sort | while read -r LINK
-#                                                                                                                        do
-#                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-#                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
-#                                                                                                                            then
-#                                                                                                                                "$0"
-#                                                                                                                                exit 0
-#                                                                                                                            fi
-#                                                                                                                        done
+                                                                                                                        exec 182> ${ resources-directory }/clean.lock
+                                                                                                                        flock -s 182
+                                                                                                                        rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                        find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
+                                                                                                                        do
+                                                                                                                            PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                            tail --follow /dev/null --pid "$PID"
+                                                                                                                            rm "$PID_FILE"
+                                                                                                                        done
+                                                                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                                                                        EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                        find ${ gc-roots-directory } -type l | sort | while read -r LINK
+                                                                                                                        do
+                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                            then
+                                                                                                                                "$0"
+                                                                                                                                exit 0
+                                                                                                                            fi
+                                                                                                                        done
 #                                                                                                                        mkdir --parents ${ resources-directory }/temporary
 #                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 114
 #                                                                                                                        export INPUT_FILE
