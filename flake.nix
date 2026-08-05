@@ -931,6 +931,7 @@
                                                                                                                         else
                                                                                                                             release
                                                                                                                         fi
+                                                                                                                    fi
                                                                                                                 '' ;
                                                                                                         } ;
                                                                                                 in "${ application }/bin/release" ;
