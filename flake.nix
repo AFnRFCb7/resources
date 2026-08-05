@@ -1494,7 +1494,7 @@
                                                                                                                                                                                                         "cat" : $CAT ,
                                                                                                                                                                                                         "file" : $FILE ,
                                                                                                                                                                                                         "stat" : $STAT
-                                                                                                                                                                                                    }' | yq eval --prettyPrint "[.}" >> "$DOCUMENT"
+                                                                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
                                                                                                                                                                                             done
                                                                                                                                                                                         fi
                                                                                                                                                                                         sha512sum "$DOCUMENT" | cut --characters 1-128
