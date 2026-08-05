@@ -791,31 +791,13 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
-                                                                                                                                                                echo 1723258852938545 1132147345183855 "$INDEX" >&2
                                                                                                                                                                 EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                echo 1723258852938545 9684421671855866 "$INDEX" >&2
-                                                                                                                                                                find /gc-roots -type l | sort | while read -r LINK
-                                                                                                                                                                do
-                                                                                                                                                                    OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                                                                    echo 1723258852938545 7863422579297753 "$INDEX" "$LINK" "$OBSERVED" >&2
-                                                                                                                                                                    if [[ "$EXPECTED" == "$OBSERVED" ]]
-                                                                                                                                                                    then
-                                                                                                                                                                        # KLUDGE
-                                                                                                                                                                        while [[ -e "$LINK" ]]
-                                                                                                                                                                        do
-                                                                                                                                                                            sleep 1s
-                                                                                                                                                                        done
-                                                                                                                                                                        # inotifywait --event delete_self "$LINK" > /private/inotifywait
-                                                                                                                                                                    fi
-                                                                                                                                                                done
-                                                                                                                                                                echo 1723258852938545 2165142988395599 "$INDEX" >&2
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 else
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 fi
-                                                                                                                                                                echo 1723258852938545 4445965552819372 "$INDEX" >&2
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
@@ -826,7 +808,6 @@
                                                                                                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                         "status" : $STATUS
                                                                                                                                                                     }' /input > /output
-                                                                                                                                                                echo 1723258852938545 2417631932995768 "$INDEX" >&2
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
@@ -912,77 +893,45 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    echo 1723258852938545 2371174711974196 "$INDEX" >&2
-                                                                                                                    mkdir --parents ${ resources-directory }
-                                                                                                                    exec 182> ${ resources-directory }/clean.lock
-                                                                                                                    flock -s 182
-                                                                                                                    rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                    echo 1723258852938545 2258996327865388 "$INDEX" >&2
-                                                                                                                    find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
-                                                                                                                    do
-                                                                                                                        PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 4238629529687522 "$INDEX" "$PID" >&2
-                                                                                                                        tail --follow /dev/null --pid "$PID"
-                                                                                                                        rm "$PID_FILE"
-                                                                                                                    done
-                                                                                                                    echo 1723258852938545 6321671814833451 "$INDEX" >&2
-                                                                                                                    mkdir --parents ${ resources-directory }/temporary
-                                                                                                                    INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    export INPUT_FILE
-                                                                                                                    jq \
-                                                                                                                        --null-input \
-                                                                                                                        --arg _INDEX "$INDEX"\
-                                                                                                                        '{
-                                                                                                                            "index" : $_INDEX
-                                                                                                                        }' > "$INPUT_FILE"
-                                                                                                                    OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
-                                                                                                                    export OUTPUT_FILE
-                                                                                                                    mkdir --parents ${ gc-roots-directory }
-                                                                                                                    echo 1723258852938545 3282539279253693 "$INDEX" >&2
-
-
-                                                                                                                    EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                    find ${ gc-roots-directory } -type l | sort | while read -r LINK
-                                                                                                                    do
-                                                                                                                        OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                        echo 1723258852938545 1741858147842999 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
-                                                                                                                        if [[ "$EXPECTED" == "$OBSERVED" ]]
-                                                                                                                        then
-                                                                                                                            echo 1723258852938545 3382837766231839 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
-                                                                                                                            # KLUDGE
-                                                                                                                            while [[ -e "$LINK" ]]
-                                                                                                                            do
-                                                                                                                                "$0"
-                                                                                                                                echo 1723258852938545 3851742713597919 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
-                                                                                                                                # KLUDGE
-                                                                                                                            done
-                                                                                                                            echo 1723258852938545 5538995455297877 "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
-                                                                                                                            # inotifywait --event delete_self "$LINK" > /private/inotifywait
-                                                                                                                        fi
-                                                                                                                        echo 1723258852938545 1769867859563763 >&2
-                                                                                                                    done
-                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX" "$INDEX" >&2
-
-
-                                                                                                                    # is-releasable
-                                                                                                                    echo 1723258852938545 1811124298664784 "$INDEX" >&2
-                                                                                                                    STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
-                                                                                                                    STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
-                                                                                                                    if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                    if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
-                                                                                                                        echo 1723258852938545 5698965571787611 "$INDEX" >&2
                                                                                                                         mkdir --parents ${ resources-directory }
-                                                                                                                        exec 186> "${ resources-directory }/$INDEX.lock"
-                                                                                                                        flock -x 186
-                                                                                                                        TEMPORARY="$( mktemp --directory )" || exit 112
-                                                                                                                        export TEMPORARY
-                                                                                                                        release
-                                                                                                                    else
-                                                                                                                        echo 1723258852938545 6132161248488359 "$INDEX" >&2
-                                                                                                                        flock -u 182
-                                                                                                                        "$0"
-                                                                                                                    fi
-                                                                                                                    rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                                                                        exec 182> ${ resources-directory }/clean.lock
+                                                                                                                        flock -s 182
+                                                                                                                        rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                        find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
+                                                                                                                        do
+                                                                                                                            PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                            tail --follow /dev/null --pid "$PID"
+                                                                                                                            rm "$PID_FILE"
+                                                                                                                        done
+                                                                                                                        export OUTPUT_FILE
+                                                                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                                                                        EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                        find ${ gc-roots-directory } -type l | sort | while read -r LINK
+                                                                                                                        do
+                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                            then
+                                                                                                                                "$0"
+                                                                                                                                exit
+                                                                                                                            fi
+                                                                                                                        done
+                                                                                                                        mkdir --parents ${ resources-directory }/temporary
+                                                                                                                        INPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 114
+                                                                                                                        export INPUT_FILE
+                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE""
+                                                                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 153
+                                                                                                                        is-releasable
+                                                                                                                        exec 162> "${ resources-directory }/$INDEX.lock"
+                                                                                                                        flock -x 162
+                                                                                                                        if [[ -f ${ resources-directory }/flags/$INDEX" ]]
+                                                                                                                        then
+                                                                                                                            flock -u 162
+                                                                                                                            "$0"
+                                                                                                                        else
+                                                                                                                            release
+                                                                                                                        fi
                                                                                                                 '' ;
                                                                                                         } ;
                                                                                                 in "${ application }/bin/release" ;
