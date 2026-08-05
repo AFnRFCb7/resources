@@ -928,11 +928,14 @@
                                                                                                                     OUTPUT_FILE="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
                                                                                                                     export OUTPUT_FILE
                                                                                                                     mkdir --parents ${ gc-roots-directory }
+                                                                                                                    echo 1723258852938545 3282539279253693 "$INDEX" >&2
                                                                                                                     is-releasable
+                                                                                                                    echo 1723258852938545 1811124298664784 "$INDEX" >&2
                                                                                                                     STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 171
                                                                                                                     STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 172
                                                                                                                     if [[ ! -f "${ resources-directory }/flags/$INDEX" ]] && [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                     then
+                                                                                                                        echo 1723258852938545 5698965571787611 "$INDEX" >&2
                                                                                                                         mkdir --parents ${ resources-directory }
                                                                                                                         exec 186> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 186
@@ -940,6 +943,7 @@
                                                                                                                         export TEMPORARY
                                                                                                                         release
                                                                                                                     else
+                                                                                                                        echo 1723258852938545 6132161248488359 "$INDEX" >&2
                                                                                                                         flock -u 182
                                                                                                                         "$0"
                                                                                                                     fi
