@@ -945,14 +945,18 @@
                                                                                                                     find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                     do
                                                                                                                         OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
-                                                                                                                        echo 1723258852938545  1741858147842999 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
+                                                                                                                        echo 1723258852938545 1741858147842999 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                         if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                         then
+                                                                                                                            echo 1723258852938545 3382837766231839 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             # KLUDGE
                                                                                                                             while [[ -e "$LINK" ]]
                                                                                                                             do
-                                                                                                                                sleep 1s
+                                                                                                                                echo 1723258852938545 3851742713597919 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
+                                                                                                                                # KLUDGE
+                                                                                                                                sleep 30s
                                                                                                                             done
+                                                                                                                            echo 1723258852938545 5538995455297877 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                         fi
                                                                                                                     done
