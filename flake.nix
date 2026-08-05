@@ -911,7 +911,7 @@
                                                                                                                     find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                     do
                                                                                                                         PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                        echo 1723258852938545 4238629529687522 "$PID" >&2
+                                                                                                                        echo 1723258852938545 4238629529687522 "$INDEX" "$PID" >&2
                                                                                                                         tail --follow /dev/null --pid "$PID"
                                                                                                                         rm "$PID_FILE"
                                                                                                                     done
