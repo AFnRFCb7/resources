@@ -797,7 +797,7 @@
                                                                                                                                                                     OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                                                                     if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        inotifywait --event delete_self "$OBSERVED" > /private/inotifywait
+                                                                                                                                                                        inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                                                                     fi
                                                                                                                                                                 done
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
@@ -815,8 +815,7 @@
                                                                                                                                                                         "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                         "status" : $STATUS
-                                                                                                                                                                    }' \
-                                                                                                                                                                    /input > /output
+                                                                                                                                                                    }' /input > /output
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
