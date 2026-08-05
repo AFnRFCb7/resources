@@ -904,7 +904,6 @@
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm "$PID_FILE"
                                                                                                                         done
-                                                                                                                        export OUTPUT_FILE
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                         find ${ gc-roots-directory } -type l | sort | while read -r LINK
