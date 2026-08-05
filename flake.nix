@@ -1241,6 +1241,7 @@
                                                                                                                                                 find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
                                                                                                                                                 do
                                                                                                                                                     echo >&2
+                                                                                                                                                    echo ==== ========= ========= ========= ========= ========= ========= ========= =====
                                                                                                                                                     echo failure "$FAILURE" >&2
                                                                                                                                                     DIR="$( dirname "$FAILURE" )" || exit 128
                                                                                                                                                     diff --recursive --report-identical-files "$DIR/expected" "$DIR/observed" >&2 || true
