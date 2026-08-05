@@ -956,11 +956,12 @@
                                                                                                                                 # KLUDGE
                                                                                                                                 sleep 30s
                                                                                                                             done
-                                                                                                                            echo 1723258852938545 5538995455297877 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" >&2
+                                                                                                                            echo 1723258852938545 5538995455297877  "$LINK" "$EXPECTED" "$OBSERVED" >&2
                                                                                                                             # inotifywait --event delete_self "$LINK" > /private/inotifywait
                                                                                                                         fi
+                                                                                                                        echo 1723258852938545 1769867859563763 >&2
                                                                                                                     done
-                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX" >&2
+                                                                                                                    echo 1723258852938545 1631694525644691 "$INDEX" "$INDEX" >&2
 
                                                                                                                     is-releasable
                                                                                                                     echo 1723258852938545 1811124298664784 "$INDEX" >&2
