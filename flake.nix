@@ -911,10 +911,12 @@
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
+                                                                                                                                echo 1723258852938545 7188485116547684 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
+                                                                                                                                echo 1723258852938545 3868869131353631 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                             fi
                                                                                                                         done
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
