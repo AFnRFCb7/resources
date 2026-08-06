@@ -918,7 +918,7 @@
                                                                                                                                 done
                                                                                                                                 echo 1723258852938545 3868869131353631 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                             fi
-                                                                                                                            echo 1723258852938545 8729273658655867 "$INDEX" >&2
+                                                                                                                            echo 1723258852938545 8729273658655867 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                         done
                                                                                                                         echo 1723258852938545 5877452111344569 "$INDEX" >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
