@@ -866,32 +866,37 @@
                                                                                                                                                                         }' input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
+                                                                                                                                                                            "index" : .index ,
                                                                                                                                                                             "standard-output" : .standard-output ,
                                                                                                                                                                             "status" : .status
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
+                                                                                                                                                                        }' /input | log
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
+                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
+                                                                                                                                                                            "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "standard-error" : .["standard-error"]
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
+                                                                                                                                                                        }' /input | log
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
+                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
+                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
+                                                                                                                                                                            "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "standard-error" : .["standard-error"] ,
                                                                                                                                                                             "status" : .status
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
+                                                                                                                                                                        }' /input | log
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
@@ -903,7 +908,7 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    # 2863426286352491
+                                                                                                                    # 2863426286352491 use this one
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
