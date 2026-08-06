@@ -1292,6 +1292,7 @@
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
                                                                                                                         critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
+                                                                                                                        kludge = visitor { bool = path : value : value ; } ;
                                                                                                                         document = visitor { bool = path : value : builtins.toJSON value ; } document ;
                                                                                                                         process =
                                                                                                                             let
