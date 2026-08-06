@@ -910,6 +910,7 @@
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
+                                                                                                                    echo 1723258852938545 7297139149892768 "$INDEX" >&2
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
                                                                                                                         mkdir --parents ${ resources-directory }
