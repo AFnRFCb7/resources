@@ -903,6 +903,7 @@
                                                                                                                 ] ;
                                                                                                             text =
                                                                                                                 ''
+                                                                                                                    # 2863426286352491
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
@@ -956,7 +957,11 @@
                                                                                     } ;
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
                                                                         release = visitor { lambda = path : value : value null ; } release ;
-                                                                        recovery = null ;
+                                                                        recovery =
+                                                                            visitor
+                                                                                {
+
+                                                                                } ;
                                                                         valid-channel = root-parameters.valid-release-channel ;
                                                                     } ;
                                                                 seed =
