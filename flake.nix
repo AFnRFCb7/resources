@@ -259,7 +259,7 @@
                                                     writeShellApplication
                                                         {
                                                             name = "release" ;
-                                                            runtimeInputs = [ coreutils jq redis ] ;
+                                                            runtimeInputs = [ coreutils findutils jq redis ] ;
                                                             text =
                                                                 ''
                                                                     while true
