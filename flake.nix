@@ -863,7 +863,7 @@
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
-                                                                                                                                                                        }' input | log
+                                                                                                                                                                        }' /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     mkdir --parents ${ resources-directory }/invalid-release
