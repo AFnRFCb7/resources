@@ -919,6 +919,7 @@
                                                                                                                                 echo 1723258852938545 3868869131353631 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                             fi
                                                                                                                         done
+                                                                                                                        echo 1723258852938545 5877452111344569 "$INDEX" >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
