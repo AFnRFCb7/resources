@@ -1245,7 +1245,7 @@
                                                                                                                                                     echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
                                                                                                                                                     echo failure "$FAILURE" >&2
                                                                                                                                                     DIR="$( dirname "$FAILURE" )" || exit 128
-                                                                                                                                                    cat "$DIR/text"
+                                                                                                                                                    cat "$DIR/text" >&2
                                                                                                                                                     diff --recursive --report-identical-files "$DIR/expected" "$DIR/observed" >&2 || true
                                                                                                                                                     if [[ -f "$DIR/document" ]]
                                                                                                                                                     then
