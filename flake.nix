@@ -913,6 +913,7 @@
                                                                                                                     echo 1723258852938545 7297139149892768 "$INDEX" >&2
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
+                                                                                                                        echo 1723258852938545 4425845666412377 "$INDEX" >&2
                                                                                                                         mkdir --parents ${ resources-directory }
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
@@ -943,7 +944,9 @@
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 153
                                                                                                                         export OUTPUT_FILE
+                                                                                                                        echo 1723258852938545 2547421334162862 "$INDEX" >&2
                                                                                                                         is-releasable
+                                                                                                                        echo 1723258852938545 8753813141828575 "$INDEX" >&2
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
                                                                                                                         if [[ -f "${ resources-directory }/flags/$INDEX" ]]
