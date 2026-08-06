@@ -1254,7 +1254,12 @@
                                                                                                                                                     echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
                                                                                                                                                     touch "$SCRATCH/failure"
                                                                                                                                                 done
-
+                                                                                                                                                if [[ -f "$SCRATCH/failure" ]]
+                                                                                                                                                then
+                                                                                                                                                    echo SCRATCH "$SCRATCH" >&2
+                                                                                                                                                    echo OUT "$OUT"
+                                                                                                                                                    exit 138
+                                                                                                                                                fi
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
