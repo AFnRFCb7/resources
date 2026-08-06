@@ -266,7 +266,7 @@
                                                                         do
                                                                             if [[ -d ${ resources-directory }/release ]]
                                                                             then
-                                                                                find ${ resources-directory }/release -mindepth 1 | while read -r RELEASE
+                                                                                find ${ resources-directory }/release -mindepth 1 | sort | while read -r RELEASE
                                                                                 do
                                                                                     # KLUDGE
                                                                                     sleep 1s
