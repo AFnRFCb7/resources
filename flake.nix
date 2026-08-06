@@ -1204,7 +1204,7 @@
                                                                                                                                                             fi
                                                                                                                                                         fi
                                                                                                                                                         touch "$SCRATCH/commands/${ command-index }/flag"
-                                                                                                                                                        if ( ${ critical } && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed" ) || ${ document } 2>&1
+                                                                                                                                                        if ( ${ critical } && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed" ) || ${ document } 2> /dev/null
                                                                                                                                                         then
                                                                                                                                                             touch "$SCRATCH/commands/${ command-index }/failure"
                                                                                                                                                         fi
@@ -1239,7 +1239,7 @@
                                                                                                                                                 export SCRATCH
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
-                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
+                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort --reverse | while read -r FAILURE
                                                                                                                                                 do
                                                                                                                                                     echo >&2
                                                                                                                                                     echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
