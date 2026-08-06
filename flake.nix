@@ -911,10 +911,8 @@
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
-                                                                                                                                while [[ -L "$LINK" ]]
-                                                                                                                                do
-                                                                                                                                    sleep 1s
-                                                                                                                                done
+                                                                                                                                "$0"
+                                                                                                                                exit 0
                                                                                                                             fi
                                                                                                                         done
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
