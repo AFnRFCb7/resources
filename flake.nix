@@ -264,7 +264,7 @@
                                                                 ''
                                                                     while true
                                                                         do
-                                                                            find ${ resource-directory }/release -mindepth 1 | while read -r RELEASE
+                                                                            find ${ resources-directory }/release -mindepth 1 | while read -r RELEASE
                                                                             do
                                                                                 "$RELEASE"
                                                                             done
