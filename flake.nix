@@ -922,7 +922,7 @@
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             tail --follow /dev/null --pid "$PID"
-                                                                                                                            rm "$PID_FILE"
+                                                                                                                            rm --force "$PID_FILE"
                                                                                                                         done
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
