@@ -1117,6 +1117,7 @@
                                                                                                         command-index ,
                                                                                                         document ,
                                                                                                         critical ,
+                                                                                                        kludge ,
                                                                                                         process ,
                                                                                                         reads ,
                                                                                                         standard-error ,
@@ -1169,6 +1170,7 @@
                                                                                                                                                 runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
+                                                                                                                                                        echo THIS COMMAND ${ if kludge then "IS A" else "IS NOT A" } kledge
                                                                                                                                                         export COMMAND_INDEX=${ command-index }
                                                                                                                                                         export DOCUMENT="$SCRATCH/commands/${ command-index }/document"
                                                                                                                                                         mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
@@ -1212,6 +1214,7 @@
                                                                                                                                             } ;
                                                                                                                                 in "${ application }/bin/file" ;
                                                                                                                             in ''${ application }/bin/link "$OUT"'' ;
+                                                                                                                            kludge = kludge ;
                                                                                                                     process = process ;
                                                                                                                 } ;
                                                                                                 in builtins.map mapper parameters ;
@@ -1551,6 +1554,7 @@
                                                                                                                                                                     name = "file" ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            echo THIS PROCESS ${ if process.kludge then "IS A" else "IS NOT A" } kludge
                                                                                                                                                                             export PROCESS_INDEX=${ builtins.toString index }
                                                                                                                                                                             PROCESS_NAME=${ process.name }
                                                                                                                                                                             export PROCESS_NAME
@@ -1584,6 +1588,7 @@
                                                                                                                         let
                                                                                                                             mapper = command : command.delay ;
                                                                                                                             in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
+                                                                                                                    kludge = builtins.any ( command : command.kludge ) value ;
                                                                                                                 } ;
                                                                                                         } ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
