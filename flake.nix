@@ -1376,7 +1376,10 @@
                                                                                                                                                                                                     }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
                                                                                                                                                                                             done
                                                                                                                                                                                         fi
-                                                                                                                                                                                        sha512sum "$DOCUMENT" | cut --characters 1-128
+                                                                                                                                                                                        HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" | exit 130
+                                                                                                                                                                                        echo "$HASH"
+                                                                                                                                                                                        mkdir --parents /tmp/documents
+                                                                                                                                                                                        cp "$DOCUMENT" "/tmp/documents/$HASH"
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
