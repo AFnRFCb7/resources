@@ -1378,8 +1378,8 @@
                                                                                                                                                                                         fi
                                                                                                                                                                                         HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 130
                                                                                                                                                                                         echo "$HASH"
-                                                                                                                                                                                        mkdir --parents /tmp/documents
-                                                                                                                                                                                        cp "$DOCUMENT" "/tmp/documents/$HASH"
+                                                                                                                                                                                        mkdir --parents //tmp/client-documents
+                                                                                                                                                                                        cp "$DOCUMENT" "//tmp/client-documents/$HASH"
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
@@ -1397,8 +1397,8 @@
                                                                                                                                                                                         echo > ${ resources-directory }/log.yaml
                                                                                                                                                                                         HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 144
                                                                                                                                                                                         echo "$HASH"
-                                                                                                                                                                                        mkdir --parents /tmp/documents
-                                                                                                                                                                                        cat "$DOCUMENT" > "/tmp/documents/$HASH"
+                                                                                                                                                                                        mkdir --parents //tmp/client-documents
+                                                                                                                                                                                        cat "$DOCUMENT" > "//tmp/client-documents/$HASH"
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
@@ -1510,7 +1510,10 @@
                                                                                                                                                                                                     }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
                                                                                                                                                                                             done
                                                                                                                                                                                         fi
-                                                                                                                                                                                        sha512sum "$DOCUMENT" | cut --characters 1-128
+                                                                                                                                                                                        HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 194
+                                                                                                                                                                                        echo "$HASH"
+                                                                                                                                                                                        mkdir --parent //tmp/client-documents
+                                                                                                                                                                                        cat "$DOCUMENT" > "//tmp/client-documents/$HASH"
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
