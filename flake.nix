@@ -262,19 +262,24 @@
                                                             runtimeInputs = [ coreutils jq redis ] ;
                                                             text =
                                                                 ''
-                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-                                                                    do
-                                                                        read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
-                                                                        read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
-                                                                        read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
-                                                                        if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-                                                                        then
-                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            sleep 1s
-                                                                            echo "$INDEX"
-                                                                            time "${ resources-directory }/release/$INDEX" &
-                                                                        fi
-                                                                    done
+                                                                    while true
+                                                                        do
+                                                                            find ${ resource-directory }/release -mindepth 1 | while read -r RELEASE
+                                                                            do
+                                                                                "$RELEASE"
+                                                                            done
+                                                                        done
+#                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+#                                                                    do
+#                                                                        read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
+#                                                                        read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
+#                                                                        read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
+#                                                                        if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+#                                                                        then
+#                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+#                                                                            time "${ resources-directory }/release/$INDEX" &
+#                                                                        fi
+#                                                                    done
                                                                 '' ;
                                                         } ;
                                                     in "${ application }/bin/release" ;
