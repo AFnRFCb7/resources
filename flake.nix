@@ -921,16 +921,12 @@
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
-                                                                                                                                echo 1723258852938545 7188485116547684 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
-                                                                                                                                echo 1723258852938545 3868869131353631 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                             fi
-                                                                                                                            echo 1723258852938545 8729273658655867 "$INDEX" "$LINK" "$EXPECTED" "$OBSERVED" "$$" >&2
                                                                                                                         done
-                                                                                                                        echo 1723258852938545 5877452111344569 "$INDEX" >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
@@ -938,9 +934,7 @@
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 153
                                                                                                                         export OUTPUT_FILE
-                                                                                                                        echo 1723258852938545 9185798584513769 >&2
                                                                                                                         is-releasable
-                                                                                                                        echo 1723258852938545 5567166137496158 >&2
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
                                                                                                                         if [[ -f "${ resources-directory }/flags/$INDEX" ]]
@@ -949,9 +943,7 @@
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
-                                                                                                                            echo 1723258852938545 1553254695495935 >&2
                                                                                                                             release
-                                                                                                                            echo 1723258852938545 7383244777938869 >&2
                                                                                                                         fi
                                                                                                                     fi
                                                                                                                 '' ;
@@ -2083,9 +2075,7 @@
                                                                                         runtimeInputs = [ pkgs.coreutils ] ;
                                                                                         text =
                                                                                             ''
-                                                                                                echo 1723258852938545 8227226241357269 >&2
                                                                                                 ifconfig >&2
-                                                                                                echo 1723258852938545 2599363965377888 >&2
                                                                                             '' ;
                                                                                     } ;
                                                                         in "${ application }/bin/github" ;
