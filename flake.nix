@@ -268,6 +268,8 @@
                                                                             then
                                                                                 find ${ resources-directory }/release -mindepth 1 | while read -r RELEASE
                                                                                 do
+                                                                                    # KLUDGE
+                                                                                    sleep 1s
                                                                                     "$RELEASE" &
                                                                                 done
                                                                             fi
