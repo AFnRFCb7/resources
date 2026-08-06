@@ -871,7 +871,7 @@
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
-                                                                                                                                                                            "standard-output" : .standard-output ,
+                                                                                                                                                                            "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' /input | log
                                                                                                                                                                     exit ${ resource-parameters.error }
