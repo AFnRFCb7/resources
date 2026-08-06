@@ -264,10 +264,13 @@
                                                                 ''
                                                                     while true
                                                                         do
-                                                                            find ${ resources-directory }/release -mindepth 1 | while read -r RELEASE
-                                                                            do
-                                                                                "$RELEASE" &
-                                                                            done
+                                                                            if [[ -d ${ resources-directory }/release ]]
+                                                                            then
+                                                                                find ${ resources-directory }/release -mindepth 1 | while read -r RELEASE
+                                                                                do
+                                                                                    "$RELEASE" &
+                                                                                done
+                                                                            fi
                                                                         done
 #                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
 #                                                                    do
