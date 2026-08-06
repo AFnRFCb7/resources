@@ -858,10 +858,10 @@
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
+                                                                                                                                                                            "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
-                                                                                                                                                                        }' \
-                                                                                                                                                                        /input | log
+                                                                                                                                                                        }' input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
@@ -1254,7 +1254,7 @@
                                                                                                                                                     echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
                                                                                                                                                     touch "$SCRATCH/failure"
                                                                                                                                                 done
-                                                                                                                                                if [[ -f "$SCRATCH/failure" ]]
+                                                                                                                                                if [[ -f "$SCRATCH/"failure" ]]
                                                                                                                                                 then
                                                                                                                                                     echo SCRATCH "$SCRATCH" >&2
                                                                                                                                                     echo OUT "$OUT"
