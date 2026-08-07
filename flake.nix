@@ -659,35 +659,6 @@
                                                                                                                                                                     "temporary" : .temporary
                                                                                                                                                                 }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
-                                                                                                                                                            # shellcheck disable=SC2016
-                                                                                                                                                            echo jq \
-                                                                                                                                                                --arg INDEX "$INDEX" \
-                                                                                                                                                                --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
-                                                                                                                                                                --argjson EVALUATION ${ resource-parameters.error } \
-                                                                                                                                                                --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
-                                                                                                                                                                --argjson OBSERVED_TARGETS "$OBSERVED_TARGETS" \
-                                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
-                                                                                                                                                                --rawfile STANDARD_ERROR /private/standard-error \
-                                                                                                                                                                --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                --argjson STATUS "$STATUS" \
-                                                                                                                                                                --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
-                                                                                                                                                                '{
-                                                                                                                                                                    "arguments" : .arguments ,
-                                                                                                                                                                    "channel" : $CHANNEL
-                                                                                                                                                                    "evaluation" : $EVALUATION ,
-                                                                                                                                                                    "index" : $INDEX ,
-                                                                                                                                                                    "inputs" : .inputs ,
-                                                                                                                                                                    "seed" : $SEED ,
-                                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                                    "status" : $STATUS ,
-                                                                                                                                                                    "targets" :
-                                                                                                                                                                        {
-                                                                                                                                                                            "expected" : $EXPECTED_TARGETS ,
-                                                                                                                                                                            "observed" : $OBSERVED_TARGETS
-                                                                                                                                                                        } ,
-                                                                                                                                                                    "text" : $TEXT
-                                                                                                                                                                }' >&2
                                                                                                                                                             jq \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
@@ -702,7 +673,7 @@
                                                                                                                                                                 '{
                                                                                                                                                                     "WTF" : "7681847598918422" ,
                                                                                                                                                                     "arguments" : .arguments ,
-                                                                                                                                                                    "channel" : $CHANNEL
+                                                                                                                                                                    "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : $EVALUATION ,
                                                                                                                                                                     "index" : $INDEX ,
                                                                                                                                                                     "inputs" : .inputs ,
