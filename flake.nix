@@ -671,7 +671,6 @@
                                                                                                                                                                 --argjson STATUS "$STATUS" \
                                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                 '{
-                                                                                                                                                                    "WTF" : "7681847598918422" ,
                                                                                                                                                                     "arguments" : .arguments ,
                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                     "evaluation" : $EVALUATION ,
