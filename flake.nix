@@ -112,7 +112,7 @@
                                                                         INPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 173
                                                                         export INPUT
                                                                         jq --compact-output "." > "$INPUT"
-                                                                        OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 128
+                                                                        OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 176
                                                                         export OUTPUT
                                                                         mkdir --parents ${ resources-directory }
                                                                         exec 143> ${ resources-directory }/log.lock
@@ -468,7 +468,7 @@
                                                                         INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                         EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
                                                                         STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 128
+                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                         echo -en "${ resources-directory }/mounts/$INDEX"
                                                                         if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                         then
@@ -1226,7 +1226,7 @@
                                                                                                                                                     echo >&2
                                                                                                                                                     echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
                                                                                                                                                     echo failure "$FAILURE" >&2
-                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 128
+                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 174
                                                                                                                                                     cat "$DIR/text" >&2
                                                                                                                                                     diff --recursive --report-identical-files "$DIR/expected" "$DIR/observed" >&2 || true
                                                                                                                                                     if [[ -f "$DIR/document" ]]
