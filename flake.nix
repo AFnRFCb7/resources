@@ -271,7 +271,7 @@
                                                                                     # KLUDGE
                                                                                     "$RELEASE" &
                                                                                 done
-                                                                                sleep 5s
+                                                                                sleep 10s
                                                                             fi
                                                                         done
 #                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
