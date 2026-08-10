@@ -282,7 +282,7 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            time "${ resources-directory }/release/$INDEX" &
+                                                                            "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
                                                                 '' ;
