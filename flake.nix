@@ -1479,10 +1479,11 @@
                                                                                                                                                                                         while [[ "$#" -gt 0 ]]
                                                                                                                                                                                         do
                                                                                                                                                                                             case "$1" in
-                                                                                                                                                                                                --excldue)
-                                                                                                                                                                                                    EXCLUSIONS+=("-o -path \"${ resources-directory }/mounts/$2\"" )
+                                                                                                                                                                                                --exclude)
+                                                                                                                                                                                                    EXCLUSIONS+=("-o -path \"${ resources-directory }/mounts/$2\"")
+                                                                                                                                                                                                    shift 2
                                                                                                                                                                                                     ;;
-                                                                                                                                                                                                #)
+                                                                                                                                                                                                *)
                                                                                                                                                                                                     exit 144
                                                                                                                                                                                                     ;;
                                                                                                                                                                                             esac
