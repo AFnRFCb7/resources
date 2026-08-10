@@ -557,7 +557,7 @@
                                                                     {
                                                                         action =
                                                                             let
-                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.exclude ;
+                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.action ;
                                                                                 in
                                                                                     {
                                                                                         script =
