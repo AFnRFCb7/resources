@@ -557,7 +557,7 @@
                                                                     {
                                                                         action =
                                                                             let
-                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.action ;
+                                                                                action = visitor { lambda = path : value : value null ; } resource-parameters.init.init.exclude ;
                                                                                 in
                                                                                     {
                                                                                         script =
@@ -1475,10 +1475,22 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+                                                                                                                                                                                        EXCLUSIONS=()
+                                                                                                                                                                                        while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                        do
+                                                                                                                                                                                            case "$1" in
+                                                                                                                                                                                                --excldue)
+                                                                                                                                                                                                    EXCLUSIONS+=("-o -path \"${ resources-directory }/mounts/$2\"" )
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                                #)
+                                                                                                                                                                                                    exit 144
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                            esac
+                                                                                                                                                                                        done
                                                                                                                                                                                         touch "$DOCUMENT"
                                                                                                                                                                                         if [[ -e ${ resources-directory } ]]
                                                                                                                                                                                         then
-                                                                                                                                                                                            find ${ resources-directory } \( -path '${ resources-directory }/log.yaml' -o -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
+                                                                                                                                                                                            find ${ resources-directory } \( -path '${ resources-directory }/log.yaml' -o -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' ${ builtins.conatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] } \) -prune -o -type f,l -print | sort | while read -r FILE
                                                                                                                                                                                             do
                                                                                                                                                                                                 STAT="$( stat --format "%A,%u,%u,%F,%s" "$FILE" )" || exit 109
                                                                                                                                                                                                 jq \
