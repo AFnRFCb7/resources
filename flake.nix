@@ -1480,7 +1480,7 @@
                                                                                                                                                                                         do
                                                                                                                                                                                             case "$1" in
                                                                                                                                                                                                 --exclude)
-                                                                                                                                                                                                    EXCLUSIONS+=("-o -path \"${ resources-directory }/mounts/$2\"")
+                                                                                                                                                                                                    EXCLUSIONS+=("-o" "-path \"${ resources-directory }/mounts/$2\"")
                                                                                                                                                                                                     shift 2
                                                                                                                                                                                                     ;;
                                                                                                                                                                                                 *)
