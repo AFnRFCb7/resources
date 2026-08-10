@@ -533,7 +533,7 @@
                                                                                     "originator-pid" : .["originator-pid"] ,
                                                                                     "seed" : .seed ,
                                                                                     "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-ouput"] ,
+                                                                                    "standard-output" : .["standard-output"] ,
                                                                                     "status" : .status ,
                                                                                     "targets" : .targets ,
                                                                                     "text" : .text ,
