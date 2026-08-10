@@ -744,6 +744,7 @@
                                                                                                                                     [
                                                                                                                                         "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                         "--ro-bind" gc-roots-directory "/gc-roots"
+                                                                                                                                        "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                         "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                         "--tmpfs" "/private"
                                                                                                                                     ] ;
@@ -772,6 +773,7 @@
                                                                                                                                                             ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                cd /mount
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
@@ -880,6 +882,7 @@
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
+                                                                                                                    export INDEX
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
                                                                                                                         mkdir --parents ${ resources-directory }
