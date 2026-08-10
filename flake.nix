@@ -262,29 +262,29 @@
                                                             runtimeInputs = [ coreutils findutils jq redis ] ;
                                                             text =
                                                                 ''
-                                                                    while true
-                                                                        do
-                                                                            if [[ -d ${ resources-directory }/release ]]
-                                                                            then
-                                                                                find ${ resources-directory }/release -mindepth 1 | sort | while read -r RELEASE
-                                                                                do
-                                                                                    # KLUDGE
-                                                                                    "$RELEASE" &
-                                                                                done
-                                                                                sleep 10s
-                                                                            fi
-                                                                        done
-#                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-#                                                                    do
-#                                                                        read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
-#                                                                        read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
-#                                                                        read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
-#                                                                        if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-#                                                                        then
-#                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-#                                                                            time "${ resources-directory }/release/$INDEX" &
-#                                                                        fi
-#                                                                    done
+#                                                                    while true
+#                                                                        do
+#                                                                            if [[ -d ${ resources-directory }/release ]]
+#                                                                            then
+#                                                                                find ${ resources-directory }/release -mindepth 1 | sort | while read -r RELEASE
+#                                                                                do
+#                                                                                    # KLUDGE
+#                                                                                    "$RELEASE" &
+#                                                                                done
+#                                                                                sleep 10s
+#                                                                            fi
+#                                                                        done
+                                                                    stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
+                                                                    do
+                                                                        read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
+                                                                        read -r CHANNEL || { echo "CHANNEL _EOF" >&2 ; break; }
+                                                                        read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
+                                                                        if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
+                                                                        then
+                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                            time "${ resources-directory }/release/$INDEX" &
+                                                                        fi
+                                                                    done
                                                                 '' ;
                                                         } ;
                                                     in "${ application }/bin/release" ;
