@@ -843,7 +843,7 @@
                                                                                                                                     sleep 1s
                                                                                                                                 done
                                                                                                                             fi
-                                                                                                                        done
+                                                                                                                       done
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
