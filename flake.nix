@@ -841,10 +841,12 @@
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
+                                                                                                                                echo 1723258852938545 5796628139651182 "$INDEX" "$LINK" "$OBSERVED" >&2
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
+                                                                                                                                echo 1723258852938545 9777339873482347 "$INDEX" "$LINK" "$OBSERVED"  >&2
                                                                                                                             fi
                                                                                                                        done
                                                                                                                        echo 1723258852938545 7859766618934795 "$INDEX" >&2
