@@ -259,7 +259,29 @@
                                                     writeShellApplication
                                                         {
                                                             name = "release" ;
-                                                            runtimeInputs = [ coreutils findutils jq redis ] ;
+                                                            runtimeInputs =
+                                                                [
+                                                                    coreutils
+                                                                    findutils
+                                                                    jq
+                                                                    redis
+                                                                    (
+                                                                        writeShellApplication
+                                                                            {
+                                                                                name = "persistent-release" ;
+                                                                                runtimeInputs = [ ] ;
+                                                                                text =
+                                                                                    ''
+                                                                                        while [[ -d "${ resources-directory }/mounts/$INDEX" ]]
+                                                                                        do
+                                                                                            echo ABOUT TO RELEASE "$INDEX"
+                                                                                            "${ resources-directory }/release/$INDEX"
+                                                                                            echo JUST RELEASED "$INDEX"
+                                                                                        done
+                                                                                    '' ;
+                                                                            }
+                                                                    )
+                                                                ] ;
                                                             text =
                                                                 ''
 #                                                                    while true
@@ -282,7 +304,8 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            "${ resources-directory }/release/$INDEX" &
+                                                                            export INDEX
+                                                                            persistent-release &
                                                                         fi
                                                                     done
                                                                 '' ;
