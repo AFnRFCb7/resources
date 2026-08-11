@@ -846,7 +846,7 @@
                                                                                                                                 echo 1723258852938545 5796628139651182 "$INDEX" "$LINK" "$OBSERVED" WE ARE LOCKED >&2
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
-                                                                                                                                    find ${ gc-root-directory } >&2
+                                                                                                                                    find ${ gc-roots-directory } >&2
                                                                                                                                     sleep 1s
                                                                                                                                 done
                                                                                                                                 echo 1723258852938545 9777339873482347 "$INDEX" "$LINK" "$OBSERVED" THE LOCK HAS BEEN RELEASED >&2
