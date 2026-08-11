@@ -826,7 +826,7 @@
                                                                                                                         echo 1723258852938545 4922741983197334 "$INDEX" "$STATUS" >&2
                                                                                                                         exit "$STATUS"
                                                                                                                     }
-                                                                                                                    trap cleanup
+                                                                                                                    trap cleanup EXIT
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
                                                                                                                     then
                                                                                                                         mkdir --parents ${ resources-directory }
