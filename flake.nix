@@ -825,14 +825,17 @@
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
                                                                                                                         rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                        echo 1723258852938545 6382536368724218 "$INDEX" >&2
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
+                                                                                                                        echo 1723258852938545 5528747551266161 "$INDEX" >&2
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                        echo 1723258852938545 9193362344178782 "$INDEX" >&2
                                                                                                                         find ${ gc-roots-directory } -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
@@ -844,6 +847,7 @@
                                                                                                                                 done
                                                                                                                             fi
                                                                                                                        done
+                                                                                                                       echo 1723258852938545 7859766618934795 "$INDEX" >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
