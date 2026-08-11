@@ -838,7 +838,7 @@
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                         echo 1723258852938545 9193362344178782 "$INDEX" >&2
-                                                                                                                        find ${ gc-roots-directory } -type l | sort | while read -r LINK
+                                                                                                                        find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
@@ -850,9 +850,9 @@
                                                                                                                                 done
                                                                                                                                 echo 1723258852938545 9777339873482347 "$INDEX" "$LINK" "$OBSERVED"  >&2
                                                                                                                             fi
-                                                                                                                        echo 1723258852938545 6881736745538722 "$INDEX" >&2
-                                                                                                                       done
-                                                                                                                       echo 1723258852938545 7859766618934795 "$INDEX" >&2
+                                                                                                                            echo 1723258852938545 6881736745538722 "$INDEX" >&2
+                                                                                                                        done
+                                                                                                                        echo 1723258852938545 7859766618934795 "$INDEX" >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
