@@ -277,7 +277,7 @@
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             echo ABOUT TO RELEASE "$INDEX"
-                                                                            nohup "${ resources-directory }/release/$INDEX" &
+                                                                            nohup "${ resources-directory }/release/$INDEX" > "/tmp/$INDEX.out" &
                                                                         fi
                                                                     done
                                                                 '' ;
