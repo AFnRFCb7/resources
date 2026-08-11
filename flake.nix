@@ -756,7 +756,6 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
-                                                                                                                                                                echo 1723258852938545 4163749695186821 "$INDEX" >&2
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -764,7 +763,6 @@
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
-                                                                                                                                                                echo 1723258852938545 8556467951331214 "$INDEX" >&2
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
@@ -823,7 +821,6 @@
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
                                                                                                                         STATUS="$?"
-                                                                                                                        echo 1723258852938545 4922741983197334 "$INDEX" "$STATUS" >&2
                                                                                                                         exit "$STATUS"
                                                                                                                     }
                                                                                                                     trap cleanup EXIT
@@ -833,31 +830,24 @@
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
                                                                                                                         rm --force "${ resources-directory }/flags/$INDEX"
-                                                                                                                        echo 1723258852938545 6382536368724218 "$INDEX" >&2
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
-                                                                                                                        echo 1723258852938545 5528747551266161 "$INDEX" >&2
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                        echo 1723258852938545 9193362344178782 "$INDEX" >&2
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             if OBSERVED="$( readlink --canonicalize "$LINK" )" && [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
-                                                                                                                                echo 1723258852938545 5796628139651182 "$INDEX" "$LINK" "$OBSERVED" WE ARE LOCKED >&2
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
-                                                                                                                                echo 1723258852938545 9777339873482347 "$INDEX" "$LINK" "$OBSERVED" THE LOCK HAS BEEN RELEASED >&2
                                                                                                                             fi
-                                                                                                                            echo 1723258852938545 6881736745538722 "$INDEX" >&2
                                                                                                                         done
-                                                                                                                        echo 1723258852938545 7859766618934795 "$INDEX" THE LOCkS HAVE BEEN RELEASED >&2
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
@@ -874,7 +864,6 @@
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
-                                                                                                                            echo 1723258852938545 6665463284475183 "$INDEX" to be released >&2
                                                                                                                             release
                                                                                                                         fi
                                                                                                                     fi
