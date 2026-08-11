@@ -284,18 +284,6 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-#                                                                    while true
-#                                                                        do
-#                                                                            if [[ -d ${ resources-directory }/release ]]
-#                                                                            then
-#                                                                                find ${ resources-directory }/release -mindepth 1 | sort | while read -r RELEASE
-#                                                                                do
-#                                                                                    # KLUDGE
-#                                                                                    "$RELEASE" &
-#                                                                                done
-#                                                                                sleep 10s
-#                                                                            fi
-#                                                                        done
                                                                     stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
                                                                     do
                                                                         read -r TYPE || { echo "TYPE _EOF" >&2 ; break; }
@@ -305,71 +293,12 @@
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             export INDEX
-                                                                            "${ resources-directory }/release/$INDEX" &
+                                                                            nohup "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
                                                                 '' ;
                                                         } ;
                                                     in "${ application }/bin/release" ;
-                                        release2 =
-                                            let
-                                                application =
-                                                    writeShellApplication
-                                                        {
-                                                            name = "release" ;
-                                                            runtimeInputs =
-                                                                [
-                                                                    (
-                                                                        buildFHSUserEnv
-                                                                            {
-                                                                                extraBwrapArgs =
-                                                                                    [
-                                                                                        "--bind" "/tmp/DEBUG" "/debug"
-                                                                                        "--tmpfs" "/private"
-                                                                                        "--ro-bind" "${ resources-directory }/release" "/release"
-                                                                                    ] ;
-                                                                                name = "release" ;
-                                                                                runScript = "release" ;
-                                                                                targetPkgs =
-                                                                                    pkgs :
-                                                                                        [
-                                                                                            (
-                                                                                                pkgs.writeShellApplication
-                                                                                                    {
-                                                                                                        name = "release" ;
-                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.redis ] ;
-                                                                                                        text =
-                                                                                                            ''
-                                                                                                                stdbuf -oL redis-cli --raw SUBSCRIBE ${ root-parameters.valid-init-channel } | while true
-                                                                                                                do
-                                                                                                                    read -r TYPE || { echo "TYPE _EOF" >> /debug ; break; }
-                                                                                                                    read -r CHANNEL || { echo "CHANNEL _EOF" >> /debug ; break; }
-                                                                                                                    read -r PAYLOAD || { echo "PAYLOAD _EOF" >> /debug ; break; }
-                                                                                                                    if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
-                                                                                                                    then
-                                                                                                                        INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                                                                        "/release/$INDEX" &
-                                                                                                                    else
-                                                                                                                        echo "NO_CONDITION" >> /debug
-                                                                                                                    fi
-                                                                                                                done
-                                                                                                            '' ;
-                                                                                                    }
-                                                                                            )
-                                                                                        ] ;
-                                                                            }
-                                                                    )
-                                                                ] ;
-                                                            text =
-                                                                ''
-                                                                    while [[ ! -d ${ resources-directory }/release ]]
-                                                                    do
-                                                                        sleep 1s
-                                                                    done
-                                                                    release
-                                                                '' ;
-                                                        } ;
-                                                in "${ application }/bin/release" ;
                                         resource =
                                             {
                                                 error ,
