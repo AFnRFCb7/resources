@@ -756,6 +756,7 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                echo 1723258852938545 4163749695186821 "$INDEX" >&2
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -763,6 +764,7 @@
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
+                                                                                                                                                                echo 1723258852938545 8556467951331214 "$INDEX" >&2
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
@@ -866,6 +868,7 @@
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
+                                                                                                                            echo 1723258852938545 6665463284475183 "$INDEX" to be released >&2
                                                                                                                             release
                                                                                                                         fi
                                                                                                                     fi
