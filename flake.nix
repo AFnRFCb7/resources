@@ -822,8 +822,9 @@
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
-                                                                                                                        echo 1723258852938545 4922741983197334 "$INDEX" "$?" >&2
-                                                                                                                        exit "$?"
+                                                                                                                        STATUS="$?"
+                                                                                                                        echo 1723258852938545 4922741983197334 "$INDEX" "$STATUS" >&2
+                                                                                                                        exit "$STATUS"
                                                                                                                     }
                                                                                                                     trap cleanup
                                                                                                                     if [[ -e "${ resources-directory }/mounts/$INDEX" ]]
