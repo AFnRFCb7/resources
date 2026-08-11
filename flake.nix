@@ -846,7 +846,7 @@
                                                                                                                         echo 1723258852938545 9193362344178782 "$INDEX" >&2
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
-                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 198
+                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 127
                                                                                                                             echo 1723258852938545 3932649669541582 "$INDEX" "$LINK" "$OBSERVED" >&2
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
