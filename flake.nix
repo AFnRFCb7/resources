@@ -265,22 +265,6 @@
                                                                     findutils
                                                                     jq
                                                                     redis
-                                                                    (
-                                                                        writeShellApplication
-                                                                            {
-                                                                                name = "persistent-release" ;
-                                                                                runtimeInputs = [ ] ;
-                                                                                text =
-                                                                                    ''
-                                                                                        while [[ -d "${ resources-directory }/mounts/$INDEX" ]]
-                                                                                        do
-                                                                                            echo ABOUT TO RELEASE "$INDEX"
-                                                                                            "${ resources-directory }/release/$INDEX"
-                                                                                            echo JUST RELEASED "$INDEX"
-                                                                                        done
-                                                                                    '' ;
-                                                                            }
-                                                                    )
                                                                 ] ;
                                                             text =
                                                                 ''
@@ -292,7 +276,7 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            export INDEX
+                                                                            echo ABOUT TO RELEASE "$INDEX"
                                                                             nohup "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
