@@ -305,7 +305,7 @@
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
                                                                             export INDEX
-                                                                            persistent-release &
+                                                                            "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
                                                                 '' ;
