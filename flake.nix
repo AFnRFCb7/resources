@@ -434,6 +434,7 @@
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
+                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
@@ -487,7 +488,7 @@
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
+                                                                            # if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             exit "$EVALUATION"
                                                                         fi
