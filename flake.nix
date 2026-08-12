@@ -417,8 +417,10 @@
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                            echo 56546 > /tmp/DEBUG-148
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 1 >> /tmp/DEBUG-148
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
@@ -438,6 +440,7 @@
                                                                                     "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 2 >> /tmp/DEBUG-148
                                                                                 echo \
                                                                                     jq \
                                                                                         '{
@@ -452,7 +455,7 @@
                                                                                             "targets" : .targets ,
                                                                                             "text" : .text ,
                                                                                             "temporary" : .temporary
-                                                                                        }' "$OUTPUT_FILE" PIPE log > /tmp/DEBUG-148
+                                                                                        }' "$OUTPUT_FILE" PIPE log >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
@@ -469,6 +472,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 3 >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -486,6 +490,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 4 >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
