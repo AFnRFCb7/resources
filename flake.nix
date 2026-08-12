@@ -301,6 +301,7 @@
                                                                 runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
+                                                                        echo "12" >> /tmp/DEBUG-148
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
@@ -332,6 +333,7 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
+                                                                                echo 6546 >> /tmp/DEBUG-148
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
@@ -397,6 +399,7 @@
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
+                                                                        jq "." "$INPUT_FILE" >> /tmp/DEBUG-148
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
@@ -410,6 +413,7 @@
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
                                                                             init
+                                                                            jq "." "$OUTPUT_FILE" >>/tmp/DEBUG-148
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
