@@ -438,7 +438,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 195 ; fi
+                                                                                # if [[ "$EXPERIMENTAL" == true ]] ; then exit 195 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
