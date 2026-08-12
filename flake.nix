@@ -409,7 +409,7 @@
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
-                                                                            timeout 10s init
+                                                                            init
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
@@ -437,7 +437,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                jq \
+                                                                                timeout 10s jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
                                                                                         "arguments" : .arguments ,
