@@ -417,10 +417,10 @@
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                            echo 56546 > /tmp/DEBUG-148
+                                                                            echo 56546 >> /tmp/DEBUG-148
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1 >> /tmp/DEBUG-148
+                                                                                echo 1 STATUS="$STATUS" >> /tmp/DEBUG-148
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
@@ -436,8 +436,7 @@
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
-                                                                                    }' \
-                                                                                    "$OUTPUT_FILE" | log
+                                                                                    }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 echo 2 >> /tmp/DEBUG-148
