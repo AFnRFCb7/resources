@@ -490,8 +490,8 @@
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                             exit "$EVALUATION"
                                                                         fi
                                                                     '' ;
