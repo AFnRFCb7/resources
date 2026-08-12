@@ -301,7 +301,6 @@
                                                                 runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        echo "12" >> /tmp/DEBUG-148
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
@@ -333,7 +332,6 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
-                                                                                echo 6546 >> /tmp/DEBUG-148
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
@@ -399,7 +397,6 @@
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
-                                                                        jq "." "$INPUT_FILE" >> /tmp/DEBUG-148
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
@@ -413,7 +410,6 @@
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
                                                                             init
-                                                                            jq "." "$OUTPUT_FILE" >>/tmp/DEBUG-148
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
@@ -421,10 +417,8 @@
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                            echo 56546 >> /tmp/DEBUG-148
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1 STATUS="$STATUS" >> /tmp/DEBUG-148
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
@@ -443,22 +437,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 2 >> /tmp/DEBUG-148
-                                                                                echo \
-                                                                                    jq \
-                                                                                        '{
-                                                                                            "WTF" : "6586389267536849" ,
-                                                                                            "arguments" : .arguments ,
-                                                                                            "index" : .index ,
-                                                                                            "inputs" : .inputs ,
-                                                                                            "originator-pid" : .["originator-pid"] ,
-                                                                                            "seed" : .seed ,
-                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                            "status" : .status ,
-                                                                                            "targets" : .targets ,
-                                                                                            "text" : .text ,
-                                                                                            "temporary" : .temporary
-                                                                                        }' "$OUTPUT_FILE" PIPE log >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
@@ -475,7 +453,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 3 >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -493,7 +470,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 4 >> /tmp/DEBUG-148
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
