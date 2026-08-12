@@ -491,8 +491,8 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                             exit "$EVALUATION"
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                         fi
                                                                     '' ;
                                                             } ;
