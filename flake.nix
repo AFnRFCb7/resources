@@ -454,6 +454,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                if true ; then exit 193 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -471,6 +472,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                if true ; then exit 194 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
