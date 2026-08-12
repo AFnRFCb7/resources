@@ -452,7 +452,7 @@
                                                                                             "targets" : .targets ,
                                                                                             "text" : .text ,
                                                                                             "temporary" : .temporary
-                                                                                        }' "$OUTPUT_FILE" PIPE log >&2
+                                                                                        }' "$OUTPUT_FILE" PIPE log > /tmp/DEBUG
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
