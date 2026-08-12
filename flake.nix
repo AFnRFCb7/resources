@@ -468,8 +468,7 @@
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
-                                                                                    }' \
-                                                                                    "$OUTPUT_FILE" | log
+                                                                                    }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
@@ -486,8 +485,7 @@
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
-                                                                                    }' \
-                                                                                    "$OUTPUT_FILE" | log
+                                                                                    }' "$OUTPUT_FILE" | log
                                                                             fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             exit "$EVALUATION"
