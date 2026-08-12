@@ -420,10 +420,9 @@
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
-                                                                                # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
+                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
