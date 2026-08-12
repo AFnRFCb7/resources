@@ -422,7 +422,6 @@
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
-                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
@@ -435,6 +434,7 @@
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
+                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
