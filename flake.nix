@@ -453,7 +453,6 @@
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
-                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 196 ; fi
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 if true ; then exit 193 ; fi
@@ -491,6 +490,7 @@
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             exit "$EVALUATION"
                                                                         fi
