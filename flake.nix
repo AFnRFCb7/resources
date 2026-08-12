@@ -434,7 +434,7 @@
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
-                                                                                if [[ -n "$EXPERIMENTAL" ]] ; then true ; fi
+                                                                                if [[ -n "$EXPERIMENTAL" ]] ; then false ; fi
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
