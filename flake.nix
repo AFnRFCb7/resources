@@ -1422,7 +1422,7 @@
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
                                                                                                                                                                                 name = "check-resource" ;
-                                                                                                                                                                                runtimeIputs = [ ] ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
                                                                                                                                                                                         ERROR"$( mktemp )" || exit 166
