@@ -397,7 +397,7 @@
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
-                                                                        if [[ -L "${ resources-directory }/canonical/$HASH" ]]
+                                                                        if false && [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
                                                                             INDEX="$( basename "$FILE" )" || exit 130
@@ -438,6 +438,7 @@
                                                                                 # if [[ -z "$EXPERIMENTAL" ]] ; then false ; fi
                                                                                 # true "$EXPERIMENTAL"
                                                                                 ## false "$EXPERIMENTAL"
+                                                                                ##
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
