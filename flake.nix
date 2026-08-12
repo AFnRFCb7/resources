@@ -1421,6 +1421,22 @@
                                                                                                                                                                     (
                                                                                                                                                                         pkgs.writeShellApplication
                                                                                                                                                                             {
+                                                                                                                                                                                name = "check-resource" ;
+                                                                                                                                                                                runtimeIputs = [ ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        ERROR"$( mktemp )" || exit 166
+                                                                                                                                                                                        RESOURCE="$( "$1" 2> "$ERROR" )"
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                        echo -en "$RESOURCE"
+                                                                                                                                                                                        cat "$ERROR" >&2
+                                                                                                                                                                                        exit "$STATUS"
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
                                                                                                                                                                                 name = "check-resources-directory" ;
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
