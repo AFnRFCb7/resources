@@ -301,7 +301,6 @@
                                                                 runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
@@ -311,6 +310,7 @@
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
+                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             if [[ -t 0 ]]
                                                                             # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                             then
