@@ -404,13 +404,13 @@
                                                                             echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                             echo "$FILE"
                                                                         else
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             mkdir --parents ${ resources-directory }/canonical
                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
                                                                             init
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
