@@ -310,7 +310,6 @@
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
-                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             if [[ -t 0 ]]
                                                                             # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                             then
@@ -395,6 +394,7 @@
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
+                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
