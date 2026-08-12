@@ -303,8 +303,8 @@
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
-                                                                        exec 157> ${ resources-directory }/clean.lock
-                                                                        flock -s 157
+                                                                        # exec 157> ${ resources-directory }/clean.lock
+                                                                        # flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
                                                                         export INPUT_FILE
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
