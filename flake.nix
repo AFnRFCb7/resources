@@ -554,7 +554,7 @@
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EVALUATION 0 \
-                                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \q
+                                                                                                                                                                --argjson SEED '${ builtins.toJSON resource-parameters.seed }' \
                                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                 '{
                                                                                                                                                                         "WTF" : "2542476521881995" ,
