@@ -395,7 +395,7 @@
                                                                             fi
                                                                         fi
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
-                                                                        jq 'del(.["originator-pid"])' "$INPUT_FILE" > "$HASH_FILE"
+                                                                        jq 'del(.["originator-pid"]) + { "pre-hash" : ${ builtins.toString resource-parameters.seed }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
