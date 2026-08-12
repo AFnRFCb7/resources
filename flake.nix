@@ -419,7 +419,7 @@
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/$HASH"
+                                                                                ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
