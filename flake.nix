@@ -419,7 +419,6 @@
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
@@ -438,7 +437,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                # if [[ "$EXPERIMENTAL" == true ]] ; then exit 195 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
