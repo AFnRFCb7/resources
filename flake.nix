@@ -301,6 +301,7 @@
                                                                 runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
+                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
