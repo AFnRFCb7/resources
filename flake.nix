@@ -435,7 +435,8 @@
                                                                                         "temporary" : .temporary
                                                                                     }' "$OUTPUT_FILE" | log
                                                                                 # if [[ -n "$EXPERIMENTAL" ]] ; then true ; fi
-                                                                                if [[ -z "$EXPERIMENTAL" ]] ; then false ; fi
+                                                                                # if [[ -z "$EXPERIMENTAL" ]] ; then false ; fi
+                                                                                true "$EXPERIMENTAL"
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
