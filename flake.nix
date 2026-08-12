@@ -410,7 +410,6 @@
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
                                                                             init
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
@@ -418,6 +417,7 @@
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
