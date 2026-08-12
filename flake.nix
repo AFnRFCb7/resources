@@ -418,8 +418,8 @@
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
-                                                                            if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 # FINDME SUCCESS 2
                                                                                 mkdir --parents ${ resources-directory }/release
