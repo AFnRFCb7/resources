@@ -404,7 +404,7 @@
                                                                             echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                             echo "$FILE"
                                                                         else
-                                                                            mkdir --parents/canonical
+                                                                            mkdir --parents ${ resources-directory }/canonical
                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
