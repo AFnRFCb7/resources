@@ -409,7 +409,7 @@
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
-                                                                            time timeout 15s init
+                                                                            init
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
