@@ -492,7 +492,6 @@
                                                                             fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
                                                                             exit "$EVALUATION"
-                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 197 ; fi
                                                                         fi
                                                                     '' ;
                                                             } ;
