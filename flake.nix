@@ -394,7 +394,6 @@
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
-                                                                        if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
@@ -405,6 +404,7 @@
                                                                             echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                             echo "$FILE"
                                                                         else
+                                                                            if [[ "$EXPERIMENTAL" == true ]] ; then exit 190 ; fi
                                                                             mkdir --parents ${ resources-directory }/canonical
                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                             export OUTPUT_FILE
