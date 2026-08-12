@@ -1425,9 +1425,13 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
-                                                                                                                                                                                        ERROR"$( mktemp )" || exit 166
-                                                                                                                                                                                        RESOURCE="$( "$1" 2> "$ERROR" )"
-                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                        ERROR="$( mktemp )" || exit 166
+                                                                                                                                                                                        if RESOURCE="$( "$1" 2> "$ERROR" )"
+                                                                                                                                                                                        then
+                                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                                        else
+                                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                                        fi
                                                                                                                                                                                         echo -en "$RESOURCE"
                                                                                                                                                                                         cat "$ERROR" >&2
                                                                                                                                                                                         exit "$STATUS"
