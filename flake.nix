@@ -394,91 +394,102 @@
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
-                                                                        OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
-                                                                        export OUTPUT_FILE
-                                                                        mkdir --parents ${ gc-roots-directory }
-                                                                        mkdir --parents ${ resources-directory }
-                                                                        init
-                                                                        CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
-                                                                        export CHANNEL
-                                                                        INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                        EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
-                                                                        STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
-                                                                        echo -en "${ resources-directory }/mounts/$INDEX"
-                                                                        if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                        HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
+                                                                        jq "del(.["originator-pid"])" "$INPUT_FILE" > "$HASH_FILE"
+                                                                        HASH="$( sha512sum "$INPUT_FILE | cut --characters 1-128 )" || exit 172
+                                                                        if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
-                                                                            # FINDME SUCCESS 2
-                                                                            mkdir --parents ${ resources-directory }/release
-                                                                            ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
-                                                                            jq \
-                                                                                '{
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "WTF" : "6586389267536849" ,
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "WTF" : "2437324934873537" ,
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-error"] ,
-                                                                                    "status" : ./status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
-                                                                        elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                        then
-                                                                            jq \
-                                                                                '{
-                                                                                    "WTF" : "9976979456295116" ,
-                                                                                    "arguments" : .arguments ,
-                                                                                    "index" : .index ,
-                                                                                    "inputs" : .inputs ,
-                                                                                    "originator-pid" : .["originator-pid"] ,
-                                                                                    "seed" : .seed ,
-                                                                                    "standard-error" : .["standard-error"] ,
-                                                                                    "standard-output" : .["standard-output"] ,
-                                                                                    "status" : .status ,
-                                                                                    "targets" : .targets ,
-                                                                                    "text" : .text ,
-                                                                                    "temporary" : .temporary
-                                                                                }' \
-                                                                                "$OUTPUT_FILE" | log
+                                                                            FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
+                                                                            INDEX="$( basename "$FILE" )" || exit 130
+                                                                            echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
+                                                                            echo "$FILE"
+                                                                        else
+                                                                            OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
+                                                                            export OUTPUT_FILE
+                                                                            mkdir --parents ${ gc-roots-directory }
+                                                                            mkdir --parents ${ resources-directory }
+                                                                            init
+                                                                            CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                            export CHANNEL
+                                                                            INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                            EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
+                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
+                                                                            STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
+                                                                            echo -en "${ resources-directory }/mounts/$INDEX"
+                                                                            if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                            then
+                                                                                # FINDME SUCCESS 2
+                                                                                mkdir --parents ${ resources-directory }/release
+                                                                                ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
+                                                                                jq \
+                                                                                    '{
+                                                                                        "arguments" : .arguments ,
+                                                                                        "index" : .index ,
+                                                                                        "inputs" : .inputs ,
+                                                                                        "originator-pid" : .["originator-pid"] ,
+                                                                                        "seed" : .seed ,
+                                                                                        "standard-output" : .["standard-output"] ,
+                                                                                        "targets" : .targets ,
+                                                                                        "text" : .text ,
+                                                                                        "temporary" : .temporary
+                                                                                    }' \
+                                                                                    "$OUTPUT_FILE" | log
+                                                                            elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                            then
+                                                                                jq \
+                                                                                    '{
+                                                                                        "WTF" : "6586389267536849" ,
+                                                                                        "arguments" : .arguments ,
+                                                                                        "index" : .index ,
+                                                                                        "inputs" : .inputs ,
+                                                                                        "originator-pid" : .["originator-pid"] ,
+                                                                                        "seed" : .seed ,
+                                                                                        "standard-output" : .["standard-output"] ,
+                                                                                        "status" : .status ,
+                                                                                        "targets" : .targets ,
+                                                                                        "text" : .text ,
+                                                                                        "temporary" : .temporary
+                                                                                    }' "$OUTPUT_FILE" | log
+                                                                            elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                            then
+                                                                                jq \
+                                                                                    '{
+                                                                                        "WTF" : "2437324934873537" ,
+                                                                                        "arguments" : .arguments ,
+                                                                                        "index" : .index ,
+                                                                                        "inputs" : .inputs ,
+                                                                                        "originator-pid" : .["originator-pid"] ,
+                                                                                        "seed" : .seed ,
+                                                                                        "standard-error" : .["standard-error"] ,
+                                                                                        "standard-output" : .["standard-error"] ,
+                                                                                        "status" : ./status ,
+                                                                                        "targets" : .targets ,
+                                                                                        "text" : .text ,
+                                                                                        "temporary" : .temporary
+                                                                                    }' \
+                                                                                    "$OUTPUT_FILE" | log
+                                                                            elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                            then
+                                                                                jq \
+                                                                                    '{
+                                                                                        "WTF" : "9976979456295116" ,
+                                                                                        "arguments" : .arguments ,
+                                                                                        "index" : .index ,
+                                                                                        "inputs" : .inputs ,
+                                                                                        "originator-pid" : .["originator-pid"] ,
+                                                                                        "seed" : .seed ,
+                                                                                        "standard-error" : .["standard-error"] ,
+                                                                                        "standard-output" : .["standard-output"] ,
+                                                                                        "status" : .status ,
+                                                                                        "targets" : .targets ,
+                                                                                        "text" : .text ,
+                                                                                        "temporary" : .temporary
+                                                                                    }' \
+                                                                                    "$OUTPUT_FILE" | log
+                                                                            fi
+                                                                            rm "$INPUT_FILE" "$OUTPUT_FILE"
+                                                                            exit "$EVALUATION"
                                                                         fi
-                                                                        rm "$INPUT_FILE" "$OUTPUT_FILE"
-                                                                        exit "$EVALUATION"
                                                                     '' ;
                                                             } ;
                                                         resource-parameters =
@@ -1320,8 +1331,8 @@
                                                                                                                                                                                         echo > ${ resources-directory }/log.yaml
                                                                                                                                                                                         HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 144
                                                                                                                                                                                         echo "$HASH"
-                                                                                                                                                                                        mkdir --parents //tmp/client-documents
-                                                                                                                                                                                        cat "$DOCUMENT" > "//tmp/client-documents/$HASH"
+                                                                                                                                                                                        mkdir --parents /tmp/client-documents
+                                                                                                                                                                                        cat "$DOCUMENT" > "/tmp/client-documents/$HASH"
                                                                                                                                                                                     '' ;
                                                                                                                                                                             }
                                                                                                                                                                     )
