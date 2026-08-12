@@ -409,7 +409,7 @@
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
-                                                                            timeout --signal 140 10s init
+                                                                            init
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
@@ -1426,7 +1426,7 @@
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
                                                                                                                                                                                         ERROR="$( mktemp )" || exit 166
-                                                                                                                                                                                        if RESOURCE="$( "$1" 2> "$ERROR" )"
+                                                                                                                                                                                        if RESOURCE="$( "$@" 2> "$ERROR" )"
                                                                                                                                                                                         then
                                                                                                                                                                                             STATUS="$?"
                                                                                                                                                                                         else
