@@ -438,6 +438,21 @@
                                                                                     "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo \
+                                                                                    jq \
+                                                                                        '{
+                                                                                            "WTF" : "6586389267536849" ,
+                                                                                            "arguments" : .arguments ,
+                                                                                            "index" : .index ,
+                                                                                            "inputs" : .inputs ,
+                                                                                            "originator-pid" : .["originator-pid"] ,
+                                                                                            "seed" : .seed ,
+                                                                                            "standard-output" : .["standard-output"] ,
+                                                                                            "status" : .status ,
+                                                                                            "targets" : .targets ,
+                                                                                            "text" : .text ,
+                                                                                            "temporary" : .temporary
+                                                                                        }' "$OUTPUT_FILE" PIPE log >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
