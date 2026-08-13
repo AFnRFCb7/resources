@@ -1147,7 +1147,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis pkg.yq-go ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 mkdir --parents "/scratch"
