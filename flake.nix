@@ -1171,33 +1171,13 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                SCRATCH="$( mktemp --directory )" || exit 125
+                                                                                                                                                export SCRATCH="scratch/$1"
+                                                                                                                                                mkdir --parents "$SCRATCH"
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 export SCRATCH
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
-                                                                                                                                                find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort --reverse | while read -r FAILURE
-                                                                                                                                                do
-                                                                                                                                                    echo >&2
-                                                                                                                                                    echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
-                                                                                                                                                    echo failure "$FAILURE" >&2
-                                                                                                                                                    DIR="$( dirname "$FAILURE" )" || exit 174
-                                                                                                                                                    cat "$DIR/text" >&2
-                                                                                                                                                    diff --recursive --report-identical-files "$DIR/expected" "$DIR/observed" >&2 || true
-                                                                                                                                                    if [[ -f "$DIR/document" ]]
-                                                                                                                                                    then
-                                                                                                                                                        cat "$DIR/document" >&2
-                                                                                                                                                    fi
-                                                                                                                                                    echo ==== ========= ========= ========= ========= ========= ========= ========= ===== >&2
-                                                                                                                                                    touch "$SCRATCH/failure"
-                                                                                                                                                done
-                                                                                                                                                if [[ -f "$SCRATCH/failure" ]]
-                                                                                                                                                then
-                                                                                                                                                    echo SCRATCH "$SCRATCH" >&2
-                                                                                                                                                    echo OUT "$OUT"
-                                                                                                                                                    exit 138
-                                                                                                                                                fi
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
@@ -1593,6 +1573,39 @@
                                                                                                                 } ;
                                                                                                         } ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
+                                                                                        test =
+                                                                                            let
+                                                                                                application =
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "test" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                            text =
+                                                                                                                let
+                                                                                                                    file =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                {
+                                                                                                                                    name = "file" ;
+                                                                                                                                    runtimeInputs = [ pkgs.findutil ] ;
+                                                                                                                                    text =
+                                                                                                                                        ''
+                                                                                                                                            export SCRATCH="$1/scratch"
+                                                                                                                                            find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
+                                                                                                                                            do
+                                                                                                                                                exit 154
+                                                                                                                                            done
+                                                                                                                                        '' ;
+                                                                                                                                } ;
+                                                                                                                            in "${ application }/bin/file" ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            OUT="$1"
+                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w$OUT/test.sh" file
+                                                                                                                            chmod a+rx "$OUT/test.sh"
+                                                                                                                        '' ;
+                                                                                                        } ;
+                                                                                                in "" ;
                                                                                         in
                                                                                             ''
                                                                                                 OUT="$1"
@@ -1601,6 +1614,7 @@
                                                                                                 mkdir --parent "$OUT/processes"
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                 ${ execute }
+                                                                                                ${ test }
                                                                                             '' ;
                                                                             }
                                                                     )
