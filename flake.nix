@@ -550,7 +550,7 @@
                                                                                                                                                     ''
                                                                                                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' /input > /private/hash.json
                                                                                                                                                         HASH="$( sha512sum /private/hash.json | cut --characters 1-128 )" || exit 138
-                                                                                                                                                        if [[ -L "/canonical/$HASH" ]]
+                                                                                                                                                        if false && [[ -L "/canonical/$HASH" ]]
                                                                                                                                                         then
                                                                                                                                                             INDEX_FILE="$( readlink --canonicalize "/canonical/$HASH" )" || exit 171
                                                                                                                                                             INDEX="$( basename "$INDEX_FILE" )" || exit 127
@@ -561,7 +561,6 @@
                                                                                                                                                                 --rawfile TEXT ${ builtins.toFile "file" resource-parameters.init.action.text } \
                                                                                                                                                                 '{
                                                                                                                                                                         "WTF" : "2542476521881995" ,
-                                                                                                                                                                        "arguments" : .arguments ,
                                                                                                                                                                         "channel" : $CHANNEL ,
                                                                                                                                                                         "evaluation" : $EVALUATION ,
                                                                                                                                                                         "index" : $INDEX ,
