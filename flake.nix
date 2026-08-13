@@ -1228,8 +1228,8 @@
                                                                                                                             sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
                                                                                                                             chmod a+rx "$OUT/execute"
                                                                                                                         '' ;
-                                                                                                                                                                                                    }
-                                                                                            in "${ application }/bin/execute" ;
+                                                                                                        } ;
+                                                                                                in "${ application }/bin/execute" ;
                                                                                         parameters =
                                                                                             let
                                                                                                 generator =
