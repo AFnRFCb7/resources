@@ -1041,7 +1041,552 @@
                                                             name = "check-derivation" ;
                                                             nativeBuildInputs =
                                                                 [
-
+                                                                    (
+                                                                        writeShellApplication
+                                                                            {
+                                                                                name = "install" ;
+                                                                                runtimeInputs =
+                                                                                    [
+                                                                                        pkgs.coreutils
+                                                                                    ] ;
+                                                                                text =
+                                                                                    let
+                                                                                        commands =
+                                                                                            let
+                                                                                                mapper =
+                                                                                                    {
+                                                                                                        command-index ,
+                                                                                                        document ,
+                                                                                                        critical ,
+                                                                                                        process ,
+                                                                                                        reads ,
+                                                                                                        standard-error ,
+                                                                                                        standard-output ,
+                                                                                                        status ,
+                                                                                                        text ,
+                                                                                                        timeout
+                                                                                                    } :
+                                                                                                        let
+                                                                                                            file-name = ''"$OUT/commands/${ command-index }"'' ;
+                                                                                                            in
+                                                                                                                {
+                                                                                                                    delay =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "delay" ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                        text =
+                                                                                                                                            ''
+                                                                                                                                                : "${ builtins.concatStringsSep [ ] [ "$" "{" "SCRATCH:?must be exported" "}" ] }"
+                                                                                                                                                while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
+                                                                                                                                                do
+                                                                                                                                                    sleep 1s
+                                                                                                                                                done
+                                                                                                                                                if [[ -f "$SCRATCH/${ command-index }/failure" ]]
+                                                                                                                                                then
+                                                                                                                                                    FAILURE=true
+                                                                                                                                                else
+                                                                                                                                                    FAILURE=false
+                                                                                                                                                fi
+                                                                                                                                                jq \
+                                                                                                                                                    --null-input \
+                                                                                                                                                    --argjsom FAILURE "$FAILURE" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_ERROR "$SCRATCH/${ command-index }/observed/standard-error" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_OUTPUT "$SCRATCH/${ command-index }/observed/standard-output" \
+                                                                                                                                                    --rawfile OBSERVED_STATUS "$SCRATCH/${ command-index }/observed/status" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_ERROR "$SCRATCH/${ command-index }/observed/standard-error" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_OUTPUT "$SCRATCH/${ command-index }/observed/standard-output" \
+                                                                                                                                                    --rawfile OBSERVED_STATUS "$SCRATCH/${ command-index }/observed/status" \
+                                                                                                                                                    --rawfile PROCESS "$SCRATCH/${ command-index }/process" \
+                                                                                                                                                    --rawfile TEXT "$SCRATCH/${ command-index }/text" \
+                                                                                                                                                    --rawfile TIMEOUT "$SCRATCH/timeout" \
+                                                                                                                                                    '{
+                                                                                                                                                        "expected: :
+                                                                                                                                                            {
+                                                                                                                                                                "standard-error" : $EXPECTED_STANDARD_ERROR ,
+                                                                                                                                                                "standard-output" : $EXPECTED_STANDARD_OUTPUT ,
+                                                                                                                                                                "status" : $EXPECTED_STATUS
+                                                                                                                                                            }
+                                                                                                                                                        "failure" : $FAILURE ,
+                                                                                                                                                        "observed"
+                                                                                                                                                            {
+                                                                                                                                                                "standard-error" : $OBSERVED_STANDARD_ERROR ,
+                                                                                                                                                                "standard-output" : $OBSERVED_STANDARD_OUTPUT ,
+                                                                                                                                                                "status" : $OBERVED_STATUS
+                                                                                                                                                            } ,
+                                                                                                                                                            "process: $PROCESS ,
+                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                            "timeout" : $TIMEOUT
+                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> result.yaml
+                                                                                                                                            '' ;
+                                                                                                                                    } ;
+                                                                                                                            in "${ application }/bin/delay" ;
+                                                                                                                    file-name = file-name ;
+                                                                                                                    link =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "link" ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                        text =
+                                                                                                                                            ''
+                                                                                                                                                OUT="$1"
+                                                                                                                                                mkdir --parents "$OUT/commands"
+                                                                                                                                                ln --symbolic ${ file } ${ file-name }
+                                                                                                                                            '' ;
+                                                                                                                                    } ;
+                                                                                                                            file =
+                                                                                                                                let
+                                                                                                                                    application =
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "file" ;
+                                                                                                                                                runtimeInputs = [ pkgs.bash pkgs.coreutils pkgs.diffutils ] ;
+                                                                                                                                                text =
+                                                                                                                                                    ''
+                                                                                                                                                        export COMMAND_INDEX=${ command-index }
+                                                                                                                                                        export DOCUMENT="$SCRATCH/commands/${ command-index }/document"
+                                                                                                                                                        mkdir --parents "$SCRATCH/commands/${ command-index }/expected"
+                                                                                                                                                        echo ${ critical } > "$SCRATCH/commands/${ command-index }/critical"
+                                                                                                                                                        ln --symbolic ${ process.path } "$SCRATCH/commands/${ command-index }/process"
+                                                                                                                                                        ln --symbolic ${ text } "$SCRATCH/commands/${ command-index }/text"
+                                                                                                                                                        echo ${ timeout } > "$SCRATCH/commands/${ command-index }/timeout"
+                                                                                                                                                        ln --symbolic ${ standard-error } "$SCRATCH/commands/${ command-index }/expected/standard-error"
+                                                                                                                                                        ln --symbolic ${ standard-output } "$SCRATCH/commands/${ command-index }/expected/standard-output"
+                                                                                                                                                        echo ${ status } > "$SCRATCH/commands/${ command-index }/expected/status"
+                                                                                                                                                        mkdir --parents "$SCRATCH/commands/${ command-index }/observed"
+                                                                                                                                                        seq 0 $(( ${ command-index } - 1 )) | while read -r I
+                                                                                                                                                        do
+                                                                                                                                                            while [[ ! -f "$SCRATCH/commands/$I/flag" ]]
+                                                                                                                                                            do
+                                                                                                                                                                sleep 1s
+                                                                                                                                                            done
+                                                                                                                                                        done
+                                                                                                                                                        seq 0 $(( ${ command-index } - 1 )) | while read -r I
+                                                                                                                                                        do
+                                                                                                                                                            if [[ -f "$SCRATCH/command/$I/failure" ]]
+                                                                                                                                                            then
+                                                                                                                                                                touch "$SCRATCH/commands/${ command-index }/failure"
+                                                                                                                                                            fi
+                                                                                                                                                        done
+                                                                                                                                                        if [[ ! -f "$SCRATCH/commands/${ command-index }/failure" ]]
+                                                                                                                                                        then
+                                                                                                                                                            if timeout ${ timeout }s ${ text } > "$SCRATCH/commands/${ command-index }/observed/standard-output" 2> "$SCRATCH/commands/${ command-index }/observed/standard-error" ${ if reads then "<&189" else "" }
+                                                                                                                                                            then
+                                                                                                                                                                echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                            else
+                                                                                                                                                                echo "$?" > "$SCRATCH/commands/${ command-index }/observed/status"
+                                                                                                                                                            fi
+                                                                                                                                                        fi
+                                                                                                                                                        touch "$SCRATCH/commands/${ command-index }/flag"
+                                                                                                                                                        if ( ${ critical } && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ command-index }/expected" "$SCRATCH/commands/${ command-index }/observed" ) || ${ document } 2> /dev/null
+                                                                                                                                                        then
+                                                                                                                                                            touch "$SCRATCH/commands/${ command-index }/failure"
+                                                                                                                                                        fi
+                                                                                                                                                    '' ;
+                                                                                                                                            } ;
+                                                                                                                                in "${ application }/bin/file" ;
+                                                                                                                            in ''${ application }/bin/link "$OUT"'' ;
+                                                                                                                    process = process ;
+                                                                                                                } ;
+                                                                                                in builtins.map mapper parameters ;
+                                                                                        parameters =
+                                                                                            let
+                                                                                                generator =
+                                                                                                    index :
+                                                                                                        let
+                                                                                                            action = builtins.elemAt actions index ;
+                                                                                                            identity =
+                                                                                                                {
+                                                                                                                    critical ? true ,
+                                                                                                                    document ? false ,
+                                                                                                                    kludge ? false ,
+                                                                                                                    process ? "" ,
+                                                                                                                    reads ? true ,
+                                                                                                                    standard-error ? "" ,
+                                                                                                                    standard-output ? "" ,
+                                                                                                                    status ? 0 ,
+                                                                                                                    text ,
+                                                                                                                    timeout ? 60
+                                                                                                                } :
+                                                                                                                    {
+                                                                                                                        command-index = builtins.toString index ;
+                                                                                                                        critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
+                                                                                                                        document = visitor { bool = path : value : builtins.toJSON value ; } document ;
+                                                                                                                        process =
+                                                                                                                            let
+                                                                                                                                path =
+                                                                                                                                    visitor
+                                                                                                                                        {
+                                                                                                                                            string = path : value : builtins.toFile "process" value ;
+                                                                                                                                            path = path : value : value ;
+                                                                                                                                        }
+                                                                                                                                        process ;
+                                                                                                                                string = toString path ;
+                                                                                                                                in
+                                                                                                                                    {
+                                                                                                                                        path = path ;
+                                                                                                                                        string = string ;
+                                                                                                                                    } ;
+                                                                                                                        reads = visitor { bool = path : value : value ; } reads ;
+                                                                                                                        standard-error =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    string = path : value : builtins.toFile "process" value ;
+                                                                                                                                    path = path : value : value ;
+                                                                                                                                }
+                                                                                                                                standard-error ;
+                                                                                                                        standard-output =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    string = path : value : builtins.toFile "process" value ;
+                                                                                                                                    path = path : value : value ;
+                                                                                                                                }
+                                                                                                                                standard-output ;
+                                                                                                                        status = visitor { int = path : value : builtins.toString value ; } status ;
+                                                                                                                        text =
+                                                                                                                            visitor
+                                                                                                                                {
+                                                                                                                                    string =
+                                                                                                                                        path : value :
+                                                                                                                                            let
+                                                                                                                                                application =
+                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                        {
+                                                                                                                                                            name = "text" ;
+                                                                                                                                                            runtimeInputs =
+                                                                                                                                                                [
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-executable" ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        if [[ ! -x "$1" ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            echo "$1 is not an executable" >&2
+                                                                                                                                                                                        fi
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-files" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        EXCLUSIONS=()
+                                                                                                                                                                                        while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                        do
+                                                                                                                                                                                            case "$1" in
+                                                                                                                                                                                                --exclude)
+                                                                                                                                                                                                    EXCLUSIONS+=("-o" "-path" "${ resources-directory }/mounts/$2")
+                                                                                                                                                                                                    shift 2
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                                *)
+                                                                                                                                                                                                    exit 144
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                            esac
+                                                                                                                                                                                        done
+                                                                                                                                                                                        mkdir --parents ${ gc-roots-directory }
+                                                                                                                                                                                        mkdir --parents ${ resources-directory }
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-gc-roots-directory" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        touch "$DOCUMENT"
+                                                                                                                                                                                        if [[ -e ${ gc-roots-directory } ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            find ${ gc-roots-directory } -type l -print | sort | while read -r FILE
+                                                                                                                                                                                            do
+                                                                                                                                                                                                LINK="$( readlink --canonicalize "$FILE" )" || exit 105
+                                                                                                                                                                                                jq \
+                                                                                                                                                                                                    --null-input \
+                                                                                                                                                                                                    --arg FILE "$FILE" \
+                                                                                                                                                                                                    --arg LINK "$LINK" \
+                                                                                                                                                                                                    '{
+                                                                                                                                                                                                        "file" : $FILE ,
+                                                                                                                                                                                                        "link" : $LINK
+                                                                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
+                                                                                                                                                                                            done
+                                                                                                                                                                                        fi
+                                                                                                                                                                                        HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 130
+                                                                                                                                                                                        echo "$HASH"
+                                                                                                                                                                                        mkdir --parents //tmp/client-documents
+                                                                                                                                                                                        cp "$DOCUMENT" "//tmp/client-documents/$HASH"
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-log" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        touch ${ resources-directory }/log.yaml
+                                                                                                                                                                                        touch "$DOCUMENT"
+                                                                                                                                                                                        ADDITION="$( jq --null-input --argjson COMMAND_INDEX "$COMMAND_INDEX" --argjson PROCESS_INDEX "$PROCESS_INDEX" --arg PROCESS_NAME "$PROCESS_NAME" '{ "command-index" : $COMMAND_INDEX , "process-index" : $PROCESS_INDEX , "process-name" : $PROCESS_NAME }' )" || exit 109
+                                                                                                                                                                                        yq eval --prettyPrint '. | map(del(.timestamp)) | map(del(.payload.["originator-pid"]))' ${ resources-directory }/log.yaml | yq eval --prettyPrint "map(. + $ADDITION)"> "$DOCUMENT"
+                                                                                                                                                                                        echo > ${ resources-directory }/log.yaml
+                                                                                                                                                                                        HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 144
+                                                                                                                                                                                        echo "$HASH"
+                                                                                                                                                                                        mkdir --parents /tmp/client-documents
+                                                                                                                                                                                        cat "$DOCUMENT" > "/tmp/client-documents/$HASH"
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-redis" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.jq ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        if [[ "$#" == 0 ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            cleanup ( ) {
+                                                                                                                                                                                                if [[ "$?" == 0 ]]
+                                                                                                                                                                                                then
+                                                                                                                                                                                                    jq \
+                                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                                        --arg TYPE "$TYPE" \
+                                                                                                                                                                                                        --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                                                                        --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                                                                                                        '{
+                                                                                                                                                                                                            "type" : $TYPE ,
+                                                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                                                                                                        }' >&2
+                                                                                                                                                                                                else
+                                                                                                                                                                                                    exit 0
+                                                                                                                                                                                                fi
+                                                                                                                                                                                            }
+                                                                                                                                                                                            trap cleanup EXIT
+                                                                                                                                                                                            read -r -t 1 -u 189 TYPE <&189
+                                                                                                                                                                                            read -r -t 1 -u 189 CHANNEL <&189
+                                                                                                                                                                                            read -r -t 1 -u 189 PAYLOAD <&189
+                                                                                                                                                                                        elif [[ "$#" == 3 ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            EXPECTED_TYPE="$1"
+                                                                                                                                                                                            EXPECTED_CHANNEL="$2"
+                                                                                                                                                                                            EXPECTED_PAYLOAD_TYPE="$3"
+                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 183
+                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
+                                                                                                                                                                                            read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
+                                                                                                                                                                                            if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
+                                                                                                                                                                                            then
+                                                                                                                                                                                                jq '.' <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
+                                                                                                                                                                                            elif [[ "$EXPECTED_PAYLOAD_TYPE" == "set" ]]
+                                                                                                                                                                                            then
+                                                                                                                                                                                                jq 'del(.["originator-pid"])'  <<< "$OBSERVED_PAYLOAD" > "$DOCUMENT"
+                                                                                                                                                                                            else
+                                                                                                                                                                                                exit 170
+                                                                                                                                                                                            fi
+                                                                                                                                                                                            sha512sum "$DOCUMENT" | cut --characters 1-128
+                                                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]]
+                                                                                                                                                                                            then
+                                                                                                                                                                                                # shellcheck disable=SC2208,SC2016
+                                                                                                                                                                                                jq \
+                                                                                                                                                                                                    --null-input \
+                                                                                                                                                                                                    --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
+                                                                                                                                                                                                    --arg EXPECTED_PAYLOAD_TYPE "$EXPECTED_PAYLOAD_TYPE" \
+                                                                                                                                                                                                    --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
+                                                                                                                                                                                                    --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
+                                                                                                                                                                                                    --argjson OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
+                                                                                                                                                                                                    --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
+                                                                                                                                                                                                    '{
+                                                                                                                                                                                                        "type" :
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                "expected" : $EXPECTED_TYPE ,
+                                                                                                                                                                                                                "observed" : $OBSERVED_TYPE
+                                                                                                                                                                                                            } ,
+                                                                                                                                                                                                        "channel" :
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                "expected" : $EXPECTED_CHANNEL ,
+                                                                                                                                                                                                                "observed" : $OBSERVED_CHANNEL
+                                                                                                                                                                                                            } ,
+                                                                                                                                                                                                        "payload" :
+                                                                                                                                                                                                            {
+                                                                                                                                                                                                                "observed" : $OBSERVED_PAYLOAD ,
+                                                                                                                                                                                                                "type" : $EXPECTED_PAYLOAD_TYPE
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                    }' >&2
+                                                                                                                                                                                            fi
+                                                                                                                                                                                        else
+                                                                                                                                                                                            echo Improper Usage >&2
+                                                                                                                                                                                        fi
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-resource" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        ERROR="$( mktemp )" || exit 166
+                                                                                                                                                                                        if RESOURCE="$( "$@" 2> "$ERROR" )"
+                                                                                                                                                                                        then
+                                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                                        else
+                                                                                                                                                                                            STATUS="$?"
+                                                                                                                                                                                        fi
+                                                                                                                                                                                        echo -en "$RESOURCE"
+                                                                                                                                                                                        cat "$ERROR" >&2
+                                                                                                                                                                                        exit "$STATUS"
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                    (
+                                                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                                                            {
+                                                                                                                                                                                name = "check-resources-directory" ;
+                                                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
+                                                                                                                                                                                text =
+                                                                                                                                                                                    ''
+                                                                                                                                                                                        EXCLUSIONS=()
+                                                                                                                                                                                        while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                        do
+                                                                                                                                                                                            case "$1" in
+                                                                                                                                                                                                --exclude)
+                                                                                                                                                                                                    EXCLUSIONS+=("-o" "-path" "${ resources-directory }/mounts/$2")
+                                                                                                                                                                                                    shift 2
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                                *)
+                                                                                                                                                                                                    exit 144
+                                                                                                                                                                                                    ;;
+                                                                                                                                                                                            esac
+                                                                                                                                                                                        done
+                                                                                                                                                                                        touch "$DOCUMENT"
+                                                                                                                                                                                        if [[ -e ${ resources-directory } ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            find ${ resources-directory } \( -path '${ resources-directory }/log.yaml' -o -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -type f -print | sort | while read -r FILE
+                                                                                                                                                                                            do
+                                                                                                                                                                                                STAT="$( stat --format "%A,%u,%u,%F,%s" "$FILE" )" || exit 109
+                                                                                                                                                                                                jq \
+                                                                                                                                                                                                    --null-input \
+                                                                                                                                                                                                    --rawfile CAT "$FILE" \
+                                                                                                                                                                                                    --arg FILE "$FILE" \
+                                                                                                                                                                                                    --arg STAT "$STAT" \
+                                                                                                                                                                                                    '{
+                                                                                                                                                                                                        "cat" : $CAT ,
+                                                                                                                                                                                                        "file" : $FILE ,
+                                                                                                                                                                                                        "stat" : $STAT
+                                                                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> "$DOCUMENT"
+                                                                                                                                                                                            done
+                                                                                                                                                                                        fi
+                                                                                                                                                                                        HASH="$( sha512sum "$DOCUMENT" | cut --characters 1-128 )" || exit 194
+                                                                                                                                                                                        echo "$HASH"
+                                                                                                                                                                                        mkdir --parent //tmp/client-documents
+                                                                                                                                                                                        cat "$DOCUMENT" > "//tmp/client-documents/$HASH"
+                                                                                                                                                                                    '' ;
+                                                                                                                                                                            }
+                                                                                                                                                                    )
+                                                                                                                                                                ] ;
+                                                                                                                                                            text = text ;
+                                                                                                                                                        } ;
+                                                                                                                                                in "${ application }/bin/text" ;
+                                                                                                                                }
+                                                                                                                                text ;
+                                                                                                                        timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
+                                                                                                                    } ;
+                                                                                                            in identity action ;
+                                                                                                in builtins.genList generator ( builtins.length actions ) ;
+                                                                                        processes =
+                                                                                            let
+                                                                                                generator =
+                                                                                                    index :
+                                                                                                        let
+                                                                                                            file-name = ''"$OUT/processes/${ builtins.toString index }"'' ;
+                                                                                                            process = builtins.elemAt list index ;
+                                                                                                            in
+                                                                                                                {
+                                                                                                                    delay =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "delay" ;
+                                                                                                                                        text = process.value.delays ;
+                                                                                                                                    } ;
+                                                                                                                            in "${ application }/bin/delay" ;
+                                                                                                                    file-name = file-name ;
+                                                                                                                    link =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "link" ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                                                        text =
+                                                                                                                                            let
+                                                                                                                                                file =
+                                                                                                                                                    let
+                                                                                                                                                        application =
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "file" ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            export PROCESS_INDEX=${ builtins.toString index }
+                                                                                                                                                                            PROCESS_NAME=${ process.name }
+                                                                                                                                                                            export PROCESS_NAME
+                                                                                                                                                                            echo PROCESS ${ builtins.toString index } "$$" >&2
+                                                                                                                                                                            ${ process.value.commands }
+                                                                                                                                                                        '' ;
+                                                                                                                                                                } ;
+                                                                                                                                                    in "${ application }/bin/file" ;
+                                                                                                                                                in
+                                                                                                                                                    ''
+                                                                                                                                                        OUT="$1"
+                                                                                                                                                        sed -e "s#\$OUT#$OUT#" -e w${ file-name } ${ file }
+                                                                                                                                                        chmod a+rx ${ file-name }
+                                                                                                                                                    '' ;
+                                                                                                                                    } ;
+                                                                                                                            in ''${ application }/bin/link "$OUT"'' ;
+                                                                                                                } ;
+                                                                                                grouper = command : builtins.readFile ( command.process.string ) ;
+                                                                                                list = builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper commands ) ) ;
+                                                                                                mapper =
+                                                                                                    name : value :
+                                                                                                        {
+                                                                                                            name = name ;
+                                                                                                            value =
+                                                                                                                {
+                                                                                                                    commands =
+                                                                                                                        let
+                                                                                                                            mapper = command : "${ command.file-name } <&189" ;
+                                                                                                                            in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
+                                                                                                                    delays =
+                                                                                                                        let
+                                                                                                                            mapper = command : command.delay ;
+                                                                                                                            in builtins.concatStringsSep "\n" ( builtins.map mapper value ) ;
+                                                                                                                } ;
+                                                                                                        } ;
+                                                                                                in builtins.genList generator ( builtins.length list ) ;
+                                                                                        in
+                                                                                            ''
+                                                                                                OUT="$1"
+                                                                                                mkdir --parents "$OUT/commands"
+                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map (command : command.link ) commands ) }
+                                                                                                mkdir --parent "$OUT/processes"
+                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
+                                                                                                ${ execute }
+                                                                                            '' ;
+                                                                            }
+                                                                    )
                                                                 ] ;
                                                             src = ./. ;
                                                         } ;
