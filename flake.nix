@@ -424,7 +424,7 @@
                                                                                     "text" : .text ,
                                                                                     "temporary" : .temporary
                                                                                 }' "$OUTPUT_FILE" | log
-                                                                            # if [[ -n "$EXPERIMENTAL" ]] ; then true ; fi
+                                                                            if [[ -n "$EXPERIMENTAL" ]] ; then true ; fi
                                                                             # if [[ -z "$EXPERIMENTAL" ]] ; then false ; fi
                                                                             # true "$EXPERIMENTAL"
                                                                             ## false "$EXPERIMENTAL"
