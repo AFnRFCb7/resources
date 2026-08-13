@@ -1610,39 +1610,6 @@
                                                                                                                 } ;
                                                                                                         } ;
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
-                                                                                        test =
-                                                                                            let
-                                                                                                application =
-                                                                                                    pkgs.writeShellApplication
-                                                                                                        {
-                                                                                                            name = "test" ;
-                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
-                                                                                                            text =
-                                                                                                                let
-                                                                                                                    file =
-                                                                                                                        let
-                                                                                                                            application =
-                                                                                                                                {
-                                                                                                                                    name = "file" ;
-                                                                                                                                    runtimeInputs = [ pkgs.findutil ] ;
-                                                                                                                                    text =
-                                                                                                                                        ''
-                                                                                                                                            FAILURES="$( yq eval ".failure" "filter(.failure) | length" result.yaml )" || exit 110
-                                                                                                                                            if [[ "$FAILURES" -gt 0 ]]
-                                                                                                                                            then
-                                                                                                                                                exit 134
-                                                                                                                                            fi
-                                                                                                                                        '' ;
-                                                                                                                                } ;
-                                                                                                                            in "${ application }/bin/file" ;
-                                                                                                                    in
-                                                                                                                        ''
-                                                                                                                            OUT="$1"
-                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w$OUT/test.sh" file
-                                                                                                                            chmod a+rx "$OUT/test.sh"
-                                                                                                                        '' ;
-                                                                                                        } ;
-                                                                                                in "${ application }/bin/test" ;
                                                                                         in
                                                                                             ''
                                                                                                 OUT="$1"
