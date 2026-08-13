@@ -1048,6 +1048,41 @@
                                                                                 runtimeInputs =
                                                                                     [
                                                                                         pkgs.coreutils
+                                                                                        (
+                                                                                            pkgs.writeShellApplication
+                                                                                                {
+                                                                                                    name = "execute" ;
+                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                    text =
+                                                                                                        let
+                                                                                                            file =
+                                                                                                                let
+                                                                                                                    application =
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "file" ;
+                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
+                                                                                                                                text =
+                                                                                                                                    ''
+                                                                                                                                        SCRATCH=/tmp/scratch
+                                                                                                                                        export SCRATCH
+                                                                                                                                        mkdir --parents "$SCRATCH"
+                                                                                                                                        export IS_NIX_FLAKE_CHECK=true
+                                                                                                                                        exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
+                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
+                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                    '' ;
+                                                                                                                            } ;
+                                                                                                                    in "${ application }/bin/file" ;
+                                                                                                            in
+                                                                                                                ''
+                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "OUT:?must be exported" "}" ] }"
+                                                                                                                    mkdir --parent "$OUT"
+                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
+                                                                                                                    chmod a+rx "$OUT/execute"
+                                                                                                                '' ;
+                                                                                                }
+                                                                                         )
                                                                                     ] ;
                                                                                 text =
                                                                                     let
@@ -1578,7 +1613,7 @@
                                                                                                 in builtins.genList generator ( builtins.length list ) ;
                                                                                         in
                                                                                             ''
-                                                                                                OUT="$1"
+                                                                                                export OUT="$1"
                                                                                                 mkdir --parents "$OUT/commands"
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map (command : command.link ) commands ) }
                                                                                                 mkdir --parent "$OUT/processes"
