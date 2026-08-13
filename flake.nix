@@ -1651,7 +1651,6 @@
                                                                                                 mkdir --parent "$OUT/processes"
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                 ${ execute }
-                                                                                                ${ test }
                                                                                             '' ;
                                                                             }
                                                                     )
