@@ -1041,7 +1041,7 @@
                                                             name = "check-derivation" ;
                                                             nativeBuildInputs =
                                                                 [
-                                                                   )
+
                                                                 ] ;
                                                             src = ./. ;
                                                         } ;
