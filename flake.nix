@@ -1556,7 +1556,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "delay" ;
-                                                                                                                                        text = process.value.delays ;
+                                                                                                                                        text = "" ; # process.value.delays ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/delay" ;
                                                                                                                     file-name = file-name ;
