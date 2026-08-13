@@ -1048,41 +1048,6 @@
                                                                                 runtimeInputs =
                                                                                     [
                                                                                         pkgs.coreutils
-                                                                                        (
-                                                                                            pkgs.writeShellApplication
-                                                                                                {
-                                                                                                    name = "execute" ;
-                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
-                                                                                                    text =
-                                                                                                        let
-                                                                                                            file =
-                                                                                                                let
-                                                                                                                    application =
-                                                                                                                        pkgs.writeShellApplication
-                                                                                                                            {
-                                                                                                                                name = "file" ;
-                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
-                                                                                                                                text =
-                                                                                                                                    ''
-                                                                                                                                        SCRATCH=/tmp/scratch
-                                                                                                                                        export SCRATCH
-                                                                                                                                        mkdir --parents "$SCRATCH"
-                                                                                                                                        export IS_NIX_FLAKE_CHECK=true
-                                                                                                                                        exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
-                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
-                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
-                                                                                                                                    '' ;
-                                                                                                                            } ;
-                                                                                                                    in "${ application }/bin/file" ;
-                                                                                                            in
-                                                                                                                ''
-                                                                                                                    : "${ builtins.concatStringsSep "" [ "$" "{" "OUT:?must be exported" "}" ] }"
-                                                                                                                    mkdir --parent "$OUT"
-                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
-                                                                                                                    chmod a+rx "$OUT/execute"
-                                                                                                                '' ;
-                                                                                                }
-                                                                                         )
                                                                                     ] ;
                                                                                 text =
                                                                                     let
@@ -1228,6 +1193,43 @@
                                                                                                                     process = process ;
                                                                                                                 } ;
                                                                                                 in builtins.map mapper parameters ;
+                                                                                        execute =
+                                                                                            let
+                                                                                                application =
+                                                                                                    pkgs.writeShellApplication
+                                                                                                        {
+                                                                                                            name = "execute" ;
+                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.gnused ] ;
+                                                                                                            text =
+                                                                                                                let
+                                                                                                                    file =
+                                                                                                                        let
+                                                                                                                            application =
+                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                    {
+                                                                                                                                        name = "file" ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
+                                                                                                                                        text =
+                                                                                                                                            ''
+                                                                                                                                                SCRATCH=/tmp/scratch
+                                                                                                                                                export SCRATCH
+                                                                                                                                                mkdir --parents "$SCRATCH"
+                                                                                                                                                export IS_NIX_FLAKE_CHECK=true
+                                                                                                                                                exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
+                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
+                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
+                                                                                                                                            '' ;
+                                                                                                                                    } ;
+                                                                                                                            in "${ application }/bin/file" ;
+                                                                                                                    in
+                                                                                                                        ''
+                                                                                                                            : "${ builtins.concatStringsSep "" [ "$" "{" "OUT:?must be exported" "}" ] }"
+                                                                                                                            mkdir --parent "$OUT"
+                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute" ${ file }
+                                                                                                                            chmod a+rx "$OUT/execute"
+                                                                                                                        '' ;
+                                                                                                                                                                                                    }
+                                                                                            in "${ application }/bin/execute" ;
                                                                                         parameters =
                                                                                             let
                                                                                                 generator =
@@ -1631,487 +1633,6 @@
                                                             name = "resource-check" ;
                                                             nodes = nodes ;
                                                             testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                        } ;
-                                    check =
-                                        {
-                                            actions ,
-                                            gc-roots-directory ,
-                                            machines ,
-                                            nixosTest ,
-                                            pkgs ,
-                                            private ,
-                                            resources-directory ,
-                                            user
-                                        } :
-                                            let
-                                                check-parameters =
-                                                    {
-                                                        actions =
-                                                            let
-                                                                _actions = builtins.concatLists [ pre-actions actions post-actions ] ;
-                                                                generator =
-                                                                    index :
-                                                                        let
-                                                                            action = builtins.elemAt _actions index ;
-                                                                            identity =
-                                                                                {
-                                                                                    critical ? true                                                                                    ,
-                                                                                    expected-standard-error ? "" ,
-                                                                                    expected-standard-output ? "" ,
-                                                                                    expected-status ? 0 ,
-                                                                                    process ? "default" ,
-                                                                                    text ,
-                                                                                    timeout ? 60 ,
-                                                                                    uuid ? null
-                                                                                } :
-                                                                                    {
-                                                                                        critical = visitor { bool = path : value : builtins.toJSON value ; } critical ;
-                                                                                        expected-standard-error = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-error" value ; } expected-standard-error ;
-                                                                                        expected-standard-output = visitor { path = path : value : value ; string = path : value : builtins.toFile "standard-output" value ; } expected-standard-output ;
-                                                                                        expected-status = visitor { int = path : value : builtins.toString value ; } expected-status ;
-                                                                                        index = builtins.toString index ;
-                                                                                        process = visitor { path = path : value : value ; string = path : value : builtins.toFile "process" value ; } process ;
-                                                                                        text =
-                                                                                            visitor
-                                                                                                {
-                                                                                                    path = path : value : value ;
-                                                                                                    string =
-                                                                                                        path : value :
-                                                                                                            let
-                                                                                                                application =
-                                                                                                                    root-parameters.writeShellApplication
-                                                                                                                        {
-                                                                                                                            name = "command" ;
-                                                                                                                            runtimeInputs =
-                                                                                                                                [
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-executable" ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        EXECUTABLE="$1"
-                                                                                                                                                        if [[ ! -x "$EXECUTABLE" ]]
-                                                                                                                                                        then
-                                                                                                                                                            echo NOT EXECUTABLE >&2
-                                                                                                                                                        fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-file-empty" ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        if [[ ! -e ${ resources-directory } ]]
-                                                                                                                                                        then
-                                                                                                                                                            echo Not Empty
-                                                                                                                                                        fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-file" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        YAML_FILE="$1"
-                                                                                                                                                        if [[ -e ${ resources-directory } ]]
-                                                                                                                                                        then
-                                                                                                                                                            find ${ resources-directory } \( -path '${ resources-directory }/pids' -o -path '${ resources-directory }/temporary' \) -prune -o -type f,l -print | sort | while read -r FILE
-                                                                                                                                                            do
-                                                                                                                                                                CONTENT="$( cat "$FILE" )" || exit 125
-                                                                                                                                                                jq \
-                                                                                                                                                                    null-input \
-                                                                                                                                                                    --arg FILE "$FILE" \
-                                                                                                                                                                    --arg CONTENT "$CONTENT" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "file" : $FILE ,
-                                                                                                                                                                        "content" : $CONTENT
-                                                                                                                                                                    }' | yq eval --prettyPrint >> "$YAML_FILE"
-                                                                                                                                                            done
-                                                                                                                                                        else
-                                                                                                                                                            touch "$YAML_FILE"
-                                                                                                                                                        fi
-                                                                                                                                                        sha512sum "$YAML_FILE" | cut --characters 1-128
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-redis-block" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        cleanup ( ) {
-                                                                                                                                                            if [[ "$?" == 0 ]]
-                                                                                                                                                            then
-                                                                                                                                                                jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg TYPE "$TYPE" \
-                                                                                                                                                                    --arg CHANNEL "$CHANNEL" \
-                                                                                                                                                                    --argjson PAYLOAD "$PAYLOAD" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "type" : $TYPE ,
-                                                                                                                                                                        "channel" : $CHANNEL ,
-                                                                                                                                                                        "payload" : $PAYLOAD
-                                                                                                                                                                    }' >&2
-                                                                                                                                                            else
-                                                                                                                                                                exit 0
-                                                                                                                                                            fi
-                                                                                                                                                        }
-                                                                                                                                                        trap cleanup EXIT
-                                                                                                                                                        read -r -t 1 -u 189 TYPE <&189
-                                                                                                                                                        read -r -t 1 -u 189 CHANNEL <&189
-                                                                                                                                                        read -r -t 1 -u 189 PAYLOAD <&189
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                    (
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "check-redis-message" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.jq ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        EXPECTED_TYPE="$1"
-                                                                                                                                                        EXPECTED_CHANNEL="$2"
-                                                                                                                                                        EXPECTED_PAYLOAD_FILE="$3"
-                                                                                                                                                        EXPECTED_PAYLOAD_TYPE="$4"
-                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_TYPE <&189 || exit 157
-                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_CHANNEL <&189 || exit 104
-                                                                                                                                                        read -r -t 1 -u 189 OBSERVED_PAYLOAD <&189 || exit 125
-                                                                                                                                                        if [[ "$EXPECTED_PAYLOAD_TYPE" == "number" ]]
-                                                                                                                                                        then
-                                                                                                                                                            EXPECTED_PAYLOAD="$( cat "$EXPECTED_PAYLOAD_FILE" )" || exit 120
-                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] || [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] || [[ "$EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                            then
-                                                                                                                                                                # shellcheck disable=SC2208,SC2016
-                                                                                                                                                                jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
-                                                                                                                                                                    --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
-                                                                                                                                                                    --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
-                                                                                                                                                                    --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                                    --argjson OBSERVED_PAYLOAD "$OBSERVED_PAYLOAD" \
-                                                                                                                                                                    --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "type" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                                "observed" : $OBSERVED_TYPE
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "channel" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                                "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "payload" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                                "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                            }
-                                                                                                                                                                    }' >&2
-                                                                                                                                                            fi
-                                                                                                                                                        elif [[ "$EXPECTED_PAYLOAD_TYPE" == "object" ]]
-                                                                                                                                                        then
-                                                                                                                                                            EXPECTED_PAYLOAD="$( jq "." "$EXPECTED_PAYLOAD_FILE" )" || exit 121
-                                                                                                                                                            STRIPPED_PAYLOAD="$( jq 'del(.["originator-pid"])' <<< "$OBSERVED_PAYLOAD" )" || exit 113
-                                                                                                                                                            if [[ "$EXPECTED_TYPE" != "$OBSERVED_TYPE" ]] && [[ "$EXPECTED_CHANNEL" != "$OBSERVED_CHANNEL" ]] && [[ "EXPECTED_PAYLOAD" != "$OBSERVED_PAYLOAD" ]]
-                                                                                                                                                            then
-                                                                                                                                                                # shellcheck disable=SC2208,SC2016
-                                                                                                                                                                echo "$EXPECTED_PAYLOAD_TYPE" jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
-                                                                                                                                                                    --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
-                                                                                                                                                                    --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
-                                                                                                                                                                    --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                                    --argjson OBSERVED_PAYLOAD "$STRIPPED_PAYLOAD" \
-                                                                                                                                                                    --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "type" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                                "observed" : $OBSERVED_TYPE
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "channel" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                                "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "payload" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                                "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                            }
-                                                                                                                                                                    }' >&2
-                                                                                                                                                                # shellcheck disable=SC2208,SC2016
-                                                                                                                                                                jq \
-                                                                                                                                                                    --null-input \
-                                                                                                                                                                    --arg EXPECTED_CHANNEL "$EXPECTED_CHANNEL" \
-                                                                                                                                                                    --argjson EXPECTED_PAYLOAD "$EXPECTED_PAYLOAD" \
-                                                                                                                                                                    --arg EXPECTED_TYPE "$EXPECTED_TYPE" \
-                                                                                                                                                                    --arg OBSERVED_CHANNEL "$OBSERVED_CHANNEL" \
-                                                                                                                                                                    --argjson OBSERVED_PAYLOAD "$STRIPPED_PAYLOAD" \
-                                                                                                                                                                    --arg OBSERVED_TYPE "$OBSERVED_TYPE" \
-                                                                                                                                                                    '{
-                                                                                                                                                                        "type" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_TYPE ,
-                                                                                                                                                                                "observed" : $OBSERVED_TYPE
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "channel" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_CHANNEL ,
-                                                                                                                                                                                "observed" : $OBSERVED_CHANNEL
-                                                                                                                                                                            } ,
-                                                                                                                                                                        "payload" :
-                                                                                                                                                                            {
-                                                                                                                                                                                "expected" : $EXPECTED_PAYLOAD ,
-                                                                                                                                                                                "observed" : $OBSERVED_PAYLOAD
-                                                                                                                                                                            }
-                                                                                                                                                                    }' >&2
-                                                                                                                                                            fi
-                                                                                                                                                        else
-                                                                                                                                                            exit 151
-                                                                                                                                                        fi
-                                                                                                                                                    '' ;
-                                                                                                                                            }
-                                                                                                                                    )
-                                                                                                                                ] ;
-                                                                                                                            text = value ;
-                                                                                                                        } ;
-                                                                                                                    in "${ application }/bin/command" ;
-                                                                                                } text ;
-                                                                                        timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
-                                                                                        uuid = visitor { null = path : value : builtins.toString index ; string = path : value : value ; } uuid ;
-                                                                                    } ;
-                                                                            in identity action ;
-                                                                post-actions =
-                                                                    [
-                                                                        { text = ''check-redis-block <&189'' ; }
-                                                                        { text = "check-file-empty" ; }
-                                                                    ] ;
-                                                                pre-actions =
-                                                                    [
-                                                                        { text = ''echo 1 > "$SCRATCH/invalid-init-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-init-channel } "$SCRATCH/invalid-init-channel.json" number <&189'' ; }
-                                                                        { text = ''echo 2 > "$SCRATCH/invalid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.invalid-release-channel } "$SCRATCH/invalid-release-channel.json" number <&189'' ; }
-                                                                        { text = ''echo 3 > "$SCRATCH/valid-init-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-init-channel } "$SCRATCH/valid-init-channel.json" number <&189'' ; }
-                                                                        { text = ''echo 4 > "$SCRATCH/valid-release-channel.json"'' ; }
-                                                                        { text = ''check-redis-message subscribe ${ root-parameters.valid-release-channel } "$SCRATCH/valid-release-channel.json" number <&189'' ; }
-                                                                        { text = ''check-redis-block <&189'' ; uuid = "redis_blocked" ; }
-                                                                        { text = "check-file-empty" ; }
-                                                                    ] ;
-                                                                in builtins.genList generator ( builtins.length _actions ) ;
-                                                        nixosTest = visitor { lambda = path : value : value ; } nixosTest ;
-                                                    } ;
-                                                in
-                                                    check-parameters.nixosTest
-                                                        {
-                                                            name = "check" ;
-                                                            nodes = { machine = { ... } : { imports = private ; } ; } ;
-                                                            testScript =
-                                                                let
-                                                                    test =
-                                                                        let
-                                                                            application =
-                                                                                root-parameters.mkDerivation
-                                                                                    {
-                                                                                        installPhase = ''install "$out"'' ;
-                                                                                        name = "test" ;
-                                                                                        nativeBuildInputs =
-                                                                                            [
-                                                                                                (
-                                                                                                    writeShellApplication
-                                                                                                        {
-                                                                                                            name = "install" ;
-                                                                                                            runtimeInputs =
-                                                                                                                [
-                                                                                                                    pkgs.findutils
-                                                                                                                    pkgs.gnused
-                                                                                                                    pkgs.redis
-                                                                                                                ] ;
-                                                                                                            text =
-                                                                                                                let
-                                                                                                                    commands =
-                                                                                                                        let
-                                                                                                                            mapper =
-                                                                                                                                { critical , expected-standard-error , expected-standard-output , expected-status , index , process , text , timeout , uuid } @ primary :
-                                                                                                                                    let
-                                                                                                                                        application =
-                                                                                                                                            root-parameters.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "command" ;
-                                                                                                                                                    runtimeInputs = [ root-parameters.coreutils pkgs.diffutils ] ;
-                                                                                                                                                    text =
-                                                                                                                                                        ''
-                                                                                                                                                            export IS_NIX_FLAKE_CHECK=true
-                                                                                                                                                            mkdir --parent "$SCRATCH/commands/${ index }/expected"
-                                                                                                                                                            echo '${ critical }' > "$SCRATCH/commands/${ index }/critical"
-                                                                                                                                                            ln --symbolic ${ expected-standard-error } "$SCRATCH/commands/${ index }/expected/standard-error"
-                                                                                                                                                            ln --symbolic ${ expected-standard-output } "$SCRATCH/commands/${ index }/expected/standard-output"
-                                                                                                                                                            echo '${ expected-status }' > "$SCRATCH/commands/${ index }/expected/status"
-                                                                                                                                                            ln --symbolic ${ process } "$SCRATCH/commands/${ index }/process"
-                                                                                                                                                            ln --symbolic ${ text } "$SCRATCH/commands/${ index }/text"
-                                                                                                                                                            echo ${ timeout } > "$SCRATCH/commands/${ index }/timeout"
-                                                                                                                                                            seq 0 $(( ${ index } - 1 )) | while read -r FLAG
-                                                                                                                                                            do
-                                                                                                                                                                while [[ ! -f "$SCRATCH/commands/$FLAG/flag" ]]
-                                                                                                                                                                do
-                                                                                                                                                                    sleep 1
-                                                                                                                                                                done
-                                                                                                                                                            done
-                                                                                                                                                            mkdir --parent "$SCRATCH/commands/${ index }/observed"
-                                                                                                                                                            if timeout ${ timeout }s "$SCRATCH/commands/${ index }/text" > "$SCRATCH/commands/${ index }/observed/standard-output" 2> "$SCRATCH/commands/${ index }/observed/standard-error" <&189
-                                                                                                                                                            then
-                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
-                                                                                                                                                            else
-                                                                                                                                                                 echo "$?" > "$SCRATCH/commands/${ index }/observed/status"
-                                                                                                                                                            fi
-                                                                                                                                                            touch "$SCRATCH/commands/${ index }/flag"
-                                                                                                                                                            if "${ critical }" && ! diff --recursive --report-identical-files "$SCRATCH/commands/${ index }/expected" "$SCRATCH/commands/${ index }/observed"
-                                                                                                                                                            then
-                                                                                                                                                                echo "${ uuid }" > "$SCRATCH/commands/${ index }/failure"
-                                                                                                                                                            fi
-                                                                                                                                                        '' ;
-                                                                                                                                                } ;
-                                                                                                                                            in
-                                                                                                                                                ''
-                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e "w$OUT/commands/${ index }" ${ application }/bin/command
-                                                                                                                                                    chmod 0555 "$OUT/commands/${ index }"
-                                                                                                                                                '' ;
-                                                                                                                            in builtins.map mapper check-parameters.actions ;
-                                                                                                                    execute =
-                                                                                                                        let
-                                                                                                                            application =
-                                                                                                                                let
-                                                                                                                                    grouper = action : builtins.hashString "sha512" ( builtins.toString action.process.string ) ;
-                                                                                                                                    mapper = name : value : ''( "$OUT/processes/${ name }" <&189 & )'' ;
-                                                                                                                                    in
-                                                                                                                                        root-parameters.writeShellApplication
-                                                                                                                                            {
-                                                                                                                                                name = "execute" ;
-                                                                                                                                                runtimeInputs = [ pkgs.coreutils pkgs.redis ] ;
-                                                                                                                                                text =
-                                                                                                                                                    ''
-                                                                                                                                                        export IS_NIX_FLAKE_CHECK=true
-                                                                                                                                                        ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        SCRATCH="$( mktemp --directory )" || exit 198
-                                                                                                                                                        ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        export SCRATCH
-                                                                                                                                                        ## if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        sleep 10
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        # redis-server --port 14012 &
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        sleep 1s
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        exec 189< <( redis-cli SUBSCRIBE ${ root-parameters.invalid-init-channel } ${ root-parameters.invalid-release-channel } ${ root-parameters.valid-init-channel } ${ root-parameters.valid-release-channel } )
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ) }
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        while [[ ! -f "$SCRATCH/commands/${ builtins.toString ( ( builtins.length commands ) - 1 ) }/flag" ]]
-                                                                                                                                                        do
-                                                                                                                                                            sleep 1s
-                                                                                                                                                        done
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 10 ; fi
-                                                                                                                                                        echo 0 > "$SCRATCH/status"
-                                                                                                                                                        find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | sort | while read -r FAILURE
-                                                                                                                                                        do
-                                                                                                                                                            REASON="$( cat "$FAILURE" )" || exit 192
-                                                                                                                                                            echo "FAILURE:  $REASON" >&2
-                                                                                                                                                            echo 119 > "$SCRATCH/status"
-                                                                                                                                                        done
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
-                                                                                                                                                        STATUS="$( cat "$SCRATCH/status" )" || exit 114
-                                                                                                                                                        echo STATUS="$STATUS"
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
-                                                                                                                                                        echo OUT="$OUT"
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
-                                                                                                                                                        echo SCRATCH="$SCRATCH"
-                                                                                                                                                        # if true ; then echo XXXXXXXXXXXXXX && dirname "$0" && exit 11 ; fi
-                                                                                                                                                        exit "$STATUS"
-                                                                                                                                                    '' ;
-                                                                                                                                            } ;
-                                                                                                                            in "${ application }/bin/execute" ;
-                                                                                                                    processes =
-                                                                                                                        let
-                                                                                                                            grouper = action : builtins.hashString "sha512" ( builtins.toString action.proces.string  ) ;
-                                                                                                                            mapper =
-                                                                                                                                name : value :
-                                                                                                                                    let
-                                                                                                                                        application =
-                                                                                                                                            root-parameters.writeShellApplication
-                                                                                                                                                {
-                                                                                                                                                    name = "process" ;
-                                                                                                                                                    text = builtins.concatStringsSep "\n" ( builtins.map ( v : ''"$OUT/commands/${ v.index}" <&189'' ) value ) ;
-                                                                                                                                                } ;
-                                                                                                                                            in
-                                                                                                                                                ''
-                                                                                                                                                    sed -e "s#\$OUT#$OUT#" -e w$OUT/processes/${ name } ${ application }/bin/process
-                                                                                                                                                    chmod 0555 "$OUT"/processes/${ name }
-                                                                                                                                                '' ;
-                                                                                                                            in builtins.attrValues ( builtins.mapAttrs mapper ( builtins.groupBy grouper check-parameters.actions ) ) ;
-                                                                                                                    test =
-                                                                                                                        let
-                                                                                                                            application =
-                                                                                                                                writeShellApplication
-                                                                                                                                    {
-                                                                                                                                        name = "test" ;
-                                                                                                                                        runtimeInputs = [ root-parameters.coreutils ] ;
-                                                                                                                                        text =
-                                                                                                                                            ''
-                                                                                                                                                DERIVATION="$( dirname "$0" )" || exit 145
-                                                                                                                                                echo The test derivation is in "$DERIVATION" >&2
-                                                                                                                                                STATUS="$( cat "$DERIVATION/status" )" || exit 199
-                                                                                                                                                exit "$STATUS"
-                                                                                                                                            '' ;
-                                                                                                                                    } ;
-                                                                                                                                in "${ application }/bin/test" ;
-                                                                                                                    in
-                                                                                                                        ''
-                                                                                                                            export OUT="$1"
-                                                                                                                            export SCRATCH="$OUT"
-                                                                                                                            mkdir --parents "$OUT/commands"
-                                                                                                                            ${ builtins.concatStringsSep "\n" commands }
-                                                                                                                            sed -e "s#\$OUT#$OUT#" -e "w$OUT/execute.sh" ${ execute }
-                                                                                                                            chmod 0555 "$OUT/execute.sh"
-                                                                                                                            mkdir --parents "$OUT/processes"
-                                                                                                                            ${ builtins.concatStringsSep "\n" processes }
-                                                                                                                        '' ;
-                                                                                                        }
-                                                                                                )
-                                                                                            ] ;
-                                                                                        src = ./. ;
-                                                                                    } ;
-                                                                            in "${ application }/execute.sh" ;
-                                                                    github =
-                                                                        let
-                                                                            application =
-                                                                                pkgs.writeShellApplication
-                                                                                    {
-                                                                                        name = "github" ;
-                                                                                        runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                        text =
-                                                                                            ''
-                                                                                                ifconfig >&2
-                                                                                            '' ;
-                                                                                    } ;
-                                                                        in "${ application }/bin/github" ;
-                                                                    in
-                                                                        ''
-                                                                            machine.wait_for_unit("multi-user.target")
-                                                                            machine.wait_for_unit("network-online.target")
-                                                                            machine.wait_for_unit("redis.service")
-                                                                            machine.succeed("runuser --login ${ user } -- ${ test }")
-                                                                       '' ;
                                                         } ;
                                     implementation = implementation ;
                                 } ;
