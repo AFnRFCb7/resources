@@ -1642,7 +1642,7 @@
                                                                                                                             chmod a+rx "$OUT/test.sh"
                                                                                                                         '' ;
                                                                                                         } ;
-                                                                                                in "" ;
+                                                                                                in "${ application }/bin/test" ;
                                                                                         in
                                                                                             ''
                                                                                                 OUT="$1"
