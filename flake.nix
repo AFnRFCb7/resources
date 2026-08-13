@@ -515,10 +515,10 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
+                                                                                                                                "--bind" "${ resources-directory }/canonical" "/canonical"
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--bind" "${ gc-roots-directory }/$INDEX" "/gc-root"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
-                                                                                                                                "--ro-bind" "${ resources-directory }/mounts" "/mounts"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                                 "--bind" "${ resources-directory }/release" "/release"
                                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
@@ -550,8 +550,10 @@
                                                                                                                                                     ''
                                                                                                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' /input > /private/hash.json
                                                                                                                                                         HASH="$( sha512sum /private/hash.json | cut --characters 1-128 )" || exit 138
-                                                                                                                                                        if [[ -d "/mounts/$HASH" ]]
+                                                                                                                                                        if [[ -d "/canonical/$HASH" ]]
                                                                                                                                                         then
+                                                                                                                                                            INDEX_FILE="$( readlink --canonicalize "/canonical/$HASH" )" || exit 171
+                                                                                                                                                            INDEX="$( basename "$INDEX_FILE" )" || exit 127
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EVALUATION 0 \
@@ -622,6 +624,7 @@
                                                                                                                                                                         "text" : $TEXT ,
                                                                                                                                                                         "temporary" : .temporary
                                                                                                                                                                     }' "$INPUT_FILE" > "$OUTPUT_FILE"
+                                                                                                                                                                ln --symbolic "${ resources-directory }/mounts/$INDEX" "/canonical/$HASH"
                                                                                                                                                             else
                                                                                                                                                                 jq \
                                                                                                                                                                     --arg INDEX "$INDEX" \
