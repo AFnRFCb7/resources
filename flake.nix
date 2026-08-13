@@ -1223,6 +1223,7 @@
                                                                                                                 } :
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
+                                                                                                                        kludge = visitor { bool = path : value : builtins fromJSON value ; } kludge ;
                                                                                                                         process =
                                                                                                                             let
                                                                                                                                 path =
