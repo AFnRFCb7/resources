@@ -1027,6 +1027,7 @@
                                     check2 =
                                         {
                                             actions ,
+                                            name ,
                                             nodes ,
                                             gc-roots-directory ,
                                             pkgs ,
@@ -1607,12 +1608,16 @@
                                                             src = ./. ;
                                                         } ;
                                                 in
-                                                    pkgs.nixosTest
-                                                        {
-                                                            name = "resource-check" ;
-                                                            nodes = nodes ;
-                                                            testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                        } ;
+                                                    {
+                                                        name = name ;
+                                                        value =
+                                                            pkgs.nixosTest
+                                                                {
+                                                                    name = "resource-check" ;
+                                                                    nodes = nodes ;
+                                                                    testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
+                                                                } ;
+                                                    } ;
                                     implementation = implementation ;
                                 } ;
             } ;
