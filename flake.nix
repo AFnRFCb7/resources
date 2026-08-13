@@ -1076,7 +1076,7 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                : "${ builtins.concatStringsWith [ ] [ "$" "{" "SCRATCH:?must be exported" "}" ] }"
+                                                                                                                                                : "${ builtins.concatStringsSepWith [ ] [ "$" "{" "SCRATCH:?must be exported" "}" ] }"
                                                                                                                                                 while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
                                                                                                                                                 do
                                                                                                                                                     sleep 1s
