@@ -1073,13 +1073,50 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "delay" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
+                                                                                                                                                : "${ builtins.concatStringsWith [ ] [ "$" "{" "SCRATCH:?must be exported" "}" ] }"
                                                                                                                                                 while [[ ! -f "$SCRATCH/commands/${ command-index }/flag" ]]
                                                                                                                                                 do
                                                                                                                                                     sleep 1s
                                                                                                                                                 done
+                                                                                                                                                if [[ -f "$SCRATCH/${ command-index }/failure" ]]
+                                                                                                                                                then
+                                                                                                                                                    FAILURE=true
+                                                                                                                                                else
+                                                                                                                                                    FAILURE=false
+                                                                                                                                                fi
+                                                                                                                                                jq \
+                                                                                                                                                    --null-input \
+                                                                                                                                                    --argjsom FAILURE "$FAILURE" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_ERROR "$SCRATCH/${ command-index }/observed/standard-error" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_OUTPUT "$SCRATCH/${ command-index }/observed/standard-output" \
+                                                                                                                                                    --rawfile OBSERVED_STATUS "$SCRATCH/${ command-index }/observed/status" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_ERROR "$SCRATCH/${ command-index }/observed/standard-error" \
+                                                                                                                                                    --rawfile OBSERVED_STANDARD_OUTPUT "$SCRATCH/${ command-index }/observed/standard-output" \
+                                                                                                                                                    --rawfile OBSERVED_STATUS "$SCRATCH/${ command-index }/observed/status" \
+                                                                                                                                                    --rawfile PROCESS "$SCRATCH/${ command-index }/process" \
+                                                                                                                                                    --rawfile TEXT "$SCRATCH/${ command-index }/text" \
+                                                                                                                                                    --rawfile TIMEOUT "$SCRATCH/timeout" \
+                                                                                                                                                    '{
+                                                                                                                                                        "expected: :
+                                                                                                                                                            {
+                                                                                                                                                                "standard-error" : $EXPECTED_STANDARD_ERROR ,
+                                                                                                                                                                "standard-output" : $EXPECTED_STANDARD_OUTPUT ,
+                                                                                                                                                                "status" : $EXPECTED_STATUS
+                                                                                                                                                            }
+                                                                                                                                                        "failure" : $FAILURE ,
+                                                                                                                                                        "observed"
+                                                                                                                                                            {
+                                                                                                                                                                "standard-error" : $OBSERVED_STANDARD_ERROR ,
+                                                                                                                                                                "standard-output" : $OBSERVED_STANDARD_OUTPUT ,
+                                                                                                                                                                "status" : $OBERVED_STATUS
+                                                                                                                                                            } ,
+                                                                                                                                                            "process: $PROCESS ,
+                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                            "timeout" : $TIMEOUT
+                                                                                                                                                    }' | yq eval --prettyPrint "[.]" >> result.yaml
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/delay" ;
@@ -1171,11 +1208,11 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                export SCRATCH="scratch/$1"
+                                                                                                                                                SCRATCH=/tmp/scratch
+                                                                                                                                                export SCRATCH
                                                                                                                                                 mkdir --parents "$SCRATCH"
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
-                                                                                                                                                export SCRATCH
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "${ process.delay }" ) processes ) }
                                                                                                                                             '' ;
@@ -1590,11 +1627,11 @@
                                                                                                                                     runtimeInputs = [ pkgs.findutil ] ;
                                                                                                                                     text =
                                                                                                                                         ''
-                                                                                                                                            export SCRATCH="$1/scratch"
-                                                                                                                                            find "$SCRATCH/commands" -mindepth 2 -maxdepth 2 -name failure | while read -r FAILURE
-                                                                                                                                            do
-                                                                                                                                                exit 154
-                                                                                                                                            done
+                                                                                                                                            FAILURES="$( yq eval ".failure" "filter(.failure) | length" result.yaml )" || exit 110
+                                                                                                                                            if [[ "$FAILURES" -gt 0 ]]
+                                                                                                                                            then
+                                                                                                                                                exit 134
+                                                                                                                                            fi
                                                                                                                                         '' ;
                                                                                                                                 } ;
                                                                                                                             in "${ application }/bin/file" ;
