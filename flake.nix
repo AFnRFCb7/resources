@@ -1512,7 +1512,7 @@
                                                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
                                                                                                                     } ;
                                                                                                             in identity input ;
-                                                                                                in builtins.genList generator ( builtins.length actions ) ;
+                                                                                                in builtins.genList generator ( builtins.length inputs ) ;
                                                                                         processes =
                                                                                             let
                                                                                                 generator =
