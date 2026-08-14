@@ -1169,29 +1169,29 @@
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
-                                                                                                                                                seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
-                                                                                                                                                do
-                                                                                                                                                    jq \
-                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
-                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
-                                                                                                                                                        --rawfile READS "/tmp/scratch/commands/$I/reads" \
-                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
-                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
-                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
-                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
-                                                                                                                                                        '{
-                                                                                                                                                            "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS ,
-                                                                                                                                                            "reads" : $READS ,
-                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                            "status" : $STATUS
-                                                                                                                                                            "text" : $TEXT ,
-                                                                                                                                                            "timeout" : $TIMEOUT
-                                                                                                                                                        }'
-                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
-                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
+#                                                                                                                                                seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
+#                                                                                                                                                do
+#                                                                                                                                                    jq \
+#                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
+#                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
+#                                                                                                                                                        --rawfile READS "/tmp/scratch/commands/$I/reads" \
+#                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
+#                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
+#                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
+#                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
+#                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
+#                                                                                                                                                        '{
+#                                                                                                                                                            "kludge" : $KLUDGE ,
+#                                                                                                                                                            "process" : $PROCESS ,
+#                                                                                                                                                            "reads" : $READS ,
+#                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+#                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+#                                                                                                                                                            "status" : $STATUS
+#                                                                                                                                                            "text" : $TEXT ,
+#                                                                                                                                                            "timeout" : $TIMEOUT
+#                                                                                                                                                        }'
+#                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
+#                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
