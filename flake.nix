@@ -1026,7 +1026,7 @@
                                 {
                                     check2 =
                                         {
-                                            actions ,
+                                            inputs ,
                                             name ,
                                             nodes ,
                                             gc-roots-directory ,
@@ -1210,7 +1210,7 @@
                                                                                                 generator =
                                                                                                     index :
                                                                                                         let
-                                                                                                            action = builtins.elemAt actions index ;
+                                                                                                            input = builtins.elemAt inputs index ;
                                                                                                             identity =
                                                                                                                 {
                                                                                                                     kludge ? false ,
@@ -1511,7 +1511,7 @@
                                                                                                                                 text ;
                                                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
                                                                                                                     } ;
-                                                                                                            in identity action ;
+                                                                                                            in identity input ;
                                                                                                 in builtins.genList generator ( builtins.length actions ) ;
                                                                                         processes =
                                                                                             let
