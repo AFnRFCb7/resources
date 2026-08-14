@@ -1174,7 +1174,7 @@
                                                                                                                                                     jq \
                                                                                                                                                         --arg I "$I" \
                                                                                                                                                         '{
-                                                                                                                                                            "i" :
+                                                                                                                                                            "i" : $I
                                                                                                                                                         }' PIPE
                                                                                                                                                          yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
