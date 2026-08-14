@@ -1190,7 +1190,7 @@
                                                                                                                                                             "text" : $TEXT ,
                                                                                                                                                             "timeout" : $TIMEOUT
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
-#                                                                                                                                                done
+                                                                                                                                                done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
