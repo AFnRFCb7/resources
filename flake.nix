@@ -1191,8 +1191,8 @@
                                                                                                                                                             text : $TEXT ,
                                                                                                                                                             timeout : $TIMEOUT
                                                                                                                                                         }'
-                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /scratch/result.yaml
-                                                                                                                                                yq eval --output-format json --prettyPrint "." /scratch/result.yaml /scratch/result.json
+                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /scratch/output.yaml
+                                                                                                                                                yq eval --output-format json --prettyPrint "." /scratch/output.yaml /scratch/output.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
