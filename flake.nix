@@ -1172,7 +1172,9 @@
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
+                                                                                                                                                        --arg I "$I" \
                                                                                                                                                         '{
+                                                                                                                                                            "i" :
                                                                                                                                                         }' PIPE
                                                                                                                                                          yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
