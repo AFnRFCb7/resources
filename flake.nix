@@ -1175,8 +1175,7 @@
                                                                                                                                                         --arg I "$I" \
                                                                                                                                                         '{
                                                                                                                                                             "i" : $I
-                                                                                                                                                        }' PIPE
-                                                                                                                                                         yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
+                                                                                                                                                        }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
