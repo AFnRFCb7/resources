@@ -529,7 +529,7 @@
                                                                                                                                 "--bind" "${ resources-directory }/release" "/release"
                                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                 "--tmpfs" "/private"
-                                                                                                                                "--tmpfs" "/scratch"
+                                                                                                                                "--tmpfs" "/tmp/scratch"
                                                                                                                             ] ;
                                                                                                                         name = "init" ;
                                                                                                                         runScript = "init" ;
@@ -1064,6 +1064,7 @@
                                                                                                         standard-output ,
                                                                                                         status ,
                                                                                                         text ,
+                                                                                                        text2 ,
                                                                                                         timeout
                                                                                                     } :
                                                                                                         let
@@ -1085,6 +1086,18 @@
                                                                                                                                                 ln --symbolic ${ file } ${ file-name }
                                                                                                                                             '' ;
                                                                                                                                     } ;
+                                                                                                                            command =
+                                                                                                                                let
+                                                                                                                                    application =
+                                                                                                                                        pkgs.writeShellApplication
+                                                                                                                                            {
+                                                                                                                                                name = "command" ;
+                                                                                                                                                runtimeInputs =
+                                                                                                                                                    [
+                                                                                                                                                    ] ;
+                                                                                                                                                text = text ;
+                                                                                                                                            } ;
+                                                                                                                                    in "${ application }/bin/command" ;
                                                                                                                             file =
                                                                                                                                 let
                                                                                                                                     application =
@@ -1095,36 +1108,36 @@
                                                                                                                                                 text =
                                                                                                                                                     ''
                                                                                                                                                         export COMMAND_INDEX=${ command-index }
-                                                                                                                                                        mkdir --parents /scratch/commands/${ command-index }/expected
-                                                                                                                                                        ln --symbolic ${ standard-error } /scratch/commands/${ command-index }/expected/standard-error
-                                                                                                                                                        ln --symbolic ${ standard-output } /scratch/commands/${ command-index }/expected/standard-output
-                                                                                                                                                        echo ${ status } > /scratch/commands/${ command-index }/expected/status
-                                                                                                                                                        echo ${ kludge } > /scratch/commands/${ command-index }/kludge
-                                                                                                                                                        ln --symbolic ${ process.path } /scratch/commands/${ command-index }/process
-                                                                                                                                                        echo ${ reads } > /scratch/commands/${ command-index }/reads
-                                                                                                                                                        ln --symbolic ${ text } /scratch/commands/${ command-index }/text
-                                                                                                                                                        echo ${ timeout } > /scratch/commands/${ command-index }/timeout
-                                                                                                                                                        mkdir --parents /scratch/commands/${ command-index }/observed
+                                                                                                                                                        mkdir --parents /tmp/scratch/commands/${ command-index }/expected
+                                                                                                                                                        ln --symbolic ${ standard-error } /tmp/scratch/commands/${ command-index }/expected/standard-error
+                                                                                                                                                        ln --symbolic ${ standard-output } /tmp/scratch/commands/${ command-index }/expected/standard-output
+                                                                                                                                                        echo ${ status } > /tmp/scratch/commands/${ command-index }/expected/status
+                                                                                                                                                        echo ${ kludge } > /tmp/scratch/commands/${ command-index }/kludge
+                                                                                                                                                        ln --symbolic ${ process.path } /tmp/scratch/commands/${ command-index }/process
+                                                                                                                                                        echo ${ reads } > /tmp/scratch/commands/${ command-index }/reads
+                                                                                                                                                        ln --symbolic ${ text } /tmp/scratch/commands/${ command-index }/text
+                                                                                                                                                        echo ${ timeout } > /tmp/scratch/commands/${ command-index }/timeout
+                                                                                                                                                        mkdir --parents /tmp/scratch/commands/${ command-index }/observed
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
                                                                                                                                                         do
-                                                                                                                                                            while [[ ! -f "/scratch/commands/$I/flag" ]]
+                                                                                                                                                            while [[ ! -f "/tmp/scratch/commands/$I/flag" ]]
                                                                                                                                                             do
                                                                                                                                                                 sleep 1s
                                                                                                                                                             done
                                                                                                                                                         done
-                                                                                                                                                        if timeout ${ timeout }s ${ text } > /scratch/commands/${ command-index }/observed/standard-output 2> /scratch/commands/${ command-index }/observed/standard-error ${ reads }
+                                                                                                                                                        if timeout ${ timeout }s ${ command } > /tmp/scratch/commands/${ command-index }/observed/standard-output 2> /tmp/scratch/commands/${ command-index }/observed/standard-error ${ reads }
                                                                                                                                                         then
-                                                                                                                                                            echo "$?" > "/scratch/commands/${ command-index }/observed/status"
+                                                                                                                                                            echo "$?" > "/tmp/scratch/commands/${ command-index }/observed/status"
                                                                                                                                                         else
-                                                                                                                                                            echo "$?" > "/scratch/commands/${ command-index }/observed/status"
+                                                                                                                                                            echo "$?" > "/tmp/scratch/commands/${ command-index }/observed/status"
                                                                                                                                                         fi
-                                                                                                                                                        touch "/scratch/commands/${ command-index }/flag"
-                                                                                                                                                        if ! diff --recursive --report-identical-files "/scratch/commands/${ command-index }/expected" "/scratch/commands/${ command-index }/observed" 2> /dev/null
+                                                                                                                                                        touch "/tmp/scratch/commands/${ command-index }/flag"
+                                                                                                                                                        if ! diff --recursive --report-identical-files "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" 2> /dev/null
                                                                                                                                                         then
-                                                                                                                                                            echo true > "/scratch/failure"
-                                                                                                                                                            echo true > "/scratch/commands/${ command-index }/failure"
+                                                                                                                                                            echo true > "/tmp/scratch/failure"
+                                                                                                                                                            echo true > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         else
-                                                                                                                                                            echo false > "/scratch/commands/${ command-index }/failure"
+                                                                                                                                                            echo false > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         fi
                                                                                                                                                     '' ;
                                                                                                                                             } ;
@@ -1151,48 +1164,34 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
-                                                                                                                                                mkdir --parents "/scratch"
-                                                                                                                                                echo false > "/scratch/failure"
+                                                                                                                                                mkdir --parents "/tmp/scratch"
+                                                                                                                                                echo false > "/tmp/scratch/failure"
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
-                                                                                                                                                        --rawfile EXPECTED_STANDARD_ERROR "/scratch/commands/$I/expected/standard-error" \
-                                                                                                                                                        --rawfile EXPECTED_STANDARD_OUTPUT "/scratch/commands/$I/expected/standard-output" \
-                                                                                                                                                        --rawfile EXPECTED_STATUS "/scratch/commands/$I/expected/status" \
-                                                                                                                                                        --argjson INDEX "$I" \
-                                                                                                                                                        --rawfile KLUDGE "/scratch/commands/$I/kludge" \
-                                                                                                                                                        --rawfile OBSERVED_STANDARD_ERROR "/scratch/commands/$I/observed/standard-error" \
-                                                                                                                                                        --rawfile OBSERVED_STANDARD_OUTPUT "/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --rawfile OBSERVED_STATUS "/scratch/commands/$I/observed/status" \
-                                                                                                                                                        --rawfile PROCESS "/scratch/commands/$I/process" \
-                                                                                                                                                        --rawfile READS "/scratch/commands/$I/reads" \
-                                                                                                                                                        --rawfile TEXT "/scratch/commands/$I/text" \
-                                                                                                                                                        --rawfile TIMEOUT "/scratch/commands/$I/timeout" \
+                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
+                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
+                                                                                                                                                        --rawfile READS "/tmp/scratch/commands/$I/reads" \
+                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
+                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
+                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
+                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
+                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
                                                                                                                                                         '{
-                                                                                                                                                            "expected" :
-                                                                                                                                                                {
-                                                                                                                                                                    "standard-error" : $EXPECTED_STANDARD_ERROR ,
-                                                                                                                                                                    "standard-output" : $EXPECTED_STANDARD_OUTPUT ,
-                                                                                                                                                                    "status" : $EXPECTED_STATUS
-                                                                                                                                                                } ,
-                                                                                                                                                            "index" : $INDEX ,
                                                                                                                                                             "kludge" : $KLUDGE ,
-                                                                                                                                                            "observed" :
-                                                                                                                                                                {
-                                                                                                                                                                    "standard-error" : $OBSERVED_STANDARD_ERROR ,
-                                                                                                                                                                    "standard-output" : $OBSERVED_STANDARD_OUTPUT ,
-                                                                                                                                                                    "status" : $OBSERVED_STATUS
-                                                                                                                                                                } ,
-                                                                                                                                                            process : $PROCESS ,
-                                                                                                                                                            reads : $READS ,
-                                                                                                                                                            text : $TEXT ,
-                                                                                                                                                            timeout : $TIMEOUT
+                                                                                                                                                            "process" : $PROCESS ,
+                                                                                                                                                            "reads" : $READS ,
+                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                            "status" : $STATUS
+                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                            "timeout" : $TIMEOUT
                                                                                                                                                         }'
-                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /scratch/output.yaml
-                                                                                                                                                yq eval --output-format json --prettyPrint "." /scratch/output.yaml /scratch/output.json
+                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /tmp/scratch/output.yaml
+                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/output.yaml /tmp/scratch/output.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
@@ -1256,7 +1255,8 @@
                                                                                                                                 }
                                                                                                                                 standard-output ;
                                                                                                                         status = visitor { int = path : value : builtins.toString value ; } status ;
-                                                                                                                        text =
+                                                                                                                        text = visitor { string = path : value : value ; } text ;
+                                                                                                                        text2 =
                                                                                                                             visitor
                                                                                                                                 {
                                                                                                                                     string =
@@ -1585,7 +1585,7 @@
                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    FAILURE="$( cat /scratch/failure )" || exit 124
+                                                                                                                    FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
                                                                                                                         exit 181
