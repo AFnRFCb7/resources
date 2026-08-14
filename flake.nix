@@ -1132,7 +1132,7 @@
                                                                                                                                                             echo "$?" > "/tmp/scratch/commands/${ command-index }/observed/status"
                                                                                                                                                         fi
                                                                                                                                                         touch "/tmp/scratch/commands/${ command-index }/flag"
-                                                                                                                                                        if ! diff --recursive --report-identical-files "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" 2> /dev/null
+                                                                                                                                                        if ! diff --recursive --report-identical-files "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" > /dev/null >&1
                                                                                                                                                         then
                                                                                                                                                             echo true > "/tmp/scratch/failure"
                                                                                                                                                             echo true > "/tmp/scratch/commands/${ command-index }/failure"
@@ -1190,8 +1190,8 @@
                                                                                                                                                             "text" : $TEXT ,
                                                                                                                                                             "timeout" : $TIMEOUT
                                                                                                                                                         }'
-                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /tmp/scratch/output.yaml
-                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/output.yaml /tmp/scratch/output.json
+                                                                                                                                                done | yq eval -prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
+                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
