@@ -1114,8 +1114,8 @@
                                                                                                                                                         echo ${ status } > /tmp/scratch/commands/${ command-index }/expected/status
                                                                                                                                                         echo ${ kludge } > /tmp/scratch/commands/${ command-index }/kludge
                                                                                                                                                         ln --symbolic ${ process.path } /tmp/scratch/commands/${ command-index }/process
-                                                                                                                                                        echo ${ reads } > /tmp/scratch/commands/${ command-index }/reads
-                                                                                                                                                        ln --symbolic ${ text } /tmp/scratch/commands/${ command-index }/text
+                                                                                                                                                        echo ${ builtins.toJSON reads } > /tmp/scratch/commands/${ command-index }/reads
+                                                                                                                                                        cat ${ builtins.toFile "text" text } > /tmp/scratch/commands/${ command-index }/text
                                                                                                                                                         echo ${ timeout } > /tmp/scratch/commands/${ command-index }/timeout
                                                                                                                                                         mkdir --parents /tmp/scratch/commands/${ command-index }/observed
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
@@ -1125,7 +1125,7 @@
                                                                                                                                                                 sleep 1s
                                                                                                                                                             done
                                                                                                                                                         done
-                                                                                                                                                        if timeout ${ timeout }s ${ command } > /tmp/scratch/commands/${ command-index }/observed/standard-output 2> /tmp/scratch/commands/${ command-index }/observed/standard-error ${ reads }
+                                                                                                                                                        if timeout ${ timeout }s ${ command } > /tmp/scratch/commands/${ command-index }/observed/standard-output 2> /tmp/scratch/commands/${ command-index }/observed/standard-error ${ if reads then "<&189" else "" }
                                                                                                                                                         then
                                                                                                                                                             echo "$?" > "/tmp/scratch/commands/${ command-index }/observed/status"
                                                                                                                                                         else
@@ -1239,7 +1239,7 @@
                                                                                                                                         path = path ;
                                                                                                                                         string = string ;
                                                                                                                                     } ;
-                                                                                                                        reads = visitor { bool = path : value : if value then "<&189" else "" ; } reads ;
+                                                                                                                        reads = visitor { bool = path : value : value ; } reads ;
                                                                                                                         standard-error =
                                                                                                                             visitor
                                                                                                                                 {
@@ -1588,6 +1588,7 @@
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
+                                                                                                                        cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
                                                                                                                 '' ;
