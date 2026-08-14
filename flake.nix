@@ -1171,18 +1171,10 @@
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
-                                                                                                                                                    echo jq \
-                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
-                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
-                                                                                                                                                        --rawfile READS "/tmp/scratch/commands/$I/reads" \
-                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
-                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
-                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
-                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
+                                                                                                                                                    jq \
                                                                                                                                                         '{
-
-                                                                                                                                                        }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
+                                                                                                                                                        }' PIPE
+                                                                                                                                                         yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
