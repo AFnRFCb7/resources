@@ -1181,14 +1181,7 @@
                                                                                                                                                         --rawfile TEXT "/tmp/scratch/commands/$I/text" \
                                                                                                                                                         --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
                                                                                                                                                         '{
-                                                                                                                                                            "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS ,
-                                                                                                                                                            "reads" : $READS ,
-                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                            "status" : $STATUS
-                                                                                                                                                            "text" : $TEXT ,
-                                                                                                                                                            "timeout" : $TIMEOUT
+
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
