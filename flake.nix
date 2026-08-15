@@ -1610,8 +1610,8 @@
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                 ${ execute }
                                                                                                 NIXOS_TEST=1
-                                                                                                sed -e "s#\$NIXOS_TEST#$NIXOS_TEST#" -e "w$OUT/test.sh" ${ test }
-                                                                                                chmod a+rx "$OUT/test.sh"
+                                                                                                sed -e "s#\$NIXOS_TEST#$NIXOS_TEST#" -e "w$OUT/test" ${ test }
+                                                                                                chmod a+rx "$OUT/test"
                                                                                             '' ;
                                                                             }
                                                                     )
