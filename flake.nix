@@ -1183,8 +1183,8 @@
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
                                                                                                                                                         --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
-                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/observed/text" \
-                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/observed/timeout" \
+                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
+                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
