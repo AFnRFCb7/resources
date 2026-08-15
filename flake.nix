@@ -1204,8 +1204,7 @@
                                                                                                                                                 cd /tmp/scratch
                                                                                                                                                 nix eval --expr 'builtins.fromJSON ( builtins.readFile ./outputs.json )' --impure > /tmp/scratch/outputs.nix
                                                                                                                                                 TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
-                                                                                                                                                echo
-                                                                                                                                                TARGET
+                                                                                                                                                echo "$TARGET" > /tmp/scratch/link/name
                                                                                                                                                 touch "/tmp/scratch/link/$TARGET"
                                                                                                                                             '' ;
                                                                                                                                     } ;
