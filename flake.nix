@@ -1594,6 +1594,7 @@
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
+                                                                                                                        echo ${ nixos-test }
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
@@ -1608,22 +1609,24 @@
                                                                                                 mkdir --parent "$OUT/processes"
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                 ${ execute }
+                                                                                                ln --symbolic ${ test } "$OUT/tests.sh"
                                                                                             '' ;
                                                                             }
                                                                     )
                                                                 ] ;
                                                             src = ./. ;
                                                         } ;
+                                                    nixos-test =
+                                                        pkgs.nixosTest
+                                                            {
+                                                                name = "resource-check" ;
+                                                                nodes = nodes ;
+                                                                testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
+                                                            } ;
                                                 in
                                                     {
                                                         name = name ;
-                                                        value =
-                                                            pkgs.nixosTest
-                                                                {
-                                                                    name = "resource-check" ;
-                                                                    nodes = nodes ;
-                                                                    testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                                } ;
+                                                        value = nixos-test ;
                                                     } ;
                                     implementation = implementation ;
                                 } ;
