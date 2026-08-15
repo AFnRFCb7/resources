@@ -1187,7 +1187,7 @@
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
                                                                                                                                                                             done
-                                                                                                                                                                            if [ -n "$UUID" ]]
+                                                                                                                                                                            if [[ -n "$UUID" ]]
                                                                                                                                                                             then
                                                                                                                                                                                 echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             fi
