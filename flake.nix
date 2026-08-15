@@ -1178,9 +1178,11 @@
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
+                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS
+                                                                                                                                                            "process" : $PROCESS ,
+                                                                                                                                                            "standard-error" : $STANDARD_ERROR
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
