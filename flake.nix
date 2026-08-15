@@ -1246,7 +1246,7 @@
                                                                                                                                                                 }
                                                                                                                                                         )
                                                                                                                                                     ] ;
-                                                                                                                                                text = text ;
+                                                                                                                                                text = "exit 142" ; # text ;
                                                                                                                                             } ;
                                                                                                                                     in "${ application }/bin/command" ;
                                                                                                                             file =
