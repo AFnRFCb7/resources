@@ -1119,6 +1119,7 @@
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     *)
+                                                                                                                                                                                        echo "$@"
                                                                                                                                                                                         exit 148
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
