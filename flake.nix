@@ -1107,6 +1107,7 @@
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
+                                                                                                                                                                            UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
@@ -1115,7 +1116,9 @@
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
-                                                                                                                                                                                        UUID="$2"
+                                                                                                                                                                                        UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
                                                                                                                                                                                     *)
                                                                                                                                                                                         exit 148
                                                                                                                                                                                         ;;
@@ -1186,7 +1189,7 @@
                                                                                                                                                                             done
                                                                                                                                                                             if [ -n "$UUID" ]]
                                                                                                                                                                             then
-                                                                                                                                                                                echo "$UUID" >&2
+                                                                                                                                                                                echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             fi
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
