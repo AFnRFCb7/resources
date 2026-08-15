@@ -1106,6 +1106,7 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq pkgs.findutils pkgs.yq-go ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            exit 126
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
