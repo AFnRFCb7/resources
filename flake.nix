@@ -1111,12 +1111,12 @@
                                                                                                                                                         mkdir --parents /tmp/scratch/commands/${ command-index }/expected
                                                                                                                                                         ln --symbolic ${ standard-error } /tmp/scratch/commands/${ command-index }/expected/standard-error
                                                                                                                                                         ln --symbolic ${ standard-output } /tmp/scratch/commands/${ command-index }/expected/standard-output
-                                                                                                                                                        echo ${ status } > /tmp/scratch/commands/${ command-index }/expected/status
-                                                                                                                                                        echo ${ kludge } > /tmp/scratch/commands/${ command-index }/kludge
+                                                                                                                                                        echo -n ${ status } > /tmp/scratch/commands/${ command-index }/expected/status
+                                                                                                                                                        echo -n ${ kludge } > /tmp/scratch/commands/${ command-index }/kludge
                                                                                                                                                         ln --symbolic ${ process.path } /tmp/scratch/commands/${ command-index }/process
-                                                                                                                                                        echo ${ builtins.toJSON reads } > /tmp/scratch/commands/${ command-index }/reads
+                                                                                                                                                        echo -n ${ builtins.toJSON reads } > /tmp/scratch/commands/${ command-index }/reads
                                                                                                                                                         cat ${ builtins.toFile "text" text } > /tmp/scratch/commands/${ command-index }/text
-                                                                                                                                                        echo ${ timeout } > /tmp/scratch/commands/${ command-index }/timeout
+                                                                                                                                                        echo -n ${ timeout } > /tmp/scratch/commands/${ command-index }/timeout
                                                                                                                                                         mkdir --parents /tmp/scratch/commands/${ command-index }/observed
                                                                                                                                                         seq 0 $(( ${ command-index } - 1 )) | while read -r I
                                                                                                                                                         do
@@ -1175,16 +1175,20 @@
                                                                                                                                                     do
                                                                                                                                                         sleep 1s
                                                                                                                                                     done
+                                                                                                                                                    KLUDGE="$( cat "/tmp/scratch/commands/$I/kludge" )" || exit 137
+                                                                                                                                                    READS="$( cat "/tmp/scratch/commands/$I/reads" )" || exit 186
+                                                                                                                                                    STATUS="$( cat "/tmp/scratch/commands/$I/observed/status" )" || exit 147
+                                                                                                                                                    TIMEOUT="$( cat "/tmp/scratch/commands/$I/timeout" )" || exit 133
                                                                                                                                                     jq \
                                                                                                                                                         --null-input \
-                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
+                                                                                                                                                        --argjson KLUDGE  "$KLUDGE" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
-                                                                                                                                                        --rawfile READS "/tmp/scratch/commands/$I/reads" \
+                                                                                                                                                        --argjson READS "$READS" \
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
+                                                                                                                                                        --argson STATUS "$STATUS" \
                                                                                                                                                         --rawfile TEXT "/tmp/scratch/commands/$I/text" \
-                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
+                                                                                                                                                        --argjson TIMEOUT "$TIMEOUT" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
