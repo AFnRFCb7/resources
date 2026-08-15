@@ -1170,6 +1170,7 @@
                                                                                                                                                 exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
+                                                                                                                                                find /tmp/scratch | sort >&2
                                                                                                                                                 do
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
