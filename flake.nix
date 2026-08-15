@@ -1177,8 +1177,7 @@
                                                                                                                                                         --arg I "$I" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS ,
-                                                                                                                                                            "i" : $I
+                                                                                                                                                            "process" : $PROCESS
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
