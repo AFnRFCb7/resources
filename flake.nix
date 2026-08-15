@@ -1123,7 +1123,6 @@
                                                                                                                                                                             then
                                                                                                                                                                                 TARGETS=( "${ resources-directory }" )
                                                                                                                                                                             fi
-                                                                                                                                                                            cat <<EOF
                                                                                                                                                                             find "${ builtins.concatStringsSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -type f -print | sort | while read -r NAME
                                                                                                                                                                             do
                                                                                                                                                                                 STAT="$( stat --printf %A "$NAME" )" || exit 122
