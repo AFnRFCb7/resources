@@ -1069,7 +1069,6 @@
                                                                                                         standard-output ,
                                                                                                         status ,
                                                                                                         text ,
-                                                                                                        text2 ,
                                                                                                         timeout
                                                                                                     } :
                                                                                                         let
