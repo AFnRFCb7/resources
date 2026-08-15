@@ -1198,7 +1198,7 @@
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                 echo 'builtins.fromJSON ( builtins.import ( ./outputs.json ) )' > /tmp/scratch/generate.nix
                                                                                                                                                 cd /tmp/scratch
-                                                                                                                                                nix eval --from-file generate.nix > /tmp/scratch/outputs.nix
+                                                                                                                                                # nix eval --from-file generate.nix > /tmp/scratch/outputs.nix
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
