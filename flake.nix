@@ -1094,6 +1094,89 @@
                                                                                                                                                 name = "command" ;
                                                                                                                                                 runtimeInputs =
                                                                                                                                                     [
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "check-files" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.findutils pkgs.yq-go ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            EXCLUSIZONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
+                                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                                            do
+                                                                                                                                                                                case "$1" in
+                                                                                                                                                                                    --exclusion
+                                                                                                                                                                                        EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    *)
+                                                                                                                                                                                        exit 148
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                esac
+                                                                                                                                                                            done
+                                                                                                                                                                            TARGETS=()
+                                                                                                                                                                            if [[ -d ${ gc-roots-directory } ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                TARGETS+=( "${ gc-roots-directory }" )
+                                                                                                                                                                            fi
+                                                                                                                                                                            if [[ -d ${ resources-directory } ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                TARGETS=( "${ resources-directory }" )
+                                                                                                                                                                            fi
+                                                                                                                                                                            find "${ builtins.concatStringSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( -path "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -type f -print | sort | while read -r NAME
+                                                                                                                                                                            do
+                                                                                                                                                                                STAT="$( stat --printf %A "$NAME" )" || exit 122
+                                                                                                                                                                                if [[ -d "$NAME" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --arg NAME "$NAME" \
+                                                                                                                                                                                        --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TYPE "directory" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "name" : $NAME ,
+                                                                                                                                                                                            "stat" : $STAT ,
+                                                                                                                                                                                            "type" : $TYPE
+                                                                                                                                                                                        }'
+                                                                                                                                                                                elif [[ -L "$NAME" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --arg NAME "$NAME" \
+                                                                                                                                                                                        --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TYPE "symbolic link" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "name" : $NAME ,
+                                                                                                                                                                                            "stat" : $STAT ,
+                                                                                                                                                                                            "type" : $TYPE
+                                                                                                                                                                                        }'
+                                                                                                                                                                                elif [[ -f "$NAME" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    if [[ "$NAME" == "${ resources-directory }/log.yaml" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        CAT="$( yq eval --prettPrint 'map(del(.timestamp)' "${ resources-directory }/log.yaml" )" || exit 115
+                                                                                                                                                                                    else
+                                                                                                                                                                                        CAT="$( cat "$NAME" )" || exit 111
+                                                                                                                                                                                    fi
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --arg CAT "$CAT" \
+                                                                                                                                                                                        --arg NAME "$NAME" \
+                                                                                                                                                                                        --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TYPE "directory" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "cat" : $CAT ,
+                                                                                                                                                                                            "name" : $NAME ,
+                                                                                                                                                                                            "stat" : $STAT ,
+                                                                                                                                                                                            "type" : $TYPE
+                                                                                                                                                                                        }'
+                                                                                                                                                                                else
+                                                                                                                                                                                    exit 138
+                                                                                                                                                                                fi
+                                                                                                                                                                            done
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
                                                                                                                                                     ] ;
                                                                                                                                                 text = text ;
                                                                                                                                             } ;
