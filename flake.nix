@@ -1596,10 +1596,11 @@
                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                             text =
                                                                                                                 ''
+                                                                                                                    CALLER="$1"
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
-                                                                                                                        echo "$NIXOS_TEST" >&2
+                                                                                                                        echo "$CALLER" >&2
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
@@ -1623,13 +1624,13 @@
                                                                 ] ;
                                                             src = ./. ;
                                                         } ;
-                                                    nixos-test =
-                                                        pkgs.nixosTest
-                                                            {
-                                                                name = "resource-check" ;
-                                                                nodes = nodes ;
-                                                                testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                            } ;
+                                                nixos-test =
+                                                    pkgs.nixosTest
+                                                        {
+                                                            name = "resource-check" ;
+                                                            nodes = nodes ;
+                                                            testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
+                                                        } ;
                                                 in
                                                     {
                                                         name = name ;
