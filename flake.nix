@@ -1599,7 +1599,7 @@
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
-                                                                                                                        echo "$NIXOS_TEST"
+                                                                                                                        echo "$NIXOS_TEST" >&2
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
@@ -1617,6 +1617,7 @@
                                                                                                 NIXOS_TEST=1
                                                                                                 sed -e "s#\$NIXOS_TEST#$NIXOS_TEST#" -e "w$OUT/test" ${ test }
                                                                                                 chmod a+rx "$OUT/test"
+                                                                                                ln --symbolic ${ nixos-test } "$OUT/nixos-test"
                                                                                             '' ;
                                                                             }
                                                                     )
