@@ -1188,7 +1188,7 @@
                                                                                                                                                             "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                             "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                             "status" : $STATUS
-                                                                                                                                                        }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
+                                                                                                                                                        }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
