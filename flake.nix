@@ -1195,9 +1195,22 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "check-redis" ;
-                                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            UUID=()
+                                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                                            do
+                                                                                                                                                                                case "$1" in
+                                                                                                                                                                                    --uuid)
+                                                                                                                                                                                        UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    *)
+                                                                                                                                                                                        exit 144
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                esac
+                                                                                                                                                                            done
                                                                                                                                                                             cleanup ( )
                                                                                                                                                                             {
                                                                                                                                                                                 STATUS="$?"
@@ -1227,6 +1240,7 @@
                                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                                     "payload" : $PAYLOAD"
                                                                                                                                                                                 }'
+                                                                                                                                                                            echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
