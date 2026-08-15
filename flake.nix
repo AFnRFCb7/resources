@@ -1123,6 +1123,7 @@
                                                                                                                                                                             then
                                                                                                                                                                                 TARGETS=( "${ resources-directory }" )
                                                                                                                                                                             fi
+                                                                                                                                                                            echo find "${ builtins.concatStringsSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( -path "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -type f -print | sort | while read -r NAME
                                                                                                                                                                             find "${ builtins.concatStringsSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( -path "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -type f -print | sort | while read -r NAME
                                                                                                                                                                             do
                                                                                                                                                                                 STAT="$( stat --printf %A "$NAME" )" || exit 122
@@ -1307,7 +1308,7 @@
                                                                                                 generator =
                                                                                                     index :
                                                                                                         let
-                                                                                                            input = builtins.elemAt inputs index ;
+                                                                                                            input = builtins.elemAt inputs_ index ;
                                                                                                             identity =
                                                                                                                 {
                                                                                                                     kludge ? false ,
@@ -1610,7 +1611,8 @@
                                                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
                                                                                                                     } ;
                                                                                                             in identity input ;
-                                                                                                in builtins.genList generator ( builtins.length inputs ) ;
+                                                                                                inputs_ = builtins.fromJSON inputs ;
+                                                                                                in builtins.genList generator ( builtins.length inputs_ ) ;
                                                                                         processes =
                                                                                             let
                                                                                                 generator =
