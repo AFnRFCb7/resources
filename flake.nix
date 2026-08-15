@@ -1101,7 +1101,7 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.findutils pkgs.yq-go ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            EXCLUSIZONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
+                                                                                                                                                                            EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
