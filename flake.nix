@@ -1202,7 +1202,7 @@
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 PAYLOAD <&189 || exit 125
                                                                                                                                                                             mkdir --parents ${ resources-directory }
-                                                                                                                                                                            exec 196> ${ resource-directory }/check.lock
+                                                                                                                                                                            exec 196> ${ resources-directory }/check.lock
                                                                                                                                                                             flock -x 196
                                                                                                                                                                             EXCLUDED_PAYLOAD="$( jq <<< "$PAYLOAD" )" || exit 103
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
@@ -1292,7 +1292,7 @@
                                                                                                                                                 mkdir --parents "/tmp/scratch"
                                                                                                                                                 echo false > "/tmp/scratch/failure"
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
-                                                                                                                                                exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ log-channel } ${ valid-init-channel } ${ valid-release-channel } )
+                                                                                                                                                exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ valid-init-channel } ${ valid-release-channel } )
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
