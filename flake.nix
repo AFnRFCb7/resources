@@ -1228,7 +1228,7 @@
                                                                                                                                                                                 --null-input \
                                                                                                                                                                                 --arg TYPE "$TYPE" \
                                                                                                                                                                                 --arg CHANNEL "$CHANNEL" \
-                                                                                                                                                                                --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
+                                                                                                                                                                                --argjson PAYLOAD "$PAYLOAD" \
                                                                                                                                                                                 --arg TYPE "TYPE" \
                                                                                                                                                                                 '{
                                                                                                                                                                                     "type" : $TYPE ,
