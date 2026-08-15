@@ -1245,7 +1245,7 @@
                                                                                                                                                                 }
                                                                                                                                                         )
                                                                                                                                                     ] ;
-                                                                                                                                                text = "exit 142" ; # text ;
+                                                                                                                                                text = text ;
                                                                                                                                             } ;
                                                                                                                                     in "${ application }/bin/command" ;
                                                                                                                             file =
@@ -1284,7 +1284,7 @@
                                                                                                                                                         touch "/tmp/scratch/commands/${ command-index }/flag"
                                                                                                                                                         if ! diff --recursive --report-identical-files "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" > /dev/null >&1
                                                                                                                                                         then
-                                                                                                                                                            echo false > "/tmp/scratch/failure"
+                                                                                                                                                            echo true > "/tmp/scratch/failure"
                                                                                                                                                             echo true > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         else
                                                                                                                                                             echo false > "/tmp/scratch/commands/${ command-index }/failure"
