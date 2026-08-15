@@ -1105,7 +1105,7 @@
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
-                                                                                                                                                                                    --exclusion
+                                                                                                                                                                                    --exclusion)
                                                                                                                                                                                         EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
