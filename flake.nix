@@ -1617,7 +1617,6 @@
                                                                                                 NIXOS_TEST=1
                                                                                                 sed -e "s#\$NIXOS_TEST#$NIXOS_TEST#" -e "w$OUT/test" ${ test }
                                                                                                 chmod a+rx "$OUT/test"
-                                                                                                ln --symbolic ${ nixos-test } "$OUT/nixos-test"
                                                                                             '' ;
                                                                             }
                                                                     )
