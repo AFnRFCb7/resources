@@ -1172,9 +1172,11 @@
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
-                                                                                                                                                        --rawfile PROCESS /tmp/scratch/command/$I/process \
+                                                                                                                                                        --rawfile KLUDGE "$KLUDGE" ,
+                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/command/$I/process" \
                                                                                                                                                         --arg I "$I" \
                                                                                                                                                         '{
+                                                                                                                                                            "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
                                                                                                                                                             "i" : $I
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
