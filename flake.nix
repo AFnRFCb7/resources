@@ -1453,6 +1453,7 @@
                                                                                                                                                                                 runtimeInputs = [ pkgs.coreutils pkgs.findutils pkgs.jq pkgs.yq-go ] ;
                                                                                                                                                                                 text =
                                                                                                                                                                                     ''
+                                                                                                                                                                                        exit 148
                                                                                                                                                                                         EXCLUSIONS=()
                                                                                                                                                                                         while [[ "$#" -gt 0 ]]
                                                                                                                                                                                         do
