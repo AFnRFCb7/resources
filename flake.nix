@@ -1185,6 +1185,7 @@
                                                                                                                                                         --rawfile TEXT "/tmp/scratch/commands/$I/text" \
                                                                                                                                                         --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
                                                                                                                                                         '{
+                                                                                                                                                            "kludge" : $KLUDGE
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
