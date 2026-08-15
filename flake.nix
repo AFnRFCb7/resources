@@ -1176,6 +1176,7 @@
                                                                                                                                                         sleep 1s
                                                                                                                                                     done
                                                                                                                                                     jq \
+                                                                                                                                                        --null-input \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
                                                                                                                                                         --rawfile READS "/tmp/scratch/commands/$I/reads" \
@@ -1185,7 +1186,14 @@
                                                                                                                                                         --rawfile TEXT "/tmp/scratch/commands/$I/text" \
                                                                                                                                                         --rawfile TIMEOUT "/tmp/scratch/commands/$I/timeout" \
                                                                                                                                                         '{
-                                                                                                                                                            "kludge" : $KLUDGE
+                                                                                                                                                            "kludge" : $KLUDGE ,
+                                                                                                                                                            "process" : $PROCESS ,
+                                                                                                                                                            "reads" : $READS ,
+                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                            "timeout" : $TIMEOUT
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
