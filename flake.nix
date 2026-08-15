@@ -1594,7 +1594,7 @@
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
-                                                                                                                        echo ${ nixos-test }
+                                                                                                                        echo "$NIXOS_TEST"
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
@@ -1609,7 +1609,8 @@
                                                                                                 mkdir --parent "$OUT/processes"
                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : process.link ) processes ) }
                                                                                                 ${ execute }
-                                                                                                ln --symbolic ${ test } "$OUT/tests.sh"
+                                                                                                sed -e "s#\$NIXOS_TEST#${ nixos-test }#" -e "w$OUT/test.sh" ${ test }
+                                                                                                chmod a+rx "$OUT/test.sh"
                                                                                             '' ;
                                                                             }
                                                                     )
