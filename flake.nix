@@ -1179,6 +1179,7 @@
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
+                                                                                                                                                        --rawfile READS "/tmp/security/commands/$I/reads" \
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
                                                                                                                                                         --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
@@ -1187,6 +1188,7 @@
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
+                                                                                                                                                            "reads" : $READS ,
                                                                                                                                                             "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                             "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                             "status" : $STATUS ,
