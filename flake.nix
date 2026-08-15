@@ -1114,6 +1114,8 @@
                                                                                                                                                                                         EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
+                                                                                                                                                                                    --uuid)
+                                                                                                                                                                                        UUID="$2"
                                                                                                                                                                                     *)
                                                                                                                                                                                         exit 148
                                                                                                                                                                                         ;;
@@ -1182,6 +1184,10 @@
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
                                                                                                                                                                             done
+                                                                                                                                                                            if [ -n "$UUID" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                echo "$UUID" >&2
+                                                                                                                                                                            fi
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
