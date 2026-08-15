@@ -1179,13 +1179,17 @@
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
+                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
+                                                                                                                                                        --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
-                                                                                                                                                            "standard-error" : $STANDARD_ERROR
+                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                            "status" : $STATUS
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
-#                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
+                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
