@@ -1203,7 +1203,7 @@
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                 cd /tmp/scratch
                                                                                                                                                 nix eval --expr 'builtins.fromJSON ( builtins.readFile ./outputs.json )' --impure > /tmp/scratch/outputs.nix
-                                                                                                                                                TARGET="$( sha512sum "$OUT" | cut --characters 1-128 )" || exit 190
+                                                                                                                                                TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
                                                                                                                                                 echo
                                                                                                                                                 TARGET
                                                                                                                                                 touch "/tmp/scratch/link/$TARGET"
