@@ -181,6 +181,8 @@
                                                             text =
                                                                 ''
                                                                     mkdir --parents ${ resources-directory }
+                                                                    exec 198> ${ resources-directory }/check.lock
+                                                                    flock -s 198
                                                                     exec 131> ${ resources-directory }/clean.lock
                                                                     flock -x 131
                                                                     mkdir --parents ${ gc-roots-directory }
@@ -1192,9 +1194,10 @@
                                                                                                                                                                         ''
                                                                                                                                                                             cleanup ( )
                                                                                                                                                                             {
-                                                                                                                                                                                if [[ "$?" != 0 ]]
+                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                                if [[ "$STATUS" != 0 ]]
                                                                                                                                                                                 then
-                                                                                                                                                                                    echo "$?"
+                                                                                                                                                                                    echo "$STATUS"
                                                                                                                                                                                 fi
                                                                                                                                                                                 exit 0
                                                                                                                                                                             }
