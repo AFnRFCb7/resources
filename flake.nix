@@ -1197,7 +1197,7 @@
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
-                                                                                                                                            '' ;q
+                                                                                                                                            '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
                                                                                                                     in
