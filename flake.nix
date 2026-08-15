@@ -1102,10 +1102,9 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "check-files" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq pkgs.findutils pkgs.yq-go ] ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.findutils pkgs.yq-go ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            if true ; then exit 126 ; fi
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
@@ -1124,8 +1123,6 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
-                                                                                                                                                                            mkdir --parents ${ resources-directory }
-                                                                                                                                                                            exec 169> ${ resources-directory }/check.lock
                                                                                                                                                                             flock -x 169
                                                                                                                                                                             TARGETS=()
                                                                                                                                                                             if [[ -d ${ gc-roots-directory } ]]
@@ -1195,7 +1192,7 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "check-redis" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock ] ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             UUID=()
@@ -1226,8 +1223,6 @@
                                                                                                                                                                             read -r -t 1 -u 189 PAYLOAD <&189 || exit 125
                                                                                                                                                                             mkdir --parents ${ resources-directory }
                                                                                                                                                                             exec 196> ${ resources-directory }/check.lock
-                                                                                                                                                                            flock -x 196
-                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq <<< "$PAYLOAD" )" || exit 103
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
@@ -1311,9 +1306,12 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.jq pkgs.redis pkgs.yq-go ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.flock pkgs.jq pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
+                                                                                                                                                mkdir --parents ${ resources-directory }
+                                                                                                                                                exec 142> ${ resources-directory }/check.lock
+                                                                                                                                                flock -x 142
                                                                                                                                                 mkdir --parents "/tmp/scratch"
                                                                                                                                                 echo false > "/tmp/scratch/failure"
                                                                                                                                                 export IS_NIX_FLAKE_CHECK=true
