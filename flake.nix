@@ -1173,10 +1173,8 @@
                                                                                                                                                 do
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
-                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
                                                                                                                                                         '{
-                                                                                                                                                            "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS
+                                                                                                                                                            "kludge" : $KLUDGE
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
 #                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml /tmp/scratch/outputs.json
