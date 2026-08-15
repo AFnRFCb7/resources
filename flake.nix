@@ -1172,7 +1172,7 @@
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
-                                                                                                                                                        --rawfile KLUDGE "$KLUDGE" ,
+                                                                                                                                                        --rawfile KLUDGE "$KLUDGE" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/command/$I/process" \
                                                                                                                                                         --arg I "$I" \
                                                                                                                                                         '{
