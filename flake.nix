@@ -1154,7 +1154,7 @@
                                                                                                                                                                                 then
                                                                                                                                                                                     if [[ "$NAME" == "${ resources-directory }/log.yaml" ]]
                                                                                                                                                                                     then
-                                                                                                                                                                                        CAT="$( yq eval --prettPrint 'map(del(.timestamp)' "${ resources-directory }/log.yaml" )" || exit 115
+                                                                                                                                                                                        CAT="$( yq eval --prettyPrint 'map(del(.timestamp)' "${ resources-directory }/log.yaml" )" || exit 115
                                                                                                                                                                                     else
                                                                                                                                                                                         CAT="$( cat "$NAME" )" || exit 111
                                                                                                                                                                                     fi
