@@ -1186,7 +1186,7 @@
                                                                                                                                                         --argjson READS "$READS" \
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --argson STATUS "$STATUS" \
+                                                                                                                                                        --argjson STATUS "$STATUS" \
                                                                                                                                                         --rawfile TEXT "/tmp/scratch/commands/$I/text" \
                                                                                                                                                         --argjson TIMEOUT "$TIMEOUT" \
                                                                                                                                                         '{
