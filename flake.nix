@@ -298,11 +298,13 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils gnused jq log resource-parameters.init.action.script ] ;
+                                                                runtimeInputs = [ coreutils findutils flock gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents ${ gc-roots-directory }
                                                                         mkdir --parents ${ resources-directory }
+                                                                        exec 168> ${ resources-directory }/check.lock
+                                                                        flock -s 168
+                                                                        mkdir --parents ${ gc-roots-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
                                                                         INPUT_FILE="$( mktemp --suffix ".json" )" || exit 199
@@ -1098,7 +1100,7 @@
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "check-files" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.findutils pkgs.yq-go ] ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.flock pkgs.jq pkgs.findutils pkgs.yq-go ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
@@ -1114,6 +1116,9 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
+                                                                                                                                                                            mkdir --parents ${ resources-directory }
+                                                                                                                                                                            exec 169> ${ resources-directory }/check.lock
+                                                                                                                                                                            flock -x 169
                                                                                                                                                                             TARGETS=()
                                                                                                                                                                             if [[ -d ${ gc-roots-directory } ]]
                                                                                                                                                                             then
@@ -1174,6 +1179,43 @@
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
                                                                                                                                                                             done
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "check-redis" ;
+                                                                                                                                                                    runtimeInputs = [ ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            cleanup ( )
+                                                                                                                                                                            {
+                                                                                                                                                                                if [[ "$?" != 0 ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    echo "$?"
+                                                                                                                                                                                fi
+                                                                                                                                                                                exit 0
+                                                                                                                                                                            }
+                                                                                                                                                                            trap cleanup EXIT
+                                                                                                                                                                            read -r -t 1 -u 189 TYPE <&189 || exit 183
+                                                                                                                                                                            read -r -t 1 -u 189 CHANNEL <&189 || exit 104
+                                                                                                                                                                            read -r -t 1 -u 189 PAYLOAD <&189 || exit 125
+                                                                                                                                                                            mkdir --parents ${ resources-directory }
+                                                                                                                                                                            exec 196> ${ resource-directory }/check.lock
+                                                                                                                                                                            flock -x 196
+                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq <<< "$PAYLOAD" )" || exit 103
+                                                                                                                                                                            # shellcheck disable=SC2208,SC2016
+                                                                                                                                                                            jq \
+                                                                                                                                                                                --null-input \
+                                                                                                                                                                                --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                                                --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
+                                                                                                                                                                                --arg TYPE "TYPE" \
+                                                                                                                                                                                '{
+                                                                                                                                                                                    "type" : $TYPE ,
+                                                                                                                                                                                    "channel" : $CHANNEL ,
+                                                                                                                                                                                    "payload" : $PAYLOAD"
+                                                                                                                                                                                }'
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
