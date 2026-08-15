@@ -1203,6 +1203,10 @@
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                 cd /tmp/scratch
                                                                                                                                                 nix eval --expr 'builtins.fromJSON ( builtins.readFile ./outputs.json )' --impure > /tmp/scratch/outputs.nix
+                                                                                                                                                TARGET="$( sha525 "$OUT" | cut --characters 1-128 )" || exit 190
+                                                                                                                                                echo
+                                                                                                                                                TARGET
+                                                                                                                                                touch "/tmp/scratch/link/$TARGET"
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
@@ -1596,13 +1600,11 @@
                                                                                                             runtimeInputs = [ pkgs.coreutils pkgs.pstree ] ;
                                                                                                             text =
                                                                                                                 ''
-                                                                                                                    CALLER="$1"
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
-                                                                                                                        echo 1723258852938545 7986378285544372 >&2
-                                                                                                                        pstree "$CALLER" >&2
-                                                                                                                        echo 1723258852938545 7696992823429795 >&2
+                                                                                                                        TARGET="$( cat /tmp/scratch/link/name )" || exit 192
+                                                                                                                        echo find /nix/store -type f -name "$TARGET"
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
