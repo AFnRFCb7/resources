@@ -1182,12 +1182,16 @@
                                                                                                                                                         --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
                                                                                                                                                         --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
                                                                                                                                                         --rawfile STATUS "/tmp/scratch/commands/$I/observed/status" \
+                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/observed/text" \
+                                                                                                                                                        --rawfile TIMEOUT "/tmp/scratch/commands/$I/observed/timeout" \
                                                                                                                                                         '{
                                                                                                                                                             "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS ,
                                                                                                                                                             "standard-error" : $STANDARD_ERROR ,
                                                                                                                                                             "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                            "status" : $STATUS
+                                                                                                                                                            "status" : $STATUS ,
+                                                                                                                                                            "text" : $TEXT ,
+                                                                                                                                                            "timeout" : $TIMEOUT
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
