@@ -1161,7 +1161,7 @@
                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                     {
                                                                                                                                         name = "file" ;
-                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.redis pkgs.yq-go ] ;
+                                                                                                                                        runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.jq pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             ''
                                                                                                                                                 mkdir --parents "/tmp/scratch"
@@ -1171,6 +1171,7 @@
                                                                                                                                                 ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 find /tmp/scratch | sort >&2
+                                                                                                                                                echo "$OUT" >&2
                                                                                                                                                 do
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
