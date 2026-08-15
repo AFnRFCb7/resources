@@ -1172,10 +1172,8 @@
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
-                                                                                                                                                        --rawfile KLUDGE "/tmp/scratch/command/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/command/$I/process" \
                                                                                                                                                         '{
-                                                                                                                                                            "kludge" : $KLUDGE ,
                                                                                                                                                             "process" : $PROCESS
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
                                                                                                                                                 done
