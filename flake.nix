@@ -1175,7 +1175,6 @@
                                                                                                                                                     do
                                                                                                                                                         sleep 1s
                                                                                                                                                     done
-                                                                                                                                                    find "/tmp/scratch/commands/$I" | sort >&2
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
@@ -1197,6 +1196,9 @@
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
+                                                                                                                                                ech0 'builtins.fromJSON ( builtins.import ( ./outputs.json ) )' > /tmp/scratch/generate.nix
+                                                                                                                                                cd /tmp/scratch
+                                                                                                                                                nix eval --from-file generate.nix > /tmp/scratch/outputs.nix
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
