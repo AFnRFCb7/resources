@@ -180,9 +180,10 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    mkdir --parents ${ gc-roots-directory }
+                                                                    mkdir --parents ${ resources-directory }
                                                                     exec 131> ${ resources-directory }/clean.lock
                                                                     flock -x 131
+                                                                    mkdir --parents ${ gc-roots-directory }
                                                                     TEMPORARY="$( mktemp --directory )" || exit 113
                                                                     export TEMPORARY
                                                                     clean
@@ -1208,6 +1209,7 @@
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
+                                                                                                                                                                                --arg TYPE "$TYPE" \
                                                                                                                                                                                 --arg CHANNEL "$CHANNEL" \
                                                                                                                                                                                 --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
                                                                                                                                                                                 --arg TYPE "TYPE" \
