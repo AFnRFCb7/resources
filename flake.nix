@@ -1197,7 +1197,7 @@
                                                                                                                                                 done
                                                                                                                                                 yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                 cd /tmp/scratch
-                                                                                                                                                nix eval --expr 'builtins.fromJSON ( builtins.readFile ./outputs.json )' --impureq > /tmp/scratch/outputs.nix
+                                                                                                                                                nix eval --expr 'builtins.fromJSON ( builtins.readFile ./outputs.json )' --impure > /tmp/scratch/outputs.nix
                                                                                                                                             '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
