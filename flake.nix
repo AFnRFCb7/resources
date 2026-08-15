@@ -1600,7 +1600,9 @@
                                                                                                                     FAILURE="$( cat /tmp/scratch/failure )" || exit 124
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
+                                                                                                                        echo 1723258852938545 7986378285544372 >&2
                                                                                                                         echo "$CALLER" >&2
+                                                                                                                        echo 1723258852938545 7696992823429795 >&2
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
