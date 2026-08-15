@@ -1172,7 +1172,7 @@
                                                                                                                                                 seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
                                                                                                                                                 do
                                                                                                                                                     jq \
-                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/command/$I/process" \
+                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
                                                                                                                                                         '{
                                                                                                                                                             "process" : $PROCESS
                                                                                                                                                         }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/output.yaml
