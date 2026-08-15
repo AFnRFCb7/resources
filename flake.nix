@@ -1175,7 +1175,7 @@
                                                                                                                                                     do
                                                                                                                                                         sleep 1s
                                                                                                                                                     done
-                                                                                                                                                    find "/tmp/scratch/commands/$I" >&2
+                                                                                                                                                    find "/tmp/scratch/commands/$I" | sort >&2
                                                                                                                                                     jq \
                                                                                                                                                         --rawfile KLUDGE "/tmp/scratch/commands/$I/kludge" \
                                                                                                                                                         --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
