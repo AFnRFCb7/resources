@@ -1248,7 +1248,7 @@
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
-                                                                                                                                                                                    --base64)
+                                                                                                                                                                                    --expression)
                                                                                                                                                                                         EXPRESSION="$( echo "$2" | base64 --decode )" || exit 185
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
