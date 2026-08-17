@@ -1250,7 +1250,8 @@
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --bas64)
                                                                                                                                                                                         EXPRESSION="$( echo "$2" | base64 --decode )" || exit 185
-
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
                                                                                                                                                                                     --uuid)
                                                                                                                                                                                         UUID+=( "$2" )
                                                                                                                                                                                         shift 2
