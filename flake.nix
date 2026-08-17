@@ -438,7 +438,7 @@
                                                                                         "targets" : .targets ,
                                                                                         "text" : .text ,
                                                                                         "temporary" : .temporary
-                                                                                    }' "$OUTPUT_FILE" | logfi
+                                                                                    }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
