@@ -1124,7 +1124,6 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
-                                                                                                                                                                            flock -x 169
                                                                                                                                                                             TARGETS=()
                                                                                                                                                                             if [[ -d ${ gc-roots-directory } ]]
                                                                                                                                                                             then
