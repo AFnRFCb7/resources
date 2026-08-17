@@ -1274,6 +1274,8 @@
                                                                                                                                                                             then
                                                                                                                                                                                 exit 179
                                                                                                                                                                             fi
+                                                                                                                                                                            echo -n "$EXPRESSION" >&2
+                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             exit "$STATUS"
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
