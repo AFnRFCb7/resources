@@ -1184,7 +1184,7 @@
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
                                                                                                                                                                             done
-                                                                                                                                                                            echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
@@ -1235,7 +1235,7 @@
                                                                                                                                                                                     "channel" : $CHANNEL ,
                                                                                                                                                                                     "payload" : $PAYLOAD"
                                                                                                                                                                                 }'
-                                                                                                                                                                            echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
+                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
