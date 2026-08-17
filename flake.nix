@@ -1222,11 +1222,9 @@
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 PAYLOAD <&189 || exit 125
                                                                                                                                                                             mkdir --parents ${ resources-directory }
-                                                                                                                                                                            exec 196> ${ resources-directory }/check.lock
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
-                                                                                                                                                                                --arg TYPE "$TYPE" \
                                                                                                                                                                                 --arg CHANNEL "$CHANNEL" \
                                                                                                                                                                                 --argjson PAYLOAD "$PAYLOAD" \
                                                                                                                                                                                 --arg TYPE "TYPE" \
