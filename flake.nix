@@ -1347,54 +1347,56 @@
                                                                                                                                         name = "file" ;
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.flock pkgs.jq pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
-                                                                                                                                            ''
-                                                                                                                                                mkdir --parents ${ resources-directory }
-                                                                                                                                                exec 142> ${ resources-directory }/check.lock
-                                                                                                                                                flock -x 142
-                                                                                                                                                mkdir --parents "/tmp/scratch"
-                                                                                                                                                echo false > "/tmp/scratch/failure"
-                                                                                                                                                export IS_NIX_FLAKE_CHECK=true
-                                                                                                                                                exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ valid-init-channel } ${ valid-release-channel } )
-                                                                                                                                                ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
-                                                                                                                                                seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
-                                                                                                                                                do
-                                                                                                                                                    while [[ ! -f "/tmp/scratch/commands/$I/flag" ]]
-                                                                                                                                                    do
-                                                                                                                                                        sleep 1s
-                                                                                                                                                    done
-                                                                                                                                                    KLUDGE="$( cat "/tmp/scratch/commands/$I/kludge" )" || exit 137
-                                                                                                                                                    READS="$( cat "/tmp/scratch/commands/$I/reads" )" || exit 186
-                                                                                                                                                    STATUS="$( cat "/tmp/scratch/commands/$I/observed/status" )" || exit 147
-                                                                                                                                                    TIMEOUT="$( cat "/tmp/scratch/commands/$I/timeout" )" || exit 133
-                                                                                                                                                    jq \
-                                                                                                                                                        --null-input \
-                                                                                                                                                        --argjson KLUDGE  "$KLUDGE" \
-                                                                                                                                                        --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
-                                                                                                                                                        --argjson READS "$READS" \
-                                                                                                                                                        --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
-                                                                                                                                                        --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
-                                                                                                                                                        --argjson STATUS "$STATUS" \
-                                                                                                                                                        --rawfile TEXT "/tmp/scratch/commands/$I/text" \
-                                                                                                                                                        --argjson TIMEOUT "$TIMEOUT" \
-                                                                                                                                                        '{
-                                                                                                                                                            "kludge" : $KLUDGE ,
-                                                                                                                                                            "process" : $PROCESS ,
-                                                                                                                                                            "reads" : $READS ,
-                                                                                                                                                            "standard-error" : $STANDARD_ERROR ,
-                                                                                                                                                            "standard-output" : $STANDARD_OUTPUT ,
-                                                                                                                                                            "status" : $STATUS ,
-                                                                                                                                                            "text" : $TEXT ,
-                                                                                                                                                            "timeout" : $TIMEOUT
-                                                                                                                                                        }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
-                                                                                                                                                done
-                                                                                                                                                yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
-                                                                                                                                                cd /tmp/scratch
-                                                                                                                                                nix eval --expr 'builtins.map ( actions : builtins.concatStringsSep " ,\n" ( builtins.mapAttrs ( name : parameter : "\t${ name } = ${ builtins.fromJSON parameter }" ) actions ) ) ( builtins.fromJSON ( builtins.readFile ./outputs.json ) )' --impure > /tmp/scratch/outputs.nix
-                                                                                                                                                mkdir --parents /tmp/scratch/link
-                                                                                                                                                TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
-                                                                                                                                                echo "$TARGET" > /tmp/scratch/link/name
-                                                                                                                                                touch "/tmp/scratch/link/$TARGET"
-                                                                                                                                            '' ;
+                                                                                                                                            let
+                                                                                                                                                in
+                                                                                                                                                    ''
+                                                                                                                                                        mkdir --parents ${ resources-directory }
+                                                                                                                                                        exec 142> ${ resources-directory }/check.lock
+                                                                                                                                                        flock -x 142
+                                                                                                                                                        mkdir --parents "/tmp/scratch"
+                                                                                                                                                        echo false > "/tmp/scratch/failure"
+                                                                                                                                                        export IS_NIX_FLAKE_CHECK=true
+                                                                                                                                                        exec 189< <( redis-cli SUBSCRIBE ${ invalid-init-channel } ${ invalid-release-channel } ${ valid-init-channel } ${ valid-release-channel } )
+                                                                                                                                                        ${ builtins.concatStringsSep "\n" ( builtins.map ( process : "( ${ process.file-name } <&189 & )" ) processes ) }
+                                                                                                                                                        seq 0 ${ builtins.toString ( ( builtins.length commands ) - 1 ) } | while read -r I
+                                                                                                                                                        do
+                                                                                                                                                            while [[ ! -f "/tmp/scratch/commands/$I/flag" ]]
+                                                                                                                                                            do
+                                                                                                                                                                sleep 1s
+                                                                                                                                                            done
+                                                                                                                                                            KLUDGE="$( cat "/tmp/scratch/commands/$I/kludge" )" || exit 137
+                                                                                                                                                            READS="$( cat "/tmp/scratch/commands/$I/reads" )" || exit 186
+                                                                                                                                                            STATUS="$( cat "/tmp/scratch/commands/$I/observed/status" )" || exit 147
+                                                                                                                                                            TIMEOUT="$( cat "/tmp/scratch/commands/$I/timeout" )" || exit 133
+                                                                                                                                                            jq \
+                                                                                                                                                                --null-input \
+                                                                                                                                                                --argjson KLUDGE  "$KLUDGE" \
+                                                                                                                                                                --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
+                                                                                                                                                                --argjson READS "$READS" \
+                                                                                                                                                                --rawfile STANDARD_ERROR "/tmp/scratch/commands/$I/observed/standard-error" \
+                                                                                                                                                                --rawfile STANDARD_OUTPUT "/tmp/scratch/commands/$I/observed/standard-output" \
+                                                                                                                                                                --argjson STATUS "$STATUS" \
+                                                                                                                                                                --rawfile TEXT "/tmp/scratch/commands/$I/text" \
+                                                                                                                                                                --argjson TIMEOUT "$TIMEOUT" \
+                                                                                                                                                                '{
+                                                                                                                                                                    "kludge" : $KLUDGE ,
+                                                                                                                                                                    "process" : $PROCESS ,
+                                                                                                                                                                    "reads" : $READS ,
+                                                                                                                                                                    "standard-error" : $STANDARD_ERROR ,
+                                                                                                                                                                    "standard-output" : $STANDARD_OUTPUT ,
+                                                                                                                                                                    "status" : $STATUS ,
+                                                                                                                                                                    "text" : $TEXT ,
+                                                                                                                                                                    "timeout" : $TIMEOUT
+                                                                                                                                                                }' | yq eval --prettyPrint "[.]" >> /tmp/scratch/outputs.yaml
+                                                                                                                                                        done
+                                                                                                                                                        yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
+                                                                                                                                                        cd /tmp/scratch
+                                                                                                                                                        nix eval --expr 'builtins.map ( actions : builtins.concatStringsSep " ,\n" ( builtins.mapAttrs ( name : parameter : "\t${ builtins.concatStringsSep "" [ "$" "{ " name " }" ] } = ${ nuiltins.concatStringsSep "" [ "$" "{ " "builtins.fromJSON parameter" " }" ] } ) actions ) ) ( builtins.fromJSON ( builtins.readFile ./outputs.json ) )' --impure > /tmp/scratch/outputs.nix
+                                                                                                                                                        mkdir --parents /tmp/scratch/link
+                                                                                                                                                        TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
+                                                                                                                                                        echo "$TARGET" > /tmp/scratch/link/name
+                                                                                                                                                        touch "/tmp/scratch/link/$TARGET"
+                                                                                                                                                    '' ;
                                                                                                                                     } ;
                                                                                                                             in "${ application }/bin/file" ;
                                                                                                                     in
