@@ -1231,7 +1231,7 @@
                                                                                                                                                                                 '{
                                                                                                                                                                                     "type" : $TYPE ,
                                                                                                                                                                                     "channel" : $CHANNEL ,
-                                                                                                                                                                                    "payload" : $PAYLOAD"
+                                                                                                                                                                                    "payload" : $PAYLOAD
                                                                                                                                                                                 }'
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
                                                                                                                                                                         '' ;
