@@ -1237,6 +1237,45 @@
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "check-resource" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            UUID=()
+                                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                                            do
+                                                                                                                                                                                --expression)
+                                                                                                                                                                                    EXPRESSION="$2"
+                                                                                                                                                                                    shift 2
+                                                                                                                                                                                    ;;
+                                                                                                                                                                                --uuid)
+                                                                                                                                                                                    UUID+=( "$2" )
+                                                                                                                                                                                    shift 2
+                                                                                                                                                                                    ;;
+                                                                                                                                                                                *)
+                                                                                                                                                                                    exit 119
+                                                                                                                                                                                    ;;
+                                                                                                                                                                            done
+                                                                                                                                                                            STANDARD_ERROR="$( mktemp )" || exit 193
+                                                                                                                                                                            if RESOURCE="$( "$EXPRESSION" 2> "$STANDARD_ERROR" )"
+                                                                                                                                                                            then
+                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                            else
+                                                                                                                                                                                STATUS="$?"
+                                                                                                                                                                            fi
+                                                                                                                                                                            echo -n "$RESOURCE"
+                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                            if [[ ! -s "$STANDARD_ERROR" ]]
+                                                                                                                                                                            then
+                                                                                                                                                                                exit 179
+                                                                                                                                                                            fi
+                                                                                                                                                                            exit "$STATUS"
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
                                                                                                                                                     ] ;
                                                                                                                                                 text = text ;
                                                                                                                                             } ;
