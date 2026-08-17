@@ -1463,7 +1463,7 @@
                                                                                                                         timeout = visitor { int = path : value : builtins.toString value ; } timeout ;
                                                                                                                     } ;
                                                                                                             in identity input ;
-                                                                                                inputs_ = builtins.fromJSON inputs ;
+                                                                                                inputs_ = inputs ;
                                                                                                 in builtins.genList generator ( builtins.length inputs_ ) ;
                                                                                         processes =
                                                                                             let
