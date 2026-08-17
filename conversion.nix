@@ -43,7 +43,7 @@ builtins.toFile
                                     builtins.fromJSON
                                         (
                                             builtins.readFile
-                                                /nix/store/dy25czn13926gppzkwvabg9py6c83mx3-vm-test-run-resource-check/scratch/scratch/outputs.json
+                                                /tmp/scratch/outputs.json
                                         )
                                 )
                         )
