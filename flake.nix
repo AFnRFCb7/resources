@@ -1247,17 +1247,19 @@
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
-                                                                                                                                                                                --expression)
-                                                                                                                                                                                    EXPRESSION="$2"
-                                                                                                                                                                                    shift 2
-                                                                                                                                                                                    ;;
-                                                                                                                                                                                --uuid)
-                                                                                                                                                                                    UUID+=( "$2" )
-                                                                                                                                                                                    shift 2
-                                                                                                                                                                                    ;;
-                                                                                                                                                                                *)
-                                                                                                                                                                                    exit 119
-                                                                                                                                                                                    ;;
+                                                                                                                                                                                case "$1" in
+                                                                                                                                                                                    --expression)
+                                                                                                                                                                                        EXPRESSION="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --uuid)
+                                                                                                                                                                                        UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    *)
+                                                                                                                                                                                        exit 119
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                esac
                                                                                                                                                                             done
                                                                                                                                                                             STANDARD_ERROR="$( mktemp )" || exit 193
                                                                                                                                                                             if RESOURCE="$( "$EXPRESSION" 2> "$STANDARD_ERROR" )"
