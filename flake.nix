@@ -1391,7 +1391,7 @@
                                                                                                                                                         done
                                                                                                                                                         yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                         cd /tmp/scratch
-                                                                                                                                                        nix eval --file ${ self }/conversion.nix --impure > /tmp/scratch/outputs.nix
+                                                                                                                                                        # nix eval --file ${ self }/conversion.nix --impure > /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
                                                                                                                                                         echo "$TARGET" > /tmp/scratch/link/name
