@@ -1244,16 +1244,25 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            EXPRESSION=()
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
-                                                                                                                                                                                    --expression)
-                                                                                                                                                                                        EXPRESSION="$2"
+                                                                                                                                                                                    --double-quote)
+                                                                                                                                                                                        EXPRESSION+=( "\"$2\"" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --single-quote)
+                                                                                                                                                                                        EXPRESSION+=( "'$2'" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
                                                                                                                                                                                         UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --zero-quote)
+                                                                                                                                                                                        EXPRESSION+=( "$2"
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     *)
@@ -1262,7 +1271,7 @@
                                                                                                                                                                                 esac
                                                                                                                                                                             done
                                                                                                                                                                             STANDARD_ERROR="$( mktemp )" || exit 193
-                                                                                                                                                                            if RESOURCE="$( "$EXPRESSION" 2> "$STANDARD_ERROR" )"
+                                                                                                                                                                            if RESOURCE="$( "${ builtins.concatStringsSep "" [ "$" "{" "EXPRESSION[@]" "}" ] }" 2> "$STANDARD_ERROR" )"
                                                                                                                                                                             then
                                                                                                                                                                                 STATUS="$?"
                                                                                                                                                                             else
