@@ -1247,14 +1247,8 @@
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --expression)
-                                                                                                                                                                                        DOUBLE="$2"
-                                                                                                                                                                                        SINGLE="$3"
-                                                                                                                                                                                        DOLLAR="$4"
-                                                                                                                                                                                        EXPRESSION_0="$5"
-                                                                                                                                                                                        EXPRESSION_1="${ builtins.concatStringsSep "" [ "$" "{" "EXPRESSION_0//$DOUBLE/\\\"" "}" ] }"
-                                                                                                                                                                                        EXPRESSION_2="${ builtins.concatStringsSep "" [ "$" "{" "EXPRESSION_1//$SINGLE/\\\'" "}" ] }"
-                                                                                                                                                                                        EXPRESSION="${ builtins.concatStringsSep "" [ "$" "{" "EXPRESSION_2//$DOLLAR/\$" "}" ] }"
-                                                                                                                                                                                        shift 5
+                                                                                                                                                                                        EXPRESSION="$2"
+                                                                                                                                                                                        shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
                                                                                                                                                                                         UUID+=( "$2" )
