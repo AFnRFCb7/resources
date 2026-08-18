@@ -1450,7 +1450,7 @@
                                                                                                                                                         cat ${ builtins.toFile "conversion.nix" conversion } > "/tmp/scratch/conversion.nix"
                                                                                                                                                         NIX_FILE="$( nix eval --file "/tmp/scratch/conversion.nix" --impure )" || exit 199
                                                                                                                                                         # echo "NIX_FILE=$NIX_FILE" >&2
-                                                                                                                                                        ech "$NIX_FILE" > /tmp/scratch/outputs.nix
+                                                                                                                                                        echo "$NIX_FILE" > /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
                                                                                                                                                         echo "$TARGET" > /tmp/scratch/link/name
