@@ -1406,7 +1406,7 @@
                                                                                                                                                     '' ;
                                                                                                                                                 fun =
                                                                                                                                                     expression :
-                                                                                                                                                        "${ builtins.concatString "" [ "$" "{" " " expression " " "}" ] }" ;
+                                                                                                                                                        "${ builtins.concatStringsSep "" [ "$" "{" " " expression " " "}" ] }" ;
                                                                                                                                                 in
                                                                                                                                                     ''
                                                                                                                                                         mkdir --parents ${ resources-directory }
