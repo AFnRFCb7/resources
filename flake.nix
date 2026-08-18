@@ -1348,7 +1348,7 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.flock pkgs.jq pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             let
-                                                                                                                                                expression =
+                                                                                                                                                conversion =
                                                                                                                                                     ''
                                                                                                                                                         ${ fun false "builtins.toFile" }
                                                                                                                                                             "answer.nix"
@@ -1451,7 +1451,8 @@
                                                                                                                                                         done
                                                                                                                                                         yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                         cd /tmp/scratch
-                                                                                                                                                        NIX_FILE="$( nix eval '${ expression }' --impure )" || exit 199
+                                                                                                                                                        cat ${ builtins.toFile "conversion.nix" conversion } > "$SCRATCH/conversion.nix"
+                                                                                                                                                        NIX_FILE="$( nix eval --file "$SCRATCH/conversion.nix" --impure )" || exit 199
                                                                                                                                                         ln --symbolic "$NIX_FILE" /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
