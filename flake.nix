@@ -1451,9 +1451,9 @@
                                                                                                                                                         done
                                                                                                                                                         yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                         cd /tmp/scratch
-                                                                                                                                                        cat ${ builtins.toFile "conversion.nix" conversion } > "$SCRATCH/conversion.nix"
-                                                                                                                                                        # NIX_FILE="$( nix eval --file "$SCRATCH/conversion.nix" --impure )" || exit 199
-                                                                                                                                                        # ln --symbolic "$NIX_FILE" /tmp/scratch/outputs.nix
+                                                                                                                                                        cat ${ builtins.toFile "conversion.nix" conversion } > "/tmp/scratch/conversion.nix"
+                                                                                                                                                        NIX_FILE="$( nix eval --file "$SCRATCH/conversion.nix" --impure )" || exit 199
+                                                                                                                                                        ln --symbolic "$NIX_FILE" /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
                                                                                                                                                         echo "$TARGET" > /tmp/scratch/link/name
