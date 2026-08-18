@@ -1348,6 +1348,65 @@
                                                                                                                                         runtimeInputs = [ pkgs.coreutils pkgs.diffutils pkgs.findutils pkgs.flock pkgs.jq pkgs.redis pkgs.yq-go ] ;
                                                                                                                                         text =
                                                                                                                                             let
+                                                                                                                                                expression =
+                                                                                                                                                    ''
+                                                                                                                                                        ${ fun "builtins.toFile" }
+                                                                                                                                                            "answer.nix"
+                                                                                                                                                            (
+                                                                                                                                                                ${ fun "builtins.concatStringsSep" }
+                                                                                                                                                                    "\n"
+                                                                                                                                                                    (
+                                                                                                                                                                        ${ fun "builtins.concatLists" }
+                                                                                                                                                                            [
+                                                                                                                                                                                [ "[" ]
+                                                                                                                                                                                (
+                                                                                                                                                                                    ${ fun "builtins.map" }
+                                                                                                                                                                                        (
+                                                                                                                                                                                            actions :
+                                                                                                                                                                                                (
+                                                                                                                                                                                                    ${ fun "builtins.concatStringsSep" }
+                                                                                                                                                                                                        "\n"
+                                                                                                                                                                                                        (
+                                                                                                                                                                                                            ${ fun "builtins.concatLists" }
+                                                                                                                                                                                                                [
+                                                                                                                                                                                                                    [ "\t{" ]
+                                                                                                                                                                                                                    [
+                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                            ${ fun "builtins.concatStringsSep" }
+                                                                                                                                                                                                                                "\n"
+                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                    ${ fun "builtins.attrValues" }
+                                                                                                                                                                                                                                        (
+                                                                                                                                                                                                                                           ${ fun "builtins.mapAttrs" }
+                                                                                                                                                                                                                                                (
+                                                                                                                                                                                                                                                    name : parameter : "\t\t${ fun "builtins.toJSON name" } = ${ fun "builtins.toJSON parameter" } ;"
+                                                                                                                                                                                                                                                )
+                                                                                                                                                                                                                                                actions
+                                                                                                                                                                                                                                        )
+                                                                                                                                                                                                                                )
+                                                                                                                                                                                                                        )
+                                                                                                                                                                                                                    ]
+                                                                                                                                                                                                                    [ "\t}"]
+                                                                                                                                                                                                                ]
+                                                                                                                                                                                                        )
+                                                                                                                                                                                                )
+                                                                                                                                                                                        )
+                                                                                                                                                                                        (
+                                                                                                                                                                                            builtins.fromJSON
+                                                                                                                                                                                                (
+                                                                                                                                                                                                    builtins.readFile
+                                                                                                                                                                                                        /tmp/scratch/outputs.json
+                                                                                                                                                                                                )
+                                                                                                                                                                                        )
+                                                                                                                                                                                )
+                                                                                                                                                                                [ "]" ]
+                                                                                                                                                                            ]
+                                                                                                                                                                    )
+                                                                                                                                                            )
+                                                                                                                                                    '' ;
+                                                                                                                                                fun =
+                                                                                                                                                    expression :
+                                                                                                                                                        "${ builtins.concatString "" [ "$" "{" " " expression " " "}" ] }" ;
                                                                                                                                                 in
                                                                                                                                                     ''
                                                                                                                                                         mkdir --parents ${ resources-directory }
@@ -1391,7 +1450,7 @@
                                                                                                                                                         done
                                                                                                                                                         yq eval --output-format json --prettyPrint "." /tmp/scratch/outputs.yaml > /tmp/scratch/outputs.json
                                                                                                                                                         cd /tmp/scratch
-                                                                                                                                                        NIX_FILE="$( nix eval --file ${ self }/conversion.nix --impure )" || exit 199
+                                                                                                                                                        NIX_FILE="$( nix eval ${ expression } --impure )" || exit 199
                                                                                                                                                         ln --symbolic "$NIX_FILE" /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
