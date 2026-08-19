@@ -1211,7 +1211,7 @@
                                                                                                                                                                                 STATUS="$?"
                                                                                                                                                                                 if [[ "$STATUS" != 0 ]]
                                                                                                                                                                                 then
-                                                                                                                                                                                    echo "$STATUS"
+                                                                                                                                                                                    echo -n "$STATUS"
                                                                                                                                                                                 fi
                                                                                                                                                                                 exit 0
                                                                                                                                                                             }
