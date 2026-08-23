@@ -348,8 +348,13 @@
                                                                                     echo "\$\$=$$ PPID=$PPID"
                                                                                     echo "ORIGINATOR_PID=$ORIGINATOR_PID"
                                                                                     echo BEFORE PSTREE
-                                                                                    pstree -salp "$$"  2>&1
-                                                                                    echo AFTER PSTREE
+                                                                                    if pstree -salp "$$"  2>&1
+                                                                                    then
+                                                                                        STATUS="$?"
+                                                                                    else
+                                                                                        STATUS="$?"
+                                                                                    fi
+                                                                                    echo AFTER PSTREE STATUS="$STATUS"
                                                                                 } >> ${ resources-directory }/DEBUG
                                                                                 jq \
                                                                                     --null-input \
