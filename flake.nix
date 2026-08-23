@@ -1247,7 +1247,7 @@
                                                                                                                                                                             read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
                                                                                                                                                                             if [[ "$EXCLUSION" ]]
                                                                                                                                                                             then
-                                                                                                                                                                                EXCLUDED_PAYLOAD="$( jq 'del(.payload.["originator-pid"]' <<< "$COMPLETE_PAYLOAD" )" || exit 116
+                                                                                                                                                                                EXCLUDED_PAYLOAD="$( jq 'del(.payload.["originator-pid"])' <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             else
                                                                                                                                                                                 EXCLUDED_PAYLOAD="$COMPLETE_PAYLOAD"
                                                                                                                                                                             fi
