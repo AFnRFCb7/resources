@@ -350,7 +350,6 @@
                                                                                     while [ "$PID" -ne 1 ]; do
                                                                                         ps -o pid=,ppid=,cmd= -p "$PID"
                                                                                         PID=$(ps -o ppid= -p "$PID" | tr -d '[:space:]')
-                                                                                        echo "PID=$PID"
                                                                                     done
 
                                                                                     ps -o pid=,ppid=,cmd= -p 1
