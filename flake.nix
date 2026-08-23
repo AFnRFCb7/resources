@@ -339,7 +339,7 @@
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 ANTE_PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$ANTE_PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                                ULTIMATE_PID="$( ps -o ppid= -p "PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 101
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 101
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 140
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
                                                                                 # if true ; then exit 0 ; fi
