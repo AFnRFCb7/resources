@@ -16,6 +16,7 @@
 		                jq ,
 		                log-channel ,
 		                mkDerivation ,
+		                pstree ,
 		                redis ,
 		                valid-init-channel ,
 		                valid-release-channel ,
@@ -686,6 +687,7 @@
                                                                                                                     coreutils
                                                                                                                     flock
                                                                                                                     log
+                                                                                                                    pstree
                                                                                                                     (
                                                                                                                         buildFHSUserEnv
                                                                                                                             {
@@ -852,7 +854,7 @@
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
-                                                                                                                            ${ pkgs.pstree }/bin/pstree "$PID"
+                                                                                                                            pstree "$PID"
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
