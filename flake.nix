@@ -345,16 +345,15 @@
                                                                                 # if true ; then exit 0 ; fi
                                                                                 {
                                                                                     echo "===== $(date) ====="
-                                                                                    echo "\$\$=$$ PPID=$PPID"
-                                                                                    echo "ORIGINATOR_PID=$ORIGINATOR_PID"
-                                                                                    echo BEFORE PSTREE
-                                                                                    if pstree -salp "$$"  2>&1
-                                                                                    then
-                                                                                        STATUS="$?"
-                                                                                    else
-                                                                                        STATUS="$?"
-                                                                                    fi
-                                                                                    echo AFTER PSTREE STATUS="$STATUS"
+                                                                                    PID=$$
+
+                                                                                    while [ "$PID" -ne 1 ]; do
+                                                                                        ps -o pid=,ppid=,cmd= -p "$PID"
+                                                                                        PID=$(ps -o ppid= -p "$PID" | tr -d '[:space:]')
+                                                                                        echo "PID=$PID"
+                                                                                    done
+
+                                                                                    ps -o pid=,ppid=,cmd= -p 1
                                                                                 } >> ${ resources-directory }/DEBUG
                                                                                 jq \
                                                                                     --null-input \
