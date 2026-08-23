@@ -768,8 +768,8 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                echo "EXECUTING RELEASE $INDEX"
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                echo "EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
