@@ -854,7 +854,13 @@
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
-                                                                                                                            pstree "$PID"
+                                                                                                                            if ps -p "$PID" > /dev/null 2>&1
+                                                                                                                            then
+                                                                                                                                echo "PID $PID EXISTS"
+                                                                                                                                pstree -alp "$PID" || true
+                                                                                                                            else
+                                                                                                                                echo "PID $PID IS ALREADY GONE"
+                                                                                                                            fi
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
