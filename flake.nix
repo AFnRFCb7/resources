@@ -347,7 +347,7 @@
                                                                                     echo "===== $(date) ====="
                                                                                     echo "\$\$=$$ PPID=$PPID"
                                                                                     echo "ORIGINATOR_PID=$ORIGINATOR_PID"
-                                                                                    pstree -salp "$$"
+                                                                                    pstree -salp "$$" 2>&1
                                                                                 } >> ${ resources-directory }/DEBUG
                                                                                 jq \
                                                                                     --null-input \
