@@ -1214,13 +1214,13 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            EXCLUSIONS=( "." )
+                                                                                                                                                                            EXCLUSION="."
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --exclude)
-                                                                                                                                                                                        EXCLUSIONS+=( " | del($2) " )
+                                                                                                                                                                                        EXCLUSION="del($2)"
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
@@ -1245,7 +1245,7 @@
                                                                                                                                                                             read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" <<< "$COMPLETE_PAYLOAD" )" || exit 116
+                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
