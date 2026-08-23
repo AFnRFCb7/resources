@@ -302,7 +302,7 @@
                                                         writeShellApplication
                                                             {
                                                                 name = "resource" ;
-                                                                runtimeInputs = [ coreutils findutils flock gnused jq log resource-parameters.init.action.script ] ;
+                                                                runtimeInputs = [ coreutils findutils flock gnused jq pstree log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
                                                                         mkdir --parents ${ gc-roots-directory }
