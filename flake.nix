@@ -768,6 +768,7 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
+                                                                                                                                                                echo "EXECUTING RELEASE $INDEX"
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
@@ -830,6 +831,7 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
+                                                                                                                    echo "CONSIDERING RELEASE $INDEX"
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
