@@ -1214,10 +1214,15 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            EXCLUSIONS=( "." )
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
+                                                                                                                                                                                    --exclude)
+                                                                                                                                                                                        EXCLUSIONS+=( " | del($2) " )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
                                                                                                                                                                                     --uuid)
                                                                                                                                                                                         UUID+=( "$2" )
                                                                                                                                                                                         shift 2
@@ -1239,13 +1244,13 @@
                                                                                                                                                                             trap cleanup EXIT
                                                                                                                                                                             read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
-                                                                                                                                                                            read -r -t 1 -u 189 PAYLOAD <&189 || exit 125
-                                                                                                                                                                            mkdir --parents ${ resources-directory }
+                                                                                                                                                                            read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
+                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq "$EXCLUSIONS" <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
                                                                                                                                                                                 --arg CHANNEL "$CHANNEL" \
-                                                                                                                                                                                --argjson PAYLOAD "$PAYLOAD" \
+                                                                                                                                                                                --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
                                                                                                                                                                                 --arg TYPE "$TYPE" \
                                                                                                                                                                                 '{
                                                                                                                                                                                     "type" : $TYPE ,
