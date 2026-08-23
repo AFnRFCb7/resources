@@ -337,10 +337,11 @@
                                                                             else
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
-                                                                                ANTE_PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
-                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$ANTE_PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 101
-                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 140
+                                                                                PPID0="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
+                                                                                PPID1="$( ps -o ppid= -p "$PPID0" | tr -d '[:space:]' )" || exit 125
+                                                                                PPID2="$( ps -o ppid= -p "$PPID1" | tr -d '[:space:]' )" || exit 101
+                                                                                PPID3="$( ps -o ppid= -p "$PPID2" | tr -d '[:space:]' )" || exit 100
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$PPID3" | tr -d '[:space:]' )" || exit 140
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # if true ; then exit 0 ; fi
