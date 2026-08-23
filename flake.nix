@@ -1245,7 +1245,7 @@
                                                                                                                                                                             read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                            if [[ "$EXCLUSION" ]]
+                                                                                                                                                                            if [[ "$EXCLUSION" == "true" ]]
                                                                                                                                                                             then
                                                                                                                                                                                 EXCLUDED_PAYLOAD="$( jq 'del(.payload.["originator-pid"])' <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             else
