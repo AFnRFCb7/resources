@@ -335,12 +335,6 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
-                                                                                {
-                                                                                    echo "===== $(date) ====="
-                                                                                    echo "\$\$=$$ PPID=$PPID"
-                                                                                    echo "ORIGINATOR_PID=$ORIGINATOR_PID"
-                                                                                    pstree -salp "$$"
-                                                                                } >> ${ resources-directory }/DEBUG
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
@@ -349,6 +343,12 @@
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # if true ; then exit 0 ; fi
+                                                                                {
+                                                                                    echo "===== $(date) ====="
+                                                                                    echo "\$\$=$$ PPID=$PPID"
+                                                                                    echo "ORIGINATOR_PID=$ORIGINATOR_PID"
+                                                                                    pstree -salp "$$"
+                                                                                } >> ${ resources-directory }/DEBUG
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
