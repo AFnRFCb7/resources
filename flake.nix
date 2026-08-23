@@ -855,7 +855,9 @@
                                                                                                                         do
                                                                                                                             if [[ -f ${ resources-directory }/DEBUG ]]
                                                                                                                             then
+                                                                                                                                echo START DEBUG
                                                                                                                                 cat ${ resources-directory }/DEBUG
+                                                                                                                                echo STOP DEBUG
                                                                                                                             fi
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
