@@ -304,9 +304,6 @@
                                                                 runtimeInputs = [ coreutils findutils flock gnused jq log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        mkdir --parents ${ resources-directory }
-                                                                        exec 168> ${ resources-directory }/check.lock
-                                                                        flock -s 168
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
