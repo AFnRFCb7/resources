@@ -1265,11 +1265,10 @@
                                                                                                                                                                             fi
                                                                                                                                                                             echo -n "$RESOURCE"
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                            if [[ ! -s "$STANDARD_ERROR" ]]
+                                                                                                                                                                            if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                             then
                                                                                                                                                                                 exit 179
                                                                                                                                                                             fi
-                                                                                                                                                                            echo -n "$EXPRESSION" >&2
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             exit "$STATUS"
                                                                                                                                                                         '' ;
