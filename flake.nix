@@ -337,23 +337,13 @@
                                                                             else
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
-                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
-                                                                                ULTIMATE_PID="$( ps -o ppid= -p "$PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
-                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                ANTE_PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
+                                                                                PENULTIMATE_PID="$( ps -o ppid= -p "$ANTE_PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
+                                                                                ULTIMATE_PID="$( ps -o ppid= -p "PENULTIMATE_PID" | tr -d '[:space:]' )" || exit 101
+                                                                                ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 140
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # if true ; then exit 0 ; fi
-                                                                                {
-                                                                                    echo "===== $(date) ====="
-                                                                                    PID=$$
-
-                                                                                    while [ "$PID" -ne 1 ]; do
-                                                                                        ps -o pid=,ppid=,cmd= -p "$PID"
-                                                                                        PID=$(ps -o ppid= -p "$PID" | tr -d '[:space:]')
-                                                                                    done
-
-                                                                                    ps -o pid=,ppid=,cmd= -p 1
-                                                                                } >> ${ resources-directory }/DEBUG
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
