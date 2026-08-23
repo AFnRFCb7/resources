@@ -843,12 +843,15 @@
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
                                                                                                                         rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                        echo "CONSIDERING RELEASING $INDEX START WAITING FOR PIDS"
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
+                                                                                                                            echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
+                                                                                                                        echo "CONSIDERING RELEASING $INDEX FINISHED WAITING FOR PIDS"
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
