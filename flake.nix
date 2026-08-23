@@ -852,7 +852,7 @@
                                                                                                                         do
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
-                                                                                                                            pstree "$PID"
+                                                                                                                            ${ pkgs.pstree }/bin/pstree "$PID"
                                                                                                                             tail --follow /dev/null --pid "$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
