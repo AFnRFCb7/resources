@@ -335,6 +335,7 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
+                                                                                pstree -salp "$$" > ${ resources-directory }/DEBUG
                                                                                 # if true ; then exit 0 ; fi
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 PENULTIMATE_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
@@ -852,6 +853,7 @@
                                                                                                                         echo "CONSIDERING RELEASING $INDEX START WAITING FOR PIDS"
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
+                                                                                                                            cat ${ resources-directory }/DEBUG
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
                                                                                                                             echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
                                                                                                                             if ps -p "$PID" > /dev/null 2>&1
