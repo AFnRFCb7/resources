@@ -724,6 +724,7 @@
                                                                                                                                                             ''
                                                                                                                                                                 cd /mount
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
+                                                                                                                                                                echo "123 ABOUT TO RELEASE $INDEX"
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
@@ -769,7 +770,7 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
-                                                                                                                                                                echo "EXECUTING RELEASE $INDEX"
+                                                                                                                                                                echo "169 EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
@@ -831,8 +832,8 @@
                                                                                                             text =
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
-                                                                                                                    echo "CONSIDERING RELEASE $INDEX"
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
+                                                                                                                    echo "192 CONSIDERING RELEASE $INDEX"
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
                                                                                                                         STATUS="$?"
