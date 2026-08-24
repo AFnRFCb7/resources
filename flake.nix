@@ -1220,7 +1220,7 @@
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --exclude)
-                                                                                                                                                                                        EXCLUSION='del(.payload["originator-pid"])'
+                                                                                                                                                                                        EXCLUSION='del(.["originator-pid"])'
                                                                                                                                                                                         shift
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
@@ -1258,6 +1258,7 @@
                                                                                                                                                                                     "payload" : $PAYLOAD
                                                                                                                                                                                 }'
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
+                                                                                                                                                                            echo -n "$EXCLUSIONS" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
