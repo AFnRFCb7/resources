@@ -1214,13 +1214,13 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            EXCLUSION=false
+                                                                                                                                                                            EXCLUSION="."
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --exclude)
-                                                                                                                                                                                        EXCLUSION=true
+                                                                                                                                                                                        EXCLUSION='del(.payload.["originator-pid"])'
                                                                                                                                                                                         shift
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
@@ -1245,12 +1245,7 @@
                                                                                                                                                                             read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                            if [[ "$EXCLUSION" == "true" ]]
-                                                                                                                                                                            then
-                                                                                                                                                                                EXCLUDED_PAYLOAD="$( jq 'del(.payload.["originator-pid"])' <<< "$COMPLETE_PAYLOAD" )" || exit 116
-                                                                                                                                                                            else
-                                                                                                                                                                                EXCLUDED_PAYLOAD="$COMPLETE_PAYLOAD"
-                                                                                                                                                                            fi
+                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
                                                                                                                                                                                 --null-input \
