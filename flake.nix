@@ -225,7 +225,13 @@
                                                                                                                     TIMESTAMP="$( date +%s)" || exit 164
                                                                                                                     read -r -u 170 TYPE || break
                                                                                                                     read -r -u 170 CHANNEL || break
-                                                                                                                    read -r -u 170 PAYLOAD || break
+                                                                                                                    read -r -u 170 COMPLETE_PAYLOAD || break
+                                                                                                                    PAYLOAD="$(jq '
+                                                                                                                        if type == "object"
+                                                                                                                        then del(."originator-pid")
+                                                                                                                        else .
+                                                                                                                        end
+                                                                                                                    ' <<< "$PAYLOAD")" || exit 183
                                                                                                                     if [[ "$TYPE" == "message" ]]
                                                                                                                     then
                                                                                                                         jq \
