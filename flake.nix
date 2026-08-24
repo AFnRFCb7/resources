@@ -1220,7 +1220,7 @@
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
                                                                                                                                                                                     --exclude)
-                                                                                                                                                                                        EXCLUSION='del(.payload.["originator-pid"])'
+                                                                                                                                                                                        EXCLUSION='del(.payload["originator-pid"])'
                                                                                                                                                                                         shift
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
