@@ -231,7 +231,7 @@
                                                                                                                         then del(."originator-pid")
                                                                                                                         else .
                                                                                                                         end
-                                                                                                                    ' <<< "$PAYLOAD")" || exit 183
+                                                                                                                    ' <<< "$COMPLETE_PAYLOAD")" || exit 183
                                                                                                                     if [[ "$TYPE" == "message" ]]
                                                                                                                     then
                                                                                                                         jq \
