@@ -226,12 +226,12 @@
                                                                                                                     read -r -u 170 TYPE || break
                                                                                                                     read -r -u 170 CHANNEL || break
                                                                                                                     read -r -u 170 COMPLETE_PAYLOAD || break
-                                                                                                                    PAYLOAD="$(jq '
+                                                                                                                    PAYLOAD="$( jq '
                                                                                                                         if type == "object"
                                                                                                                         then del(."originator-pid")
                                                                                                                         else .
                                                                                                                         end
-                                                                                                                    ' <<< "$COMPLETE_PAYLOAD")" || exit 183
+                                                                                                                    ' <<< "$COMPLETE_PAYLOAD" )" || break
                                                                                                                     if [[ "$TYPE" == "message" ]]
                                                                                                                     then
                                                                                                                         jq \
