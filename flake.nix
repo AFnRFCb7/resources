@@ -181,9 +181,9 @@
                                                                 ] ;
                                                             text =
                                                                 ''
-                                                                    mkdir --parents ${ resources-directory }
-                                                                    exec 198> ${ resources-directory }/check.lock
-                                                                    flock -s 198
+                                                                    # 13644 mkdir --parents ${ resources-directory }
+                                                                    # 13644 exec 198> ${ resources-directory }/check.lock
+                                                                    # 13644 flock -s 198
                                                                     exec 131> ${ resources-directory }/clean.lock
                                                                     flock -x 131
                                                                     mkdir --parents ${ gc-roots-directory }
@@ -1453,9 +1453,9 @@
                                                                                                                                                         else expression ;
                                                                                                                                                 in
                                                                                                                                                     ''
-                                                                                                                                                        mkdir --parents ${ resources-directory }
-                                                                                                                                                        exec 142> ${ resources-directory }/check.lock
-                                                                                                                                                        flock -x 142
+                                                                                                                                                        # 13644 mkdir --parents ${ resources-directory }
+                                                                                                                                                        # 13644 exec 142> ${ resources-directory }/check.lock
+                                                                                                                                                        # 13644 flock -x 142
                                                                                                                                                         mkdir --parents "/tmp/scratch"
                                                                                                                                                         echo false > "/tmp/scratch/failure"
                                                                                                                                                         export IS_NIX_FLAKE_CHECK=true
