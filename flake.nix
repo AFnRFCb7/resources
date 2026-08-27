@@ -1335,6 +1335,17 @@
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "force-sync" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            sleep 10s
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
                                                                                                                                                     ] ;
                                                                                                                                                 text = text ;
                                                                                                                                             } ;
