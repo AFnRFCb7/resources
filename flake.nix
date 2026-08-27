@@ -1467,7 +1467,7 @@
                                                                                                                                                             do
                                                                                                                                                                 sleep 1s
                                                                                                                                                             done
-                                                                                                                                                            FAILURE="$( cat /tmp/scratch/commands/$I/failure )" || exit 179
+                                                                                                                                                            FAILURE="$( cat "/tmp/scratch/commands/$I/failure" )" || exit 179
                                                                                                                                                             KLUDGE="$( cat "/tmp/scratch/commands/$I/kludge" )" || exit 137
                                                                                                                                                             READS="$( cat "/tmp/scratch/commands/$I/reads" )" || exit 186
                                                                                                                                                             STATUS="$( cat "/tmp/scratch/commands/$I/observed/status" )" || exit 147
