@@ -1131,7 +1131,7 @@
                                                                                                                                                                     text =
                                                                                                                                                                         ''
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
-                                                                                                                                                                            NON_DETERMINISTIC_REGULAR_FILES=( )
+#                                                                                                                                                                            NON_DETERMINISTIC_REGULAR_FILES=( )
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
@@ -1140,10 +1140,10 @@
                                                                                                                                                                                         EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
-                                                                                                                                                                                    --non-deterministic-regular-file)
-                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILE+=()
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
+#                                                                                                                                                                                    --non-deterministic-regular-file)
+#                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILE+=()
+#                                                                                                                                                                                        shift 2
+#                                                                                                                                                                                        ;;
                                                                                                                                                                                     --uuid)
                                                                                                                                                                                         UUID+=( "$2" )
                                                                                                                                                                                         shift 2
@@ -1154,7 +1154,6 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
-                                                                                                                                                                            echo "$NON_DETERMINISTIC_REGULAR_FILE"
                                                                                                                                                                             TARGETS=()
                                                                                                                                                                             if [[ -d ${ gc-roots-directory } ]]
                                                                                                                                                                             then
