@@ -1198,7 +1198,7 @@
                                                                                                                                                                                         --arg CAT "$CAT" \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
-                                                                                                                                                                                        --arg TYPE "directory" \
+                                                                                                                                                                                        --arg TYPE "regular file" \
                                                                                                                                                                                         '{
                                                                                                                                                                                             "cat" : $CAT ,
                                                                                                                                                                                             "name" : $NAME ,
