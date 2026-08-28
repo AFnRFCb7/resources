@@ -1146,7 +1146,7 @@
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --non-deterministic-regular-file)
-                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILES+=()
+                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILES+=( "$2" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
