@@ -1201,14 +1201,17 @@
                                                                                                                                                                                     fi
                                                                                                                                                                                 elif [[ -L "$NAME" ]]
                                                                                                                                                                                 then
+                                                                                                                                                                                    TARGET="$( readlink "$NAME" )" || exit 182
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TARGET "$TARGET" \
                                                                                                                                                                                         --arg TYPE "symbolic link" \
                                                                                                                                                                                         '{
                                                                                                                                                                                             "name" : $NAME ,
                                                                                                                                                                                             "stat" : $STAT ,
+                                                                                                                                                                                            "target" : $TARGET ,
                                                                                                                                                                                             "type" : $TYPE
                                                                                                                                                                                         }'
                                                                                                                                                                                 elif [[ -d "$NAME" ]]
