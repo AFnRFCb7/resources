@@ -1130,12 +1130,17 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.jq pkgs.findutils pkgs.yq-go ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
+                                                                                                                                                                            DELETE=true
                                                                                                                                                                             EXCLUSIONS=( "-path" "${ resources-directory }/pids" "-o" "-path" "${ resources-directory }/temporary" )
                                                                                                                                                                             NON_DETERMINISTIC_REGULAR_FILES=( )
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
                                                                                                                                                                                 case "$1" in
+                                                                                                                                                                                    --delete)
+                                                                                                                                                                                        DELETE="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
                                                                                                                                                                                     --exclusion)
                                                                                                                                                                                         EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
                                                                                                                                                                                         shift 2
@@ -1190,7 +1195,10 @@
                                                                                                                                                                                             "stat" : $STAT ,
                                                                                                                                                                                             "type" : $TYPE
                                                                                                                                                                                         }'
-                                                                                                                                                                                    echo > ${ resources-directory }/log.yaml
+                                                                                                                                                                                    if [[ "$DELETE" == "true" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        echo > ${ resources-directory }/log.yaml
+                                                                                                                                                                                    fi
                                                                                                                                                                                 elif [[ -L "$NAME" ]]
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
