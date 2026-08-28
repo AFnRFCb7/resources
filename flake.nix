@@ -1191,18 +1191,6 @@
                                                                                                                                                                                             "type" : $TYPE
                                                                                                                                                                                         }'
                                                                                                                                                                                     echo > ${ resources-directory }/log.yaml
-                                                                                                                                                                                elif [[ -d "$NAME" ]]
-                                                                                                                                                                                then
-                                                                                                                                                                                    jq \
-                                                                                                                                                                                        --null-input \
-                                                                                                                                                                                        --arg NAME "$NAME" \
-                                                                                                                                                                                        --arg STAT "$STAT" \
-                                                                                                                                                                                        --arg TYPE "directory" \
-                                                                                                                                                                                        '{
-                                                                                                                                                                                            "name" : $NAME ,
-                                                                                                                                                                                            "stat" : $STAT ,
-                                                                                                                                                                                            "type" : $TYPE
-                                                                                                                                                                                        }'
                                                                                                                                                                                 elif [[ -L "$NAME" ]]
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
@@ -1210,6 +1198,18 @@
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
                                                                                                                                                                                         --arg TYPE "symbolic link" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "name" : $NAME ,
+                                                                                                                                                                                            "stat" : $STAT ,
+                                                                                                                                                                                            "type" : $TYPE
+                                                                                                                                                                                        }'
+                                                                                                                                                                                elif [[ -d "$NAME" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --arg NAME "$NAME" \
+                                                                                                                                                                                        --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TYPE "directory" \
                                                                                                                                                                                         '{
                                                                                                                                                                                             "name" : $NAME ,
                                                                                                                                                                                             "stat" : $STAT ,
