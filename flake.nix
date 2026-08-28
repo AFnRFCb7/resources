@@ -1231,7 +1231,7 @@
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
-                                                                                                                                                                                        --arg CAT "$CAT" \
+                                                                                                                                                                                        --rawfile CAT "$NAME" \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
                                                                                                                                                                                         --arg TYPE "regular file" \
