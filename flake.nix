@@ -1175,7 +1175,22 @@
                                                                                                                                                                             find "${ builtins.concatStringsSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -print | sort | while read -r NAME
                                                                                                                                                                             do
                                                                                                                                                                                 STAT="$( stat --printf %A "$NAME" )" || exit 122
-                                                                                                                                                                                if [[ -d "$NAME" ]]
+                                                                                                                                                                                if [[ "$NAME" == "${ resources-directory }/log.yaml" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    LOG="$( yq eval 'map(del(.timestamp))' -o=json "$NAME" )" || exit 138
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --argjson LOG "$LOG" \
+                                                                                                                                                                                        --arg NAME "$NAME" \
+                                                                                                                                                                                        --arg STAT "$STAT" \
+                                                                                                                                                                                        --arg TYPE "log file" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "log" : $LOG ,
+                                                                                                                                                                                            "name" : $NAME ,
+                                                                                                                                                                                            "stat" : $STAT ,
+                                                                                                                                                                                            "type" : $TYPE
+                                                                                                                                                                                        }'
+                                                                                                                                                                                elif [[ -d "$NAME" ]]
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
@@ -1234,7 +1249,7 @@
                                                                                                                                                                                 else
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
-                                                                                                                                                                            done | jq --slurp "."
+                                                                                                                                                                            done | jq --slurp --sort-keys "."
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
