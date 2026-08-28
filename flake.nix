@@ -1190,6 +1190,7 @@
                                                                                                                                                                                             "stat" : $STAT ,
                                                                                                                                                                                             "type" : $TYPE
                                                                                                                                                                                         }'
+                                                                                                                                                                                    echo > ${ resources-directory }/log.yaml
                                                                                                                                                                                 elif [[ -d "$NAME" ]]
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
@@ -1228,12 +1229,6 @@
                                                                                                                                                                                         }'
                                                                                                                                                                                 elif [[ -f "$NAME" ]]
                                                                                                                                                                                 then
-                                                                                                                                                                                    if [[ "$NAME" == "${ resources-directory }/log.yaml" ]]
-                                                                                                                                                                                    then
-                                                                                                                                                                                        CAT="$( yq eval --prettyPrint 'map(del(.timestamp))' "${ resources-directory }/log.yaml" )" || exit 115
-                                                                                                                                                                                    else
-                                                                                                                                                                                        CAT="$( cat "$NAME" )" || exit 111
-                                                                                                                                                                                    fi
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
                                                                                                                                                                                         --arg CAT "$CAT" \
