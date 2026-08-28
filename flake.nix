@@ -442,8 +442,8 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-output" : .["standard-output"] ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : .text ,
-                                                                                        "temporary" : .temporary
+                                                                                        "temporary" : .temporary ,
+                                                                                        "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
@@ -458,8 +458,8 @@
                                                                                         "standard-output" : .["standard-output"] ,
                                                                                         "status" : .status ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : .text ,
-                                                                                        "temporary" : .temporary
+                                                                                        "temporary" : .temporary ,
+                                                                                        "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
@@ -476,8 +476,8 @@
                                                                                         "standard-output" : .["standard-error"] ,
                                                                                         "status" : ./status ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : .text ,
-                                                                                        "temporary" : .temporary
+                                                                                        "temporary" : .temporary ,
+                                                                                        "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
@@ -494,8 +494,8 @@
                                                                                         "standard-output" : .["standard-output"] ,
                                                                                         "status" : .status ,
                                                                                         "targets" : .targets ,
-                                                                                        "text" : .text ,
                                                                                         "temporary" : .temporary
+                                                                                        "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
                                                                             rm "$INPUT_FILE" "$OUTPUT_FILE"
