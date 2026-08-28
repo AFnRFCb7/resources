@@ -1141,7 +1141,7 @@
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --non-deterministic-regular-file)
-                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILE+=()
+                                                                                                                                                                                        NON_DETERMINISTIC_REGULAR_FILES+=()
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --uuid)
@@ -1234,7 +1234,7 @@
                                                                                                                                                                                 else
                                                                                                                                                                                     exit 138
                                                                                                                                                                                 fi
-                                                                                                                                                                            done
+                                                                                                                                                                            done | jq --slurp "."
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
