@@ -425,10 +425,15 @@
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             echo 1723258852938545 9411522885922345 >&2
                                                                             export CHANNEL
+                                                                            echo 1723258852938545 5732771243884589 >&2
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                            echo 1723258852938545 1166554171412546 >&2
                                                                             EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
+                                                                            echo 1723258852938545 2335898198312578 >&2
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
+                                                                            echo 1723258852938545 8626566658366576 >&2
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
+                                                                            echo 1723258852938545 1996332632827493 >&2
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
