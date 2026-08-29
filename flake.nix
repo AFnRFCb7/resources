@@ -1017,6 +1017,7 @@
                                                                                     runtimeInputs = [ coreutils ] ;
                                                                                     text =
                                                                                         ''
+                                                                                            echo 1723258852938545 7831873132494747 >&2
                                                                                             OUT="$1"
                                                                                             mkdir --parents "$OUT/init"
                                                                                             ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
