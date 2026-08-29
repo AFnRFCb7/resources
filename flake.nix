@@ -311,7 +311,7 @@
                                                                 runtimeInputs = [ coreutils findutils flock gnused jq pstree log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        echo 2858318639976659 >&2
+                                                                        echo 1723258852938545 2858318639976659 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
@@ -320,6 +320,7 @@
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
+                                                                            echo 1723258852938545 8466923957952529 >&2
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 STANDARD_INPUT="$( cat )" || exit 103
@@ -341,6 +342,7 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
+                                                                                echo 1723258852938545 9121411587543833 >&2
                                                                                 PPID0="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 PPID1="$( ps -o ppid= -p "$PPID0" | tr -d '[:space:]' )" || exit 125
                                                                                 PPID2="$( ps -o ppid= -p "$PPID1" | tr -d '[:space:]' )" || exit 101
@@ -399,9 +401,11 @@
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
+                                                                        echo 1723258852938545 5895993454226683 >&2
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
+                                                                        echo 1723258852938545 6718234118438396 "$HASH" >&2
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
@@ -409,12 +413,15 @@
                                                                             echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                             echo "$FILE"
                                                                         else
+                                                                            echo 1723258852938545 8132847946454768 >&2
                                                                             mkdir --parents ${ resources-directory }/canonical
                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
+                                                                            echo 1723258852938545 6947212415537174 >&2
                                                                             init
+                                                                            echo 1723258852938545 1829285734966493 >&2
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
