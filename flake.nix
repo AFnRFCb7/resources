@@ -1318,6 +1318,7 @@
                                                                                                                                                                                     "payload" : $PAYLOAD
                                                                                                                                                                                 }'
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
+                                                                                                                                                                            echo -n "$COMPLETE_PAYLOAD" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
