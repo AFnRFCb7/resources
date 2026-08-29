@@ -423,6 +423,7 @@
                                                                             init
                                                                             echo 1723258852938545 1829285734966493 >&2
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                            echo 1723258852938545 9411522885922345 >&2
                                                                             export CHANNEL
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
                                                                             EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
