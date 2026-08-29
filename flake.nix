@@ -428,6 +428,7 @@
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                                 jq \
                                                                                     '{
+                                                                                        "WTF" : "5823838285162639" ,
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : .index ,
                                                                                         "inputs" : .inputs ,
