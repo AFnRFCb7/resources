@@ -783,6 +783,15 @@
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 echo "169 EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
+                                                                                                                                                                find /resources/canonical -mindepth 1 -maxdepth 1 -type l | while read LINK
+                                                                                                                                                                do
+                                                                                                                                                                    TARGET="$( readlink "$LINK" )" || exit 129
+                                                                                                                                                                    if [[ "$TARGET" == "${ resources-directory }/mounts/$INDEX" ]]
+                                                                                                                                                                    then
+                                                                                                                                                                        rm "$LINK"
+                                                                                                                                                                    fi
+                                                                                                                                                                done
+                                                                                                                                                                rm "/resources/canonical/$HASH"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
                                                                                                                                                                 CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
