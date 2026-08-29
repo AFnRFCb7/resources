@@ -1293,7 +1293,6 @@
                                                                                                                                                                             read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                             read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                             read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                            echo -n 7581338468756549"$COMPLETE_PAYLOAD"2959144542961938 >&2
                                                                                                                                                                             EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                             # shellcheck disable=SC2208,SC2016
                                                                                                                                                                             jq \
