@@ -791,7 +791,6 @@
                                                                                                                                                                         rm "$LINK"
                                                                                                                                                                     fi
                                                                                                                                                                 done
-                                                                                                                                                                rm "/resources/canonical/$HASH"
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
                                                                                                                                                                 CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
