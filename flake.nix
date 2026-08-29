@@ -1363,7 +1363,7 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            sleep 1s
+                                                                                                                                                                            sleep 10s
                                                                                                                                                                         '' ;
                                                                                                                                                                 }
                                                                                                                                                         )
