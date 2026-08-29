@@ -481,7 +481,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                if true ; then exit 194 ; fi
+                                                                                if true ; then exit 129 ; fi
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
