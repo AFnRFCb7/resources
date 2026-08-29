@@ -311,6 +311,7 @@
                                                                 runtimeInputs = [ coreutils findutils flock gnused jq pstree log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
+                                                                        echo 2858318639976659 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
@@ -320,7 +321,6 @@
                                                                         if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
                                                                             if [[ -t 0 ]]
-                                                                            # if [[ -p /dev/stdin || -f /dev/stdin ]]
                                                                             then
                                                                                 STANDARD_INPUT="$( cat )" || exit 103
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
@@ -341,16 +341,11 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
-                                                                                # if true ; then exit 0 ; fi
-                                                                                # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 187
                                                                                 PPID0="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 PPID1="$( ps -o ppid= -p "$PPID0" | tr -d '[:space:]' )" || exit 125
                                                                                 PPID2="$( ps -o ppid= -p "$PPID1" | tr -d '[:space:]' )" || exit 101
                                                                                 PPID3="$( ps -o ppid= -p "$PPID2" | tr -d '[:space:]' )" || exit 100
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID3" | tr -d '[:space:]' )" || exit 140
-                                                                                # ORIGINATOR_PID="$( ps -o ppid= -p "$$" | tr -d '[:space:]' )" || exit 173
-                                                                                # if true ; then exit 0 ; fi
-                                                                                # if true ; then exit 0 ; fi
                                                                                 jq \
                                                                                     --null-input \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
@@ -362,7 +357,6 @@
                                                                                         "originator-pid" : $ORIGINATOR_PID ,
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
-                                                                                # if true ; then exit 0 ; fi
                                                                             fi
                                                                         else
                                                                             # if [[ -t 0 ]]
