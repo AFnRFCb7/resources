@@ -437,6 +437,7 @@
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 1723258852938545 2197761958171486 >&2
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
@@ -454,6 +455,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 1723258852938545 8818699613471955 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
@@ -468,9 +470,10 @@
                                                                                         "temporary" : .temporary ,
                                                                                         "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
+                                                                                echo 1723258852938545 2919347625956953 >&2
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                if true ; then exit 193 ; fi
+                                                                                echo 1723258852938545 8415949837419814 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -488,6 +491,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                echo 1723258852938545 7346943618625982 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
