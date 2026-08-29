@@ -504,7 +504,7 @@
                                                                                         "standard-output" : .["standard-output"] ,
                                                                                         "status" : .status ,
                                                                                         "targets" : .targets ,
-                                                                                        "temporary" : .temporary
+                                                                                        "temporary" : .temporary ,
                                                                                         "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             fi
