@@ -311,7 +311,6 @@
                                                                 runtimeInputs = [ coreutils findutils flock gnused jq pstree log resource-parameters.init.action.script ] ;
                                                                 text =
                                                                     ''
-                                                                        echo 1723258852938545 2858318639976659 >&2
                                                                         mkdir --parents ${ gc-roots-directory }
                                                                         exec 157> ${ resources-directory }/clean.lock
                                                                         flock -s 157
@@ -320,7 +319,6 @@
                                                                         export TEMPORARY=${ builtins.toJSON resource-parameters.temporary }
                                                                         if [[ "$IS_NIX_FLAKE_CHECK" == "true" ]]
                                                                         then
-                                                                            echo 1723258852938545 8466923957952529 >&2
                                                                             if [[ -t 0 ]]
                                                                             then
                                                                                 STANDARD_INPUT="$( cat )" || exit 103
@@ -342,7 +340,6 @@
                                                                                         "temporary" : $TEMPORARY
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             else
-                                                                                echo 1723258852938545 9121411587543833 >&2
                                                                                 PPID0="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 192
                                                                                 PPID1="$( ps -o ppid= -p "$PPID0" | tr -d '[:space:]' )" || exit 125
                                                                                 PPID2="$( ps -o ppid= -p "$PPID1" | tr -d '[:space:]' )" || exit 101
@@ -401,11 +398,9 @@
                                                                                     }' -- "$@" > "$INPUT_FILE"
                                                                             fi
                                                                         fi
-                                                                        echo 1723258852938545 5895993454226683 >&2
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
                                                                         jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
-                                                                        echo 1723258852938545 6718234118438396 "$HASH" >&2
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
                                                                         then
                                                                             FILE="$( readlink --canonicalize "${ resources-directory }/canonical/$HASH" )" || echo 182
@@ -413,31 +408,21 @@
                                                                             echo "$ORIGINATOR_PID" > "${ resources-directory }/pids/$INDEX/$ORIGINATOR_PID"
                                                                             echo "$FILE"
                                                                         else
-                                                                            echo 1723258852938545 8132847946454768 >&2
                                                                             mkdir --parents ${ resources-directory }/canonical
                                                                             OUTPUT_FILE="$( mktemp --suffix ".json" )" || exit 101
                                                                             export OUTPUT_FILE
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
-                                                                            echo 1723258852938545 6947212415537174 >&2
                                                                             init
-                                                                            echo 1723258852938545 1829285734966493 >&2
                                                                             CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
-                                                                            echo 1723258852938545 9411522885922345 >&2
                                                                             export CHANNEL
-                                                                            echo 1723258852938545 5732771243884589 >&2
                                                                             INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                            echo 1723258852938545 1166554171412546 >&2
                                                                             EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
-                                                                            echo 1723258852938545 2335898198312578 >&2
                                                                             STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
-                                                                            echo 1723258852938545 8626566658366576 >&2
                                                                             STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
-                                                                            echo 1723258852938545 1996332632827493 >&2
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1723258852938545 2197761958171486 >&2
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
@@ -454,7 +439,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1723258852938545 8818699613471955 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
@@ -468,10 +452,8 @@
                                                                                         "temporary" : .temporary ,
                                                                                         "text" : .text
                                                                                     }' "$OUTPUT_FILE" | log
-                                                                                echo 1723258852938545 2919347625956953 >&2
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1723258852938545 8415949837419814 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -488,7 +470,6 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
-                                                                                echo 1723258852938545 7346943618625982 >&2
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
@@ -1023,7 +1004,6 @@
                                                                                     runtimeInputs = [ coreutils ] ;
                                                                                     text =
                                                                                         ''
-                                                                                            echo 1723258852938545 7831873132494747 >&2
                                                                                             OUT="$1"
                                                                                             mkdir --parents "$OUT/init"
                                                                                             ln --symbolic ${ resource-parameters.init.action.script } "$OUT/init/action"
