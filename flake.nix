@@ -428,7 +428,6 @@
                                                                                 ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
                                                                                 jq \
                                                                                     '{
-                                                                                        "WTF" : "5823838285162639" ,
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : .index ,
                                                                                         "inputs" : .inputs ,
@@ -1408,6 +1407,7 @@
                                                                                                                                                         else
                                                                                                                                                             echo false > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         fi
+                                                                                                                                                        diff --recursive --unified "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" > "/tmp/scratch/commands/${ command-index }/diff"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
                                                                                                                                 in "${ application }/bin/file" ;
