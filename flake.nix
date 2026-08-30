@@ -464,7 +464,6 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-error" : .["standard-error"] ,
                                                                                         "standard-output" : .["standard-error"] ,
-                                                                                        "status" : ./status ,
                                                                                         "targets" : .targets ,
                                                                                         "temporary" : .temporary ,
                                                                                         "text" : .text
