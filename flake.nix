@@ -1408,6 +1408,10 @@
                                                                                                                                                         else
                                                                                                                                                             echo false > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         fi
+                                                                                                                                                        if diff --recursive --unified "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" > "/tmp/scratch/commands/${ command-index }/diff"
+                                                                                                                                                        then
+                                                                                                                                                            true
+                                                                                                                                                        fi
                                                                                                                                                     '' ;
                                                                                                                                             } ;
                                                                                                                                 in "${ application }/bin/file" ;
