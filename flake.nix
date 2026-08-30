@@ -1170,7 +1170,7 @@
                                                                                                                                                                             fi
                                                                                                                                                                             if [[ -d ${ resources-directory } ]]
                                                                                                                                                                             then
-                                                                                                                                                                                TARGETS=( "${ resources-directory }" )
+                                                                                                                                                                                TARGETS+=( "${ resources-directory }" )
                                                                                                                                                                             fi
                                                                                                                                                                             find "${ builtins.concatStringsSep "" [ "$" "{" "TARGETS[@]" "}" ] }" \( "${ builtins.concatStringsSep "" [ "$" "{" "EXCLUSIONS[@]" "}" ] }" \) -prune -o -print | sort | while read -r NAME
                                                                                                                                                                             do
