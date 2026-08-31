@@ -1138,7 +1138,7 @@
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --exclusion)
-                                                                                                                                                                                        EXCLUSIONS+=("-o" "-path" "${ resources-directory }/$2" )
+                                                                                                                                                                                        EXCLUSIONS+=("-o" "-path" "$2" )
                                                                                                                                                                                         shift 2
                                                                                                                                                                                         ;;
                                                                                                                                                                                     --non-deterministic-regular-file)
