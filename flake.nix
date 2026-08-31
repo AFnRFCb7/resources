@@ -1744,7 +1744,7 @@
                                                         } ;
                                                 in
                                                     {
-                                                        name = name ;
+                                                        name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
                                                         order = order ;
                                                         value = nixos-test ;
                                                     } ;
