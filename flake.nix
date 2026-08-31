@@ -1344,7 +1344,7 @@
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                             then
-                                                                                                                                                                                exit 179
+                                                                                                                                                                                exit 118
                                                                                                                                                                             fi
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             exit "$STATUS"
@@ -1524,7 +1524,7 @@
                                                                                                                                                             do
                                                                                                                                                                 sleep 1s
                                                                                                                                                             done
-                                                                                                                                                            FAILURE="$( cat "/tmp/scratch/commands/$I/failure" )" || exit 179
+                                                                                                                                                            FAILURE="$( cat "/tmp/scratch/commands/$I/failure" )" || exit 138
                                                                                                                                                             KLUDGE="$( cat "/tmp/scratch/commands/$I/kludge" )" || exit 137
                                                                                                                                                             READS="$( cat "/tmp/scratch/commands/$I/reads" )" || exit 186
                                                                                                                                                             STATUS="$( cat "/tmp/scratch/commands/$I/observed/status" )" || exit 147
