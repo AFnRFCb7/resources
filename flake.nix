@@ -1051,10 +1051,11 @@
                                 {
                                     check2 =
                                         {
+                                            gc-roots-directory ,
                                             inputs ,
                                             name ,
                                             nodes ,
-                                            gc-roots-directory ,
+                                            order ,
                                             pkgs ,
                                             resources-directory ,
                                             tests
@@ -1744,6 +1745,7 @@
                                                 in
                                                     {
                                                         name = name ;
+                                                        order = order ;
                                                         value = nixos-test ;
                                                     } ;
                                     implementation = implementation ;
