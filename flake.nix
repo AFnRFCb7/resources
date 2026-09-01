@@ -426,7 +426,7 @@
                                                                                 ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
                                                                                 mkdir --parents ${ resources-directory }/release
                                                                                 sed -e "s#$HASH#\$HASH#" -e "w${ resources-directory }/release/$INDEX"
-                                                                                sed 's/^/# /' "$INPUT_FILE" >> ${ resources-directory }/release/$INDEX"
+                                                                                sed 's/^/# /' "$INPUT_FILE" >> "${ resources-directory }/release/$INDEX"
                                                                                 chmod 0500 "${ resources-directory }/release/$INDEX"
                                                                                 jq \
                                                                                     '{
