@@ -648,8 +648,8 @@
                                                                                                             printf -v INDEX "%016d" "$SEQUENCE"
                                                                                                             export INDEX
                                                                                                             mkdir --parents "${ gc-roots-directory }/$INDEX"
-                                                                                                            mkdir --parents ${ resources-directory }/flags
-                                                                                                            touch "${ resources-directory }/flags/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }
+                                                                                                            touch "${ resources-directory }/$INDEX.flag"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                             mkdir --parents ${ resources-directory }/release
@@ -851,7 +851,7 @@
                                                                                                                         mkdir --parents ${ resources-directory }
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
-                                                                                                                        rm --force "${ resources-directory }/flags/$INDEX"
+                                                                                                                        rm --force "${ resources-directory }/$INDEX.flag"
                                                                                                                         echo "CONSIDERING RELEASING $INDEX START WAITING FOR PIDS"
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
@@ -896,7 +896,7 @@
                                                                                                                         is-releasable
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
-                                                                                                                        if [[ -f "${ resources-directory }/flags/$INDEX" ]]
+                                                                                                                        if [[ -f "${ resources-directory }/$INDEX.flag" ]]
                                                                                                                         then
                                                                                                                             flock -u 162
                                                                                                                             "$0"
