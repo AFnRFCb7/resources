@@ -839,7 +839,7 @@
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    echo "192 CONSIDERING RELEASE $INDEX $HASH"
+                                                                                                                    echo "192 CONSIDERING RELEASE $INDEX"
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
                                                                                                                         STATUS="$?"
