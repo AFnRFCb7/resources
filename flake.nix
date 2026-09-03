@@ -1624,7 +1624,7 @@
                                                                                                                         standard-output =
                                                                                                                             visitor
                                                                                                                                 {
-                                                                                                                                    string = path : value : builtins.toFile "process" ( builtins.trace "9615154236931499 ${ value }" value ) ;
+                                                                                                                                    string = path : value : builtins.toFile "process" value ;
                                                                                                                                     path = path : value : value ;
                                                                                                                                 }
                                                                                                                                 standard-output ;
