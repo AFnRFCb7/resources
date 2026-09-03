@@ -1345,7 +1345,7 @@
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                             then
-                                                                                                                                                                                exit 118
+                                                                                                                                                                                exit 134
                                                                                                                                                                             fi
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                             exit "$STATUS"
