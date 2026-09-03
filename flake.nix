@@ -1379,7 +1379,7 @@
                                                                                                                                                         export COMMAND_INDEX=${ command-index }
                                                                                                                                                         mkdir --parents /tmp/scratch/commands/${ command-index }/expected
                                                                                                                                                         ln --symbolic ${ standard-error } /tmp/scratch/commands/${ command-index }/expected/standard-error
-                                                                                                                                                        ln --symbolic ${ builtins.trace standard-output standard-output } /tmp/scratch/commands/${ command-index }/expected/standard-output
+                                                                                                                                                        ln --symbolic ${ builtins.trace "2187455776768915 ${ standard-output }" standard-output } /tmp/scratch/commands/${ command-index }/expected/standard-output
                                                                                                                                                         echo -n ${ status } > /tmp/scratch/commands/${ command-index }/expected/status
                                                                                                                                                         echo -n ${ kludge } > /tmp/scratch/commands/${ command-index }/kludge
                                                                                                                                                         ln --symbolic ${ process.path } /tmp/scratch/commands/${ command-index }/process
@@ -1624,7 +1624,7 @@
                                                                                                                         standard-output =
                                                                                                                             visitor
                                                                                                                                 {
-                                                                                                                                    string = path : value : builtins.toFile "process" ( builtins.trace value value ) ;
+                                                                                                                                    string = path : value : builtins.toFile "process" ( builtins.trace "9615154236931499 ${ value }" value ) ;
                                                                                                                                     path = path : value : value ;
                                                                                                                                 }
                                                                                                                                 standard-output ;
