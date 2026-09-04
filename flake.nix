@@ -1268,9 +1268,24 @@
                                                                                                                                                                                     UUID=()
                                                                                                                                                                                     while [[ "$#" -gt 0 ]]
                                                                                                                                                                                     do
-                                                                                                                                                                                        *)
-                                                                                                                                                                                            exit
+                                                                                                                                                                                        case "$1" in
+                                                                                                                                                                                            --expected)
+                                                                                                                                                                                                EXPECTED="$2"
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            --uuid)
+                                                                                                                                                                                                UUID+=( "$2" )
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            *)
+                                                                                                                                                                                                exit 170
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                        esac
                                                                                                                                                                                     done
+                                                                                                                                                                                    OBSERVED="$( mktemp --suffix ".json" )" || exit 172
+                                                                                                                                                                                    check-files > "$OBSERVED"
+                                                                                                                                                                                    diff --unified "$EXPECTED" "$OBSERVED"
+                                                                                                                                                                                    echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
                                                                                                                                                                 )
