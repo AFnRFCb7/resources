@@ -1437,7 +1437,7 @@
                                                                                                                                                                                                 ;;
                                                                                                                                                                                         esac
                                                                                                                                                                                     done
-                                                                                                                                                                                    # nix-collect-garbage > /dev/null 2>&1
+                                                                                                                                                                                    nix-collect-garbage > /dev/null 2>&1
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
