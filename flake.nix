@@ -1420,6 +1420,31 @@
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
+                                                                                                                                                                            name = "force-garbage-collection" ;
+                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.nix ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    UUID=()
+                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                    do
+                                                                                                                                                                                        case "$1" in
+                                                                                                                                                                                            --uuid)
+                                                                                                                                                                                                UUID+=( "$2" )
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            *)
+                                                                                                                                                                                                exit 182
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                        esac
+                                                                                                                                                                                    done
+                                                                                                                                                                                    nix-collect-garbage > /dev/null 2>&1
+                                                                                                                                                                                    echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
                                                                                                                                                                             name = "force-sync" ;
                                                                                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                             text =
