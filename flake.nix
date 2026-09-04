@@ -1355,6 +1355,82 @@
                                                                                                                                                         (
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
+                                                                                                                                                                    name = "force-corruption" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            UUID=()
+                                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                                            do
+                                                                                                                                                                                case "$1" in
+                                                                                                                                                                                    --check-file-target)
+                                                                                                                                                                                        CHECK_FILE_TARGET="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --link-target-alpha)
+                                                                                                                                                                                        LINK_TARGET_ALPHA="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --link-target-beta)
+                                                                                                                                                                                        LINK_TARGET_BETA="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --string)
+                                                                                                                                                                                        STRING="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --uuid)
+                                                                                                                                                                                        UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    *)
+                                                                                                                                                                                        exit 156
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                esac
+                                                                                                                                                                            done
+                                                                                                                                                                            find ${ resources-directory }/mounts -mindepth 1 | while read -r FILE
+                                                                                                                                                                            do
+                                                                                                                                                                                PERMISSIONS="$( stat --printf "%A" "$FILE" )" || exit 162
+                                                                                                                                                                                if [[ -L "$FILE" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    LINK_TARGET="$( readlink "$FILE" )" || exit 177
+                                                                                                                                                                                    if [[ "$LINK_TARGET" == "$LINK_TARGET_ALPHA" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        ln --symbolic --force "$LINK_TARGET_BETA" "$FILE"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        ln --symbolic --force "$LINK_TARGET_ALPHA" "$FILE"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                elif [[ -f "$FILE" ]]
+                                                                                                                                                                                then
+                                                                                                                                                                                    if [[ -s "$FILE" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        echo > "$FILE"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        echo "$STRING" > "$FILE"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                    if [[ "$PERMISSIONS" == "-r--------" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        chmod 0777 "$FILE"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        chmod 0400 "$FILE"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                else
+                                                                                                                                                                                    if [[ "$PERMISSIONS" == "-r--------" ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        chmod 0777 "$FILE"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        chmod 0400 "$FILE"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                fi
+                                                                                                                                                                            done
+                                                                                                                                                                            echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                            check-files ... > "$CHECK_FILE_TARGET"
+                                                                                                                                                                        '' ;
+                                                                                                                                                                }
+                                                                                                                                                        )
+                                                                                                                                                        (
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
                                                                                                                                                                     name = "force-sync" ;
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                     text =
