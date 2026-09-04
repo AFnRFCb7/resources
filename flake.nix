@@ -1261,6 +1261,22 @@
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
+                                                                                                                                                                            name = "check-difference" ;
+                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.diffutils check-files ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    UUID=()
+                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                    do
+                                                                                                                                                                                        *)
+                                                                                                                                                                                            exit
+                                                                                                                                                                                    done
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
                                                                                                                                                                             name = "check-redis" ;
                                                                                                                                                                             runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                                                             text =
@@ -1366,7 +1382,7 @@
                                                                                                                                                                                     do
                                                                                                                                                                                         case "$1" in
                                                                                                                                                                                             --check-file-target)
-                                                                                                                                                                                                CHECK_FILE_TARGET="$2"
+                                                                                                                                                                                                CHECK_FILES_TARGET="$2"
                                                                                                                                                                                                 shift 2
                                                                                                                                                                                                 ;;
                                                                                                                                                                                             --uuid)
@@ -1382,7 +1398,7 @@
                                                                                                                                                                                     nix-collect-garbage
                                                                                                                                                                                     find ${ resources-directory }/mounts -mindepth 2 -maxdepth 2 -delete
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                                    check-files ... > "$CHECK_FILE_TARGET"
+                                                                                                                                                                                    check-files > "$CHECK_FILES_TARGET"
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
                                                                                                                                                                 )
