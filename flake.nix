@@ -1118,8 +1118,8 @@
                                                                                                                                             {
                                                                                                                                                 name = "command" ;
                                                                                                                                                 runtimeInputs =
-                                                                                                                                                    [
-                                                                                                                                                        (
+                                                                                                                                                    let
+                                                                                                                                                        check-files =
                                                                                                                                                             pkgs.writeShellApplication
                                                                                                                                                                 {
                                                                                                                                                                     name = "check-files" ;
@@ -1254,192 +1254,150 @@
                                                                                                                                                                             done | jq --slurp --sort-keys "."
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                        (
-                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                {
-                                                                                                                                                                    name = "check-redis" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                                    text =
-                                                                                                                                                                        ''
-                                                                                                                                                                            EXCLUSION="."
-                                                                                                                                                                            UUID=()
-                                                                                                                                                                            while [[ "$#" -gt 0 ]]
-                                                                                                                                                                            do
-                                                                                                                                                                                case "$1" in
-                                                                                                                                                                                    --exclude)
-                                                                                                                                                                                        EXCLUSION='del(.["originator-pid"])'
-                                                                                                                                                                                        shift
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --uuid)
-                                                                                                                                                                                        UUID+=( "$2" )
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    *)
-                                                                                                                                                                                        exit 144
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                esac
-                                                                                                                                                                            done
-                                                                                                                                                                            cleanup ( )
-                                                                                                                                                                            {
-                                                                                                                                                                                STATUS="$?"
-                                                                                                                                                                                if [[ "$STATUS" != 0 ]]
-                                                                                                                                                                                then
-                                                                                                                                                                                    echo -n "$STATUS"
-                                                                                                                                                                                fi
-                                                                                                                                                                                exit 0
-                                                                                                                                                                            }
-                                                                                                                                                                            trap cleanup EXIT
-                                                                                                                                                                            read -r -t 1 -u 189 TYPE <&189 || exit 183
-                                                                                                                                                                            read -r -t 1 -u 189 CHANNEL <&189 || exit 104
-                                                                                                                                                                            read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                            EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
-                                                                                                                                                                            # shellcheck disable=SC2208,SC2016
-                                                                                                                                                                            jq \
-                                                                                                                                                                                --null-input \
-                                                                                                                                                                                --arg CHANNEL "$CHANNEL" \
-                                                                                                                                                                                --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
-                                                                                                                                                                                --arg TYPE "$TYPE" \
-                                                                                                                                                                                '{
-                                                                                                                                                                                    "type" : $TYPE ,
-                                                                                                                                                                                    "channel" : $CHANNEL ,
-                                                                                                                                                                                    "payload" : $PAYLOAD
-                                                                                                                                                                                }'
-                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
-                                                                                                                                                                        '' ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                        (
-                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                {
-                                                                                                                                                                    name = "check-resource" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                                    text =
-                                                                                                                                                                        ''
-                                                                                                                                                                            UUID=()
-                                                                                                                                                                            while [[ "$#" -gt 0 ]]
-                                                                                                                                                                            do
-                                                                                                                                                                                case "$1" in
-                                                                                                                                                                                    --expression)
-                                                                                                                                                                                        EXPRESSION="$2"
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --uuid)
-                                                                                                                                                                                        UUID+=( "$2" )
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    *)
-                                                                                                                                                                                        exit 119
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                esac
-                                                                                                                                                                            done
-                                                                                                                                                                            STANDARD_ERROR="$( mktemp )" || exit 193
-                                                                                                                                                                            if RESOURCE="$( "$EXPRESSION" 2> "$STANDARD_ERROR" )"
-                                                                                                                                                                            then
-                                                                                                                                                                                STATUS="$?"
-                                                                                                                                                                            else
-                                                                                                                                                                                STATUS="$?"
-                                                                                                                                                                            fi
-                                                                                                                                                                            echo -n "$RESOURCE"
-                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                            if [[ -s "$STANDARD_ERROR" ]]
-                                                                                                                                                                            then
-                                                                                                                                                                                exit 134
-                                                                                                                                                                            fi
-                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                            exit "$STATUS"
-                                                                                                                                                                        '' ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                        (
-                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                {
-                                                                                                                                                                    name = "force-corruption" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.findutils ] ;
-                                                                                                                                                                    text =
-                                                                                                                                                                        ''
-                                                                                                                                                                            UUID=()
-                                                                                                                                                                            while [[ "$#" -gt 0 ]]
-                                                                                                                                                                            do
-                                                                                                                                                                                case "$1" in
-                                                                                                                                                                                    --check-file-target)
-                                                                                                                                                                                        CHECK_FILE_TARGET="$2"
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --link-target-alpha)
-                                                                                                                                                                                        LINK_TARGET_ALPHA="$2"
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --link-target-beta)
-                                                                                                                                                                                        LINK_TARGET_BETA="$2"
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --string)
-                                                                                                                                                                                        STRING="$2"
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    --uuid)
-                                                                                                                                                                                        UUID+=( "$2" )
-                                                                                                                                                                                        shift 2
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                    *)
-                                                                                                                                                                                        exit 156
-                                                                                                                                                                                        ;;
-                                                                                                                                                                                esac
-                                                                                                                                                                            done
-                                                                                                                                                                            find ${ resources-directory }/mounts -mindepth 1 | while read -r FILE
-                                                                                                                                                                            do
-                                                                                                                                                                                PERMISSIONS="$( stat --printf "%A" "$FILE" )" || exit 162
-                                                                                                                                                                                if [[ -L "$FILE" ]]
-                                                                                                                                                                                then
-                                                                                                                                                                                    LINK_TARGET="$( readlink "$FILE" )" || exit 177
-                                                                                                                                                                                    if [[ "$LINK_TARGET" == "$LINK_TARGET_ALPHA" ]]
+                                                                                                                                                                } ;
+                                                                                                                                                        in
+                                                                                                                                                            [
+                                                                                                                                                                check-files
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "check-redis" ;
+                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    EXCLUSION="."
+                                                                                                                                                                                    UUID=()
+                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                    do
+                                                                                                                                                                                        case "$1" in
+                                                                                                                                                                                            --exclude)
+                                                                                                                                                                                                EXCLUSION='del(.["originator-pid"])'
+                                                                                                                                                                                                shift
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            --uuid)
+                                                                                                                                                                                                UUID+=( "$2" )
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            *)
+                                                                                                                                                                                                exit 144
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                        esac
+                                                                                                                                                                                    done
+                                                                                                                                                                                    cleanup ( )
+                                                                                                                                                                                    {
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                        if [[ "$STATUS" != 0 ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            echo -n "$STATUS"
+                                                                                                                                                                                        fi
+                                                                                                                                                                                        exit 0
+                                                                                                                                                                                    }
+                                                                                                                                                                                    trap cleanup EXIT
+                                                                                                                                                                                    read -r -t 1 -u 189 TYPE <&189 || exit 183
+                                                                                                                                                                                    read -r -t 1 -u 189 CHANNEL <&189 || exit 104
+                                                                                                                                                                                    read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
+                                                                                                                                                                                    EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
+                                                                                                                                                                                    # shellcheck disable=SC2208,SC2016
+                                                                                                                                                                                    jq \
+                                                                                                                                                                                        --null-input \
+                                                                                                                                                                                        --arg CHANNEL "$CHANNEL" \
+                                                                                                                                                                                        --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
+                                                                                                                                                                                        --arg TYPE "$TYPE" \
+                                                                                                                                                                                        '{
+                                                                                                                                                                                            "type" : $TYPE ,
+                                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                                                                                        }'
+                                                                                                                                                                                    echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "check-resource" ;
+                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    UUID=()
+                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                    do
+                                                                                                                                                                                        case "$1" in
+                                                                                                                                                                                            --expression)
+                                                                                                                                                                                                EXPRESSION="$2"
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            --uuid)
+                                                                                                                                                                                                UUID+=( "$2" )
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            *)
+                                                                                                                                                                                                exit 119
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                        esac
+                                                                                                                                                                                    done
+                                                                                                                                                                                    STANDARD_ERROR="$( mktemp )" || exit 193
+                                                                                                                                                                                    if RESOURCE="$( "$EXPRESSION" 2> "$STANDARD_ERROR" )"
                                                                                                                                                                                     then
-                                                                                                                                                                                        ln --symbolic --force "$LINK_TARGET_BETA" "$FILE"
+                                                                                                                                                                                        STATUS="$?"
                                                                                                                                                                                     else
-                                                                                                                                                                                        ln --symbolic --force "$LINK_TARGET_ALPHA" "$FILE"
+                                                                                                                                                                                        STATUS="$?"
                                                                                                                                                                                     fi
-                                                                                                                                                                                elif [[ -f "$FILE" ]]
-                                                                                                                                                                                then
-                                                                                                                                                                                    if [[ -s "$FILE" ]]
+                                                                                                                                                                                    echo -n "$RESOURCE"
+                                                                                                                                                                                    echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                                    if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                                     then
-                                                                                                                                                                                        echo > "$FILE"
-                                                                                                                                                                                    else
-                                                                                                                                                                                        echo "$STRING" > "$FILE"
+                                                                                                                                                                                        exit 134
                                                                                                                                                                                     fi
-                                                                                                                                                                                    if [[ "$PERMISSIONS" == "-r--------" ]]
-                                                                                                                                                                                    then
-                                                                                                                                                                                        chmod 0777 "$FILE"
-                                                                                                                                                                                    else
-                                                                                                                                                                                        chmod 0400 "$FILE"
-                                                                                                                                                                                    fi
-                                                                                                                                                                                else
-                                                                                                                                                                                    if [[ "$PERMISSIONS" == "-r--------" ]]
-                                                                                                                                                                                    then
-                                                                                                                                                                                        chmod 0777 "$FILE"
-                                                                                                                                                                                    else
-                                                                                                                                                                                        chmod 0400 "$FILE"
-                                                                                                                                                                                    fi
-                                                                                                                                                                                fi
-                                                                                                                                                                            done
-                                                                                                                                                                            echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                            check-files ... > "$CHECK_FILE_TARGET"
-                                                                                                                                                                        '' ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                        (
-                                                                                                                                                            pkgs.writeShellApplication
-                                                                                                                                                                {
-                                                                                                                                                                    name = "force-sync" ;
-                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils ] ;
-                                                                                                                                                                    text =
-                                                                                                                                                                        ''
-                                                                                                                                                                            sleep 10s
-                                                                                                                                                                        '' ;
-                                                                                                                                                                }
-                                                                                                                                                        )
-                                                                                                                                                    ] ;
+                                                                                                                                                                                    echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                                    exit "$STATUS"
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "force-corruption" ;
+                                                                                                                                                                            runtimeInputs = [ check-files pkgs.coreutils pkgs.findutils pkgs.nix ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    UUID=()
+                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
+                                                                                                                                                                                    do
+                                                                                                                                                                                        case "$1" in
+                                                                                                                                                                                            --check-file-target)
+                                                                                                                                                                                                CHECK_FILE_TARGET="$2"
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            --uuid)
+                                                                                                                                                                                                UUID+=( "$2" )
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                            *)
+                                                                                                                                                                                                exit 156
+                                                                                                                                                                                                ;;
+                                                                                                                                                                                        esac
+                                                                                                                                                                                    done
+                                                                                                                                                                                    find ${ gc-roots-directory } -mindepth 2 -maxdepth 2 -delete
+                                                                                                                                                                                    nix-collect-garbage
+                                                                                                                                                                                    find ${ resources-directory }/mounts -mindepth 2 -maxdepth 2 -delete
+                                                                                                                                                                                    echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                                    check-files ... > "$CHECK_FILE_TARGET"
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                                (
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "force-sync" ;
+                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                    sleep 10s
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        }
+                                                                                                                                                                )
+                                                                                                                                                            ] ;
                                                                                                                                                 text = text ;
                                                                                                                                             } ;
                                                                                                                                     in "${ application }/bin/command" ;
