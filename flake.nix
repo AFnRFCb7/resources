@@ -1410,7 +1410,7 @@
                                                                                                                                                                                         esac
                                                                                                                                                                                     done
                                                                                                                                                                                     find ${ gc-roots-directory } -mindepth 2 -maxdepth 2 -delete
-                                                                                                                                                                                    nix-collect-garbage
+                                                                                                                                                                                    # nix-collect-garbage
                                                                                                                                                                                     find ${ resources-directory }/mounts -mindepth 2 -maxdepth 2 -delete
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     check-files > "$CHECK_FILES_TARGET"
