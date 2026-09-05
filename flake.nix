@@ -526,6 +526,7 @@
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
                                                                                                                                 "--bind" "${ resources-directory }/pids/$INDEX" "/pid"
                                                                                                                                 "--bind" "${ resources-directory }/release" "/release"
+                                                                                                                                "--bind" "${ resources-directory }/${ root-parameters.invalid-init-channel }" "/invalid-init"
                                                                                                                                 "--bind" "$OUTPUT_FILE" "/output"
                                                                                                                                 "--tmpfs" "/private"
                                                                                                                                 "--tmpfs" "/tmp/scratch"
@@ -655,6 +656,7 @@
                                                                                                             touch "${ resources-directory }/$INDEX.flag"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                                             mkdir --parents ${ resources-directory }/release
                                                                                                             init
                                                                                                         '' ;
