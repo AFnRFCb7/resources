@@ -782,7 +782,7 @@
                                                                                                                                                                 done
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
-                                                                                                                                                                CHANNEL="$( jq --raw-output ".channel" /input )" || exit 134
+                                                                                                                                                                CHANNEL="$( jq --raw-output ".channel" /input )" || exit 179
                                                                                                                                                                 export CHANNEL
                                                                                                                                                                 STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
                                                                                                                                                                 STATUS="$( jq --raw-output ".status" /input )" || exit 112
@@ -1410,7 +1410,7 @@
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                                     then
-                                                                                                                                                                                        exit 134
+                                                                                                                                                                                        exit 123
                                                                                                                                                                                     fi
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     exit "$STATUS"
