@@ -519,6 +519,7 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
+                                                                                                                                "--bind" "${ resources-directory }/canonical" /canonical
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--bind" "${ gc-roots-directory }/$INDEX" "/gc-root"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
@@ -576,9 +577,8 @@
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" "${ resources-directory }/canonical/$HASH"
-                                                                                                                                                            mkdir --parents ${ resources-directory }/release
-                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } "${ resources-directory }/release/$INDEX"
+                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" /canonical/$HASH"
+                                                                                                                                                            ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
@@ -655,6 +655,7 @@
                                                                                                             mkdir --parents "${ gc-roots-directory }/$INDEX"
                                                                                                             mkdir --parents ${ resources-directory }
                                                                                                             touch "${ resources-directory }/$INDEX.flag"
+                                                                                                            mkdir --parents "${ resources-directory }/canonical"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
                                                                                                             mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
