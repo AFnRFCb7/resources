@@ -519,7 +519,7 @@
                                                                                                                     {
                                                                                                                         extraBwrapArgs =
                                                                                                                             [
-                                                                                                                                "--bind" "${ resources-directory }/canonical" /canonical2
+                                                                                                                                "--bind" "${ resources-directory }/canonical" "/canonical"
                                                                                                                                 "--ro-bind" "$INPUT_FILE" "/input"
                                                                                                                                 "--bind" "${ gc-roots-directory }/$INDEX" "/gc-root"
                                                                                                                                 "--bind" "${ resources-directory }/mounts/$INDEX" "/mount"
@@ -577,7 +577,7 @@
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" /canonical2/$HASH"
+                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" /canonical/$HASH"
                                                                                                                                                             ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
