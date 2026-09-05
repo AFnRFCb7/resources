@@ -451,7 +451,7 @@
                                                                                         "status" : .status ,
                                                                                         "targets" : .targets ,
                                                                                         "temporary" : .temporary ,
-                                                                                        "text" : .text
+                                                                                        "text" : .textf
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
