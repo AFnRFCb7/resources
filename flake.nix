@@ -1410,6 +1410,7 @@
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                                     then
+                                                                                                                                                                                        cat "$STANDARD_ERROR" >&2
                                                                                                                                                                                         exit 139
                                                                                                                                                                                     fi
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
