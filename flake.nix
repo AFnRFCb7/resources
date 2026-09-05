@@ -1255,9 +1255,39 @@
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 } ;
+                                                                                                                                                        force-garbage-collection =
+                                                                                                                                                            pkgs.writeShellApplication
+                                                                                                                                                                {
+                                                                                                                                                                    name = "force-garbage-collection" ;
+                                                                                                                                                                    runtimeInputs = [ pkgs.coreutils pkgs.nix ] ;
+                                                                                                                                                                    text =
+                                                                                                                                                                        ''
+                                                                                                                                                                            TIMEOUT=10
+                                                                                                                                                                            UUID=()
+                                                                                                                                                                            while [[ "$#" -gt 0 ]]
+                                                                                                                                                                            do
+                                                                                                                                                                                case "$1" in
+                                                                                                                                                                                    --timeout)
+                                                                                                                                                                                        TIMEOUT="$2"
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    --uuid)
+                                                                                                                                                                                        UUID+=( "$2" )
+                                                                                                                                                                                        shift 2
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                    *)
+                                                                                                                                                                                        exit 179
+                                                                                                                                                                                        ;;
+                                                                                                                                                                                esac
+                                                                                                                                                                            done
+                                                                                                                                                                            true timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
+                                                                                                                                                                            echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
+                                                                                                                                                                        '' ;
+                                                                                                                                                                } ;
                                                                                                                                                         in
                                                                                                                                                             [
                                                                                                                                                                 check-files
+                                                                                                                                                                force-garbage-collection
                                                                                                                                                                 (
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
@@ -1389,17 +1419,13 @@
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
                                                                                                                                                                             name = "force-corruption" ;
-                                                                                                                                                                            runtimeInputs = [ check-files pkgs.coreutils pkgs.findutils pkgs.nix ] ;
+                                                                                                                                                                            runtimeInputs = [ check-files force-garbage-collection pkgs.coreutils pkgs.findutils pkgs.nix ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
                                                                                                                                                                                     UUID=()
                                                                                                                                                                                     while [[ "$#" -gt 0 ]]
                                                                                                                                                                                     do
                                                                                                                                                                                         case "$1" in
-                                                                                                                                                                                            --check-file-target)
-                                                                                                                                                                                                CHECK_FILES_TARGET="$2"
-                                                                                                                                                                                                shift 2
-                                                                                                                                                                                                ;;
                                                                                                                                                                                             --uuid)
                                                                                                                                                                                                 UUID+=( "$2" )
                                                                                                                                                                                                 shift 2
@@ -1409,41 +1435,17 @@
                                                                                                                                                                                                 ;;
                                                                                                                                                                                         esac
                                                                                                                                                                                     done
-                                                                                                                                                                                    find ${ gc-roots-directory } -mindepth 2 -maxdepth 2 -delete
-                                                                                                                                                                                    nix-collect-garbage
-                                                                                                                                                                                    find ${ resources-directory }/mounts -mindepth 2 -maxdepth 2 -delete
+                                                                                                                                                                                    find ${ gc-roots-directory } -mindepth 2 -maxdepth 2 | while read -r FILE
+                                                                                                                                                                                    do
+                                                                                                                                                                                        if [[ ! -d "$FILE" ]]
+                                                                                                                                                                                        then
+                                                                                                                                                                                            rm "$FILE"
+                                                                                                                                                                                        fi
+                                                                                                                                                                                    done
+                                                                                                                                                                                    force-garbage-collection
+                                                                                                                                                                                    find ${ resources-directory }/mounts -mindepth 2 -type l -delete
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     check-files > "$CHECK_FILES_TARGET"
-                                                                                                                                                                                '' ;
-                                                                                                                                                                        }
-                                                                                                                                                                )
-                                                                                                                                                                (
-                                                                                                                                                                    pkgs.writeShellApplication
-                                                                                                                                                                        {
-                                                                                                                                                                            name = "force-garbage-collection" ;
-                                                                                                                                                                            runtimeInputs = [ pkgs.coreutils pkgs.nix ] ;
-                                                                                                                                                                            text =
-                                                                                                                                                                                ''
-                                                                                                                                                                                    TIMEOUT=10
-                                                                                                                                                                                    UUID=()
-                                                                                                                                                                                    while [[ "$#" -gt 0 ]]
-                                                                                                                                                                                    do
-                                                                                                                                                                                        case "$1" in
-                                                                                                                                                                                            --timeout)
-                                                                                                                                                                                                TIMEOUT="$2"
-                                                                                                                                                                                                shift 2
-                                                                                                                                                                                                ;;
-                                                                                                                                                                                            --uuid)
-                                                                                                                                                                                                UUID+=( "$2" )
-                                                                                                                                                                                                shift 2
-                                                                                                                                                                                                ;;
-                                                                                                                                                                                            *)
-                                                                                                                                                                                                exit 179
-                                                                                                                                                                                                ;;
-                                                                                                                                                                                        esac
-                                                                                                                                                                                    done
-                                                                                                                                                                                    true timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
-                                                                                                                                                                                    echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
                                                                                                                                                                 )
