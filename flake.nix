@@ -577,7 +577,7 @@
                                                                                                                                                         ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
-                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" /canonical/$HASH"
+                                                                                                                                                            ln --symbolic "${ resources-directory }/mounts/$INDEX" "/canonical/$HASH"
                                                                                                                                                             ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
