@@ -1424,10 +1424,15 @@
                                                                                                                                                                             runtimeInputs = [ pkgs.coreutils pkgs.nix ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
+                                                                                                                                                                                    TIMEOUT=10
                                                                                                                                                                                     UUID=()
                                                                                                                                                                                     while [[ "$#" -gt 0 ]]
                                                                                                                                                                                     do
                                                                                                                                                                                         case "$1" in
+                                                                                                                                                                                            --timeout)
+                                                                                                                                                                                                TIMEOUT="$2"
+                                                                                                                                                                                                shift 2
+                                                                                                                                                                                                ;;
                                                                                                                                                                                             --uuid)
                                                                                                                                                                                                 UUID+=( "$2" )
                                                                                                                                                                                                 shift 2
@@ -1437,7 +1442,7 @@
                                                                                                                                                                                                 ;;
                                                                                                                                                                                         esac
                                                                                                                                                                                     done
-                                                                                                                                                                                    nix-collect-garbage > /dev/null 2>&1
+                                                                                                                                                                                    timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
