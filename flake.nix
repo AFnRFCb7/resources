@@ -439,6 +439,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
@@ -454,6 +455,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 == "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
@@ -470,6 +472,7 @@
                                                                                     }' "$OUTPUT_FILE" | log
                                                                             elif [[ 0 != "$STATUS" ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                             then
+                                                                                mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
@@ -652,7 +655,6 @@
                                                                                                             touch "${ resources-directory }/$INDEX.flag"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
-                                                                                                            mkdir --parents ${ resources-directory }/release
                                                                                                             init
                                                                                                         '' ;
                                                                                                 } ;
