@@ -1442,7 +1442,7 @@
                                                                                                                                                                                                 ;;
                                                                                                                                                                                         esac
                                                                                                                                                                                     done
-                                                                                                                                                                                    # timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
+                                                                                                                                                                                    true timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
                                                                                                                                                                                     echo "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
