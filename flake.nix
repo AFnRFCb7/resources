@@ -1445,7 +1445,6 @@
                                                                                                                                                                                     force-garbage-collection
                                                                                                                                                                                     find ${ resources-directory }/mounts -mindepth 2 -type l -delete
                                                                                                                                                                                     echo -e "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
-                                                                                                                                                                                    check-files > "$CHECK_FILES_TARGET"
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
                                                                                                                                                                 )
