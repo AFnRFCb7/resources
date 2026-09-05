@@ -120,7 +120,7 @@
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 123
+                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 163
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
@@ -723,7 +723,7 @@
                                                                                                                                                             ''
                                                                                                                                                                 cd /mount
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
-                                                                                                                                                                echo "123 ABOUT TO RELEASE $INDEX"
+                                                                                                                                                                echo "ABOUT TO RELEASE $INDEX"
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
@@ -1410,7 +1410,7 @@
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     if [[ -s "$STANDARD_ERROR" ]]
                                                                                                                                                                                     then
-                                                                                                                                                                                        exit 123
+                                                                                                                                                                                        exit 139
                                                                                                                                                                                     fi
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                     exit "$STATUS"
