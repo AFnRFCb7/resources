@@ -1658,6 +1658,7 @@
                                                                                                                                                         echo "NIX_FILE=$NIX_FILE" >&2
                                                                                                                                                         cat "$NIX_FILE" > /tmp/scratch/outputs.nix
                                                                                                                                                         mkdir --parents /tmp/scratch/link
+                                                                                                                                                        echo ${ name } > /tmp/scratch/link/name
                                                                                                                                                         ln --symbolic "$0" /tmp/scratch/link/execute
                                                                                                                                                         TARGET="$( echo "$OUT" | sha512sum  | cut --characters 1-128 )" || exit 190
                                                                                                                                                         echo "$TARGET" > /tmp/scratch/link/name
