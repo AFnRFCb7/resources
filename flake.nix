@@ -655,6 +655,7 @@
                                                                                                             touch "${ resources-directory }/$INDEX.flag"
                                                                                                             mkdir --parents "${ resources-directory }/mounts/$INDEX"
                                                                                                             mkdir --parents "${ resources-directory }/pids/$INDEX"
+                                                                                                            mkdir --parents ${ resources-directory }/release
                                                                                                             init
                                                                                                         '' ;
                                                                                                 } ;
