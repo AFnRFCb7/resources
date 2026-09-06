@@ -8,6 +8,7 @@
 		            {
 		                buildFHSUserEnv ,
 		                coreutils ,
+		                error-code ,
 		                findutils ,
 		                flock ,
 		                gnused ,
@@ -1123,6 +1124,7 @@
                                     in
                                         {
                                             coreutils = visitor { string = path : value : value ;} coreutils ;
+                                            error-code = visitor { int = path : value : builtins.toString value ; } error-code ;
                                             invalid-init-channel = to-string invalid-init-channel ;
                                             invalid-release-channel = to-string invalid-release-channel ;
                                             mkDerivation = visitor { lambda = path : value : value ; } mkDerivation ;
