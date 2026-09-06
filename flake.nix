@@ -948,13 +948,32 @@
                                                                                                                                         recovery =
                                                                                                                                             visitor
                                                                                                                                                 {
-
+                                                                                                                                                    lambda =
+                                                                                                                                                        path : value :
+                                                                                                                                                            let
+                                                                                                                                                                application =
+                                                                                                                                                                    pkgs.writeShellApplication
+                                                                                                                                                                        {
+                                                                                                                                                                            name = "recovery" ;
+                                                                                                                                                                            runtimeInputs = [ ] ;
+                                                                                                                                                                            text =
+                                                                                                                                                                                ''
+                                                                                                                                                                                '' ;
+                                                                                                                                                                        } ;
+                                                                                                                                                                in
+                                                                                                                                                                    [
+                                                                                                                                                                        ''
+                                                                                                                                                                            mkdir --parents /invalid-release/"$INDEX"
+                                                                                                                                                                        ''
+                                                                                                                                                                        ''
+                                                                                                                                                                            ln --symbolic ${ application }/bin/recovery /invalid-release/"$INDEX"/'${ builtins.toJSON path }'.sh
+                                                                                                                                                                        ''
+                                                                                                                                                                    ] ;
+                                                                                                                                                    list = path : list : builtins.concatLists list ;
+                                                                                                                                                    set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                                                                                 }
                                                                                                                                                 resource-parameters.release.release.action ;
-                                                                                                                                        in
-                                                                                                                                            ''
-                                                                                                                                                mkdir --parents "/invalid-release/$INDEX"
-                                                                                                                                            '' ;
+                                                                                                                                        in builtins.concatStringsSep "\n" recovery ;
                                                                                                                             }
                                                                                                                     )
                                                                                                                 ] ;
