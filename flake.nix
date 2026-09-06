@@ -77,7 +77,7 @@
                                                                                                                     then
                                                                                                                         jq \
                                                                                                                             --null-input \
-                                                                                                                            --arg STATUS "$?" \
+                                                                                                                            --argjson STATUS "$?" \
                                                                                                                             --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                             --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                             '{
@@ -88,7 +88,7 @@
                                                                                                                     else
                                                                                                                         jq \
                                                                                                                             --null-input \
-                                                                                                                            --arg STATUS "$?" \
+                                                                                                                            --argjson STATUS "$?" \
                                                                                                                             --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                             --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                             '{
@@ -463,7 +463,7 @@
                                                                                         "seed" : .seed ,
                                                                                         "standard-error" : .["standard-error"] ,
                                                                                         "standard-output" : .["standard-error"] ,
-                                                                                        "status" : ./status ,
+                                                                                        "status" : .status ,
                                                                                         "targets" : .targets ,
                                                                                         "temporary" : .temporary ,
                                                                                         "text" : .text
@@ -738,7 +738,7 @@
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
-                                                                                                                                                                    --arg STATUS "$STATUS" \
+                                                                                                                                                                    --argjson STATUS "$STATUS" \
                                                                                                                                                                     '{
                                                                                                                                                                         "index" : .index ,
                                                                                                                                                                         "standard-error" : $STANDARD_ERROR ,
