@@ -1006,7 +1006,7 @@
                                                                                                                                                     list = path : list : builtins.concatLists list ;
                                                                                                                                                     set = path : set : builtins.concatLists ( builtins.attrValues set ) ;
                                                                                                                                                 }
-                                                                                                                                                resource-parameters.release.recovery ;
+                                                                                                                                                release.recovery ;
                                                                                                                                         in builtins.concatStringsSep "\n" recovery ;
                                                                                                                             }
                                                                                                                     )
