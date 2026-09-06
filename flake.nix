@@ -945,6 +945,12 @@
                                                                                                                                 runtimeInputs = [ pkgs.coreutils ] ;
                                                                                                                                 text =
                                                                                                                                     let
+                                                                                                                                        recovery =
+                                                                                                                                            visitor
+                                                                                                                                                {
+
+                                                                                                                                                }
+                                                                                                                                                resource-parameters.release.release.action ;
                                                                                                                                         in
                                                                                                                                             ''
                                                                                                                                                 mkdir --parents "/invalid-release/$INDEX"
