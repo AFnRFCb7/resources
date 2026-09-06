@@ -955,7 +955,11 @@
                                                                                                                                                                     pkgs.writeShellApplication
                                                                                                                                                                         {
                                                                                                                                                                             name = "recovery" ;
-                                                                                                                                                                            runtimeInputs = [ ] ;
+                                                                                                                                                                            runtimeInputs =
+                                                                                                                                                                                let
+                                                                                                                                                                                    in
+                                                                                                                                                                                        [
+                                                                                                                                                                                        ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
                                                                                                                                                                                 '' ;
