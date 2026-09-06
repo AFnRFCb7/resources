@@ -923,9 +923,37 @@
                                                                         invalid-channel = root-parameters.invalid-release-channel ;
                                                                         release = visitor { lambda = path : value : value null ; } release ;
                                                                         recovery =
-                                                                            visitor
+                                                                            writeShellApplication
                                                                                 {
-
+                                                                                    name = "recovery" ;
+                                                                                    runtimeInputs =
+                                                                                        [
+                                                                                            (
+                                                                                                buildFHSUserEnv
+                                                                                                    {
+                                                                                                        extraBwrapArgs = [ ] ;
+                                                                                                        name = "recovery" ;
+                                                                                                        runScript = "recovery" ;
+                                                                                                        targetPkgs =
+                                                                                                            pkgs :
+                                                                                                                [
+                                                                                                                    (
+                                                                                                                        pkgs.writeShellApplication
+                                                                                                                            {
+                                                                                                                                name = "recovery" ;
+                                                                                                                                runtimeInputs = [ pkgs.coreutils ] ;
+                                                                                                                                text =
+                                                                                                                                    let
+                                                                                                                                        in
+                                                                                                                                            ''
+                                                                                                                                            '' ;
+                                                                                                                            }
+                                                                                                                    )
+                                                                                                                ] ;
+                                                                                                    }
+                                                                                            )
+                                                                                        ] ;
+                                                                                    text = "recovery" ;
                                                                                 } ;
                                                                         valid-channel = root-parameters.valid-release-channel ;
                                                                     } ;
