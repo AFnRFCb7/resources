@@ -933,7 +933,11 @@
                                                                                             (
                                                                                                 buildFHSUserEnv
                                                                                                     {
-                                                                                                        extraBwrapArgs = [ ] ;
+                                                                                                        extraBwrapArgs =
+                                                                                                            [
+                                                                                                                "--bind" "/invalid-release" "/invalid-release"
+                                                                                                                "--tmpfs" "/private"
+                                                                                                            ] ;
                                                                                                         name = "recovery" ;
                                                                                                         runScript = "recovery" ;
                                                                                                         targetPkgs =
