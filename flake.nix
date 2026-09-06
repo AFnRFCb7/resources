@@ -758,6 +758,7 @@
                                                                                                                                     [
                                                                                                                                         "--ro-bind" "$OUTPUT_FILE" "/input"
                                                                                                                                         "--bind" gc-roots-directory "/gc-roots"
+                                                                                                                                        "--bind" "${ resources-directory }/${ root-parameters.invalid-release-channel }" /invalid-release
                                                                                                                                         "--bind" resources-directory "/resources"
                                                                                                                                         "--bind" "$TEMPORARY" "/temporary"
                                                                                                                                     ] ;
@@ -802,7 +803,7 @@
                                                                                                                                                                         }' /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
+                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -813,7 +814,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
+                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -824,7 +825,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
+                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -909,6 +910,7 @@
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
+                                                                                                                            mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
                                                                                                                             release
                                                                                                                         fi
                                                                                                                     fi
