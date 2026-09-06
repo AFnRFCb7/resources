@@ -758,7 +758,7 @@
                                                                                                                                     [
                                                                                                                                         "--ro-bind" "$OUTPUT_FILE" "/input"
                                                                                                                                         "--bind" gc-roots-directory "/gc-roots"
-                                                                                                                                        "--bind" "${ resources-directory }/${ root-parameters.invalid-release-channel }" /invalid-release
+                                                                                                                                        "--bind" "${ resources-directory }/${ root-parameters.invalid-release-channel }" "/invalid-release"
                                                                                                                                         "--bind" resources-directory "/resources"
                                                                                                                                         "--bind" "$TEMPORARY" "/temporary"
                                                                                                                                     ] ;
