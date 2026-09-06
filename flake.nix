@@ -809,6 +809,7 @@
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
+                                                                                                                                                                            "WTF" : "${ resource-parameters.release.recovery }" ,
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "status" : .status
