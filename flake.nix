@@ -1504,7 +1504,6 @@
                                                                                                                                                         else
                                                                                                                                                             echo -n "$?" > "/tmp/scratch/commands/${ command-index }/observed/status"
                                                                                                                                                         fi
-                                                                                                                                                        touch "/tmp/scratch/commands/${ command-index }/flag"
                                                                                                                                                         if ! diff --recursive --report-identical-files "/tmp/scratch/commands/${ command-index }/expected" "/tmp/scratch/commands/${ command-index }/observed" > /dev/null >&1
                                                                                                                                                         then
                                                                                                                                                             echo true > "/tmp/scratch/failure"
@@ -1516,6 +1515,7 @@
                                                                                                                                                         then
                                                                                                                                                             true
                                                                                                                                                         fi
+                                                                                                                                                        touch "/tmp/scratch/commands/${ command-index }/flag"
                                                                                                                                                     '' ;
                                                                                                                                             } ;
                                                                                                                                 in "${ application }/bin/file" ;
