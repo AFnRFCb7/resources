@@ -773,7 +773,7 @@
                                                                                                                                                 pkgs.writeShellApplication
                                                                                                                                                     {
                                                                                                                                                         name = "release" ;
-                                                                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log ] ;
+                                                                                                                                                        runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log resource-parameters.release.recovery ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
@@ -805,7 +805,7 @@
                                                                                                                                                                         }' /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    ${ resource-parameters.release.recovery }
+                                                                                                                                                                    recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -816,7 +816,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    ${ resource-parameters.release.recovery }
+                                                                                                                                                                    recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -827,7 +827,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    ${ resource-parameters.release.recovery }
+                                                                                                                                                                    recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
