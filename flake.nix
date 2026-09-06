@@ -1451,7 +1451,7 @@
                                                                                                                                                                                         fi
                                                                                                                                                                                     done
                                                                                                                                                                                     force-garbage-collection
-                                                                                                                                                                                    find ${ resources-directory }/mounts -mindepth 2 -type l -delete
+                                                                                                                                                                                    find ${ resources-directory }/mounts -type f -delete
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                                 '' ;
                                                                                                                                                                         }
