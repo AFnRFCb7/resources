@@ -957,11 +957,36 @@
                                                                                                                                                                             name = "recovery" ;
                                                                                                                                                                             runtimeInputs =
                                                                                                                                                                                 let
+                                                                                                                                                                                    recovery = value null ;
                                                                                                                                                                                     in
                                                                                                                                                                                         [
+                                                                                                                                                                                            (
+                                                                                                                                                                                                pkgs.writeShellApplication
+                                                                                                                                                                                                    {
+                                                                                                                                                                                                        name = "recovery" ;
+                                                                                                                                                                                                        runtimeInputs = recovery.targetPkgs pkgs ;
+                                                                                                                                                                                                        text = recovery.text ;
+                                                                                                                                                                                                    }
+                                                                                                                                                                                            )
                                                                                                                                                                                         ] ;
                                                                                                                                                                             text =
                                                                                                                                                                                 ''
+                                                                                                                                                                                    if recovery "$@"
+                                                                                                                                                                                    then
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    else
+                                                                                                                                                                                        STATUS="$?"
+                                                                                                                                                                                    fi
+                                                                                                                                                                                    if [[ "$STATUS" == 0 ]]
+                                                                                                                                                                                    then
+                                                                                                                                                                                        export CHANNEL=${ root-parameters.valid-release-channel }
+                                                                                                                                                                                        jq \
+                                                                                                                                                                                            --null-input \
+                                                                                                                                                                                            '{
+                                                                                                                                                                                            }' | log
+                                                                                                                                                                                    else
+                                                                                                                                                                                        exit ${ root-parameters.error-code }
+                                                                                                                                                                                    fi
                                                                                                                                                                                 '' ;
                                                                                                                                                                         } ;
                                                                                                                                                                 in
