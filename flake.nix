@@ -802,7 +802,7 @@
                                                                                                                                                                         }' /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
+                                                                                                                                                                    mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -813,7 +813,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents ${ resources-directory }/invalid-release
+                                                                                                                                                                    mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
