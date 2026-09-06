@@ -776,6 +776,7 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                export INDEX
                                                                                                                                                                 echo "169 EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources/canonical -mindepth 1 -maxdepth 1 -type l | while read -r LINK
@@ -803,7 +804,7 @@
                                                                                                                                                                         }' /input | log
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
+                                                                                                                                                                    ${ resource-parameters.release.recovery }
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -814,7 +815,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
+                                                                                                                                                                    ${ resource-parameters.release.recovery }
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -825,7 +826,7 @@
                                                                                                                                                                     exit ${ resource-parameters.error }
                                                                                                                                                                 elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
-                                                                                                                                                                    mkdir --parents "/invalid-release/$INDEX"
+                                                                                                                                                                    ${ resource-parameters.release.recovery }
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
                                                                                                                                                                         '{
@@ -946,6 +947,7 @@
                                                                                                                                     let
                                                                                                                                         in
                                                                                                                                             ''
+                                                                                                                                                mkdir --parents "/invalid-release/$INDEX"
                                                                                                                                             '' ;
                                                                                                                             }
                                                                                                                     )
