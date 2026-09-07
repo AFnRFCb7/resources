@@ -912,7 +912,7 @@
                                                                                                                         IS_RELEASABLE_STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
                                                                                                                         echo "4275599343161566 $INDEX IS_RELEASABLE_STATUS=$IS_RELEASABLE_STATUS"
                                                                                                                         IS_RELEASABLE_STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 123
-                                                                                                                        echo "8741665869459463 IS RELEASABLE? $INDEX $OUT IS_RELEASABLE_STATUS=$IS_RELEASABLE_STATUS IS_RELEASABLE_STANDARD_ERROR=$IS_RELEASABLE_STANDARD_ERROR"
+                                                                                                                        echo "8741665869459463 IS RELEASABLE? $INDEX ... IS_RELEASABLE_STATUS=$IS_RELEASABLE_STATUS IS_RELEASABLE_STANDARD_ERROR=$IS_RELEASABLE_STANDARD_ERROR"
                                                                                                                         if [[ "$IS_RELEASABLE_STATUS" != 0 ]] || [[ -n "$IS_RELEASABLE_STANDARD_ERROR" ]]
                                                                                                                         then
                                                                                                                             echo "8517127674839116 REFUSING TO RELEASE $INDEX ... NO RETRY"
