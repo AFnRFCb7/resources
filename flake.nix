@@ -1465,7 +1465,7 @@
                                                                                                                                                                                         --arg TYPE "$TYPE" \
                                                                                                                                                                                         '{
                                                                                                                                                                                             "type" : $TYPE ,
-                                                                                                                                                                                            "channel" : $CHANNEL ,
+                                                                                                                                                                            3161aafe44771f5226baf622fa5e83227543d226                "channel" : $CHANNEL ,
                                                                                                                                                                                             "payload" : $PAYLOAD
                                                                                                                                                                                         }'
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
