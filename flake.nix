@@ -39,7 +39,7 @@
                                                     text =
                                                         ''
                                                             : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                            JSON="$( jq --compact-output "." )" || exit 108
+                                                            JSON="$( jq --compact-output --sort-keys "." )" || exit 108
                                                             redis-cli PUBLISH "$CHANNEL" "$JSON" >> /tmp/DEBUG 2>&1
                                                         '' ;
                                                 } ;
