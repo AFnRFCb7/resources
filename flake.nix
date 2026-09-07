@@ -287,7 +287,7 @@
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
                                                                             INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
-                                                                            echo ABOUT TO RELEASE "$INDEX"
+                                                                            echo 2259188546499332 ABOUT TO RELEASE "$INDEX"
                                                                             nohup "${ resources-directory }/release/$INDEX" &
                                                                         fi
                                                                     done
@@ -849,7 +849,7 @@
                                                                                                                 ''
                                                                                                                     # 2863426286352491 use this one
                                                                                                                     INDEX="$( basename "$0" )" || exit 101
-                                                                                                                    echo "192 CONSIDERING RELEASE $INDEX"
+                                                                                                                    echo "1165835439787381 CONSIDERING RELEASE $INDEX"
                                                                                                                     export INDEX
                                                                                                                     cleanup () {
                                                                                                                         STATUS="$?"
@@ -862,40 +862,39 @@
                                                                                                                         exec 182> ${ resources-directory }/clean.lock
                                                                                                                         flock -s 182
                                                                                                                         rm --force "${ resources-directory }/$INDEX.flag"
-                                                                                                                        echo "CONSIDERING RELEASING $INDEX START WAITING FOR PIDS"
+                                                                                                                        echo "5288984498744573 CONSIDERING RELEASING $INDEX START WAITING FOR PIDS"
                                                                                                                         find "${ resources-directory }/pids/$INDEX" -mindepth 1 -maxdepth 1 -type f | sort | while read -r PID_FILE
                                                                                                                         do
-                                                                                                                            if [[ -f ${ resources-directory }/DEBUG ]]
-                                                                                                                            then
-                                                                                                                                echo START DEBUG
-                                                                                                                                cat ${ resources-directory }/DEBUG
-                                                                                                                                echo STOP DEBUG
-                                                                                                                            fi
                                                                                                                             PID="$( basename "$PID_FILE" )" || exit 169
-                                                                                                                            echo "CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
+                                                                                                                            echo "4759686157857953 CONSIDERING RELEASING $INDEX WAITING FOR PID=$PID"
                                                                                                                             if ps -p "$PID" > /dev/null 2>&1
                                                                                                                             then
-                                                                                                                                echo "PID $PID EXISTS"
-                                                                                                                                pstree -alp "$PID" || true
+                                                                                                                                echo "4597885531591768 PID $PID EXISTS"
                                                                                                                             else
-                                                                                                                                echo "PID $PID IS ALREADY GONE"
+                                                                                                                                echo "4485259781845736 PID $PID IS ALREADY GONE"
                                                                                                                             fi
                                                                                                                             tail --follow /dev/null --pid "$PID"
+                                                                                                                            echo "1298783972374869 CONSIDERING RELEASING $INDEX WAITED FOR PID=$PID"
                                                                                                                             rm --force "$PID_FILE"
                                                                                                                         done
-                                                                                                                        echo "CONSIDERING RELEASING $INDEX FINISHED WAITING FOR PIDS"
+                                                                                                                        echo "2475552584217434 CONSIDERING RELEASING $INDEX FINISHED WAITING FOR PIDS"
                                                                                                                         mkdir --parents ${ gc-roots-directory }
                                                                                                                         EXPECTED="${ resources-directory }/mounts/$INDEX"
+                                                                                                                        echo "9312433659993238 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOTS"
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
-                                                                                                                            if OBSERVED="$( readlink --canonicalize "$LINK" )" && [[ "$EXPECTED" == "$OBSERVED" ]]
+                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 199
+                                                                                                                            if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
+                                                                                                                                echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
+                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
                                                                                                                             fi
                                                                                                                         done
+                                                                                                                        echo "9312433659993238 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOTS"
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
@@ -903,7 +902,10 @@
                                                                                                                         jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 153
                                                                                                                         export OUTPUT_FILE
+                                                                                                                        echo "1838495886151143 IS RELEASABLE? $INDEX"
                                                                                                                         is-releasable
+                                                                                                                        OUT="$( cat "$OUTPUT_FILE" )" || exit 173
+                                                                                                                        echo "8741665869459463 IS RELEASABLE? $INDEX $OUT"
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
                                                                                                                         if [[ -f "${ resources-directory }/$INDEX.flag" ]]
