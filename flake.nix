@@ -888,12 +888,12 @@
                                                                                                                             echo "3898698566622627 $INDEX $LINK"
                                                                                                                             if [[ "$EXPECTED" == "$( readlink "$LINK" )" ]]
                                                                                                                             then
-                                                                                                                                echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
+                                                                                                                                echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$EXPECTED"
                                                                                                                                 while [[ -L "$LINK" ]]
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
-                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOT=$OBSERVED"
+                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOT=$EXPECTED"
                                                                                                                             fi
                                                                                                                             echo "2492775487789137 $INDEX"
                                                                                                                         done
