@@ -73,11 +73,12 @@
                                                                                                                 ''
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    JSON="$( jq --compact-output 'del(.["originator-pid])' /input )" || exit 129
+                                                                                                                    JSON="$( jq --compact-output --sort-keys 'del(.["originator-pid])' /input )" || exit 129
                                                                                                                     if redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-output 2> /private/standard-error
                                                                                                                     then
                                                                                                                         jq \
                                                                                                                             --null-input \
+                                                                                                                            --sort-keys \
                                                                                                                             --argjson STATUS "$?" \
                                                                                                                             --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                             --rawfile STANDARD_ERROR /private/standard-error \
@@ -89,6 +90,7 @@
                                                                                                                     else
                                                                                                                         jq \
                                                                                                                             --null-input \
+                                                                                                                            --sort-keys \
                                                                                                                             --argjson STATUS "$?" \
                                                                                                                             --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                             --rawfile STANDARD_ERROR /private/standard-error \
@@ -113,7 +115,7 @@
                                                                         mkdir --parents ${ resources-directory }/temporary
                                                                         INPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 173
                                                                         export INPUT
-                                                                        jq --compact-output "." > "$INPUT"
+                                                                        jq --compact-output --sort-keys "." > "$INPUT"
                                                                         OUTPUT="$( mktemp --suffix ".json" ${ resources-directory }/temporary/XXXXXXXX )" || exit 176
                                                                         export OUTPUT
                                                                         mkdir --parents ${ resources-directory }
@@ -121,7 +123,7 @@
                                                                         flock -x 143
                                                                         mkdir --parents ${ resources-directory }/log.yaml
                                                                         log
-                                                                        STATUS="$( jq --raw-output ".status" "$OUTPUT" )" || exit 163
+                                                                        STATUS="$( jq --raw-output --sort-keys ".status" "$OUTPUT" )" || exit 163
                                                                         exit "$STATUS"
                                                                     '' ;
                                                             } ;
@@ -227,7 +229,7 @@
                                                                                                                     read -r -u 170 TYPE || break
                                                                                                                     read -r -u 170 CHANNEL || break
                                                                                                                     read -r -u 170 COMPLETE_PAYLOAD || break
-                                                                                                                    PAYLOAD="$( jq '
+                                                                                                                    PAYLOAD="$( jq --sort-keys '
                                                                                                                         if type == "object"
                                                                                                                         then del(."originator-pid")
                                                                                                                         else .
@@ -237,6 +239,7 @@
                                                                                                                     then
                                                                                                                         jq \
                                                                                                                             --null-input \
+                                                                                                                            --sort-keys \
                                                                                                                             --arg CHANNEL "$CHANNEL" \
                                                                                                                             --argjson PAYLOAD "$PAYLOAD" \
                                                                                                                             --argjson TIMESTAMP "$TIMESTAMP" \
@@ -286,7 +289,7 @@
                                                                         read -r PAYLOAD || { echo "PAYLOAD _EOF" >&2 ; break; }
                                                                         if [[ "$TYPE" == "message" ]] && [[ "${ root-parameters.valid-init-channel }" == "$CHANNEL" ]]
                                                                         then
-                                                                            INDEX="$( jq --raw-output ".index" <<< "$PAYLOAD" )" || break
+                                                                            INDEX="$( jq --raw-output --sort-keys ".index" <<< "$PAYLOAD" )" || break
                                                                             echo ABOUT TO RELEASE "$INDEX"
                                                                             nohup "${ resources-directory }/release/$INDEX" &
                                                                         fi
@@ -326,6 +329,7 @@
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                                 jq \
                                                                                     --null-input \
+                                                                                    --sort-keys \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
@@ -348,6 +352,7 @@
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID3" | tr -d '[:space:]' )" || exit 140
                                                                                 jq \
                                                                                     --null-input \
+                                                                                    --sort-keys \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
@@ -366,6 +371,7 @@
                                                                                 ORIGINATOR_PID="$( ps -o ppid= -p "$PPID" | tr -d '[:space:]' )" || exit 184
                                                                                 jq \
                                                                                     --null-input \
+                                                                                    --sort-keys \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --arg STANDARD_INPUT "$STANDARD_INPUT" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
@@ -387,6 +393,7 @@
                                                                                 # ORIGINATOR_PID="$( ps -o ppid= -p "$ULTIMATE_PID" | tr -d '[:space:]' )" || exit 125
                                                                                 jq \
                                                                                     --null-input \
+                                                                                    --sort-keys \
                                                                                     --argjson ORIGINATOR_PID "$ORIGINATOR_PID" \
                                                                                     --argjson TEMPORARY "$TEMPORARY" \
                                                                                     --args \
@@ -400,7 +407,7 @@
                                                                             fi
                                                                         fi
                                                                         HASH_FILE="$( mktemp --suffix ".json" )" || exit 178
-                                                                        jq 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
+                                                                        jq --sort-keys 'del(.["originator-pid"]) + { "pre-hash" : "${ builtins.hashString "sha512" ( builtins.toJSON resource-parameters.seed ) }" }' "$INPUT_FILE" > "$HASH_FILE"
                                                                         HASH="$( sha512sum "$HASH_FILE" | cut --characters 1-128 )" || exit 172
                                                                         export HASH
                                                                         if [[ -L "${ resources-directory }/canonical/$HASH" ]]
@@ -416,16 +423,17 @@
                                                                             mkdir --parents ${ gc-roots-directory }
                                                                             mkdir --parents ${ resources-directory }
                                                                             init
-                                                                            CHANNEL="$( jq --raw-output ".channel" "$OUTPUT_FILE" )" || exit 181
+                                                                            CHANNEL="$( jq --raw-output --sort-keys ".channel" "$OUTPUT_FILE" )" || exit 181
                                                                             export CHANNEL
-                                                                            INDEX="$( jq --raw-output ".index" "$OUTPUT_FILE" )" || exit 198
-                                                                            EVALUATION="$( jq --raw-output ".evaluation" "$OUTPUT_FILE" )" || exit 176
-                                                                            STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
-                                                                            STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
+                                                                            INDEX="$( jq --raw-output --sort-keys ".index" "$OUTPUT_FILE" )" || exit 198
+                                                                            EVALUATION="$( jq --raw-output --sort-keys ".evaluation" "$OUTPUT_FILE" )" || exit 176
+                                                                            STANDARD_ERROR="$( jq --raw-output --sort-keys '.["standard-error"]' "$OUTPUT_FILE" )" || exit 146
+                                                                            STATUS="$( jq --raw-output --sort-keys ".status" "$OUTPUT_FILE" )" || exit 173
                                                                             echo -en "${ resources-directory }/mounts/$INDEX"
                                                                             if [[ 0 == "$STATUS" ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                             then
                                                                                 jq \
+                                                                                    --sort-keys \
                                                                                     '{
                                                                                         "arguments" : .arguments ,
                                                                                         "index" : .index ,
@@ -440,6 +448,7 @@
                                                                             then
                                                                                 mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
+                                                                                    --sort-keys \
                                                                                     '{
                                                                                         "WTF" : "6586389267536849" ,
                                                                                         "arguments" : .arguments ,
@@ -456,6 +465,7 @@
                                                                             then
                                                                                 mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
+                                                                                    --sort-keys \
                                                                                     '{
                                                                                         "WTF" : "2437324934873537" ,
                                                                                         "arguments" : .arguments ,
@@ -473,6 +483,7 @@
                                                                             then
                                                                                 mkdir --parents ${ resources-directory }/${ root-parameters.invalid-init-channel }
                                                                                 jq \
+                                                                                    --sort-keys \
                                                                                     '{
                                                                                         "WTF" : "9976979456295116" ,
                                                                                         "arguments" : .arguments ,
@@ -554,12 +565,12 @@
                                                                                                                                                     ] ;
                                                                                                                                                 text =
                                                                                                                                                     ''
-                                                                                                                                                        jq --raw-output '.arguments[]' /input > /private/jq
-                                                                                                                                                        mapfile -t ARGUMENTS < <( jq -r '.arguments[]' /input )
+                                                                                                                                                        jq --raw-output --sort-keys '.arguments[]' /input > /private/jq
+                                                                                                                                                        mapfile -t ARGUMENTS < <( jq -r --sort-keys '.arguments[]' /input )
                                                                                                                                                         cd /mount
-                                                                                                                                                        if jq -e '.inputs | has("standard")' /input > /private/jq
+                                                                                                                                                        if jq --sort-keys -e '.inputs | has("standard")' /input > /private/jq
                                                                                                                                                         then
-                                                                                                                                                            if jq '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
+                                                                                                                                                            if jq --sort-keys '.inputs.standard' /input | init "${ builtins.concatStringsSep "" [ "$" "{" "ARGUMENTS[@]" "}" ] }" > /private/standard-output 2> /private/standard-error
                                                                                                                                                             then
                                                                                                                                                                 STATUS="$?"
                                                                                                                                                             else
@@ -574,14 +585,15 @@
                                                                                                                                                             fi
                                                                                                                                                         fi
                                                                                                                                                         EXPECTED_TARGETS="$( jq --null-input '${ builtins.toJSON resource-parameters.targets }' )" || exit 136
-                                                                                                                                                        OBSERVED_TARGETS="$( find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq -R "." | jq -s "." )" || exit 111
-                                                                                                                                                        ORIGINATOR_PID="$( jq --raw-output '.["originator-pid"]' /input )" || exit 156
+                                                                                                                                                        OBSERVED_TARGETS="$( find /mount -mindepth 1 -maxdepth 1 -exec basename {} \; | LC_ALL=C sort | jq --sort-keys -R "." | jq --sort-keys "." )" || exit 111
+                                                                                                                                                        ORIGINATOR_PID="$( jq --raw-output --sort-keys '.["originator-pid"]' /input )" || exit 156
                                                                                                                                                         if [[ 0 == "$STATUS" ]] && [[ ! -s /private/standard-error ]] && [[ "$EXPECTED_TARGETS" == "$OBSERVED_TARGETS" ]]
                                                                                                                                                         then
                                                                                                                                                             ln --symbolic "${ resources-directory }/mounts/$INDEX" "/canonical/$HASH"
                                                                                                                                                             ln --symbolic ${ resource-parameters.release.action.script } "/release/$INDEX"
                                                                                                                                                             echo "$ORIGINATOR_PID" > "/pid/$ORIGINATOR_PID"
                                                                                                                                                             jq \
+                                                                                                                                                                --sort-keys \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.valid-channel } \
                                                                                                                                                                 --argjson EVALUATION 0 \
                                                                                                                                                                 --argjson EXPECTED_TARGETS "$EXPECTED_TARGETS" \
@@ -611,6 +623,7 @@
                                                                                                                                                                 }' "$INPUT_FILE" > "$OUTPUT_FILE"
                                                                                                                                                         else
                                                                                                                                                             jq \
+                                                                                                                                                                --sort-keys \
                                                                                                                                                                 --arg INDEX "$INDEX" \
                                                                                                                                                                 --arg CHANNEL ${ resource-parameters.init.invalid-channel } \
                                                                                                                                                                 --argjson EVALUATION ${ resource-parameters.error } \
@@ -728,7 +741,7 @@
                                                                                                                                                         text =
                                                                                                                                                             ''
                                                                                                                                                                 cd /mount
-                                                                                                                                                                INDEX="$( jq --raw-output ".index" /input )" || exit 176
+                                                                                                                                                                INDEX="$( jq --raw-output --sort-keys ".index" /input )" || exit 176
                                                                                                                                                                 echo "ABOUT TO RELEASE $INDEX"
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
@@ -737,6 +750,7 @@
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 fi
                                                                                                                                                                 jq \
+                                                                                                                                                                    --sort-keys \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
                                                                                                                                                                     --argjson STATUS "$STATUS" \
@@ -776,7 +790,7 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log resource-parameters.release.recovery ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                INDEX="$( jq --raw-output --sort-keys ".index" /input )" || exit 109
                                                                                                                                                                 export INDEX
                                                                                                                                                                 echo "169 EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
@@ -790,14 +804,15 @@
                                                                                                                                                                 done
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
                                                                                                                                                                 find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
-                                                                                                                                                                CHANNEL="$( jq --raw-output ".channel" /input )" || exit 179
+                                                                                                                                                                CHANNEL="$( jq --raw-output --sort-keys ".channel" /input )" || exit 179
                                                                                                                                                                 export CHANNEL
-                                                                                                                                                                STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
-                                                                                                                                                                STATUS="$( jq --raw-output ".status" /input )" || exit 112
+                                                                                                                                                                STANDARD_ERROR="$( jq --raw-output --sort-keys '.["standard-error"]' /input )" || exit 192
+                                                                                                                                                                STATUS="$( jq --raw-output --sort-keys ".status" /input )" || exit 112
                                                                                                                                                                 if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                 then
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.valid-channel }
                                                                                                                                                                     jq \
+                                                                                                                                                                        --sort-keys \
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -808,6 +823,7 @@
                                                                                                                                                                     recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
+                                                                                                                                                                        --sort-keys \
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -819,6 +835,7 @@
                                                                                                                                                                     recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
+                                                                                                                                                                        --sort-keys \
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -830,6 +847,7 @@
                                                                                                                                                                     recovery
                                                                                                                                                                     export CHANNEL=${ resource-parameters.release.invalid-channel }
                                                                                                                                                                     jq \
+                                                                                                                                                                        --sort-keys \
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
@@ -900,7 +918,7 @@
                                                                                                                         mkdir --parents "$TEMPORARY"
                                                                                                                         INPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 114
                                                                                                                         export INPUT_FILE
-                                                                                                                        jq --null-input --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
+                                                                                                                        jq --null-input --sort-keys --arg INDEX "$INDEX" '{ "index" : $INDEX }' > "$INPUT_FILE"
                                                                                                                         OUTPUT_FILE="$( mktemp --suffix ".json" "$TEMPORARY/XXXXXXXX" )" || exit 153
                                                                                                                         export OUTPUT_FILE
                                                                                                                         is-releasable
@@ -986,6 +1004,7 @@
                                                                                                                                                                                     then
                                                                                                                                                                                         export CHANNEL=${ root-parameters.valid-release-channel }
                                                                                                                                                                                         jq \
+                                                                                                                                                                                            --sort-keys \
                                                                                                                                                                                             --null-input \
                                                                                                                                                                                             '{
                                                                                                                                                                                             }' | log
@@ -1280,6 +1299,7 @@
                                                                                                                                                                                     LOG="$( yq eval 'map(del(.timestamp))' -o=json "$NAME" )" || exit 138
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --argjson LOG "$LOG" \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
@@ -1299,6 +1319,7 @@
                                                                                                                                                                                     TARGET="$( readlink "$NAME" )" || exit 182
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
                                                                                                                                                                                         --arg TARGET "$TARGET" \
@@ -1313,6 +1334,7 @@
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
                                                                                                                                                                                         --arg TYPE "directory" \
@@ -1325,6 +1347,7 @@
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
                                                                                                                                                                                         --arg TYPE "non-deterministic regular file" \
@@ -1337,6 +1360,7 @@
                                                                                                                                                                                 then
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --rawfile CAT "$NAME" \
                                                                                                                                                                                         --arg NAME "$NAME" \
                                                                                                                                                                                         --arg STAT "$STAT" \
@@ -1456,10 +1480,11 @@
                                                                                                                                                                                     read -r -t 1 -u 189 TYPE <&189 || exit 183
                                                                                                                                                                                     read -r -t 1 -u 189 CHANNEL <&189 || exit 104
                                                                                                                                                                                     read -r -t 1 -u 189 COMPLETE_PAYLOAD <&189 || exit 125
-                                                                                                                                                                                    EXCLUDED_PAYLOAD="$( jq "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
+                                                                                                                                                                                    EXCLUDED_PAYLOAD="$( jq --sort-keys "$EXCLUSION" <<< "$COMPLETE_PAYLOAD" )" || exit 116
                                                                                                                                                                                     # shellcheck disable=SC2208,SC2016
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --arg CHANNEL "$CHANNEL" \
                                                                                                                                                                                         --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
                                                                                                                                                                                         --arg TYPE "$TYPE" \
@@ -1728,6 +1753,7 @@
                                                                                                                                                             TIMEOUT="$( cat "/tmp/scratch/commands/$I/timeout" )" || exit 133
                                                                                                                                                             jq \
                                                                                                                                                                 --null-input \
+                                                                                                                                                                --sort-keys \
                                                                                                                                                                 --argjson KLUDGE  "$KLUDGE" \
                                                                                                                                                                 --rawfile PROCESS "/tmp/scratch/commands/$I/process" \
                                                                                                                                                                 --argjson READS "$READS" \
