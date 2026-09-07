@@ -73,7 +73,7 @@
                                                                                                                 ''
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
                                                                                                                     : "${ builtins.concatStringsSep "" [ "$" "{" "CHANNEL:?must be exported" "}" ] }"
-                                                                                                                    JSON="$( jq --compact-output 'del(.["originator-pid])' /input )" || exit 129
+                                                                                                                    JSON="$( jq --compact-output --sort-keys 'del(.["originator-pid])' /input )" || exit 129
                                                                                                                     if redis-cli PUBLISH "$CHANNEL" "$JSON" > /private/standard-output 2> /private/standard-error
                                                                                                                     then
                                                                                                                         jq \
