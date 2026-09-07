@@ -1460,13 +1460,14 @@
                                                                                                                                                                                     # shellcheck disable=SC2208,SC2016
                                                                                                                                                                                     jq \
                                                                                                                                                                                         --null-input \
+                                                                                                                                                                                        --sort-keys \
                                                                                                                                                                                         --arg CHANNEL "$CHANNEL" \
                                                                                                                                                                                         --argjson PAYLOAD "$EXCLUDED_PAYLOAD" \
                                                                                                                                                                                         --arg TYPE "$TYPE" \
                                                                                                                                                                                         '{
-                                                                                                                                                                                            "type" : $TYPE ,
                                                                                                                                                                                             "channel" : $CHANNEL ,
-                                                                                                                                                                                            "payload" : $PAYLOAD
+                                                                                                                                                                                            "payload" : $PAYLOAD ,
+                                                                                                                                                                                            "type" : $TYPE
                                                                                                                                                                                         }'
                                                                                                                                                                                     echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}"] }" >&2
                                                                                                                                                                                 '' ;
