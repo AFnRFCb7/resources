@@ -886,7 +886,7 @@
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             echo "3898698566622627 $INDEX $LINK"
-                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || { echo readlink failed && exit 199 }
+                                                                                                                            OBSERVED="$( readlink --canonicalize "$LINK" )" || { STATUS="$?" && echo readlink failed "$STATUS" && exit 199 }
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
                                                                                                                                 echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
