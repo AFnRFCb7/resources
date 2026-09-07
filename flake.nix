@@ -729,7 +729,7 @@
                                                                                                                                                             ''
                                                                                                                                                                 cd /mount
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 176
-                                                                                                                                                                echo "ABOUT TO RELEASE $INDEX"
+                                                                                                                                                                echo "4524626911578245 ABOUT TO RELEASE $INDEX"
                                                                                                                                                                 if release "$INDEX" > /private/standard-output 2> /private/standard-error
                                                                                                                                                                 then
                                                                                                                                                                     STATUS="$?"
@@ -778,7 +778,7 @@
                                                                                                                                                             ''
                                                                                                                                                                 INDEX="$( jq --raw-output ".index" /input )" || exit 109
                                                                                                                                                                 export INDEX
-                                                                                                                                                                echo "169 EXECUTING RELEASE $INDEX"
+                                                                                                                                                                echo "2989851292386492 EXECUTING RELEASE $INDEX"
                                                                                                                                                                 rm --recursive --force "/gc-roots/$INDEX"
                                                                                                                                                                 find /resources/canonical -mindepth 1 -maxdepth 1 -type l | while read -r LINK
                                                                                                                                                                 do
@@ -904,16 +904,23 @@
                                                                                                                         export OUTPUT_FILE
                                                                                                                         echo "1838495886151143 IS RELEASABLE? $INDEX"
                                                                                                                         is-releasable
-                                                                                                                        OUT="$( cat "$OUTPUT_FILE" )" || exit 173
-                                                                                                                        echo "8741665869459463 IS RELEASABLE? $INDEX $OUT"
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
-                                                                                                                        if [[ -f "${ resources-directory }/$INDEX.flag" ]]
+                                                                                                                        IS_RELEASABLE_STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
+                                                                                                                        IS_RELEASABLE_STANDARD_ERROR="$( jq --raw-output ".standard-error" "$OUTPUT_FILE" )" || 123
+                                                                                                                        echo "8741665869459463 IS RELEASABLE? $INDEX $OUT IS_RELEASABLE_STATUS=IS_RELEASABLE_STATUS IS_RELEASABLE_STANDARD_ERROR=$IS_RELEASABLE_STANDARD_ERROR"
+                                                                                                                        if [[ "$IS_RELEASABLE_STATUS" != 0 ]] || [[ -n "$IS_RELEASABLE_STANDARD_ERROR" ]]
                                                                                                                         then
+                                                                                                                            echo "8517127674839116 REFUSING TO RELEASE $INDEX ... NO RETRY"
+                                                                                                                            exit ${ root-parameters.error-code }
+                                                                                                                        elif [[ -f "${ resources-directory }/$INDEX.flag" ]]
+                                                                                                                        then
+                                                                                                                            echo "4218266468541298 ABORTING RELEASE $INDEX ... WILL RETRY"
                                                                                                                             flock -u 162
                                                                                                                             "$0"
                                                                                                                             exit 0
                                                                                                                         else
+                                                                                                                            echo "7323746185756479 RELEASING $INDEX"
                                                                                                                             mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
                                                                                                                             release
                                                                                                                         fi
