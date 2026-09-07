@@ -736,6 +736,7 @@
                                                                                                                                                                 else
                                                                                                                                                                     STATUS="$?"
                                                                                                                                                                 fi
+                                                                                                                                                                echo "6664193424187971 ABOUT TO RELEASE $INDEX STATUS=$STATUS"
                                                                                                                                                                 jq \
                                                                                                                                                                     --rawfile STANDARD_ERROR /private/standard-error \
                                                                                                                                                                     --rawfile STANDARD_OUTPUT /private/standard-output \
@@ -746,6 +747,7 @@
                                                                                                                                                                         "standard-output" : $STANDARD_OUTPUT ,
                                                                                                                                                                         "status" : $STATUS
                                                                                                                                                                     }' /input > /output
+                                                                                                                                                                echo "5453479786157473 ABOUT TO RELEASE $INDEX"
                                                                                                                                                             '' ;
                                                                                                                                                     }
                                                                                                                                             )
@@ -904,6 +906,7 @@
                                                                                                                         export OUTPUT_FILE
                                                                                                                         echo "1838495886151143 IS RELEASABLE? $INDEX"
                                                                                                                         is-releasable
+                                                                                                                        echo "8828794674681769 $INDEX"
                                                                                                                         exec 162> "${ resources-directory }/$INDEX.lock"
                                                                                                                         flock -x 162
                                                                                                                         IS_RELEASABLE_STATUS="$( jq --raw-output ".status" "$OUTPUT_FILE" )" || exit 173
