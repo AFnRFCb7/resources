@@ -885,6 +885,7 @@
                                                                                                                         echo "9312433659993238 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOTS"
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
+                                                                                                                            echo "3898698566622627 $INDEX"
                                                                                                                             OBSERVED="$( readlink --canonicalize "$LINK" )" || exit 199
                                                                                                                             if [[ "$EXPECTED" == "$OBSERVED" ]]
                                                                                                                             then
@@ -893,8 +894,9 @@
                                                                                                                                 do
                                                                                                                                     sleep 1s
                                                                                                                                 done
-                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
+                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOT=$OBSERVED"
                                                                                                                             fi
+                                                                                                                            echo "2492775487789137 $INDEX"
                                                                                                                         done
                                                                                                                         echo "9312433659993238 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOTS"
                                                                                                                         export TEMPORARY=${ resources-directory }/temporary
