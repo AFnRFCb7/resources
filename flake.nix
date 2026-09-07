@@ -886,18 +886,14 @@
                                                                                                                         find ${ gc-roots-directory } -mindepth 1 -type l | sort | while read -r LINK
                                                                                                                         do
                                                                                                                             echo "3898698566622627 $INDEX $LINK"
-                                                                                                                            if [[ -L "$LINK" ]]
+                                                                                                                            if [[ "$EXPECTED" == "$( readlink "$LINK" )" ]]
                                                                                                                             then
-                                                                                                                                OBSERVED="$( readlink "$LINK" )" || { STATUS="$?" && echo readlink failed "$STATUS" && exit 199 ; }
-                                                                                                                                if [[ "$EXPECTED" == "$OBSERVED" ]]
-                                                                                                                                then
-                                                                                                                                    echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
-                                                                                                                                    while [[ -L "$LINK" ]]
-                                                                                                                                    do
-                                                                                                                                        sleep 1s
-                                                                                                                                    done
-                                                                                                                                    echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOT=$OBSERVED"
-                                                                                                                                fi
+                                                                                                                                echo "8431983946874286 CONSIDERING RELEASING $INDEX WAITING FOR GC-ROOT=$OBSERVED"
+                                                                                                                                while [[ -L "$LINK" ]]
+                                                                                                                                do
+                                                                                                                                    sleep 1s
+                                                                                                                                done
+                                                                                                                                echo "4684843459351611 CONSIDERING RELEASING $INDEX WAITED FOR GC-ROOT=$OBSERVED"
                                                                                                                             fi
                                                                                                                             echo "2492775487789137 $INDEX"
                                                                                                                         done
