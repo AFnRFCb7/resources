@@ -861,7 +861,8 @@
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
                                                                                                                                                                             "standard-error" : .["standard-error"] ,
                                                                                                                                                                             "status" : .status
-                                                                                                                                                                        }' /input | slot
+                                                                                                                                                                        }' /input | log
+
                                                                                                                                                                     recovery
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
