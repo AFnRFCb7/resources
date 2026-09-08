@@ -1939,7 +1939,7 @@
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
                                                                                                                         TARGET="$( cat /tmp/scratch/link/name )" || exit 192
-                                                                                                                        echo time timeout 10m find /nix/store -type f -name "$TARGET" -exec echo {} '\;' -quit >&2
+                                                                                                                        echo timeout 10m /nix/store -type f -name "$TARGET" -exec echo {} '\;' -quit >&2
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
