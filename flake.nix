@@ -1222,6 +1222,7 @@
                                                                                                 mapper =
                                                                                                     {
                                                                                                         command-index ,
+                                                                                                        fix ,
                                                                                                         kludge ,
                                                                                                         process ,
                                                                                                         reads ,
@@ -1823,6 +1824,7 @@
                                                                                                             input = builtins.elemAt inputs_ index ;
                                                                                                             identity =
                                                                                                                 {
+                                                                                                                    fix ? null ,
                                                                                                                     kludge ? false ,
                                                                                                                     process ? "" ,
                                                                                                                     reads ? true ,
@@ -1834,6 +1836,7 @@
                                                                                                                 } :
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
+                                                                                                                        fix = visitor { null = path : value : value ; string = path : value : value ; } fix ;
                                                                                                                         kludge = visitor { bool = path : value : builtins.toJSON value ; } kludge ;
                                                                                                                         process =
                                                                                                                             let
