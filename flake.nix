@@ -859,10 +859,8 @@
                                                                                                                                                                         '{
                                                                                                                                                                             "index" : .index ,
                                                                                                                                                                             "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "standard-error" : .["standard-error"] ,
                                                                                                                                                                             "status" : .status
                                                                                                                                                                         }' /input | log
-
                                                                                                                                                                     recovery
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
