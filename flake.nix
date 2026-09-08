@@ -854,6 +854,14 @@
                                                                                                                                                                         fi
                                                                                                                                                                     done
                                                                                                                                                                     rm "/resources/release/$INDEX"
+                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
+                                                                                                                                                                    jq \
+                                                                                                                                                                        '{
+                                                                                                                                                                            "index" : .index ,
+                                                                                                                                                                            "standard-output" : .["standard-output"] ,
+                                                                                                                                                                            "standard-error" : .["standard-error"] ,
+                                                                                                                                                                            "status" : .status
+                                                                                                                                                                        }' /input | slot
                                                                                                                                                                     recovery
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
@@ -1939,7 +1947,7 @@
                                                                                                                     if [[ "true" == "$FAILURE" ]]
                                                                                                                     then
                                                                                                                         TARGET="$( cat /tmp/scratch/link/name )" || exit 192
-                                                                                                                        echo timeout 10m /nix/store -type f -name "$TARGET" -exec echo {} '\;' -quit >&2
+                                                                                                                        echo timeout 10m time find /nix/store -type f -name "$TARGET" -exec echo {} '\;' -quit >&2
                                                                                                                         cat ${ builtins.toFile "name" name } >&2
                                                                                                                         exit 181
                                                                                                                     fi
