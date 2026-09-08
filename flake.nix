@@ -846,7 +846,7 @@
                                                                                                                                                                     fi
                                                                                                                                                                 else
                                                                                                                                                                     EXPECTED="${ resources-directory }/mounts/$INDEX"
-                                                                                                                                                                    find /resource/canonical -type l | while read -r LINK
+                                                                                                                                                                    find /resources/canonical -type l | while read -r LINK
                                                                                                                                                                     do
                                                                                                                                                                         if [[ "$( readlink "$LINK" )" == "$EXPECTED" ]]
                                                                                                                                                                         then
