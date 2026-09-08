@@ -924,6 +924,7 @@
                                                                                                                         if [[ "$IS_RELEASABLE_STATUS" != 0 ]] || [[ -n "$IS_RELEASABLE_STANDARD_ERROR" ]]
                                                                                                                         then
                                                                                                                             echo "8517127674839116 REFUSING TO RELEASE $INDEX ... NO RETRY"
+                                                                                                                            mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
                                                                                                                             release false
                                                                                                                         elif [[ -f "${ resources-directory }/$INDEX.flag" ]]
                                                                                                                         then
