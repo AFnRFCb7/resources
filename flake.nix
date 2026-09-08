@@ -166,7 +166,7 @@
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
                                                                                                                 mkdir --parents /resources/invalid-release
-                                                                                                                if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f | grep --quiet "."
+                                                                                                                if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 | grep --quiet "."
                                                                                                                 then
                                                                                                                     find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f >&2
                                                                                                                     exit 164
