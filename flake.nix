@@ -853,6 +853,7 @@
                                                                                                                                                                             rm "$LINK"
                                                                                                                                                                         fi
                                                                                                                                                                     done
+                                                                                                                                                                    rm /resources/release/$INDEX
                                                                                                                                                                     recovery
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
