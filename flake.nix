@@ -1641,6 +1641,7 @@
                                                                                                                                                         then
                                                                                                                                                             echo true > "/tmp/scratch/failure"
                                                                                                                                                             echo true > "/tmp/scratch/commands/${ command-index }/failure"
+                                                                                                                                                            ${ if builtins.typeOf fix == "set" then "ln --symbolic ${ fix }/bin/fix /tmp/scratch/commands/${ command-index }/fix" else "" }
                                                                                                                                                         else
                                                                                                                                                             echo false > "/tmp/scratch/commands/${ command-index }/failure"
                                                                                                                                                         fi
@@ -1836,7 +1837,7 @@
                                                                                                                 } :
                                                                                                                     {
                                                                                                                         command-index = builtins.toString index ;
-                                                                                                                        fix = visitor { null = path : value : value ; string = path : value : value ; } fix ;
+                                                                                                                        fix = visitor { null = path : value : value ; string = path : value : writeShellApplication { name = "fix" ; runtimeInputs = [ coreutils ] ; text = value ; } ; } fix ;
                                                                                                                         kludge = visitor { bool = path : value : builtins.toJSON value ; } kludge ;
                                                                                                                         process =
                                                                                                                             let
