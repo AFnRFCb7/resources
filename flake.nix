@@ -691,6 +691,7 @@
                                                                                                                     flock
                                                                                                                     log
                                                                                                                     pstree
+                                                                                                                    resource-parameters.release.recovery
                                                                                                                     (
                                                                                                                         buildFHSUserEnv
                                                                                                                             {
@@ -917,6 +918,7 @@
                                                                                                                         if [[ "$IS_RELEASABLE_STATUS" != 0 ]] || [[ -n "$IS_RELEASABLE_STANDARD_ERROR" ]]
                                                                                                                         then
                                                                                                                             echo "8517127674839116 REFUSING TO RELEASE $INDEX ... NO RETRY"
+                                                                                                                            recovery
                                                                                                                             exit ${ root-parameters.error-code }
                                                                                                                         elif [[ -f "${ resources-directory }/$INDEX.flag" ]]
                                                                                                                         then
