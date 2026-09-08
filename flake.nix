@@ -779,67 +779,73 @@
                                                                                                                                                         runtimeInputs = [ pkgs.findutils pkgs.gnutar pkgs.jq pkgs.xz log resource-parameters.release.recovery ] ;
                                                                                                                                                         text =
                                                                                                                                                             ''
-                                                                                                                                                                INDEX="$( jq --raw-output ".index" /input )" || exit 109
-                                                                                                                                                                export INDEX
-                                                                                                                                                                echo "2989851292386492 EXECUTING RELEASE $INDEX"
-                                                                                                                                                                rm --recursive --force "/gc-roots/$INDEX"
-                                                                                                                                                                find /resources/canonical -mindepth 1 -maxdepth 1 -type l | while read -r LINK
-                                                                                                                                                                do
-                                                                                                                                                                    TARGET="$( readlink "$LINK" )" || exit 129
-                                                                                                                                                                    if [[ "$TARGET" == "${ resources-directory }/mounts/$INDEX" ]]
+                                                                                                                                                                IS_RELEASABLE="$1"
+                                                                                                                                                                if [[ "$IS_RELEASABLE" == "true" ]]
+                                                                                                                                                                then
+                                                                                                                                                                    INDEX="$( jq --raw-output ".index" /input )" || exit 109
+                                                                                                                                                                    export INDEX
+                                                                                                                                                                    echo "2989851292386492 EXECUTING RELEASE $INDEX"
+                                                                                                                                                                    rm --recursive --force "/gc-roots/$INDEX"
+                                                                                                                                                                    find /resources/canonical -mindepth 1 -maxdepth 1 -type l | while read -r LINK
+                                                                                                                                                                    do
+                                                                                                                                                                        TARGET="$( readlink "$LINK" )" || exit 129
+                                                                                                                                                                        if [[ "$TARGET" == "${ resources-directory }/mounts/$INDEX" ]]
+                                                                                                                                                                        then
+                                                                                                                                                                            rm "$LINK"
+                                                                                                                                                                        fi
+                                                                                                                                                                    done
+                                                                                                                                                                    find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
+                                                                                                                                                                    find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
+                                                                                                                                                                    CHANNEL="$( jq --raw-output ".channel" /input )" || exit 179
+                                                                                                                                                                    export CHANNEL
+                                                                                                                                                                    STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
+                                                                                                                                                                    STATUS="$( jq --raw-output ".status" /input )" || exit 112
+                                                                                                                                                                    if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
                                                                                                                                                                     then
-                                                                                                                                                                        rm "$LINK"
+                                                                                                                                                                        export CHANNEL=${ resource-parameters.release.valid-channel }
+                                                                                                                                                                        jq \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                                "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                "status" : .status
+                                                                                                                                                                            }' /input | log
+                                                                                                                                                                    elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
+                                                                                                                                                                    then
+                                                                                                                                                                        recovery
+                                                                                                                                                                        export CHANNEL=${ resource-parameters.release.invalid-channel }
+                                                                                                                                                                        jq \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                                "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                "status" : .status
+                                                                                                                                                                            }' /input | log
+                                                                                                                                                                        exit ${ resource-parameters.error }
+                                                                                                                                                                    elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                                    then
+                                                                                                                                                                        recovery
+                                                                                                                                                                        export CHANNEL=${ resource-parameters.release.invalid-channel }
+                                                                                                                                                                        jq \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                                "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                "standard-error" : .["standard-error"]
+                                                                                                                                                                            }' /input | log
+                                                                                                                                                                        exit ${ resource-parameters.error }
+                                                                                                                                                                    elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
+                                                                                                                                                                    then
+                                                                                                                                                                        recovery
+                                                                                                                                                                        export CHANNEL=${ resource-parameters.release.invalid-channel }
+                                                                                                                                                                        jq \
+                                                                                                                                                                            '{
+                                                                                                                                                                                "index" : .index ,
+                                                                                                                                                                                "standard-output" : .["standard-output"] ,
+                                                                                                                                                                                "standard-error" : .["standard-error"] ,
+                                                                                                                                                                                "status" : .status
+                                                                                                                                                                            }' /input | log
+                                                                                                                                                                        exit ${ resource-parameters.error }
                                                                                                                                                                     fi
-                                                                                                                                                                done
-                                                                                                                                                                find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 | tar --null --files-from - --create --file /temporary/resources.tar.xz
-                                                                                                                                                                find /resources -mindepth 2 -maxdepth 2 -name "$INDEX" -print0 -exec rm --recursive --force {} \;
-                                                                                                                                                                CHANNEL="$( jq --raw-output ".channel" /input )" || exit 179
-                                                                                                                                                                export CHANNEL
-                                                                                                                                                                STANDARD_ERROR="$( jq --raw-output '.["standard-error"]' /input )" || exit 192
-                                                                                                                                                                STATUS="$( jq --raw-output ".status" /input )" || exit 112
-                                                                                                                                                                if [[ "$STATUS" == 0 ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.valid-channel }
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "index" : .index ,
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "status" : .status
-                                                                                                                                                                        }' /input | log
-                                                                                                                                                                elif [[ "$STATUS" != 0 ]] && [[ -z "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
+                                                                                                                                                                else
                                                                                                                                                                     recovery
-                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "index" : .index ,
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "status" : .status
-                                                                                                                                                                        }' /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
-                                                                                                                                                                elif [[ "$STATUS" == 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    recovery
-                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "index" : .index ,
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "standard-error" : .["standard-error"]
-                                                                                                                                                                        }' /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
-                                                                                                                                                                elif [[ "$STATUS" != 0 ]] && [[ -n "$STANDARD_ERROR" ]]
-                                                                                                                                                                then
-                                                                                                                                                                    recovery
-                                                                                                                                                                    export CHANNEL=${ resource-parameters.release.invalid-channel }
-                                                                                                                                                                    jq \
-                                                                                                                                                                        '{
-                                                                                                                                                                            "index" : .index ,
-                                                                                                                                                                            "standard-output" : .["standard-output"] ,
-                                                                                                                                                                            "standard-error" : .["standard-error"] ,
-                                                                                                                                                                            "status" : .status
-                                                                                                                                                                        }' /input | log
-                                                                                                                                                                    exit ${ resource-parameters.error }
                                                                                                                                                                 fi
                                                                                                                                                             '' ;
                                                                                                                                                     }
@@ -918,8 +924,7 @@
                                                                                                                         if [[ "$IS_RELEASABLE_STATUS" != 0 ]] || [[ -n "$IS_RELEASABLE_STANDARD_ERROR" ]]
                                                                                                                         then
                                                                                                                             echo "8517127674839116 REFUSING TO RELEASE $INDEX ... NO RETRY"
-                                                                                                                            recovery
-                                                                                                                            exit ${ root-parameters.error-code }
+                                                                                                                            release false
                                                                                                                         elif [[ -f "${ resources-directory }/$INDEX.flag" ]]
                                                                                                                         then
                                                                                                                             echo "4218266468541298 ABORTING RELEASE $INDEX ... WILL RETRY"
@@ -929,7 +934,7 @@
                                                                                                                         else
                                                                                                                             echo "7323746185756479 RELEASING $INDEX"
                                                                                                                             mkdir --parents ${ resources-directory }/${ root-parameters.invalid-release-channel }
-                                                                                                                            release
+                                                                                                                            release true
                                                                                                                         fi
                                                                                                                     fi
                                                                                                                 '' ;
