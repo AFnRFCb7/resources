@@ -166,16 +166,13 @@
                                                                                                                         echo "${ root-parameters.error-code }" > /temporary/status
                                                                                                                     fi
                                                                                                                 }
-                                                                                                                trap cleanup EXIT
-                                                                                                                mkdir --parents /resources/release
-                                                                                                                find /resources/release -mindepth 1 -maxdepth 1 -type f -exec {} \;
+                                                                                                                trap cleanup EXI
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
                                                                                                                 mkdir --parents /resources/invalid-release
                                                                                                                 if find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 | grep --quiet "."
                                                                                                                 then
-                                                                                                                    find /resources/release /resources/invalid-init /resources/invalid-release -mindepth 1 -type f >&2
-                                                                                                                    exit 164
+                                                                                                                    exit ${ root-parameters.error-code }
                                                                                                                 fi
                                                                                                                 tar --create --xz --file /temporary/archive.tar.gz /gc-roots /resources 2> /private/tar
                                                                                                                 rm --recursive --force /gc-locks/* /resources/*
