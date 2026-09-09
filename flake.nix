@@ -1994,7 +1994,7 @@
                                                         value = nixos-test ;
                                                         value-lambda =
                                                             dependencies :
-                                                                runCommand
+                                                                pkgs.runCommand
                                                                     "nixos-test-wrapper"
                                                                     {
                                                                         nativeBuildInputs = builtins.concatLists [ dependencies [ nixos-test ] ] ;
