@@ -1992,6 +1992,16 @@
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
                                                         order = order ;
                                                         value = nixos-test ;
+                                                        value-lambda =
+                                                            dependencies :
+                                                                runCommand
+                                                                    "nixos-test-wrapper"
+                                                                    {
+                                                                        nativeBuildInputs = builtins.concatLists [ dependencies [ nixos-test ] ] ;
+                                                                    }
+                                                                    ''
+                                                                        touch "$out"
+                                                                    '' ;
                                                     } ;
                                     implementation = implementation ;
                                 } ;
