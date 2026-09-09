@@ -161,6 +161,8 @@
                                                                                                                     STATUS="$?"
                                                                                                                     if [[ "$STATUS" == 0 ]]
                                                                                                                     then
+                                                                                                                        echo 0 > /temporary/status
+                                                                                                                    else
                                                                                                                         echo "${ root-parameters.error-code }" > /temporary/status
                                                                                                                     fi
                                                                                                                 }
