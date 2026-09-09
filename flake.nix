@@ -1202,7 +1202,7 @@
                                             pkgs ,
                                             resources-directory ,
                                             tests
-                                        } :
+                                        } : dependencies :
                                             let
                                                 action-derivation =
                                                     pkgs.stdenv.mkDerivation
@@ -1984,6 +1984,7 @@
                                                     pkgs.nixosTest
                                                         {
                                                             name = "resource-check" ;
+                                                            nativeCheckInputs = dependencies ;
                                                             nodes = nodes ;
                                                             testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
                                                         } ;
