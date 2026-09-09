@@ -1985,7 +1985,7 @@
                                                         pkgs.nixosTest
                                                             {
                                                                 name = "resource-check" ;
-                                                                checkInputs = dependencies ;
+                                                                nativeCheckInputs = dependencies ;
                                                                 nodes = nodes ;
                                                                 testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
                                                             } ;
