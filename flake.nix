@@ -1981,12 +1981,14 @@
                                                             src = ./. ;
                                                         } ;
                                                 nixos-test =
-                                                    pkgs.nixosTest
-                                                        {
-                                                            name = "resource-check" ;
-                                                            nodes = nodes ;
-                                                            testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                        } ;
+                                                    dependencies :
+                                                        pkgs.nixosTest
+                                                            {
+                                                                name = "resource-check" ;
+                                                                checkInputs = dependencies ;
+                                                                nodes = nodes ;
+                                                                testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
+                                                            } ;
                                                 in
                                                     {
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
