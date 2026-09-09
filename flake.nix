@@ -166,7 +166,7 @@
                                                                                                                         echo "${ root-parameters.error-code }" > /temporary/status
                                                                                                                     fi
                                                                                                                 }
-                                                                                                                trap cleanup EXI
+                                                                                                                trap cleanup EXIT
                                                                                                                 mkdir --parents /resources/release
                                                                                                                 mkdir --parents /resources/invalid-init
                                                                                                                 mkdir --parents /resources/invalid-release
