@@ -1997,11 +1997,39 @@
                                                                 pkgs.runCommand
                                                                     "nixos-test-wrapper"
                                                                     {
-                                                                        nativeBuildInputs = builtins.concatLists [ dependencies [ nixos-test ] ] ;
+                                                                        nativeBuildInputs = [ pkgs.jq ] ;
                                                                     }
-                                                                    ''
-                                                                        touch "$out"
-                                                                    '' ;
+                                                                    (
+                                                                        if builtins.size dependencies == 0 then
+                                                                            ''
+                                                                                jq \
+                                                                                    --sort-keys \
+                                                                                    --arg NAME "${ name }" \
+                                                                                    --argjson ORDER ${ builtins.toString order } \
+                                                                                    --arg TEST ${ nixos-test } \
+                                                                                    '{
+                                                                                        "name" : $NAME ,
+                                                                                        "order" : $ORDER ,
+                                                                                        "test" : $TEST
+                                                                                    }' > "$out"
+                                                                            ''
+                                                                        else
+                                                                            ''
+                                                                                DEPENDENCY="$( ${ builtins.head dependencies }/bin/nixos-test-wrapper )" || exit 130
+                                                                                jq \
+                                                                                    --sort-keys \
+                                                                                    --arg DEPENDENCY "$DEPENDENCY" \
+                                                                                    --arg NAME "${ name }" \
+                                                                                    --argjson ORDER ${ builtins.toString order } \
+                                                                                    --arg TEST ${ builtins.toString nixos-test } \
+                                                                                    '{
+                                                                                        "dependency" : $DEPENDENCY ,
+                                                                                        "name" : $NAME ,
+                                                                                        "order" : $ORDER ,
+                                                                                        "test" : $TEST
+                                                                                    }' > "$out"
+                                                                            ''
+                                                                    ) ;
                                                     } ;
                                     implementation = implementation ;
                                 } ;
