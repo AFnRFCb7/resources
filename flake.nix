@@ -158,7 +158,13 @@
                                                                                                         text =
                                                                                                             ''
                                                                                                                 cleanup ( ) {
-                                                                                                                    echo "$?" > /temporary/status
+                                                                                                                    STATUS="$?"
+                                                                                                                    if [[ "$STATUS" == 0 ]]
+                                                                                                                    then
+                                                                                                                        echo "0" > /temporary/status
+                                                                                                                    else
+                                                                                                                        echo "${ root-parameters.error-code }" > /temporary/status
+                                                                                                                    fi
                                                                                                                 }
                                                                                                                 trap cleanup EXIT
                                                                                                                 mkdir --parents /resources/release
