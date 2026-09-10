@@ -2021,8 +2021,8 @@
                                                             } ;
                                                 in
                                                     {
-                                                        name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
-                                                        order = order ;
+                                                        name = builtins.trace "2439717779538932" ( builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ) ;
+                                                        order = builtins.trace "5619528298521274" order ;
                                                         value = builtins.trace "1342761235482162" nixos-test ;
                                                     } ;
                                     implementation = implementation ;
