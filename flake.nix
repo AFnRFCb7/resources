@@ -2023,7 +2023,7 @@
                                                     {
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
                                                         order = order ;
-                                                        value = nixos-test ;
+                                                        value = nixos-test [ ] ;
                                                     } ;
                                     implementation = implementation ;
                                 } ;
