@@ -1996,13 +1996,13 @@
                                                                                         ''
                                                                                             import os
                                                                                         ''
-                                                                                        ''
-                                                                                            import time
-                                                                                        ''
                                                                                     ]
                                                                                     (
                                                                                         if builtins.length dependencies > 0 then
                                                                                             [
+                                                                                                ''
+                                                                                                    import time
+                                                                                                ''
                                                                                                 ''
                                                                                                     while not os.path.exists( "${ builtins.head dependencies }/SYNC" ) :
                                                                                                         time.sleep(1)
