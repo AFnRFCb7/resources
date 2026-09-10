@@ -2023,7 +2023,7 @@
                                                     {
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
                                                         order = order ;
-                                                        value = nixos-test ;
+                                                        value = builtins.trace "1342761235482162" nixos-test ;
                                                     } ;
                                     implementation = implementation ;
                                 } ;
