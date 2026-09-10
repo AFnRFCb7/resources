@@ -1981,12 +1981,44 @@
                                                             src = ./. ;
                                                         } ;
                                                 nixos-test =
-                                                    pkgs.nixosTest
-                                                        {
-                                                            name = "resource-check" ;
-                                                            nodes = nodes ;
-                                                            testScript = builtins.concatStringsSep "\n" ( tests action-derivation ) ;
-                                                        } ;
+                                                    dependencies :
+                                                        pkgs.nixosTest
+                                                            {
+                                                                name = "resource-check" ;
+                                                                nodes = nodes ;
+                                                                testScript =
+                                                                    builtins.concatStringsSep
+                                                                        "\n"
+                                                                        (
+                                                                            builtins.concatLists
+                                                                                [
+                                                                                    [
+                                                                                        ''
+                                                                                            import os
+                                                                                        ''
+                                                                                        ''
+                                                                                            import time
+                                                                                        ''
+                                                                                    ]
+                                                                                    (
+                                                                                        if builtins.length dependencies > 0 then
+                                                                                            [
+                                                                                                ''
+                                                                                                    while not os.path.exists( "${ builtins.head dependencies }/SYNC" ) :
+                                                                                                        time.sleep(1)
+                                                                                                ''
+                                                                                            ]
+                                                                                        else [ ]
+                                                                                    )
+                                                                                    ( tests action-derivation )
+                                                                                    [
+                                                                                        ''
+                                                                                            open(os.path.join(os.environ["out"], "SYNC"), "w").close()
+                                                                                        ''
+                                                                                    ]
+                                                                                ]
+                                                                        ) ;
+                                                            } ;
                                                 in
                                                     {
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
