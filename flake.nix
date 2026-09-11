@@ -2012,13 +2012,13 @@
                                                                                     )
                                                                                     [
                                                                                         ''
-                                                                                            print("BEGIN")
+                                                                                            print("BEGIN CHECK ${ name }")
                                                                                         ''
                                                                                     ]
                                                                                     ( tests action-derivation )
                                                                                     [
                                                                                         ''
-                                                                                            print("END")
+                                                                                            print("END CHECK ${ name }")
                                                                                         ''
                                                                                         ''
                                                                                             open(os.path.join(os.environ["out"], "SYNC"), "w").close()
