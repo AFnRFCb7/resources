@@ -1992,38 +1992,7 @@
                                                                         (
                                                                             builtins.concatLists
                                                                                 [
-                                                                                    [
-                                                                                        ''
-                                                                                            import os
-                                                                                        ''
-                                                                                    ]
-                                                                                    (
-                                                                                        if builtins.length dependencies > 0 then
-                                                                                            [
-                                                                                                ''
-                                                                                                    import time
-                                                                                                ''
-                                                                                                ''
-                                                                                                    while not os.path.exists( "${ builtins.head dependencies }/SYNC" ) :
-                                                                                                        time.sleep(1)
-                                                                                                ''
-                                                                                            ]
-                                                                                        else [ ]
-                                                                                    )
-                                                                                    [
-                                                                                        ''
-                                                                                            print("BEGIN")
-                                                                                        ''
-                                                                                    ]
                                                                                     ( tests action-derivation )
-                                                                                    [
-                                                                                        ''
-                                                                                            print("END")
-                                                                                        ''
-                                                                                        ''
-                                                                                            open(os.path.join(os.environ["out"], "SYNC"), "w").close()
-                                                                                        ''
-                                                                                    ]
                                                                                 ]
                                                                         ) ;
                                                             } ;
