@@ -1982,51 +1982,23 @@
                                                         } ;
                                                 nixos-test =
                                                     dependencies :
-                                                        pkgs.nixosTest
-                                                            {
-                                                                name = "resource-check" ;
-                                                                nodes = nodes ;
-                                                                testScript =
-                                                                    builtins.concatStringsSep
-                                                                        "\n"
-                                                                        (
-                                                                            builtins.concatLists
-                                                                                [
-                                                                                    [
-                                                                                        ''
-                                                                                            import os
-                                                                                        ''
-                                                                                    ]
-                                                                                    (
-                                                                                        if builtins.length dependencies > 0 then
-                                                                                            [
-                                                                                                ''
-                                                                                                    import time
-                                                                                                ''
-                                                                                                ''
-                                                                                                    while not os.path.exists( "${ builtins.head dependencies }/SYNC" ) :
-                                                                                                        time.sleep(1)
-                                                                                                ''
-                                                                                            ]
-                                                                                        else [ ]
-                                                                                    )
-                                                                                    [
-                                                                                        ''
-                                                                                            print("BEGIN CHECK")
-                                                                                        ''
-                                                                                    ]
-                                                                                    ( tests action-derivation )
-                                                                                    [
-                                                                                        ''
-                                                                                            print("END CHECK")
-                                                                                        ''
-                                                                                        ''
-                                                                                            open(os.path.join(os.environ["out"], "SYNC"), "w").close()
-                                                                                        ''
-                                                                                    ]
-                                                                                ]
-                                                                        ) ;
-                                                            } ;
+                                                        let
+                                                            in
+                                                                pkgs.nixosTest
+                                                                    {
+                                                                        globalTimeout = 60 ;
+                                                                        name = "resource-check" ;
+                                                                        nodes = nodes ;
+                                                                        testScript =
+                                                                            builtins.concatStringsSep
+                                                                                "\n"
+                                                                                (
+                                                                                    builtins.concatLists
+                                                                                        [
+                                                                                            ( tests action-derivation )
+                                                                                        ]
+                                                                                ) ;
+                                                                    } ;
                                                 in
                                                     {
                                                         name = builtins.concatStringsSep "-" [ ( builtins.toString order ) name ] ;
