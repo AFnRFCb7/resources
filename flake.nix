@@ -2029,7 +2029,7 @@
                                                             } ;
                                                 in
                                                     {
-                                                        name = builtins.concatStringsSep "-" [ ( builtins.toString order ) "check" ] ;
+                                                        name = builtins.concatStringsSep "-" [ "check" ( builtins.toString order ) ] ;
                                                         order = order ;
                                                         value = nixos-test ;
                                                     } ;
