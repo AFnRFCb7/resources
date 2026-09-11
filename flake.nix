@@ -1406,7 +1406,7 @@
                                                                                                                                                                     runtimeInputs = [ pkgs.coreutils pkgs.nix ] ;
                                                                                                                                                                     text =
                                                                                                                                                                         ''
-                                                                                                                                                                            TIMEOUT=10
+                                                                                                                                                                            TIMEOUT=50
                                                                                                                                                                             UUID=()
                                                                                                                                                                             while [[ "$#" -gt 0 ]]
                                                                                                                                                                             do
@@ -1424,7 +1424,7 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
-                                                                                                                                                                            true timeout "$TIMEOUT" nix-collect-garbage > /dev/null 2>&1 || true
+                                                                                                                                                                            nix-collect-garbage --cores 1 --max-jobs 1 --no-build-output --quiet --timeout "$TIMEOUT" > /dev/null 2>&1
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 } ;
