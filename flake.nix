@@ -1424,7 +1424,7 @@
                                                                                                                                                                                         ;;
                                                                                                                                                                                 esac
                                                                                                                                                                             done
-                                                                                                                                                                            nix-collect-garbage --cores 1 --max-jobs 1 --no-build-output --quiet --timeout "$TIMEOUT" > /dev/null 2>&1
+                                                                                                                                                                            true nice --adjustment 19 nix-collect-garbage --cores 1 --max-jobs 1 --no-build-output --quiet --timeout "$TIMEOUT" > /dev/null 2>&1
                                                                                                                                                                             echo -n "${ builtins.concatStringsSep "" [ "$" "{" "UUID[@]" "}" ] }" >&2
                                                                                                                                                                         '' ;
                                                                                                                                                                 } ;
